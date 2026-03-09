@@ -1,6 +1,6 @@
 FROM postgres:16-alpine
 
-ENV POSTGRES_DB=fastapi_db
+ENV POSTGRES_DB=vlabs_db
 ENV POSTGRES_USER=myuser
 ENV POSTGRES_PASSWORD=password
 

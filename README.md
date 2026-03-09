@@ -1,175 +1,272 @@
+# VantageLabs — Local Development Setup
+
+---
+
+## Table of Contents
+
+1. [Install Docker CLI](#1-install-docker-cli)
+2. [Fix Docker Credential Configuration](#2-fix-docker-credential-configuration)
+3. [Install and Start Colima](#3-install-and-start-colima)
+4. [Verify Docker Context](#4-verify-docker-context)
+5. [Switching Docker Contexts](#5-switching-docker-contexts)
+6. [If You Install Docker Desktop Later](#6-if-you-install-docker-desktop-later)
+7. [Install Node.js via NVM](#7-install-nodejs-via-nvm)
+8. [Run PostgreSQL with Docker](#8-run-postgresql-with-docker)
+9. [Create Database and User](#9-create-database-and-user)
+10. [Install Backend Dependencies](#10-install-backend-dependencies)
+11. [PostgreSQL Quick Reference](#11-postgresql-quick-reference)
+12. [Running the Project](#12-running-the-project)
+13. [Configure VS Code Docker Integration](#13-configure-vs-code-docker-integration)
+
+---
+
+## 1. Install Docker CLI
+
+Install Docker CLI and credential helpers via Homebrew:
+
+```bash
 brew install docker docker-credential-helper
-You may come across an issue later on where the Docker CLI will throw an error that 'docker-credential-desktop not installed' which is a result of a misconfiguration (potentially from a previous installation of Docker Desktop). You can correct this by doing the following.
+```
 
+> **Note:** You may see `docker-credential-desktop not installed` if Docker Desktop was previously installed. This is resolved in the next step.
+
+---
+
+## 2. Fix Docker Credential Configuration
+
+Open your Docker config file:
+
+```bash
 nano ~/.docker/config.json
+```
 
+Replace its contents with:
+
+```json
 {
-        "auths": {},
-        "credsStore": "osxkeychain",
-        "currentContext": "colima"
+  "auths": {},
+  "credsStore": "osxkeychain", // container tools extension may throw errs: if so remove this and reload vscode
+  "currentContext": "colima"
 }
-Yours might not have the current context set to Colima yet, however, the important one to update is credStore.
+```
 
+> The key field here is `"credsStore": "osxkeychain"`.
+
+---
+
+## 3. Install and Start Colima
+
+Install Colima:
+
+```bash
 brew install colima
-Once this is installed, all you need to do is start the Colima VM.
+```
 
+Start the Colima VM:
+
+```bash
 colima start
-Now you're good to go! You can test that everything is connected correctly by running. Where the * indicates the active context.
+```
 
+---
+
+## 4. Verify Docker Context
+
+Check your Docker contexts:
+
+```bash
 docker context ls
-# this will return a list of docker socket configurations, example below
+```
 
-NAME       DESCRIPTION                               DOCKER ENDPOINT                                             KUBERNETES ENDPOINT                    ORCHESTRATOR
-colima *   colima                                    unix:///Users/{you}/.colima/default/docker.sock                                          
-default    Current DOCKER_HOST based configuration   unix:///var/run/docker.sock                                 https://192.168.64.3:16443 (default)   swarm
+Expected output:
 
+```
+NAME       DESCRIPTION                               DOCKER ENDPOINT
+colima *   colima                                    unix:///Users/{you}/.colima/default/docker.sock
+default    Current DOCKER_HOST configuration         unix:///var/run/docker.sock
+```
 
-Docker context will switch
+> The `*` indicates the active context.
 
-Docker Desktop will automatically set your active context to:
+---
 
-desktop-linux
+## 5. Switching Docker Contexts
 
-Colima uses:
+Switch to Colima:
 
-colima
-
-Check with:
-
-docker context ls
-
-Switch manually:
-
+```bash
 docker context use colima
+```
+
+Switch to Docker Desktop:
+
+```bash
 docker context use desktop-linux
+```
 
-If You Install Docker Desktop Later
+---
 
-You have 3 clean options:
+## 6. If You Install Docker Desktop Later
 
-Option A — Use Docker Desktop only
+Choose one of the following options:
+
+**Option A — Use Docker Desktop only:**
+
+```bash
 colima stop
 brew uninstall colima
-Option B — Keep both, switch when needed
+```
+
+**Option B — Keep both and switch as needed:**
+
+```bash
 docker context use colima
-docker context use desktop-linux
-Option C — Remove Docker Desktop
+# or
+docker context use default
+```
 
-Drag to trash + remove settings:
+**Option C — Remove Docker Desktop settings:**
 
+```bash
 rm -rf ~/.docker/desktop
+```
 
+---
 
-=============
-# Download and install nvm:
+## 7. Install Node.js via NVM
+
+Install NVM:
+
+```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+```
 
-# in lieu of restarting the shell
+Load NVM into your shell:
+
+```bash
 \. "$HOME/.nvm/nvm.sh"
+```
 
-# Download and install Node.js:
+Install Node.js:
+
+```bash
 nvm install 25
+```
 
-# Verify the Node.js version:
-node -v # Should print "v25.7.0".
+Verify the installation:
 
-# Verify npm version:
-npm -v # Should print "11.10.1".
+```bash
+node -v  # v25.7.0
+npm -v   # 11.10.1
+```
 
+---
 
+## 8. Install Backend Dependencies - pyproject.toml
 
-#####################################
-CREATE BACKEND AND POSTGRES SQL
-#####################################
+```bash
+pip3 install .
+```
 
-docker pull postgres:alpine
+---
 
-docker run --name fastapi-postgres -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres:alpine
+## 9. PostgreSQL Quick Reference
 
+### Connection
 
-CREATE DB AND USER AND EXPOSE TO OUTSIDE A CONTAINER 
+| Action | Command |
+|---|---|
+| Connect to a database | `psql -U username -d dbname` |
+| List databases | `\l` |
+| Switch database | `\c dbname` |
+| List tables | `\dt` |
+| Describe a table | `\d table_name` |
+| List users | `\du` |
 
-docker exec -it fastapi-postgres bash
-d4c30f0b575b:/# psql -U postgres
-postgres=# create database fastapi_db;
-CREATE DATABASE
-postgres=# create user myuser with encrypted password 'password';
-CREATE ROLE
-postgres=# grant all privileges on database fastapi_db to myuser ; 
-postgres=# GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO myuser;
-postgres=# GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO myuser;
-GRANT
-postgres=# \c fastapi_db 
-You are now connected to database "fastapi_db" as user "postgres".
+### Database Management
 
-fastapi_db=# psql -h localhost -p 5432 postgres 
-
-
-install pip packages:
-pip3 install "fastapi[all]" SQLAlchemy psycopg2-binary
-
-
-# COMMON POSTGRES CMDS:
-Database-Level Commands
-psql -U username -d dbname
-Connect to a database.
-
-\l
-List all databases.
-
+```sql
 CREATE DATABASE dbname;
-Create a new database.
-
 DROP DATABASE dbname;
-Delete a database.
+```
 
-\c dbname
-Connect to a database from psql.
+### Table Management
 
-🔹 Table Commands
-\dt
-List tables.
-
+```sql
 CREATE TABLE table_name (...);
-Create a table.
-
 DROP TABLE table_name;
-Delete a table.
-
 ALTER TABLE table_name ADD COLUMN column_name datatype;
-Add a column.
-
 ALTER TABLE table_name DROP COLUMN column_name;
-Remove a column.
+```
 
-\d table_name
-Describe table structure.
+### CRUD Operations
 
-🔹 Data Manipulation (CRUD)
-
+```sql
+-- Insert
 INSERT INTO table_name VALUES (...);
-Insert data.
-
 INSERT INTO table_name (col1, col2) VALUES (...);
-Insert specific columns.
 
+-- Update
 UPDATE table_name SET column = value WHERE condition;
-Update data.
 
+-- Delete
 DELETE FROM table_name WHERE condition;
-Delete rows.
+```
 
-🔹 User & Permissions
+### Users & Permissions
 
+```sql
 CREATE USER username WITH PASSWORD 'password';
-
 GRANT ALL PRIVILEGES ON DATABASE dbname TO username;
+```
 
-\du — List users/roles
+---
 
+## 10. Running the Project
 
+Navigate to the project directory:
 
+```bash
+cd vantagelabs
+```
 
-# -------------
+Build all containers:
 
-docker-compose build --no-cache <empty or specific service>
+```bash
+docker compose build --no-cache
+```
+
+Or build a specific service:
+
+```bash
+docker compose build --no-cache <service>
+```
+
+Start containers in detached mode:
+
+```bash
+docker compose up -d
+```
+
+---
+
+## 11. Configure VS Code Docker Integration
+
+Open the VS Code settings JSON:
+
+```
+Cmd + Shift + P → Preferences: Open Settings (JSON)
+```
+
+Add the following configuration:
+
+```json
+{
+  "files.autoSave": "afterDelay",
+  "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
+  "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.dockercompose",
+  "docker.host": "unix:///Users/maiklzaki/.colima/default/docker.sock"
+}
+```
+
+> This ensures VS Code connects to Docker through the Colima socket.

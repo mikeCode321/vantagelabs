@@ -11,7 +11,7 @@ interface Contact {
 }
 
 
-export default async function About() {
+export default async function Test() {
 
   const res = await fetch("http://backend:8000/api/contacts/", {
     cache: "no-store", 

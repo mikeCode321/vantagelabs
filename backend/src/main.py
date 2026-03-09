@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from slowapi.middleware import SlowAPIMiddleware
 import schema
 import fastapi
-import backend.src.services as services
+import services
 import sqlalchemy.orm as orm
 from typing import TYPE_CHECKING, List
 from logger import Logger

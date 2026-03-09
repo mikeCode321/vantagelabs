@@ -11,6 +11,3 @@ dependencies = [
     "python-dotenv",
     "alembic",
 ]
-
-[tool.setuptools]
-packages = ["config", "models", "services", "alembic"]

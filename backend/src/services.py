@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, List
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
-import backend.src.models.database as database
+import database
 from models.contact import Contact
 import schema
 from fastapi.responses import JSONResponse

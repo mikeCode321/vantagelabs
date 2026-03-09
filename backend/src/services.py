@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, List
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
-import database
+import backend.src.models.database as database
 from models.contact import Contact
 import schema
 from fastapi.responses import JSONResponse
@@ -54,3 +54,20 @@ async def update_contact(contact: schema.Contact, contact_data: schema.Contact, 
     db.refresh(contact)
     
     return schema.Contact.model_validate(contact)
+
+
+# ------------------------------- Vantage Labs -------------------------------
+
+async def calc_cash_on_hand(net_income: float, expenses: float, years: int, interest_rates_and_thresholds: List[tuple]) -> float:
+    
+    running_total = net_income
+
+    for year in range(years): # 0 - years-1 so if years is 5, it will run for 0,1,2,3,4 which is 5 iterations
+        running_total += net_income - expenses
+
+        for threshold, rate in interest_rates_and_thresholds:
+            if net_income < threshold:
+                net_income += net_income * rate
+                break
+
+    return net_income

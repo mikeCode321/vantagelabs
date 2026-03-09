@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from slowapi.middleware import SlowAPIMiddleware
 import schema
 import fastapi
-import services
+import backend.src.services as services
 import sqlalchemy.orm as orm
 from typing import TYPE_CHECKING, List
 from logger import Logger
@@ -37,6 +37,10 @@ else:
                 return func
             return decorator
     limiter = DummyLimiter()
+
+@app.get("/status")
+def status():
+    return {"status": "ok"}
 
 # http://127.0.0.1:8000/docs
 # view api endpoints in the ui and test there
@@ -78,3 +82,7 @@ async def delete_contact(contact_id: int, db: orm.Session = fastapi.Depends(serv
         raise fastapi.HTTPException(404, detail="User DNE")
     
     return await services.delete_contact(contact, db) 
+
+@app.get("/api/calc_cash_on_hand/")
+async def calc_cash_on_hand( net_income: float, expenses: float, years: int, interest_rates_and_thresholds: List[tuple] ):
+    return await services.calc_cash_on_hand(net_income, expenses, years, interest_rates_and_thresholds)

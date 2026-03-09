@@ -1,6 +1,6 @@
 import sqlalchemy as sql
 from sqlalchemy.sql import func
-import database as db
+import backend.src.models.database as db
 
 class Contact(db.Base):
     __tablename__ = "contacts"

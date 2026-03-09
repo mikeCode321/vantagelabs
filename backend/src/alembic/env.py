@@ -7,7 +7,7 @@ from alembic import context
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from database import Base
+from backend.src.models.database import Base
 from models import contact 
 
 # this is the Alembic Config object, which provides

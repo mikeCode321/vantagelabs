@@ -1,5 +1,5 @@
 [project]
-name = "practicevantagelabs-backend"
+name = "vantagelabs-backend"
 version = "0.1.0"
 dependencies = [
     "fastapi",
@@ -11,3 +11,6 @@ dependencies = [
     "python-dotenv",
     "alembic",
 ]
+
+[tool.setuptools]
+packages = ["config", "models", "services", "alembic"]

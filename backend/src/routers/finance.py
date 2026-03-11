@@ -5,7 +5,7 @@ from schemas.finance import CashOnHandRequest, CashOnHandResponse
 
 router = APIRouter(prefix="/api/finance", tags=["finance"])
 
-@router.post("/api/calc_cash_on_hand/")
+@router.post("/calc_cash_on_hand/")
 async def calc_cash_on_hand(payload: CashOnHandRequest):
     result = finance_services.calc_cash_on_hand(
         years=payload.years,

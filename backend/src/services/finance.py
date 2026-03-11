@@ -34,7 +34,7 @@ def apply_tiered_interest(balance: float, tiers: List[InterestRateTier], periods
     return total
         
 def calc_cash_on_hand(years: int, cash_on_hand: float, net_income_dict: IncomeConfig, expenses_dict: ExpensesConfig, tiers: List[InterestRateTier]) -> float: 
-    print(f"Years: {years}, Initial Cash on Hand: {cash_on_hand}, Net Income: {net_income_dict}, Expenses: {expenses_dict}")
+    # print(f"Years: {years}, Initial Cash on Hand: {cash_on_hand}, Net Income: {net_income_dict}, Expenses: {expenses_dict}")
     periods_per_year = 12 
     months = years * periods_per_year 
     net_income = net_income_dict.net_income

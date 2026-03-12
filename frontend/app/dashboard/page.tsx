@@ -1,4 +1,4 @@
-import "./page.module.css";
+import "./dashboard.css";
 import CashOnHandCalc from "@/components/Dashboard/CashOnHandCalc/CashOnHandCalc";
 // import <component> from "@/components/<component>";  placeholder for future components
 

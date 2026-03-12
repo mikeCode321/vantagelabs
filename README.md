@@ -270,3 +270,22 @@ Add the following configuration:
 ```
 
 > This ensures VS Code connects to Docker through the Colima socket.
+
+
+
+<!--
+MAIN COLORS 
+ #2A4C65
+
+#F2A65A
+
+#5FA7AB
+
+#FFFFFF
+
+#DCEFF2
+
+#F4F7F8
+
+#C44
+ -->

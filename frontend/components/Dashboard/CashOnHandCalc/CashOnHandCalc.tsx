@@ -1,5 +1,5 @@
 "use client";
-
+import "./CashOnHandCalc.css";
 import { useState } from "react";
 
 interface InterestRateTier {

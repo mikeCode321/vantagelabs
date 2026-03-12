@@ -34,3 +34,46 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+
+#### SAVE FOR LATE USE (SEO AND METADATA)
+// export const metadata: Metadata = {
+//   title: "Vantage Personal",
+//   description: "Plan and simulate your personal finances with Vantage Personal. Custom investment, savings, and retirement simulations.",
+//   keywords: [
+//     "personal finance",
+//     "financial simulator",
+//     "savings planner",
+//     "investment simulator",
+//     "retirement planning",
+//     "Vantage Personal"
+//   ],
+//   authors: [{ name: "Vantage Labs", url: "https://vantage.com" }],
+
+  // commented out for now - but useful for seo and social sharing when we have a public site
+  // openGraph: {
+  //   title: "Vantage Personal",
+  //   description: "Custom personal finance simulations to plan your investments, savings, and retirement.",
+  //   url: "https://personal.vantage.com",
+  //   siteName: "Vantage Personal",
+  //   type: "website",
+  //   images: [
+  //     {
+  //       url: "https://personal.vantage.com/og-image.png",
+  //       width: 1200,
+  //       height: 630,
+  //       alt: "Vantage Personal - Financial Simulation Dashboard",
+  //     },
+  //   ],
+  // },
+  
+  // EXAMPLE: for social media card when sharing 
+  // twitter: {
+  //   card: "summary_large_image",
+  //   title: "Vantage Personal",
+  //   description: "Custom personal finance simulations to plan your investments, savings, and retirement.",
+  //   images: ["https://personal.vantage.com/og-image.png"],
+  //   creator: "@VantageLabs",
+  // },
+// };

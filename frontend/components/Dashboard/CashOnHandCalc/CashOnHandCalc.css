@@ -1,0 +1,318 @@
+/* ─────────────────────────────────────────
+   CashOnHandCalc — Static Card
+───────────────────────────────────────── */
+.coh-card {
+  background: #FFFFFF;
+  border: 1px solid #5FA7AB33;
+  border-radius: 4px;
+  padding: 16px 20px;
+  font-family: 'DM Mono', monospace;
+  color: #2A4C65;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.coh-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.coh-card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2A4C65;
+}
+
+.coh-edit-btn {
+  background: none;
+  border: 1px solid #5FA7AB55;
+  border-radius: 2px;
+  color: #5FA7AB;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.coh-edit-btn:hover {
+  border-color: #F2A65A;
+  color: #F2A65A;
+}
+
+.coh-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.coh-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.coh-stat-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #5FA7AB;
+}
+
+.coh-stat-value {
+  font-size: 0.85rem;
+  color: #2A4C65;
+}
+
+.coh-projection {
+  background: #DCEFF2;
+  border-radius: 2px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.coh-projection-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #5FA7AB;
+}
+
+.coh-projection-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: #F2A65A;
+}
+
+.coh-projection-empty {
+  font-size: 0.65rem;
+  color: #5FA7AB88;
+  letter-spacing: 0.05em;
+  text-align: center;
+  padding: 8px 0;
+  border-top: 1px dashed #5FA7AB33;
+}
+
+/* ─────────────────────────────────────────
+   CashOnHandCalc — Modal
+───────────────────────────────────────── */
+.coh-overlay {
+  position: fixed;
+  inset: 0;
+  background: #2A4C6566;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+
+.coh-modal {
+  background: #FFFFFF;
+  border: 1px solid #5FA7AB33;
+  border-radius: 4px;
+  width: 480px;
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'DM Mono', monospace;
+  color: #2A4C65;
+  overflow: hidden;
+}
+
+.coh-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #5FA7AB22;
+}
+
+.coh-modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2A4C65;
+}
+
+.coh-close-btn {
+  background: none;
+  border: none;
+  color: #5FA7AB;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.coh-close-btn:hover { color: #F2A65A; }
+
+.coh-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.coh-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.coh-group-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #5FA7AB;
+}
+
+.coh-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.coh-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.coh-field label {
+  font-size: 0.6rem;
+  color: #5FA7AB;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.coh-field input {
+  background: #DCEFF2;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: #2A4C65;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  padding: 7px 10px;
+  outline: none;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.coh-field input:focus {
+  border-color: #F2A65A;
+  background: #FFFFFF;
+}
+
+.coh-tier-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.coh-tier-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 28px;
+  gap: 10px;
+  align-items: end;
+  margin-top: 4px;
+}
+
+.coh-remove-btn {
+  background: none;
+  border: 1px solid #5FA7AB44;
+  color: #5FA7AB;
+  border-radius: 2px;
+  width: 28px;
+  height: 33px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  padding: 0;
+}
+
+.coh-remove-btn:hover { border-color: #F2A65A; color: #F2A65A; }
+
+.coh-add-btn {
+  background: none;
+  border: none;
+  color: #5FA7AB;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.coh-add-btn:hover { color: #F2A65A; }
+
+.coh-error {
+  background: #fff5f5;
+  border: 1px solid #F2A65A55;
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-size: 0.75rem;
+  color: #c44;
+}
+
+.coh-modal-footer {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid #5FA7AB22;
+}
+
+.coh-cancel-btn {
+  background: none;
+  border: 1px solid #5FA7AB44;
+  border-radius: 2px;
+  color: #5FA7AB;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.coh-cancel-btn:hover { border-color: #2A4C65; color: #2A4C65; }
+
+.coh-save-btn {
+  flex: 1;
+  background: #2A4C65;
+  border: none;
+  border-radius: 2px;
+  color: #FFFFFF;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.coh-save-btn:hover { background: #F2A65A; }
+
+.coh-save-btn:disabled {
+  background: #DCEFF2;
+  color: #5FA7AB88;
+  cursor: not-allowed;
+}

@@ -2,13 +2,12 @@
    CashOnHandCalc — Static Card
 ───────────────────────────────────────── */
 .coh-card {
-  background: #FFFFFF;
+  background: var(--white);
   border: 1px solid #5FA7AB33;
   border-radius: 4px;
   padding: 16px 20px;
   font-family: 'DM Mono', monospace;
-  color: #2A4C65;
-  max-width: 420px;
+  color: var(--primary);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -24,14 +23,14 @@
   font-family: 'Playfair Display', serif;
   font-size: 1rem;
   font-weight: 700;
-  color: #2A4C65;
+  color: var(--primary);
 }
 
 .coh-edit-btn {
   background: none;
   border: 1px solid #5FA7AB55;
   border-radius: 2px;
-  color: #5FA7AB;
+  color: var(--teal);
   font-family: 'DM Mono', monospace;
   font-size: 0.65rem;
   letter-spacing: 0.1em;
@@ -42,8 +41,8 @@
 }
 
 .coh-edit-btn:hover {
-  border-color: #F2A65A;
-  color: #F2A65A;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .coh-stat-grid {
@@ -62,16 +61,16 @@
   font-size: 0.58rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #5FA7AB;
+  color: var(--teal);
 }
 
 .coh-stat-value {
   font-size: 0.85rem;
-  color: #2A4C65;
+  color: var(--primary);
 }
 
 .coh-projection {
-  background: #DCEFF2;
+  background: var(--soft-bg);
   border-radius: 2px;
   padding: 10px 14px;
   display: flex;
@@ -83,13 +82,13 @@
   font-size: 0.6rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #5FA7AB;
+  color: var(--teal);
 }
 
 .coh-projection-value {
   font-family: 'Playfair Display', serif;
   font-size: 1.2rem;
-  color: #F2A65A;
+  color: var(--accent);
 }
 
 .coh-projection-empty {
@@ -116,7 +115,7 @@
 }
 
 .coh-modal {
-  background: #FFFFFF;
+  background: var(--white);
   border: 1px solid #5FA7AB33;
   border-radius: 4px;
   width: 480px;
@@ -125,7 +124,7 @@
   display: flex;
   flex-direction: column;
   font-family: 'DM Mono', monospace;
-  color: #2A4C65;
+  color: var(--primary);
   overflow: hidden;
 }
 
@@ -141,13 +140,13 @@
   font-family: 'Playfair Display', serif;
   font-size: 1rem;
   font-weight: 700;
-  color: #2A4C65;
+  color: var(--primary);
 }
 
 .coh-close-btn {
   background: none;
   border: none;
-  color: #5FA7AB;
+  color: var(--teal);
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0;
@@ -155,7 +154,7 @@
   transition: color 0.15s;
 }
 
-.coh-close-btn:hover { color: #F2A65A; }
+.coh-close-btn:hover { color: var(--accent); }
 
 .coh-modal-body {
   padding: 20px;
@@ -175,7 +174,7 @@
   font-size: 0.6rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #5FA7AB;
+  color: var(--teal);
 }
 
 .coh-row {
@@ -192,16 +191,16 @@
 
 .coh-field label {
   font-size: 0.6rem;
-  color: #5FA7AB;
+  color: var(--teal);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .coh-field input {
-  background: #DCEFF2;
+  background: var(--soft-bg);
   border: 1px solid transparent;
   border-radius: 2px;
-  color: #2A4C65;
+  color: var(--primary);
   font-family: 'DM Mono', monospace;
   font-size: 0.85rem;
   padding: 7px 10px;
@@ -211,8 +210,8 @@
 }
 
 .coh-field input:focus {
-  border-color: #F2A65A;
-  background: #FFFFFF;
+  border-color: var(--accent);
+  background: var(--white);
 }
 
 .coh-tier-header {
@@ -232,7 +231,7 @@
 .coh-remove-btn {
   background: none;
   border: 1px solid #5FA7AB44;
-  color: #5FA7AB;
+  color: var(--teal);
   border-radius: 2px;
   width: 28px;
   height: 33px;
@@ -245,12 +244,12 @@
   padding: 0;
 }
 
-.coh-remove-btn:hover { border-color: #F2A65A; color: #F2A65A; }
+.coh-remove-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 .coh-add-btn {
   background: none;
   border: none;
-  color: #5FA7AB;
+  color: var(--teal);
   cursor: pointer;
   font-family: 'DM Mono', monospace;
   font-size: 0.65rem;
@@ -260,7 +259,7 @@
   transition: color 0.15s;
 }
 
-.coh-add-btn:hover { color: #F2A65A; }
+.coh-add-btn:hover { color: var(--accent); }
 
 .coh-error {
   background: #fff5f5;
@@ -268,7 +267,7 @@
   border-radius: 2px;
   padding: 10px 14px;
   font-size: 0.75rem;
-  color: #c44;
+  color: var(--error);
 }
 
 .coh-modal-footer {
@@ -282,7 +281,7 @@
   background: none;
   border: 1px solid #5FA7AB44;
   border-radius: 2px;
-  color: #5FA7AB;
+  color: var(--teal);
   font-family: 'DM Mono', monospace;
   font-size: 0.7rem;
   letter-spacing: 0.1em;
@@ -292,14 +291,14 @@
   transition: all 0.15s;
 }
 
-.coh-cancel-btn:hover { border-color: #2A4C65; color: #2A4C65; }
+.coh-cancel-btn:hover { border-color: var(--primary); color: var(--primary); }
 
 .coh-save-btn {
   flex: 1;
-  background: #2A4C65;
+  background: var(--primary);
   border: none;
   border-radius: 2px;
-  color: #FFFFFF;
+  color: var(--white);
   font-family: 'DM Mono', monospace;
   font-size: 0.7rem;
   letter-spacing: 0.15em;
@@ -309,10 +308,10 @@
   transition: background 0.15s;
 }
 
-.coh-save-btn:hover { background: #F2A65A; }
+.coh-save-btn:hover { background: var(--accent); }
 
 .coh-save-btn:disabled {
-  background: #DCEFF2;
+  background: var(--soft-bg);
   color: #5FA7AB88;
   cursor: not-allowed;
 }

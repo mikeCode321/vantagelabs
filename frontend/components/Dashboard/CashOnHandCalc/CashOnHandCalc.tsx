@@ -1,6 +1,6 @@
 "use client";
 import "./CashOnHandCalc.css";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface InterestRateTier {
   threshold: number;
@@ -15,8 +15,12 @@ interface FormData {
   tiers: InterestRateTier[];
 }
 
+interface CashOnHandCalcProps {
+  currentYear: number;
+}
+
 const DEFAULT: FormData = {
-  years: 10,
+  years: 0,
   cash_on_hand: 100000,
   net_income: { net_income: 80000, interest_rate: 0.03 },
   expenses: { expenses: 50000, interest_rate: 0.02 },
@@ -26,7 +30,7 @@ const DEFAULT: FormData = {
 const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-export default function CashOnHandCalc() {
+export default function CashOnHandCalc({ currentYear }: CashOnHandCalcProps) {
   const [saved, setSaved] = useState<FormData>(DEFAULT);
   const [draft, setDraft] = useState<FormData>(DEFAULT);
   const [open, setOpen] = useState(false);
@@ -46,25 +50,40 @@ export default function CashOnHandCalc() {
     setOpen(true);
   };
 
-  const handleSave = async () => {
+  // Core fetch — accepts the form data and year explicitly so it can be called
+  // both from handleSave (with draft) and the year-change effect (with saved).
+  const fetchResult = useCallback(async (data: FormData, year: number) => {
     setLoading(true);
     setError(null);
     try {
+      const payload = { ...data, years: year };
+
       const res = await fetch("http://localhost:8000/api/finance/calc_cash_on_hand/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(draft),
+        body: JSON.stringify(payload),
       });
+
       if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
-      const data = await res.json();
-      setResult(typeof data === "number" ? data : data.result ?? null);
-      setSaved(draft);
-      setOpen(false);
+      const json = await res.json();
+      setResult(typeof json === "number" ? json : json.result ?? null);
     } catch (err) {
       setError((err as Error).message);
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  // Re-fetch whenever currentYear changes, but only after the user has saved once.
+  useEffect(() => {
+    if (!currentYear) return;
+    fetchResult(saved, currentYear);
+  }, [currentYear]);
+
+  const handleSave = async () => {
+    await fetchResult(draft, currentYear);
+    setSaved(draft);
+    setOpen(false);
   };
 
   return (
@@ -83,7 +102,7 @@ export default function CashOnHandCalc() {
           </div>
           <div className="coh-stat">
             <span className="coh-stat-label">Horizon</span>
-            <span className="coh-stat-value">{saved.years} yrs</span>
+            <span className="coh-stat-value">{currentYear} yrs</span>
           </div>
           <div className="coh-stat">
             <span className="coh-stat-label">Net Income</span>
@@ -105,12 +124,14 @@ export default function CashOnHandCalc() {
 
         {result !== null ? (
           <div className="coh-projection">
-            <span className="coh-projection-label">{saved.years}yr Projection</span>
+            <span className="coh-projection-label">
+              Year {currentYear} Projection{loading ? " …" : ""}
+            </span>
             <span className="coh-projection-value">${fmt(result)}</span>
           </div>
         ) : (
           <div className="coh-projection-empty">
-            Edit values and save to calculate projection
+            {loading ? "Calculating…" : "Edit values and save to calculate projection"}
           </div>
         )}
       </div>
@@ -128,11 +149,6 @@ export default function CashOnHandCalc() {
               <div className="coh-group">
                 <span className="coh-group-label">Horizon</span>
                 <div className="coh-row">
-                  <div className="coh-field">
-                    <label>Years</label>
-                    <input type="number" value={draft.years}
-                      onChange={e => setDraft({ ...draft, years: Number(e.target.value) || 0 })} />
-                  </div>
                   <div className="coh-field">
                     <label>Starting Cash ($)</label>
                     <input type="number" value={draft.cash_on_hand}

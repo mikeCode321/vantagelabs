@@ -1,8 +1,15 @@
+"use client";
 import "./dashboard.css";
+import { useState } from "react";
 import CashOnHandCalc from "@/components/Dashboard/CashOnHandCalc/CashOnHandCalc";
+import SimControls from "@/components/Dashboard/SimControls/SimControls";
 // import <component> from "@/components/<component>";  placeholder for future components
 
+const SIM_MAX = 40;
+
 export default function Dashboard() {
+  const [year, setYear] = useState(0);
+
   return (
     <div className="dash-root">
 
@@ -34,7 +41,7 @@ export default function Dashboard() {
             <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
           </div>
           <div className="dash-topbar-right">
-            <span className="dash-sim-badge">Sim: 10yr</span>
+            <span className="dash-sim-badge">Sim: {SIM_MAX}yr</span>
           </div>
         </header>
 
@@ -43,7 +50,7 @@ export default function Dashboard() {
 
           {/* Row 1 — primary widgets */}
           <div className="dash-cell dash-cell-md">
-            <CashOnHandCalc />
+            <CashOnHandCalc currentYear={year}/>
           </div>
 
           <div className="dash-cell dash-cell-md">
@@ -64,7 +71,8 @@ export default function Dashboard() {
 
           <div className="dash-cell dash-cell-sm">
             {/* <SimulationControls /> */}
-            <div className="dash-placeholder">Simulation Controls</div>
+            {/* <div className="dash-placeholder">Simulation Controls</div> */}
+            <SimControls max={SIM_MAX} year={year} onYearChange={setYear} />
           </div>
 
         </div>

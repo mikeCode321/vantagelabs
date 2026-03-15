@@ -1,0 +1,232 @@
+.sim-root {
+  font-family: 'DM Mono', monospace;
+  max-width: 460px;
+  background: #ffffff;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Header */
+.sim-header {
+  padding: 1rem 1.25rem 0.75rem;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sim-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.sim-status {
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Body */
+.sim-body {
+  padding: 1.25rem 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sim-control-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sim-label {
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* Year pill */
+.year-pill {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  background: #E8F4F4;
+  border: 0.5px solid rgba(95, 167, 171, 0.27);
+  border-radius: 5px;
+  padding: 3px 10px;
+  cursor: text;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.year-pill:focus-within {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(95, 167, 171, 0.13);
+}
+
+.year-input {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--primary);
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 2ch;
+  text-align: right;
+  padding: 0;
+  caret-color: var(--teal);
+  -moz-appearance: textfield;
+}
+
+.year-input::-webkit-inner-spin-button,
+.year-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.year-sep {
+  font-size: 13px;
+  color: var(--teal);
+  padding: 0 5px;
+  user-select: none;
+}
+
+.year-total {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: rgba(95, 167, 171, 0.6);
+  user-select: none;
+}
+
+/* Slider */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 7px;
+  background: #E0EAEC;
+  border-radius: 5px;
+  background-image: linear-gradient(var(--teal), var(--teal));
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 15px;
+  width: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  box-shadow: 0 0 2px 0 #555;
+  transition: transform 0.15s;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+  box-shadow: var(--teal) 0px 0px 0px 6px;
+}
+
+input[type='range']::-webkit-slider-thumb:active {
+  box-shadow: var(--accent) 0px 0px 0px 6px;
+  transform: scale(1.1);
+  transition: box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+              transform 150ms;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+}
+
+/* Ticks */
+.sim-tick-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2px;
+}
+
+.sim-tick {
+  font-size: 10px;
+  color: #888;
+  opacity: 0.6;
+}
+
+.sim-tick--hidden {
+  visibility: hidden;
+}
+
+/* Footer */
+.sim-footer {
+  padding: 0.75rem 1.25rem;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sim-play-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--primary);
+  background: transparent;
+  border: 0.5px solid rgba(42, 76, 101, 0.31);
+  border-radius: 8px;
+  padding: 5px 14px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.sim-play-btn:hover {
+  background: rgba(42, 76, 101, 0.06);
+  border-color: var(--primary);
+}
+
+.sim-play-btn:active {
+  transform: scale(0.97);
+}
+
+.sim-play-btn.playing {
+  color: var(--accent);
+  border-color: rgba(242, 166, 90, 0.53);
+  background: rgba(242, 166, 90, 0.05);
+}
+
+.play-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.sim-reset-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: #888;
+  background: transparent;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  margin-left: auto;
+  transition: background 0.15s;
+}
+
+.sim-reset-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.sim-reset-btn:active {
+  transform: scale(0.97);
+}

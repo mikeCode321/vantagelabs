@@ -1,140 +1,159 @@
 "use client";
 import "./CashOnHandCalc.css";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { LedgerEntry, YearInputs, YearResult } from "@/app/dashboard/page";
 
-interface InterestRateTier {
-  threshold: number;
-  annual_rate: number;
+interface Props {
+  currentYear: number;
+  ledger: LedgerEntry[];
+  commitResult: (year: number, result: YearResult) => void;
+  updateYear: (year: number, inputs: YearInputs) => void;
+  pause: () => void;
 }
 
-interface FormData {
-  years: number;
-  cash_on_hand: number;
-  net_income: { net_income: number; interest_rate: number };
-  expenses: { expenses: number; interest_rate: number };
-  tiers: InterestRateTier[];
-}
-
-const DEFAULT: FormData = {
-  years: 10,
-  cash_on_hand: 100000,
-  net_income: { net_income: 80000, interest_rate: 0.03 },
-  expenses: { expenses: 50000, interest_rate: 0.02 },
-  tiers: [{ threshold: 1000000, annual_rate: 0.03 }],
-};
-
-const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt = (n: number) =>
+  n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-export default function CashOnHandCalc() {
-  const [saved, setSaved] = useState<FormData>(DEFAULT);
-  const [draft, setDraft] = useState<FormData>(DEFAULT);
+export default function CashOnHandCalc({ currentYear, ledger, commitResult, updateYear, pause }: Props) {
+  const entry = ledger.find((e) => e.year === currentYear) ?? ledger[0];
+  const inputs = entry.inputs;
+  const result = entry.result;
+
+  const [draft, setDraft] = useState<YearInputs | null>(null);
   const [open, setOpen] = useState(false);
-  const [result, setResult] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const updateTier = (i: number, field: keyof InterestRateTier, value: number) => {
+  const fetchingYear = useRef<number | null>(null);
+  // Keep the last known result so we can show it while the next year is loading
+  const lastResult = useRef<YearResult | null>(null);
+  if (result !== null) lastResult.current = result;
+
+  useEffect(() => {
+    if (currentYear === 0) return;
+    if (result !== null) return;
+    if (fetchingYear.current === currentYear) return;
+
+    fetchingYear.current = currentYear;
+
+    Promise.resolve().then(async () => {
+      setError(null);
+      try {
+        const target = ledger.find((e) => e.year === currentYear);
+        if (!target) return;
+        const res = await fetch("http://localhost:8000/api/finance/calc_cash_on_hand/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...target.inputs, years: 1 }),
+        });
+        if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+        const json: YearResult = await res.json();
+        commitResult(currentYear, json);
+      } catch (err) {
+        setError((err as Error).message);
+        pause();
+      } finally {
+        fetchingYear.current = null;
+      }
+    });
+  }, [currentYear, result]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // What to display in the projection area:
+  // - year 0: always show starting cash
+  // - year N with result: show result
+  // - year N loading: show last known result (no flash) with a subtle label update
+  const displayResult = result ?? lastResult.current;
+  const isLoading = currentYear > 0 && result === null;
+
+  const handleSave = () => {
+    if (!draft) return;
+    updateYear(currentYear, draft);
+    lastResult.current = null; // clear so we don't show stale data after an edit
+    setOpen(false);
+  };
+
+  const updateTier = (i: number, field: "threshold" | "annual_rate", value: number) => {
+    if (!draft) return;
     const tiers = [...draft.tiers];
     tiers[i] = { ...tiers[i], [field]: value };
     setDraft({ ...draft, tiers });
   };
 
-  const openModal = () => {
-    setDraft(saved);
-    setError(null);
-    setOpen(true);
-  };
-
-  const handleSave = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("http://localhost:8000/api/finance/calc_cash_on_hand/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(draft),
-      });
-      if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
-      const data = await res.json();
-      setResult(typeof data === "number" ? data : data.result ?? null);
-      setSaved(draft);
-      setOpen(false);
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <>
-      {/* ── Static Card ── */}
       <div className="coh-card">
         <div className="coh-card-header">
           <span className="coh-card-title">Cash on Hand</span>
-          <button className="coh-edit-btn" onClick={openModal}>Edit</button>
+          <button className="coh-edit-btn" onClick={() => { setDraft(structuredClone(inputs)); setOpen(true); }}>Edit</button>
         </div>
 
         <div className="coh-stat-grid">
-          <div className="coh-stat">
+          {/* <div className="coh-stat">
             <span className="coh-stat-label">Starting Cash</span>
-            <span className="coh-stat-value">${fmt(saved.cash_on_hand)}</span>
-          </div>
+            <span className="coh-stat-value">${fmt(inputs.cash_on_hand)}</span>
+          </div> */}
           <div className="coh-stat">
-            <span className="coh-stat-label">Horizon</span>
-            <span className="coh-stat-value">{saved.years} yrs</span>
+            <span className="coh-stat-label">Year</span>
+            <span className="coh-stat-value">{currentYear}</span>
           </div>
           <div className="coh-stat">
             <span className="coh-stat-label">Net Income</span>
-            <span className="coh-stat-value">${fmt(saved.net_income.net_income)}</span>
+            <span className="coh-stat-value">${fmt(inputs.net_income.net_income)}</span>
           </div>
           <div className="coh-stat">
             <span className="coh-stat-label">Income Growth</span>
-            <span className="coh-stat-value">{pct(saved.net_income.interest_rate)}</span>
+            <span className="coh-stat-value">{pct(inputs.net_income.interest_rate)}</span>
           </div>
           <div className="coh-stat">
             <span className="coh-stat-label">Expenses</span>
-            <span className="coh-stat-value">${fmt(saved.expenses.expenses)}</span>
+            <span className="coh-stat-value">${fmt(inputs.expenses.expenses)}</span>
           </div>
           <div className="coh-stat">
             <span className="coh-stat-label">Expense Growth</span>
-            <span className="coh-stat-value">{pct(saved.expenses.interest_rate)}</span>
+            <span className="coh-stat-value">{pct(inputs.expenses.interest_rate)}</span>
           </div>
         </div>
 
-        {result !== null ? (
-          <div className="coh-projection">
-            <span className="coh-projection-label">{saved.years}yr Projection</span>
-            <span className="coh-projection-value">${fmt(result)}</span>
-          </div>
-        ) : (
-          <div className="coh-projection-empty">
-            Edit values and save to calculate projection
-          </div>
-        )}
+        <div className="coh-projection">
+          {currentYear === 0 ? (
+            <>
+              <span className="coh-projection-label">Starting Cash</span>
+              <span className="coh-projection-value">${fmt(inputs.cash_on_hand)}</span>
+            </>
+          ) : displayResult ? (
+            <>
+              <span className="coh-projection-label">
+                {isLoading ? "Calculating…" : `End of Year ${currentYear}`}
+              </span>
+              <span className="coh-projection-value">${fmt(displayResult.cash_on_hand)}</span>
+            </>
+          ) : (
+            <>
+              <span className="coh-projection-label">&nbsp;</span>
+              <span className="coh-projection-value coh-projection-empty">
+                {isLoading ? "Calculating…" : "Press play to run the simulation"}
+              </span>
+            </>
+          )}
+        </div>
+
+        {error && <div className="coh-error">{error}</div>}
       </div>
 
-      {/* ── Modal ── */}
-      {open && (
+      {open && draft && (
         <div className="coh-overlay" onClick={() => setOpen(false)}>
           <div className="coh-modal" onClick={e => e.stopPropagation()}>
             <div className="coh-modal-header">
-              <span className="coh-modal-title">Edit Projection</span>
+              <span className="coh-modal-title">Edit — Year {currentYear}</span>
               <button className="coh-close-btn" onClick={() => setOpen(false)}>×</button>
             </div>
 
             <div className="coh-modal-body">
               <div className="coh-group">
-                <span className="coh-group-label">Horizon</span>
+                <span className="coh-group-label">Starting Cash</span>
                 <div className="coh-row">
                   <div className="coh-field">
-                    <label>Years</label>
-                    <input type="number" value={draft.years}
-                      onChange={e => setDraft({ ...draft, years: Number(e.target.value) || 0 })} />
-                  </div>
-                  <div className="coh-field">
-                    <label>Starting Cash ($)</label>
+                    <label>Amount ($)</label>
                     <input type="number" value={draft.cash_on_hand}
                       onChange={e => setDraft({ ...draft, cash_on_hand: Number(e.target.value) || 0 })} />
                   </div>
@@ -198,15 +217,11 @@ export default function CashOnHandCalc() {
                   </div>
                 ))}
               </div>
-
-              {error && <div className="coh-error">{error}</div>}
             </div>
 
             <div className="coh-modal-footer">
               <button className="coh-cancel-btn" onClick={() => setOpen(false)}>Cancel</button>
-              <button className="coh-save-btn" onClick={handleSave} disabled={loading}>
-                {loading ? "Saving..." : "Save & Calculate"}
-              </button>
+              <button className="coh-save-btn" onClick={handleSave}>Save</button>
             </div>
           </div>
         </div>

@@ -21,4 +21,6 @@ class CashOnHandRequest(BaseModel):
     tiers: List[InterestRateTier]
 
 class CashOnHandResponse(BaseModel):
-    result: float
+    cash_on_hand: float
+    net_income: float
+    expenses: float

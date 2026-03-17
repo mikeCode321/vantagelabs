@@ -65,8 +65,7 @@
 }
 
 .coh-stat-value {
-  font-size: 0.85rem;
-  color: var(--primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .coh-projection {
@@ -76,6 +75,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.coh-projection,
+.coh-projection-empty {
+  min-height: 64px;        /* match whichever is taller */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .coh-projection-label {

@@ -75,6 +75,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 64px; /* match the height when a result is showing */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .coh-projection,
@@ -90,12 +94,14 @@
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--teal);
+  min-height: 1.2em; /* always occupies label height even when empty */
 }
 
 .coh-projection-value {
   font-family: 'Playfair Display', serif;
   font-size: 1.2rem;
   color: var(--accent);
+  min-height: 1.5em; /* always occupies value height even when empty */
 }
 
 .coh-projection-empty {

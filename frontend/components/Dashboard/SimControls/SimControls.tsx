@@ -13,15 +13,10 @@ interface SimControlsProps {
 }
 
 export default function SimControls({
-  currentYear, isPlaying, status, simMax, onPlay, onPause, onReset, onSeek,
+  currentYear, isPlaying, status, simMax,
+  onPlay, onPause, onReset, onSeek,
 }: SimControlsProps) {
   const bgSize = `${(currentYear / simMax) * 100}% 100%`;
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-    if (e.key === "ArrowUp") { e.preventDefault(); onSeek(currentYear + 1); }
-    if (e.key === "ArrowDown") { e.preventDefault(); onSeek(currentYear - 1); }
-  };
 
   return (
     <div className="sim-root">
@@ -33,18 +28,8 @@ export default function SimControls({
       <div className="sim-body">
         <div className="sim-control-header">
           <span className="sim-label">Years</span>
-          <div className="year-pill" onClick={() => document.getElementById("yearInput")?.focus()}>
-            <input
-              id="yearInput"
-              className="year-input"
-              type="number"
-              value={currentYear}
-              min={0}
-              max={simMax}
-              onChange={e => onSeek(Number(e.target.value))}
-              onKeyDown={handleKeyDown}
-              onBlur={e => onSeek(Number(e.target.value))}
-            />
+          <div className="year-pill">
+            <span className="year-input">{currentYear}</span>
             <span className="year-sep">/</span>
             <span className="year-total">{simMax}</span>
           </div>
@@ -52,7 +37,7 @@ export default function SimControls({
 
         <input
           type="range"
-          min={0}
+          min={1}
           max={simMax}
           step={1}
           value={currentYear}
@@ -61,7 +46,7 @@ export default function SimControls({
         />
 
         <div className="sim-tick-row">
-          <span className="sim-tick">0</span>
+          <span className="sim-tick">1</span>
           <span className="sim-tick sim-tick--hidden" />
           <span className="sim-tick">{Math.round(simMax / 2)}</span>
           <span className="sim-tick sim-tick--hidden" />

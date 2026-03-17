@@ -96,10 +96,8 @@ export default function Dashboard() {
     const entry = ledger.find((e) => e.year === currentYear);
     if (!entry) return;
 
-    // Skip auto-fetch if this year was just edited — wait for play or seek
     if (entry.dirty) return;
 
-    // Fetch if no result yet
     if (entry.result === null && fetchingYear.current !== currentYear) {
       fetchingYear.current = currentYear;
       Promise.resolve().then(() =>
@@ -110,7 +108,6 @@ export default function Dashboard() {
       return;
     }
 
-    // Advance if playing and result is ready
     if (entry.result !== null && isPlaying) {
       if (currentYear >= SIM_MAX) {
         setTimeout(() => setIsPlaying(false), 0);
@@ -128,6 +125,7 @@ export default function Dashboard() {
       }, 300);
       return () => clearTimeout(t);
     }
+
   }, [currentYear, isPlaying, ledger]);
 
   const seekTo = (year: number) => {
@@ -145,7 +143,6 @@ export default function Dashboard() {
     const fromEntry = ledger.find((e) => e.year === maxCached) ?? ledger[0];
     fetchingYear.current = clamped;
 
-    // Clear dirty flag on all entries being refetched so they go through normally
     setLedger((prev) =>
       prev.map((e) => e.year >= maxCached + 1 && e.year <= clamped ? { ...e, dirty: false } : e)
     );
@@ -155,8 +152,6 @@ export default function Dashboard() {
       .finally(() => { fetchingYear.current = null; });
   };
 
-  // Mark the edited year and all forward entries as dirty so the effect
-  // won't auto-fetch them — they'll recalculate when play or seek is triggered.
   const updateYear = (year: number, inputs: YearInputs) => {
     setLedger((prev) =>
       prev
@@ -166,7 +161,6 @@ export default function Dashboard() {
     fetchingYear.current = null;
   };
 
-  // When play is pressed, clear dirty flags so the effect starts fetching again
   const play = () => {
     setLedger((prev) => prev.map((e) => ({ ...e, dirty: false })));
     setIsPlaying(true);

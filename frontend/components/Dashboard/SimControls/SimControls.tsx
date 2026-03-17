@@ -1,85 +1,27 @@
 "use client";
 import "./SimControls.css";
-import { useState, useRef, useEffect } from "react";
-
-
-// keep this comment section for reference 
-// Starting Cash
-// $100,000.00
-// Horizon
-// 5 yrs
-// Net Income
-// $80,000.00
-// Income Growth
-// 3.0%
-// Expenses
-// $50,000.00
-// Expense Growth
-// 2.0%
-// $561,773.57
 
 interface SimControlsProps {
-  max: number;
-  year: number;
-  onYearChange: (year: number) => void;
+  currentYear: number;
+  isPlaying: boolean;
+  status: string;
+  simMax: number;
+  onPlay: () => void;
+  onPause: () => void;
+  onReset: () => void;
+  onSeek: (year: number) => void;
 }
 
-export default function SimControls({ max, year, onYearChange }: SimControlsProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const status = isPlaying ? "playing" : year >= max ? "done" : year === 0 ? "ready" : "paused";
-
-  const update = (val: number) => {
-    const clamped = Math.max(0, Math.min(max, Math.round(val)));
-    onYearChange(clamped);
-    return clamped;
-  };
-
-  const pause = () => {
-    setIsPlaying(false);
-    if (intervalRef.current) clearInterval(intervalRef.current);
-  };
-
-  const play = () => {
-    if (year >= max) onYearChange(0);
-    setIsPlaying(true);
-  };
-
-  useEffect(() => {
-    if (isPlaying) {
-      let current = year;
-      intervalRef.current = setInterval(() => {
-        current += 1;
-        if (current >= max) {
-          onYearChange(max);
-          setIsPlaying(false);
-          clearInterval(intervalRef.current!);
-        } else {
-          onYearChange(current);
-        }
-      }, 300);
-    }
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [isPlaying]);
-
-  const handleSlider = (e: React.ChangeEvent<HTMLInputElement>) => {
-    pause();
-    update(Number(e.target.value));
-  };
-
-  const handleTextInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    pause();
-    update(Number(e.target.value));
-  };
+export default function SimControls({
+  currentYear, isPlaying, status, simMax, onPlay, onPause, onReset, onSeek,
+}: SimControlsProps) {
+  const bgSize = `${(currentYear / simMax) * 100}% 100%`;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-    if (e.key === "ArrowUp") { e.preventDefault(); pause(); update(year + 1); }
-    if (e.key === "ArrowDown") { e.preventDefault(); pause(); update(year - 1); }
+    if (e.key === "ArrowUp") { e.preventDefault(); onSeek(currentYear + 1); }
+    if (e.key === "ArrowDown") { e.preventDefault(); onSeek(currentYear - 1); }
   };
-
-  const bgSize = `${(year / max) * 100}% 100%`;
 
   return (
     <div className="sim-root">
@@ -96,39 +38,42 @@ export default function SimControls({ max, year, onYearChange }: SimControlsProp
               id="yearInput"
               className="year-input"
               type="number"
-              value={year}
+              value={currentYear}
               min={0}
-              max={max}
-              onChange={handleTextInput}
+              max={simMax}
+              onChange={e => onSeek(Number(e.target.value))}
               onKeyDown={handleKeyDown}
-              onBlur={(e) => update(Number(e.target.value))}
+              onBlur={e => onSeek(Number(e.target.value))}
             />
             <span className="year-sep">/</span>
-            <span className="year-total">{max}</span>
+            <span className="year-total">{simMax}</span>
           </div>
         </div>
 
         <input
           type="range"
           min={0}
-          max={max}
+          max={simMax}
           step={1}
-          value={year}
-          onChange={handleSlider}
+          value={currentYear}
+          onChange={e => onSeek(Number(e.target.value))}
           style={{ backgroundSize: bgSize }}
         />
 
         <div className="sim-tick-row">
           <span className="sim-tick">0</span>
           <span className="sim-tick sim-tick--hidden" />
-          <span className="sim-tick">{Math.round(max / 2)}</span>
+          <span className="sim-tick">{Math.round(simMax / 2)}</span>
           <span className="sim-tick sim-tick--hidden" />
-          <span className="sim-tick">{max}</span>
+          <span className="sim-tick">{simMax}</span>
         </div>
       </div>
 
       <div className="sim-footer">
-        <button className={`sim-play-btn${isPlaying ? " playing" : ""}`} onClick={isPlaying ? pause : play}>
+        <button
+          className={`sim-play-btn${isPlaying ? " playing" : ""}`}
+          onClick={isPlaying ? onPause : onPlay}
+        >
           {isPlaying ? (
             <svg className="play-icon" viewBox="0 0 12 12" fill="currentColor">
               <rect x="2" y="1" width="3" height="10" />
@@ -141,7 +86,7 @@ export default function SimControls({ max, year, onYearChange }: SimControlsProp
           )}
           {isPlaying ? "pause" : "play"}
         </button>
-        <button className="sim-reset-btn" onClick={() => { pause(); update(0); }}>reset</button>
+        <button className="sim-reset-btn" onClick={onReset}>reset</button>
       </div>
     </div>
   );

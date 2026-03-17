@@ -55,7 +55,7 @@ export default function Dashboard() {
 
   const currentEntry = ledger.find((e) => e.year === currentYear) ?? ledger[0];
   const lastCachedResult = [...ledger].reverse().find((e) => e.result !== null)?.result ?? null;
-  const displayResult = currentEntry.result ?? lastCachedResult;
+  const displayResult = currentEntry.result ?? (isPlaying ? lastCachedResult : null); // if current year has no result, show last cached result as projection
 
   async function fetchSnapshots(fromInputs: YearInputs, fromYear: number, years: number) {
     const res = await fetch(API, {
@@ -71,48 +71,43 @@ export default function Dashboard() {
       snapshots.forEach((snapshot, i) => {
         const year = fromYear + i;
         if (updated.some((e) => e.year === year)) {
-          updated = updated.map((e) =>
-            e.year === year ? { ...e, result: snapshot, dirty: false } : e
-          );
+          updated = updated.map((e) => e.year === year ? { ...e, result: snapshot, dirty: false } : e );
         } else {
           const prevEntry = updated.find((e) => e.year === year - 1);
-          updated.push({
-            year,
-            inputs: prevEntry ? nextInputs(prevEntry) : structuredClone(fromInputs),
-            result: snapshot,
-            dirty: false,
-          });
+          updated.push({ year, inputs: prevEntry ? nextInputs(prevEntry) : structuredClone(fromInputs), result: snapshot, dirty: false, });
         }
       });
       return updated.sort((a, b) => a.year - b.year);
     });
+
   }
 
   useEffect(() => {
     console.log('ledger', ledger);
   }, [ledger]);
 
-  useEffect(() => {
-    const entry = ledger.find((e) => e.year === currentYear);
+  useEffect(() => { // on change [currentYear, isPlaying, ledger]
+    const entry = ledger.find((e) => e.year === currentYear);  
     if (!entry) return;
 
-    if (entry.dirty) return;
+    if (entry.dirty) return; // if user edited wait for pause/play
 
-    if (entry.result === null && fetchingYear.current !== currentYear) {
+    if (entry.result === null && fetchingYear.current !== currentYear) { // if no result and not already fetching, fetch snapshots for this year
       fetchingYear.current = currentYear;
       Promise.resolve().then(() =>
         fetchSnapshots(entry.inputs, currentYear, 1)
           .catch((err) => { setError(err.message); setIsPlaying(false); })
           .finally(() => { fetchingYear.current = null; })
-      );
+      );  // set entry.result = snapshot for this year  
       return;
     }
 
-    if (entry.result !== null && isPlaying) {
+    if (entry.result !== null && isPlaying) { // if result and playing, schedule next years input which then triggers this effect again -> fetch snapshots
       if (currentYear >= SIM_MAX) {
         setTimeout(() => setIsPlaying(false), 0);
         return;
       }
+
       const t = setTimeout(() => {
         setLedger((prev) => {
           const nextYear = currentYear + 1;
@@ -121,8 +116,10 @@ export default function Dashboard() {
           return [...prev, { year: nextYear, inputs: nextInputs(cur), result: null, dirty: false }]
             .sort((a, b) => a.year - b.year);
         });
+
         setCurrentYear((y) => y + 1);
       }, 300);
+
       return () => clearTimeout(t);
     }
 
@@ -154,9 +151,7 @@ export default function Dashboard() {
 
   const updateYear = (year: number, inputs: YearInputs) => {
     setLedger((prev) =>
-      prev
-        .filter((e) => e.year <= year)
-        .map((e) => e.year === year ? { ...e, inputs, result: null, dirty: true } : e)
+      prev.filter((e) => e.year <= year).map((e) => e.year === year ? { ...e, inputs, result: null, dirty: true } : e)
     );
     fetchingYear.current = null;
   };
@@ -165,6 +160,8 @@ export default function Dashboard() {
     setLedger((prev) => prev.map((e) => ({ ...e, dirty: false })));
     setIsPlaying(true);
   };
+
+  const pause = () => setIsPlaying(false);
 
   const reset = () => {
     setIsPlaying(false);
@@ -209,6 +206,7 @@ export default function Dashboard() {
               entry={currentEntry}
               displayResult={displayResult}
               onUpdateYear={updateYear}
+              onPause={pause}
             />
           </div>
           <div className="dash-cell dash-cell-md">
@@ -227,7 +225,7 @@ export default function Dashboard() {
               status={status}
               simMax={SIM_MAX}
               onPlay={play}
-              onPause={() => setIsPlaying(false)}
+              onPause={pause}
               onReset={reset}
               onSeek={seekTo}
             />

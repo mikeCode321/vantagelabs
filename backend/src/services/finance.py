@@ -1,8 +1,4 @@
-from typing import TYPE_CHECKING, List
-
-if TYPE_CHECKING:
-    from sqlalchemy.orm import Session
-
+from typing import List
 from schemas.finance import IncomeConfig, ExpensesConfig, InterestRateTier
 
 
@@ -37,28 +33,31 @@ def calc_cash_on_hand(
     net_income_dict: IncomeConfig,
     expenses_dict: ExpensesConfig,
     tiers: List[InterestRateTier],
-) -> dict:
+) -> List[dict]:
     periods_per_year = 12
-    months = years * periods_per_year
     net_income = net_income_dict.net_income
     expenses = expenses_dict.expenses
     monthly_income = net_income / 12
     monthly_expenses = expenses / 12
 
-    for month in range(months):
-        cash_on_hand += monthly_income
-        cash_on_hand -= monthly_expenses
-        cash_on_hand = apply_tiered_interest(cash_on_hand, tiers, periods_per_year)
+    snapshots = []
 
-        if (month + 1) % 12 == 0:  # annual compounding
-            net_income *= (1 + net_income_dict.interest_rate)
-            expenses *= (1 + expenses_dict.interest_rate)
-            monthly_income = net_income / 12
-            monthly_expenses = expenses / 12
+    for year in range(1, years + 1):
+        for month in range(periods_per_year):
+            cash_on_hand += monthly_income
+            cash_on_hand -= monthly_expenses
+            cash_on_hand = apply_tiered_interest(cash_on_hand, tiers, periods_per_year)
 
-    # Return the full year-end state so the frontend can seed the next year
-    return {
-        "cash_on_hand": round(cash_on_hand, 2),
-        "net_income": round(net_income, 2),
-        "expenses": round(expenses, 2),
-    }
+            if (month + 1) % 12 == 0:  # annual compounding at end of each year
+                net_income *= (1 + net_income_dict.interest_rate)
+                expenses *= (1 + expenses_dict.interest_rate)
+                monthly_income = net_income / 12
+                monthly_expenses = expenses / 12
+
+        snapshots.append({
+            "cash_on_hand": round(cash_on_hand, 2),
+            "net_income": round(net_income, 2),
+            "expenses": round(expenses, 2),
+        })
+
+    return snapshots

@@ -8,18 +8,16 @@ interface Props {
   entry: LedgerEntry;
   displayResult: YearResult | null;
   onUpdateYear: (year: number, inputs: YearInputs) => void;
+  onPause: () => void;
 }
 
-const fmt = (n: number) =>
-  n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-export default function CashOnHandCalc({ currentYear, entry, displayResult, onUpdateYear }: Props) {
+export default function CashOnHandCalc({ currentYear, entry, displayResult, onUpdateYear, onPause }: Props) {
   const { inputs, result } = entry;
   const [draft, setDraft] = useState<YearInputs | null>(null);
   const [open, setOpen] = useState(false);
-
-
 
   const updateTier = (i: number, field: "threshold" | "annual_rate", value: number) => {
     if (!draft) return;
@@ -33,7 +31,7 @@ export default function CashOnHandCalc({ currentYear, entry, displayResult, onUp
       <div className="coh-card">
         <div className="coh-card-header">
           <span className="coh-card-title">Cash on Hand</span>
-          <button className="coh-edit-btn" onClick={() => { setDraft(structuredClone(inputs)); setOpen(true); }}>Edit</button>
+          <button className="coh-edit-btn" onClick={() => { setDraft(structuredClone(inputs)); setOpen(true); onPause();}}>Edit</button>
         </div>
 
         <div className="coh-stat-grid">

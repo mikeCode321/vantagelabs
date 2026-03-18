@@ -1,8 +1,34 @@
-from typing import List
-from schemas.finance import IncomeConfig, ExpensesConfig, InterestRateTier
+from typing import List, Optional
+from pydantic import BaseModel
 
 
-def apply_tiered_interest(balance: float, tiers: List[InterestRateTier], periods_per_year: int) -> float:
+class Tier(BaseModel):
+    threshold: float
+    annual_rate: float
+
+
+class SimEvent(BaseModel):
+    year: int
+    net_income: Optional[float] = None
+    income_growth: Optional[float] = None
+    expenses: Optional[float] = None
+    expense_growth: Optional[float] = None
+    tiers: Optional[List[Tier]] = None
+
+
+class SimulateRequest(BaseModel):
+    start_cash: float
+    start_year: int
+    end_year: int
+    base_net_income: float
+    base_income_growth: float
+    base_expenses: float
+    base_expense_growth: float
+    base_tiers: List[Tier]
+    events: List[SimEvent] = []
+
+
+def apply_tiered_interest(balance: float, tiers: List[Tier], periods_per_year: int) -> float:
     remaining = balance
     total = 0
     prev_threshold = 0
@@ -16,7 +42,6 @@ def apply_tiered_interest(balance: float, tiers: List[InterestRateTier], periods
         remaining -= applied
         prev_threshold = tier.threshold
         last_rate = tier.annual_rate
-
         if remaining <= 0:
             return total
 
@@ -27,37 +52,52 @@ def apply_tiered_interest(balance: float, tiers: List[InterestRateTier], periods
     return total
 
 
-def calc_cash_on_hand(
-    years: int,
-    cash_on_hand: float,
-    net_income_dict: IncomeConfig,
-    expenses_dict: ExpensesConfig,
-    tiers: List[InterestRateTier],
-) -> List[dict]:
+def simulate(req: SimulateRequest) -> list:
     periods_per_year = 12
-    net_income = net_income_dict.net_income
-    expenses = expenses_dict.expenses
-    monthly_income = net_income / 12
-    monthly_expenses = expenses / 12
-
     snapshots = []
 
-    for year in range(1, years + 1):
-        for month in range(periods_per_year):
+    cash_on_hand = req.start_cash
+    net_income = req.base_net_income
+    income_growth = req.base_income_growth
+    expenses = req.base_expenses
+    expense_growth = req.base_expense_growth
+    tiers = req.base_tiers
+
+    # Index events by year for quick lookup
+    events_by_year = {e.year: e for e in req.events}
+
+    for year in range(req.start_year, req.end_year + 1):
+        # Apply any event for this year — only override fields that are set
+        event = events_by_year.get(year)
+        if event:
+            if event.net_income is not None:
+                net_income = event.net_income
+            if event.income_growth is not None:
+                income_growth = event.income_growth
+            if event.expenses is not None:
+                expenses = event.expenses
+            if event.expense_growth is not None:
+                expense_growth = event.expense_growth
+            if event.tiers is not None:
+                tiers = event.tiers
+
+        monthly_income = net_income / 12
+        monthly_expenses = expenses / 12
+
+        for _ in range(periods_per_year):
             cash_on_hand += monthly_income
             cash_on_hand -= monthly_expenses
             cash_on_hand = apply_tiered_interest(cash_on_hand, tiers, periods_per_year)
 
-            if (month + 1) % 12 == 0:  # annual compounding at end of each year
-                net_income *= (1 + net_income_dict.interest_rate)
-                expenses *= (1 + expenses_dict.interest_rate)
-                monthly_income = net_income / 12
-                monthly_expenses = expenses / 12
+        # Compound at end of year
+        net_income = round(net_income * (1 + income_growth), 2)
+        expenses = round(expenses * (1 + expense_growth), 2)
 
         snapshots.append({
+            "year": year,
             "cash_on_hand": round(cash_on_hand, 2),
-            "net_income": round(net_income, 2),
-            "expenses": round(expenses, 2),
+            "net_income": net_income,
+            "expenses": expenses,
         })
 
     return snapshots

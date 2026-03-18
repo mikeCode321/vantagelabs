@@ -8,6 +8,16 @@ export type Asset = {
     downPayment?: number;
     monthlyExpense: number;
     sold: boolean;
+
+    compound: number;
+    year: number;
     
 
+};
+
+
+export const DEFAULT_GROWTH_RATES: Record<AssetType, number> = {
+  house: 0.04,
+  gold:  0.02,
+  car:   -0.10,
 };

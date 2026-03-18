@@ -1,38 +1,66 @@
 "use client";
 import "./dashboard.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import CashOnHandCalc from "@/components/Dashboard/CashOnHandCalc/CashOnHandCalc";
 import SimControls from "@/components/Dashboard/SimControls/SimControls";
 import AssetPortfolio from "@/components/Dashboard/Assets/AssetPortfolio";
 import { Asset, NewAsset, DEFAULT_GROWTH_RATES } from "@/components/Dashboard/Assets/types";
 
-export const SIM_MAX = 40;
+export const SIM_MAX = 30;
+const API = "http://localhost:8000/api/finance/simulate/";
 
-export interface YearInputs {
-  cash_on_hand: number;
-  net_income: { net_income: number; interest_rate: number };
-  expenses: { expenses: number; interest_rate: number };
-  tiers: { threshold: number; annual_rate: number }[];
+export interface Tier {
+  threshold: number;
+  annual_rate: number;
 }
 
-export interface YearResult {
+export interface SimEvent {
+  year: number;
+  net_income?: number;
+  income_growth?: number;
+  expenses?: number;
+  expense_growth?: number;
+  tiers?: Tier[];
+}
+
+export interface YearSnapshot {
+  year: number;
   cash_on_hand: number;
   net_income: number;
   expenses: number;
 }
 
-export interface LedgerEntry {
-  year: number;
-  inputs: YearInputs;
-  result: YearResult | null;
-}
-
-const DEFAULT_INPUTS: YearInputs = {
-  cash_on_hand: 100000,
-  net_income: { net_income: 80000, interest_rate: 0.03 },
-  expenses: { expenses: 50000, interest_rate: 0.02 },
-  tiers: [{ threshold: 1000000, annual_rate: 0.03 }],
+const DEFAULTS = {
+  start_cash: 100000,
+  base_net_income: 80000,
+  base_income_growth: 0.03,
+  base_expenses: 50000,
+  base_expense_growth: 0.02,
+  base_tiers: [{ threshold: 1000000, annual_rate: 0.03 }],
 };
+
+// Derive the effective base values by replaying all events before a given year.
+// This ensures growth rates and other settings carry forward correctly
+// when restarting the simulation from mid-timeline.
+function getBaseAtYear(events: SimEvent[], beforeYear: number) {
+  const priorEvents = events.filter((e) => e.year < beforeYear);
+  return priorEvents.reduce(
+    (base, ev) => ({
+      base_net_income: ev.net_income ?? base.base_net_income,
+      base_income_growth: ev.income_growth ?? base.base_income_growth,
+      base_expenses: ev.expenses ?? base.base_expenses,
+      base_expense_growth: ev.expense_growth ?? base.base_expense_growth,
+      base_tiers: ev.tiers ?? base.base_tiers,
+    }),
+    {
+      base_net_income: DEFAULTS.base_net_income,
+      base_income_growth: DEFAULTS.base_income_growth,
+      base_expenses: DEFAULTS.base_expenses,
+      base_expense_growth: DEFAULTS.base_expense_growth,
+      base_tiers: DEFAULTS.base_tiers,
+    }
+  );
+}
 
 const INITIAL_ASSETS: Asset[] = [
   {
@@ -60,94 +88,104 @@ const INITIAL_ASSETS: Asset[] = [
 ];
 
 export default function Dashboard() {
-  const [currentYear, setCurrentYear] = useState(0);
+  const [events, setEvents] = useState<SimEvent[]>([]);
+  const [results, setResults] = useState<YearSnapshot[]>([]);
+  const [currentYear, setCurrentYear] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [ledger, setLedger] = useState<LedgerEntry[]>([
-    { year: 0, inputs: structuredClone(DEFAULT_INPUTS), result: null },
-  ]);
+  const [error, setError] = useState<string | null>(null);
+  const [dirtyFromYear, setDirtyFromYear] = useState<number | null>(1);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const currentResult = results.find((r) => r.year === currentYear) ?? null;
+  const lastResult = [...results].reverse().find((r) => r.year <= currentYear) ?? null;
+  const displayResult = currentResult ?? (isPlaying ? lastResult : null);
+
+  const currentEvent = events.find((e) => e.year === currentYear);
+  const currentInputs = {
+    net_income: currentResult?.net_income ?? currentEvent?.net_income ?? DEFAULTS.base_net_income,
+    income_growth: currentEvent?.income_growth ?? DEFAULTS.base_income_growth,
+    expenses: currentResult?.expenses ?? currentEvent?.expenses ?? DEFAULTS.base_expenses,
+    expense_growth: currentEvent?.expense_growth ?? DEFAULTS.base_expense_growth,
+    tiers: currentEvent?.tiers ?? DEFAULTS.base_tiers,
+  };
 
   // completely separate from cash simulation
   const [assets, setAssets] = useState<Asset[]>(INITIAL_ASSETS);
 
   useEffect(() => {
     if (!isPlaying) return;
-
     if (currentYear >= SIM_MAX) {
-      const t = setTimeout(() => setIsPlaying(false), 0);
-      return () => clearTimeout(t);
+      setIsPlaying(false);
+      return;
     }
+    timerRef.current = setTimeout(() => setCurrentYear((y) => y + 1), 600);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [isPlaying, currentYear]);
 
-    const entry = ledger.find((e) => e.year === currentYear);
-    const ready = currentYear === 0 || entry?.result != null;
-    if (!ready) return;
+  const runSimulation = async (fromYear: number) => {
+    setError(null);
+    try {
+      const prevResult = [...results].reverse().find((r) => r.year === fromYear - 1);
 
-    const t = setTimeout(() => {
-      const nextYear = currentYear + 1;
-      setLedger((prev) => {
-        if (prev.some((e) => e.year === nextYear)) return prev;
-        const current = prev.find((e) => e.year === currentYear)!;
-        return [...prev, { year: nextYear, inputs: structuredClone(current.inputs), result: null }]
-          .sort((a, b) => a.year - b.year);
+      // Get the effective base by replaying all events before fromYear
+      // so growth rates and settings from past edits carry forward correctly
+      const base = getBaseAtYear(events, fromYear);
+
+      const payload = {
+        ...base,
+        start_cash: prevResult?.cash_on_hand ?? DEFAULTS.start_cash,
+        start_year: fromYear,
+        end_year: SIM_MAX,
+        events: events.filter((e) => e.year >= fromYear),
+      };
+
+      const res = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
-      setCurrentYear(nextYear);
-    }, 600);
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      const snapshots: YearSnapshot[] = await res.json();
 
-    return () => clearTimeout(t);
-  }, [isPlaying, currentYear, ledger]);
+      console.log(`payload: ${JSON.stringify(payload, null, 2)}`);
+      console.log(`snapshots: ${JSON.stringify(snapshots, null, 2)}`);
+      setResults((prev) => [...prev.filter((r) => r.year < fromYear), ...snapshots]);
+      setDirtyFromYear(null);
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
 
-  const play = () => setIsPlaying(true);
-  const pause = () => setIsPlaying(false);
+  const play = async () => {
+    if (dirtyFromYear !== null) await runSimulation(dirtyFromYear);
+    setIsPlaying(true);
+  };
+
+  const pause = () => {
+    setIsPlaying(false);
+    if (timerRef.current) clearTimeout(timerRef.current);
+  };
 
   const reset = () => {
-    setIsPlaying(false);
-    setCurrentYear(0);
-    setLedger([{ year: 0, inputs: structuredClone(DEFAULT_INPUTS), result: null }]);
+    pause();
+    setCurrentYear(1);
+    setEvents([]);
+    setResults([]);
+    setDirtyFromYear(1);
+    setError(null);
   };
 
   const seekTo = (year: number) => {
-    setIsPlaying(false);
-    const simulatedYears = ledger
-      .filter((e) => e.year === 0 || e.result !== null)
-      .map((e) => e.year);
-    const maxReachable = Math.max(...simulatedYears);
-    const clamped = Math.max(0, Math.min(maxReachable, year));
-    setCurrentYear(clamped);
+    pause();
+    setCurrentYear(Math.max(1, Math.min(SIM_MAX, year)));
   };
 
-  const commitResult = (year: number, result: YearResult) => {
-    setLedger((prev) => {
-      const thisEntry = prev.find((e) => e.year === year);
-      if (!thisEntry) return prev;
-
-      const updated = prev.map((e) => e.year === year ? { ...e, result } : e);
-      const nextYear = year + 1;
-      const nextInputs: YearInputs = {
-        ...structuredClone(thisEntry.inputs),
-        cash_on_hand: result.cash_on_hand,
-        net_income: { ...thisEntry.inputs.net_income, net_income: result.net_income },
-        expenses: { ...thisEntry.inputs.expenses, expenses: result.expenses },
-      };
-
-      if (nextYear <= SIM_MAX) {
-        const nextExists = updated.some((e) => e.year === nextYear);
-        if (nextExists) {
-          return updated
-            .map((e) => e.year === nextYear ? { ...e, inputs: nextInputs } : e)
-            .sort((a, b) => a.year - b.year);
-        } else {
-          updated.push({ year: nextYear, inputs: nextInputs, result: null });
-        }
-      }
-      return updated.sort((a, b) => a.year - b.year);
-    });
-  };
-
-  const updateYear = (year: number, inputs: YearInputs) => {
-    setLedger((prev) =>
-      prev
-        .filter((e) => e.year <= year)
-        .map((e) => e.year === year ? { ...e, inputs, result: null } : e)
+  const updateEvent = (event: SimEvent) => {
+    setEvents((prev) =>
+      [...prev.filter((e) => e.year !== event.year), event].sort((a, b) => a.year - b.year)
     );
+    setDirtyFromYear((prev) => (prev === null ? event.year : Math.min(prev, event.year)));
+    setResults((prev) => prev.filter((r) => r.year < event.year));
   };
 
   const addAsset = (asset: NewAsset) => {
@@ -175,13 +213,7 @@ export default function Dashboard() {
   };
 
   const status =
-    isPlaying
-      ? "playing"
-      : currentYear >= SIM_MAX
-      ? "done"
-      : currentYear === 0
-      ? "ready"
-      : "paused";
+    isPlaying ? "playing" : dirtyFromYear !== null ? "edited" : currentYear >= SIM_MAX ? "done" : "paused";
 
   return (
     <div className="dash-root">
@@ -213,10 +245,10 @@ export default function Dashboard() {
           <div className="dash-cell dash-cell-md">
             <CashOnHandCalc
               currentYear={currentYear}
-              ledger={ledger}
-              commitResult={commitResult}
-              updateYear={updateYear}
-              pause={pause}
+              inputs={currentInputs}
+              result={currentResult}
+              displayResult={displayResult}
+              onUpdate={(changes) => updateEvent({ year: currentYear, ...changes })}
             />
           </div>
 
@@ -249,6 +281,8 @@ export default function Dashboard() {
             />
           </div>
         </div>
+
+        {error && <div className="dash-error">{error}</div>}
       </main>
     </div>
   );

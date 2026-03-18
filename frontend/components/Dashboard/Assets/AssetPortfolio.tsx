@@ -12,11 +12,7 @@ type AssetPortfolioProps = {
   onSell: (id: number) => void;
 };
 
-export default function AssetPortfolio({
-  assets,
-  onAddAsset,
-  onSell,
-}: AssetPortfolioProps) {
+export default function AssetPortfolio({ assets, onAddAsset, onSell, }: AssetPortfolioProps) {
   const [showForm, setShowForm] = useState(false);
 
   const ownedAssets = assets.filter((asset) => !asset.sold);

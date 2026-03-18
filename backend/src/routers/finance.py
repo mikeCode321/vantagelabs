@@ -1,17 +1,9 @@
 from fastapi import APIRouter
-from schemas.finance import CashOnHandRequest, CashOnHandResponse
-
-import services.finance as finance_services
+from services.finance import SimulateRequest, simulate
 
 router = APIRouter(prefix="/api/finance", tags=["finance"])
 
 
-@router.post("/calc_cash_on_hand/", response_model=CashOnHandResponse)
-async def calc_cash_on_hand(payload: CashOnHandRequest):
-    return finance_services.calc_cash_on_hand(
-        years=payload.years,
-        cash_on_hand=payload.cash_on_hand,
-        net_income_dict=payload.net_income,
-        expenses_dict=payload.expenses,
-        tiers=payload.tiers,
-    )
+@router.post("/simulate/")
+async def run_simulation(payload: SimulateRequest):
+    return simulate(payload)

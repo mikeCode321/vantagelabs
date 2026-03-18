@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { Asset, AssetType } from "./types";
+import type { Asset, NewAsset, AssetType } from "./types";
 import { DEFAULT_GROWTH_RATES } from "./types";
 
 type AssetActionsProps = {
-  onAddAsset: (asset: Omit<Asset, "id" | "sold">) => void;
+  onAddAsset: (asset: NewAsset) => void;
 };
 
 type AssetFormState = {

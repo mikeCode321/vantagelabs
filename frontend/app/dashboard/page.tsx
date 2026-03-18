@@ -213,13 +213,7 @@ export default function Dashboard() {
   };
 
   const status =
-    isPlaying
-      ? "playing"
-      : dirtyFromYear !== null
-      ? "edited"
-      : currentYear >= SIM_MAX
-      ? "done"
-      : "paused";
+    isPlaying ? "playing" : dirtyFromYear !== null ? "edited" : currentYear >= SIM_MAX ? "done" : "paused";
 
   return (
     <div className="dash-root">

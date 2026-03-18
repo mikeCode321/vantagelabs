@@ -1,18 +1,23 @@
-
 type AssetSummaryProps = {
-  totalCash: number;
-  totalExpenses: number;
+  totalAssetValue: number;
+  totalMonthlyExpenses: number;
+  ownedCount: number;
 };
 
-
-export default function AssetSummary({totalCash, totalExpenses}: AssetSummaryProps){
-    return(
-        <section>
-      <h2>Summary</h2>
-      <p>Total Cash: ${totalCash.toLocaleString()}</p>
-      <p>Total Expenses: ${totalExpenses.toLocaleString()}/month</p>
+export default function AssetSummary({
+  totalAssetValue,
+  totalMonthlyExpenses,
+  ownedCount,
+}: AssetSummaryProps) {
+  return (
+    <section className="asset-summary">
+      <p className="asset-summary-label">Portfolio Value</p>
+      <p className="asset-summary-value">
+        ${totalAssetValue.toLocaleString()}
+      </p>
+      <p className="asset-summary-meta">
+        {ownedCount} owned · ${totalMonthlyExpenses.toLocaleString()}/month expenses
+      </p>
     </section>
-    
-);
-
+  );
 }

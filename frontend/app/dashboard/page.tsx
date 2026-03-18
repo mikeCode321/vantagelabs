@@ -3,6 +3,8 @@ import "./dashboard.css";
 import { useState, useEffect } from "react";
 import CashOnHandCalc from "@/components/Dashboard/CashOnHandCalc/CashOnHandCalc";
 import SimControls from "@/components/Dashboard/SimControls/SimControls";
+import AssetPortfolio from "@/components/Dashboard/Assets/AssetPortfolio";
+import { Asset, NewAsset, DEFAULT_GROWTH_RATES } from "@/components/Dashboard/Assets/types";
 
 export const SIM_MAX = 40;
 
@@ -32,12 +34,40 @@ const DEFAULT_INPUTS: YearInputs = {
   tiers: [{ threshold: 1000000, annual_rate: 0.03 }],
 };
 
+const INITIAL_ASSETS: Asset[] = [
+  {
+    id: 1,
+    name: "Rental House",
+    type: "house",
+    value: 250000,
+    downPayment: 50000,
+    monthlyExpense: 1800,
+    sold: false,
+    compound: DEFAULT_GROWTH_RATES.house,
+    year: 0,
+  },
+  {
+    id: 2,
+    name: "Gold Bar",
+    type: "gold",
+    value: 3000,
+    downPayment: 0,
+    monthlyExpense: 0,
+    sold: false,
+    compound: DEFAULT_GROWTH_RATES.gold,
+    year: 0,
+  },
+];
+
 export default function Dashboard() {
   const [currentYear, setCurrentYear] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [ledger, setLedger] = useState<LedgerEntry[]>([
     { year: 0, inputs: structuredClone(DEFAULT_INPUTS), result: null },
   ]);
+
+  // completely separate from cash simulation
+  const [assets, setAssets] = useState<Asset[]>(INITIAL_ASSETS);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -74,9 +104,6 @@ export default function Dashboard() {
     setLedger([{ year: 0, inputs: structuredClone(DEFAULT_INPUTS), result: null }]);
   };
 
-  // Only allow seeking to years that have already been simulated (have a result),
-  // plus year 0 which is the starting state. Clamp to the highest simulated year
-  // if the user tries to jump further ahead.
   const seekTo = (year: number) => {
     setIsPlaying(false);
     const simulatedYears = ledger
@@ -123,7 +150,38 @@ export default function Dashboard() {
     );
   };
 
-  const status = isPlaying ? "playing" : currentYear >= SIM_MAX ? "done" : currentYear === 0 ? "ready" : "paused";
+  const addAsset = (asset: NewAsset) => {
+    setAssets((prev) => {
+      const nextId =
+        prev.length > 0 ? Math.max(...prev.map((a) => a.id)) + 1 : 1;
+
+      return [
+        ...prev,
+        {
+          id: nextId,
+          sold: false,
+          ...asset,
+        },
+      ];
+    });
+  };
+
+  const sellAsset = (id: number) => {
+    setAssets((prev) =>
+      prev.map((asset) =>
+        asset.id === id ? { ...asset, sold: true } : asset
+      )
+    );
+  };
+
+  const status =
+    isPlaying
+      ? "playing"
+      : currentYear >= SIM_MAX
+      ? "done"
+      : currentYear === 0
+      ? "ready"
+      : "paused";
 
   return (
     <div className="dash-root">
@@ -161,15 +219,23 @@ export default function Dashboard() {
               pause={pause}
             />
           </div>
+
           <div className="dash-cell dash-cell-md">
-            <div className="dash-placeholder">Net Worth Tracker</div>
+            <AssetPortfolio
+              assets={assets}
+              onAddAsset={addAsset}
+              onSell={sellAsset}
+            />
           </div>
+
           <div className="dash-cell dash-cell-sm">
             <div className="dash-placeholder">Asset Allocation</div>
           </div>
+
           <div className="dash-cell dash-cell-lg">
             <div className="dash-placeholder">Scenario Timeline</div>
           </div>
+
           <div className="dash-cell dash-cell-sm">
             <SimControls
               currentYear={currentYear}

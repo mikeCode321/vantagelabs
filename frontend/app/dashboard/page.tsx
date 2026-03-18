@@ -3,9 +3,8 @@ import "./dashboard.css";
 import { useState, useEffect } from "react";
 import CashOnHandCalc from "@/components/Dashboard/CashOnHandCalc/CashOnHandCalc";
 import SimControls from "@/components/Dashboard/SimControls/SimControls";
-import AssetPortfolio from "@/components/Assets//AssetPortfolio";
-import type { Asset, NewAsset } from "@/components/Assets/types";
-import { DEFAULT_GROWTH_RATES } from "@/components/Assets/types";
+import AssetPortfolio from "@/components/Dashboard/Assets/AssetPortfolio";
+import { Asset, NewAsset, DEFAULT_GROWTH_RATES } from "@/components/Dashboard/Assets/types";
 
 export const SIM_MAX = 40;
 

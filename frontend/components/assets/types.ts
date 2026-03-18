@@ -15,6 +15,18 @@ export type Asset = {
 
 };
 
+export type NewAsset= {
+
+    name: string;
+    type: AssetType;
+    value: number;
+    downPayment?: number;
+    monthlyExpense: number;
+    compound: number;
+    year: number;
+
+}
+
 
 export const DEFAULT_GROWTH_RATES: Record<AssetType, number> = {
   house: 0.04,

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import CashOnHandCalc from "@/components/Dashboard/CashOnHandCalc/CashOnHandCalc";
 import SimControls from "@/components/Dashboard/SimControls/SimControls";
 import AssetPortfolio from "@/components/Assets//AssetPortfolio";
-import type { Asset } from "@/components/Assets/types";
+import type { Asset, NewAsset } from "@/components/Assets/types";
 import { DEFAULT_GROWTH_RATES } from "@/components/Assets/types";
 
 export const SIM_MAX = 40;
@@ -151,7 +151,7 @@ export default function Dashboard() {
     );
   };
 
-  const addAsset = (asset: Omit<Asset, "id" | "sold">) => {
+  const addAsset = (asset: NewAsset) => {
     setAssets((prev) => {
       const nextId =
         prev.length > 0 ? Math.max(...prev.map((a) => a.id)) + 1 : 1;

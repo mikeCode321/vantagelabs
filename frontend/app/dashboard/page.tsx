@@ -31,7 +31,7 @@ export interface YearSnapshot {
 }
 
 const DEFAULTS = {
-  start_cash: 100000,
+  start_cash: 0,
   base_net_income: 80000,
   base_income_growth: 0.03,
   base_expenses: 50000,

@@ -12,10 +12,7 @@ interface SimControlsProps {
   onSeek: (year: number) => void;
 }
 
-export default function SimControls({
-  currentYear, isPlaying, status, simMax,
-  onPlay, onPause, onReset, onSeek,
-}: SimControlsProps) {
+export default function SimControls({currentYear, isPlaying, status, simMax, onPlay, onPause, onReset, onSeek,}: SimControlsProps) {
   const bgSize = `${(currentYear / simMax) * 100}% 100%`;
 
   return (

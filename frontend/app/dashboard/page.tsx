@@ -39,9 +39,6 @@ const DEFAULTS = {
   base_tiers: [{ threshold: 1000000, annual_rate: 0.03 }],
 };
 
-// Derive the effective base values by replaying all events before a given year.
-// This ensures growth rates and other settings carry forward correctly
-// when restarting the simulation from mid-timeline.
 function getBaseAtYear(events: SimEvent[], beforeYear: number) {
   const priorEvents = events.filter((e) => e.year < beforeYear);
   return priorEvents.reduce(

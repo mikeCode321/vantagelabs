@@ -14,12 +14,9 @@ export type Asset = {
 
     soldYear?: number;
     soldValue?: number;
-    
-
 };
 
 export type NewAsset= {
-
     name: string;
     type: AssetType;
     value: number;
@@ -27,7 +24,6 @@ export type NewAsset= {
     monthlyExpense: number;
     compound: number;
     year: number;
-
 }
 
 

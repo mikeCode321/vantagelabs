@@ -1,7 +1,7 @@
 "use client";
 import "./CashOnHandCalc.css";
 import { useState } from "react";
-import { YearSnapshot, Tier } from "@/app/dashboard/page";
+import { YearSnapshot, Tier } from "@/app/dashboard/useSimulation";
 
 interface Inputs {
   net_income: number;
@@ -26,7 +26,7 @@ export default function CashOnHandCalc({ currentYear, inputs, result, displayRes
   const [draft, setDraft] = useState<Inputs | null>(null);
   const [open, setOpen] = useState(false);
 
-  const updateTier = (i: number, field: keyof Tier, value: number) => {
+  const updateTier = (i: number, field: keyof Tier, value: number): void => {
     if (!draft) return;
     const tiers = [...draft.tiers];
     tiers[i] = { ...tiers[i], [field]: value };

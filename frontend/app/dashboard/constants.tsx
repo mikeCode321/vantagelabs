@@ -1,5 +1,7 @@
 import { Asset, DEFAULT_GROWTH_RATES } from "@/components/Dashboard/Assets/types";
 
+export const SIM_MAX = 30;
+
 export const API = "http://localhost:8000/api/finance/simulate/";
 
 export const INITIAL_ASSETS: Asset[] = [
@@ -33,6 +35,6 @@ export const CASH_ON_HAND_DEFAULTS = {
   income_growth: 0.03,
   expenses: 50000,
   expense_growth: 0.02,
-  tiers: [{ threshold: 1000000, annual_rate: 0.03 }],
+  tiers: [{ threshold: 100000, annual_rate: 0.1 }, { threshold: 500000, annual_rate: 0.15 }],
 };
  

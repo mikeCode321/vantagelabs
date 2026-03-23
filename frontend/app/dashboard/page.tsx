@@ -47,7 +47,7 @@ export default function Dashboard() {
               inputs={sim.currentInputs}
               result={sim.currentResult}
               displayResult={sim.displayResult}
-              onUpdate={(changes) => sim.updateEvent({ year: sim.currentYear, ...changes })}
+              onUpdate={sim.updateEvent}
             />
           </div>
 

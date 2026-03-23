@@ -1,14 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import type { Asset } from "./types";
+import type { Asset, NewAsset } from "./types";
 import AssetActions from "./AssetActions";
 import AssetSummary from "./AssetSummary";
 import AssetList from "./AssetList";
 
+
+type DisplayAsset = Asset & {
+  currentValue: number;
+};
+
 type AssetPortfolioProps = {
-  assets: Asset[];
-  onAddAsset: (asset: Omit<Asset, "id" | "sold">) => void;
+  assets: DisplayAsset[];
+  onAddAsset: (asset: NewAsset) => void;
   onSell: (id: number) => void;
 };
 
@@ -17,13 +22,13 @@ export default function AssetPortfolio({ assets, onAddAsset, onSell, }: AssetPor
 
   const ownedAssets = assets.filter((asset) => !asset.sold);
 
-  const totalAssetValue = ownedAssets.reduce((sum, asset) => sum + asset.value, 0);
+  const totalAssetValue = ownedAssets.reduce((sum, asset) => sum + asset.currentValue, 0);
   const totalMonthlyExpenses = ownedAssets.reduce(
     (sum, asset) => sum + (asset.monthlyExpense ?? 0),
     0
   );
 
-  const handleAddAsset = (asset: Omit<Asset, "id" | "sold">) => {
+  const handleAddAsset = (asset: NewAsset) => {
     onAddAsset(asset);
     setShowForm(false);
   };

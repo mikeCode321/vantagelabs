@@ -204,13 +204,42 @@ export default function Dashboard() {
     });
   };
 
+  
+  
   const sellAsset = (id: number) => {
-    setAssets((prev) =>
-      prev.map((asset) =>
-        asset.id === id ? { ...asset, sold: true } : asset
-      )
-    );
+  setAssets((prev) =>
+    prev.map((asset) => {
+      if (asset.id !== id) return asset;
+
+      const yearsHeld = Math.max(0, currentYear - asset.year);
+      const soldAmount = asset.value * Math.pow(1 + asset.compound, yearsHeld);
+
+      return {
+        ...asset,
+        sold: true,
+        soldYear: currentYear,
+        saleValue: soldAmount,
+      };
+    })
+  );
+};
+
+const computedAssets = assets.map((asset) => {
+  const growthEndYear =
+    asset.sold && asset.soldYear !== undefined
+      ? Math.min(currentYear, asset.soldYear)
+      : currentYear;
+
+  const yearsHeld = Math.max(0, growthEndYear - asset.year);
+
+  const currentValue = asset.value * Math.pow(1 + asset.compound, yearsHeld);
+
+  return {
+    ...asset,
+    currentValue,
   };
+});
+
 
   const status =
     isPlaying ? "playing" : dirtyFromYear !== null ? "edited" : currentYear >= SIM_MAX ? "done" : "paused";
@@ -254,7 +283,7 @@ export default function Dashboard() {
 
           <div className="dash-cell dash-cell-md">
             <AssetPortfolio
-              assets={assets}
+              assets={computedAssets}
               onAddAsset={addAsset}
               onSell={sellAsset}
             />

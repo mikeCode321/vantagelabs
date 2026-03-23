@@ -11,6 +11,9 @@ export type Asset = {
 
     compound: number;
     year: number;
+
+    soldYear?: number;
+    soldValue?: number;
     
 
 };

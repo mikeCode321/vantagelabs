@@ -79,6 +79,9 @@ def simulate(req: SimulateRequest) -> list:
             if event.tiers is not None:
                 tiers = event.tiers
 
+        start_net_income = net_income
+        start_expenses = expenses
+
         monthly_income = net_income / 12
         monthly_expenses = expenses / 12
 
@@ -93,6 +96,8 @@ def simulate(req: SimulateRequest) -> list:
         snapshots.append({
             "year": year,
             "cash_on_hand": round(cash_on_hand, 2),
+            "start_net_income": start_net_income,
+            "start_expenses": start_expenses,
             "net_income": net_income,
             "expenses": expenses,
         })

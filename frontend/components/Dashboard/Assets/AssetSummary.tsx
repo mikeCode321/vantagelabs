@@ -4,11 +4,7 @@ type AssetSummaryProps = {
   ownedCount: number;
 };
 
-export default function AssetSummary({
-  totalAssetValue,
-  totalMonthlyExpenses,
-  ownedCount,
-}: AssetSummaryProps) {
+export default function AssetSummary({ totalAssetValue, totalMonthlyExpenses, ownedCount, }: AssetSummaryProps) {
   return (
     <section className="asset-summary">
       <p className="asset-summary-label">Portfolio Value</p>

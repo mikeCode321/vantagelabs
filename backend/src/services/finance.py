@@ -20,11 +20,11 @@ class SimulateRequest(BaseModel):
     start_cash: float
     start_year: int
     end_year: int
-    base_net_income: float
-    base_income_growth: float
-    base_expenses: float
-    base_expense_growth: float
-    base_tiers: List[Tier]
+    net_income: float
+    income_growth: float
+    expenses: float
+    expense_growth: float
+    tiers: List[Tier]
     events: List[SimEvent] = []
 
 
@@ -57,17 +57,15 @@ def simulate(req: SimulateRequest) -> list:
     snapshots = []
 
     cash_on_hand = req.start_cash
-    net_income = req.base_net_income
-    income_growth = req.base_income_growth
-    expenses = req.base_expenses
-    expense_growth = req.base_expense_growth
-    tiers = req.base_tiers
+    net_income = req.net_income
+    income_growth = req.income_growth
+    expenses = req.expenses
+    expense_growth = req.expense_growth
+    tiers = req.tiers
 
-    # Index events by year for quick lookup
     events_by_year = {e.year: e for e in req.events}
 
     for year in range(req.start_year, req.end_year + 1):
-        # Apply any event for this year — only override fields that are set
         event = events_by_year.get(year)
         if event:
             if event.net_income is not None:
@@ -81,6 +79,9 @@ def simulate(req: SimulateRequest) -> list:
             if event.tiers is not None:
                 tiers = event.tiers
 
+        start_net_income = net_income
+        start_expenses = expenses
+
         monthly_income = net_income / 12
         monthly_expenses = expenses / 12
 
@@ -89,13 +90,14 @@ def simulate(req: SimulateRequest) -> list:
             cash_on_hand -= monthly_expenses
             cash_on_hand = apply_tiered_interest(cash_on_hand, tiers, periods_per_year)
 
-        # Compound at end of year
         net_income = round(net_income * (1 + income_growth), 2)
         expenses = round(expenses * (1 + expense_growth), 2)
 
         snapshots.append({
             "year": year,
             "cash_on_hand": round(cash_on_hand, 2),
+            "start_net_income": start_net_income,
+            "start_expenses": start_expenses,
             "net_income": net_income,
             "expenses": expenses,
         })

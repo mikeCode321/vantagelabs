@@ -1,7 +1,12 @@
 import type { Asset } from "./types";
 
+
+type DisplayAsset = Asset & {
+  currentValue: number;
+};
+
 type AssetListProps = {
-  assets: Asset[];
+  assets: DisplayAsset[];
   onSell: (id: number) => void;
 };
 
@@ -25,7 +30,7 @@ export default function AssetList({ assets, onSell }: AssetListProps) {
           </div>
 
           <div className="asset-row-side">
-            <p className="asset-row-value">${asset.value.toLocaleString()}</p>
+            <p className="asset-row-value">${asset.currentValue.toLocaleString()}</p>
 
             <div className="asset-row-actions">
               <span

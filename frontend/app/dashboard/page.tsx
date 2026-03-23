@@ -9,56 +9,6 @@ import { Asset, NewAsset, DEFAULT_GROWTH_RATES } from "@/components/Dashboard/As
 export const SIM_MAX = 30;
 const API = "http://localhost:8000/api/finance/simulate/";
 
-export interface Tier {
-  threshold: number;
-  annual_rate: number;
-}
-
-export interface SimEvent {
-  year: number;
-  net_income?: number;
-  income_growth?: number;
-  expenses?: number;
-  expense_growth?: number;
-  tiers?: Tier[];
-}
-
-export interface YearSnapshot {
-  year: number;
-  cash_on_hand: number;
-  net_income: number;
-  expenses: number;
-}
-
-const DEFAULTS = {
-  start_cash: 100000,
-  base_net_income: 80000,
-  base_income_growth: 0.03,
-  base_expenses: 50000,
-  base_expense_growth: 0.02,
-  base_tiers: [{ threshold: 1000000, annual_rate: 0.03 }],
-};
-
-function getBaseAtYear(events: SimEvent[], beforeYear: number) {
-  const priorEvents = events.filter((e) => e.year < beforeYear);
-  return priorEvents.reduce(
-    (base, ev) => ({
-      base_net_income: ev.net_income ?? base.base_net_income,
-      base_income_growth: ev.income_growth ?? base.base_income_growth,
-      base_expenses: ev.expenses ?? base.base_expenses,
-      base_expense_growth: ev.expense_growth ?? base.base_expense_growth,
-      base_tiers: ev.tiers ?? base.base_tiers,
-    }),
-    {
-      base_net_income: DEFAULTS.base_net_income,
-      base_income_growth: DEFAULTS.base_income_growth,
-      base_expenses: DEFAULTS.base_expenses,
-      base_expense_growth: DEFAULTS.base_expense_growth,
-      base_tiers: DEFAULTS.base_tiers,
-    }
-  );
-}
-
 const INITIAL_ASSETS: Asset[] = [
   {
     id: 1,
@@ -84,6 +34,56 @@ const INITIAL_ASSETS: Asset[] = [
   },
 ];
 
+const CashOnHandDefaults = {
+  start_cash: 0,
+  base_net_income: 80000,
+  base_income_growth: 0.03,
+  base_expenses: 50000,
+  base_expense_growth: 0.02,
+  base_tiers: [{ threshold: 1000000, annual_rate: 0.03 }],
+};
+
+export interface Tier {
+  threshold: number;
+  annual_rate: number;
+}
+
+export interface SimEvent {
+  year: number;
+  net_income?: number;
+  income_growth?: number;
+  expenses?: number;
+  expense_growth?: number;
+  tiers?: Tier[];
+}
+
+export interface YearSnapshot {
+  year: number;
+  cash_on_hand: number;
+  net_income: number;
+  expenses: number;
+}
+
+function getBaseAtYear(events: SimEvent[], beforeYear: number) {
+  const priorEvents = events.filter((e) => e.year < beforeYear);
+  return priorEvents.reduce(
+    (base, ev) => ({
+      base_net_income: ev.net_income ?? base.base_net_income,
+      base_income_growth: ev.income_growth ?? base.base_income_growth,
+      base_expenses: ev.expenses ?? base.base_expenses,
+      base_expense_growth: ev.expense_growth ?? base.base_expense_growth,
+      base_tiers: ev.tiers ?? base.base_tiers,
+    }),
+    {
+      base_net_income: CashOnHandDefaults.base_net_income,
+      base_income_growth: CashOnHandDefaults.base_income_growth,
+      base_expenses: CashOnHandDefaults.base_expenses,
+      base_expense_growth: CashOnHandDefaults.base_expense_growth,
+      base_tiers: CashOnHandDefaults.base_tiers,
+    }
+  );
+}
+
 export default function Dashboard() {
   const [events, setEvents] = useState<SimEvent[]>([]);
   const [results, setResults] = useState<YearSnapshot[]>([]);
@@ -99,11 +99,35 @@ export default function Dashboard() {
 
   const currentEvent = events.find((e) => e.year === currentYear);
   const currentInputs = {
-    net_income: currentResult?.net_income ?? currentEvent?.net_income ?? DEFAULTS.base_net_income,
-    income_growth: currentEvent?.income_growth ?? DEFAULTS.base_income_growth,
-    expenses: currentResult?.expenses ?? currentEvent?.expenses ?? DEFAULTS.base_expenses,
-    expense_growth: currentEvent?.expense_growth ?? DEFAULTS.base_expense_growth,
-    tiers: currentEvent?.tiers ?? DEFAULTS.base_tiers,
+    net_income: currentResult?.net_income ?? currentEvent?.net_income ?? CashOnHandDefaults.base_net_income,
+    income_growth: currentEvent?.income_growth ?? CashOnHandDefaults.base_income_growth,
+    expenses: currentResult?.expenses ?? currentEvent?.expenses ?? CashOnHandDefaults.base_expenses,
+    expense_growth: currentEvent?.expense_growth ?? CashOnHandDefaults.base_expense_growth,
+    tiers: currentEvent?.tiers ?? CashOnHandDefaults.base_tiers,
+  };
+
+  const play = async () => {
+    if (dirtyFromYear !== null) await runSimulation(dirtyFromYear);
+    setIsPlaying(true);
+  };
+
+  const pause = () => {
+    setIsPlaying(false);
+    if (timerRef.current) clearTimeout(timerRef.current);
+  };
+
+  const reset = () => {
+    pause();
+    setCurrentYear(1);
+    setEvents([]);
+    setResults([]);
+    setDirtyFromYear(1);
+    setError(null);
+  };
+
+  const seekTo = (year: number) => {
+    pause();
+    setCurrentYear(Math.max(1, Math.min(SIM_MAX, year)));
   };
 
   // completely separate from cash simulation
@@ -130,7 +154,7 @@ export default function Dashboard() {
 
       const payload = {
         ...base,
-        start_cash: prevResult?.cash_on_hand ?? DEFAULTS.start_cash,
+        start_cash: prevResult?.cash_on_hand ?? CashOnHandDefaults.start_cash,
         start_year: fromYear,
         end_year: SIM_MAX,
         events: events.filter((e) => e.year >= fromYear),
@@ -151,30 +175,6 @@ export default function Dashboard() {
     } catch (err) {
       setError((err as Error).message);
     }
-  };
-
-  const play = async () => {
-    if (dirtyFromYear !== null) await runSimulation(dirtyFromYear);
-    setIsPlaying(true);
-  };
-
-  const pause = () => {
-    setIsPlaying(false);
-    if (timerRef.current) clearTimeout(timerRef.current);
-  };
-
-  const reset = () => {
-    pause();
-    setCurrentYear(1);
-    setEvents([]);
-    setResults([]);
-    setDirtyFromYear(1);
-    setError(null);
-  };
-
-  const seekTo = (year: number) => {
-    pause();
-    setCurrentYear(Math.max(1, Math.min(SIM_MAX, year)));
   };
 
   const updateEvent = (event: SimEvent) => {

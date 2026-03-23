@@ -1,7 +1,8 @@
 "use client";
 import "./CashOnHandCalc.css";
 import { useState } from "react";
-import { YearSnapshot, Tier } from "@/app/dashboard/page";
+import { YearSnapshot, Tier, SimEvent } from "@/app/dashboard/useSimulation";
+import { diffInputs } from "@/app/dashboard/utils";
 
 interface Inputs {
   net_income: number;
@@ -16,7 +17,7 @@ interface Props {
   inputs: Inputs;
   result: YearSnapshot | null;
   displayResult: YearSnapshot | null;
-  onUpdate: (changes: Partial<Inputs>) => void;
+  onUpdate: (event: SimEvent) => void;
 }
 
 const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -25,6 +26,16 @@ const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 export default function CashOnHandCalc({ currentYear, inputs, result, displayResult, onUpdate }: Props) {
   const [draft, setDraft] = useState<Inputs | null>(null);
   const [open, setOpen] = useState(false);
+
+  const openModal = () => {
+    setDraft(structuredClone(inputs));
+    setOpen(true);
+  };
+
+  const closeModal = () => {
+    setDraft(null);
+    setOpen(false);
+  };
 
   const updateTier = (i: number, field: keyof Tier, value: number) => {
     if (!draft) return;
@@ -35,8 +46,9 @@ export default function CashOnHandCalc({ currentYear, inputs, result, displayRes
 
   const handleSave = () => {
     if (!draft) return;
-    onUpdate(draft);
-    setOpen(false);
+    const changes = diffInputs(inputs, draft);
+    if (Object.keys(changes).length > 0) onUpdate({ year: currentYear, ...changes });
+    closeModal();
   };
 
   return (
@@ -44,9 +56,7 @@ export default function CashOnHandCalc({ currentYear, inputs, result, displayRes
       <div className="coh-card">
         <div className="coh-card-header">
           <span className="coh-card-title">Cash on Hand</span>
-          <button className="coh-edit-btn" onClick={() => { setDraft(structuredClone(inputs)); setOpen(true); }}>
-            Edit
-          </button>
+          <button className="coh-edit-btn" onClick={openModal}>Edit</button>
         </div>
 
         <div className="coh-stat-grid">
@@ -55,21 +65,41 @@ export default function CashOnHandCalc({ currentYear, inputs, result, displayRes
             <span className="coh-stat-value">{currentYear}</span>
           </div>
           <div className="coh-stat">
-            <span className="coh-stat-label">Net Income</span>
-            <span className="coh-stat-value">${fmt(inputs.net_income)}</span>
-          </div>
-          <div className="coh-stat">
             <span className="coh-stat-label">Income Growth</span>
             <span className="coh-stat-value">{pct(inputs.income_growth)}</span>
-          </div>
-          <div className="coh-stat">
-            <span className="coh-stat-label">Expenses</span>
-            <span className="coh-stat-value">${fmt(inputs.expenses)}</span>
           </div>
           <div className="coh-stat">
             <span className="coh-stat-label">Expense Growth</span>
             <span className="coh-stat-value">{pct(inputs.expense_growth)}</span>
           </div>
+
+          <div className="coh-stat">
+            <span className="coh-stat-label">Start Net Income</span>
+            <span className="coh-stat-value">
+              {result ? `$${fmt(result.start_net_income)}` : `$${fmt(inputs.net_income)}`}
+            </span>
+          </div>
+          <div className="coh-stat">
+            <span className="coh-stat-label">End Net Income</span>
+            <span className="coh-stat-value">
+              {result ? `$${fmt(result.net_income)}` : "—"}
+            </span>
+          </div>
+          <div className="coh-stat" />
+
+          <div className="coh-stat">
+            <span className="coh-stat-label">Start Expenses</span>
+            <span className="coh-stat-value">
+              {result ? `$${fmt(result.start_expenses)}` : `$${fmt(inputs.expenses)}`}
+            </span>
+          </div>
+          <div className="coh-stat">
+            <span className="coh-stat-label">End Expenses</span>
+            <span className="coh-stat-value">
+              {result ? `$${fmt(result.expenses)}` : "—"}
+            </span>
+          </div>
+          <div className="coh-stat" />
         </div>
 
         <div className="coh-projection">
@@ -83,11 +113,11 @@ export default function CashOnHandCalc({ currentYear, inputs, result, displayRes
       </div>
 
       {open && draft && (
-        <div className="coh-overlay" onClick={() => setOpen(false)}>
+        <div className="coh-overlay" onClick={closeModal}>
           <div className="coh-modal" onClick={(e) => e.stopPropagation()}>
             <div className="coh-modal-header">
               <span className="coh-modal-title">Edit — Year {currentYear}</span>
-              <button className="coh-close-btn" onClick={() => setOpen(false)}>×</button>
+              <button className="coh-close-btn" onClick={closeModal}>×</button>
             </div>
 
             <div className="coh-modal-body">
@@ -151,7 +181,7 @@ export default function CashOnHandCalc({ currentYear, inputs, result, displayRes
             </div>
 
             <div className="coh-modal-footer">
-              <button className="coh-cancel-btn" onClick={() => setOpen(false)}>Cancel</button>
+              <button className="coh-cancel-btn" onClick={closeModal}>Cancel</button>
               <button className="coh-save-btn" onClick={handleSave}>Save</button>
             </div>
           </div>

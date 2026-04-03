@@ -9,28 +9,12 @@ import AssetList from "./AssetList";
 type AssetPortfolioProps = {
   assets: Asset[];
   currentYear: number;
-  onAssetsChange: (assets: Asset[]) => void;
+  onAddAsset: (asset: NewAsset) => void;
+  onSellAsset: (id: number) => void;
 };
 
-export default function AssetPortfolio({ assets, currentYear, onAssetsChange }: AssetPortfolioProps) {
+export default function AssetPortfolio({ assets, currentYear, onAddAsset, onSellAsset }: AssetPortfolioProps) {
   const [showForm, setShowForm] = useState(false);
-
-  const addAsset = (asset: NewAsset) => {
-    const nextId = assets.length > 0 ? Math.max(...assets.map((a) => a.id)) + 1 : 1;
-    onAssetsChange([...assets, { id: nextId, sold: false, ...asset }]);
-    setShowForm(false);
-  };
-
-  const sellAsset = (id: number) => {
-    onAssetsChange(
-      assets.map((asset) => {
-        if (asset.id !== id) return asset;
-        const yearsHeld = Math.max(0, currentYear - asset.year);
-        const soldAmount = asset.value * Math.pow(1 + asset.compound, yearsHeld);
-        return { ...asset, sold: true, soldYear: currentYear, saleValue: soldAmount };
-      })
-    );
-  };
 
   const computedAssets = assets.map((asset) => {
     const growthEndYear =
@@ -50,16 +34,18 @@ export default function AssetPortfolio({ assets, currentYear, onAssetsChange }: 
     <section className="asset-panel">
       <div className="asset-panel-header">
         <h2 className="asset-panel-title">Asset Portfolio</h2>
-        <button type="button" className="asset-button asset-button-teal" onClick={() => setShowForm((prev) => !prev)} >
+        <button type="button" className="asset-button asset-button-teal" onClick={() => setShowForm((prev) => !prev)}>
           {showForm ? "Close" : "+ Add Asset"}
         </button>
       </div>
 
       <AssetSummary totalAssetValue={totalAssetValue} totalMonthlyExpenses={totalMonthlyExpenses} ownedCount={ownedAssets.length} />
 
-      {showForm && <AssetActions onAddAsset={addAsset} />}
+      {showForm && (
+        <AssetActions onAddAsset={(asset) => { onAddAsset(asset); setShowForm(false); }} />
+      )}
 
-      <AssetList assets={computedAssets} onSell={sellAsset} />
+      <AssetList assets={computedAssets} onSell={onSellAsset} />
     </section>
   );
 }

@@ -11,8 +11,9 @@ import { useSimulation } from "./useSimulation";
 export const SIM_MAX = 30;
 
 export default function Dashboard() {
-  const [assets, setAssets] = useState<Asset[]>(INITIAL_ASSETS);
+  
   const sim = useSimulation();
+
 
   return (
     <div className="dash-root">
@@ -53,9 +54,10 @@ export default function Dashboard() {
 
           <div className="dash-cell dash-cell-md">
             <AssetPortfolio
-              assets={assets}
+              assets={sim.asset}
               currentYear={sim.currentYear}
-              onAssetsChange={setAssets}
+              onAddAsset={sim.addAsset}
+              onSellAsset={sim.sellAsset}
             />
           </div>
 

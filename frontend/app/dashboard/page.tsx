@@ -54,7 +54,7 @@ export default function Dashboard() {
 
           <div className="dash-cell dash-cell-md">
             <AssetPortfolio
-              assets={sim.asset}
+              assets={sim.assets}
               currentYear={sim.currentYear}
               onAddAsset={sim.addAsset}
               onSellAsset={sim.sellAsset}

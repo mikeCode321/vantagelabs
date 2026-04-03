@@ -8,6 +8,13 @@ export interface Tier {
   annual_rate: number;
 }
 
+export interface AssetEvent{
+  asset: Asset;
+  year: number;
+  type: "buy"|"sell"
+
+}
+
 export interface SimEvent {
   year: number;
   net_income?: number;
@@ -30,7 +37,7 @@ export interface YearSnapshot {
 
 type SimState = {
   events: SimEvent[];
-  assets : Asset[];
+  assetEvents: AssetEvent[];
   results: YearSnapshot[];
   currentYear: number;
   isPlaying: boolean;
@@ -40,7 +47,7 @@ type SimState = {
 
 const INITIAL_STATE: SimState = {
   events: [],
-  assets: INITIAL_ASSETS,
+  assetEvents: [],
   results: [],
   currentYear: 1,
   isPlaying: false,
@@ -58,7 +65,7 @@ type SimAction =
   | { type: "SEEK"; year: number }
   | { type: "ADVANCE_YEAR" }
   | { type: "RESET" }
-  | {type: "ADD_ASSET"; asset: NewAsset}
+  | {type: "ADD_ASSET"; asset: NewAsset; year:number}
   | {type: "SELL_ASSET"; id: number};
 
 
@@ -96,25 +103,28 @@ function simReducer(state: SimState, action: SimAction): SimState {
     case "RESET":
       return { ...INITIAL_STATE };
     case "ADD_ASSET":
-      const nextId = state.assets.length > 0 
-        ? Math.max(...state.assets.map((a) => a.id)) + 1 
+      const nextId = state.assetEvents.length > 0
+        ? Math.max(...state.assetEvents.map((e) => e.asset.id)) + 1
         : 1;
       return {
         ...state,
-        assets: [...state.assets, { id: nextId, sold: false, ...action.asset }],
+        assetEvents: [...state.assetEvents, {
+          type: "buy",
+          year: action.year,
+          asset: { id: nextId, sold: false, ...action.asset }
+        }],
       };
 
     case "SELL_ASSET":
       return {
         ...state,
-        assets: state.assets.map((asset) => {
-          if (asset.id !== action.id) return asset;
-          const yearsHeld = Math.max(0, state.currentYear - asset.year);
-          const soldAmount = asset.value * Math.pow(1 + asset.compound, yearsHeld);
-          return { ...asset, sold: true, soldYear: state.currentYear, saleValue: soldAmount };
-        }),
+        assetEvents: [...state.assetEvents, {
+          type: "sell",
+          year: state.currentYear,
+          asset: state.assetEvents.find((e) => e.asset.id === action.id)!.asset
+        }],
       };
-        
+          
       }
 }
 
@@ -129,7 +139,19 @@ export function useSimulation() {
   const currentResult = results.find((r) => r.year === currentYear) ?? null;
   const lastResult = [...results].reverse().find((r) => r.year <= currentYear) ?? null;
   const displayResult = currentResult ?? (isPlaying ? lastResult : null);
-  const addAsset = (asset: NewAsset) => dispatch({ type: "ADD_ASSET", asset });
+
+  const visibleAssets = state.assetEvents
+  .filter((e) => e.year <= currentYear)
+  .reduce((assets, e) => {
+    if (e.type === "buy") return [...assets, e.asset];
+    if (e.type === "sell") return assets.filter((a) => a.id !== e.asset.id);
+    return assets;
+  }, [] as Asset[]);
+
+
+
+  const addAsset = (asset: NewAsset) => 
+  dispatch({ type: "ADD_ASSET", asset, year: currentYear });
   
   const sellAsset = (id: number) => dispatch({ type: "SELL_ASSET", id });
   const currentEvent = events.find((e) => e.year === currentYear);
@@ -198,7 +220,7 @@ export function useSimulation() {
     currentYear,
     isPlaying,
     status,
-    asset: state.assets,
+    assets: visibleAssets,
     error,
     currentInputs,
     currentResult,

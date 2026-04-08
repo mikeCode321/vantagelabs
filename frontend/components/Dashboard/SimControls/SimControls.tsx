@@ -52,20 +52,21 @@ export default function SimControls({currentYear, isPlaying, status, simMax, onP
       </div>
 
       <div className="sim-footer">
-        <button
-          className={`sim-play-btn${isPlaying ? " playing" : ""}`}
-          onClick={isPlaying ? onPause : onPlay}
-        >
-          {isPlaying ? (
-            <svg className="play-icon" viewBox="0 0 12 12" fill="currentColor">
-              <rect x="2" y="1" width="3" height="10" />
-              <rect x="7" y="1" width="3" height="10" />
-            </svg>
-          ) : (
-            <svg className="play-icon" viewBox="0 0 12 12" fill="currentColor">
-              <polygon points="2,1 11,6 2,11" />
-            </svg>
-          )}
+        <button className={`sim-play-btn${isPlaying ? " playing" : ""}`} onClick={isPlaying ? onPause : onPlay} >
+
+          {
+            isPlaying ? (
+              <svg className="play-icon" viewBox="0 0 12 12" fill="currentColor">
+                <rect x="2" y="1" width="3" height="10" />
+                <rect x="7" y="1" width="3" height="10" />
+              </svg>
+            ) : (
+              <svg className="play-icon" viewBox="0 0 12 12" fill="currentColor">
+                <polygon points="2,1 11,6 2,11" />
+              </svg>
+            )
+          }
+
           {isPlaying ? "pause" : "play"}
         </button>
         <button className="sim-reset-btn" onClick={onReset}>reset</button>

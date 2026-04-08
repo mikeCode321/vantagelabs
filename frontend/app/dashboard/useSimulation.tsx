@@ -1,22 +1,27 @@
 import { useReducer, useEffect, useRef } from "react";
-import { API, SIM_MAX } from "@/app/dashboard/constants";
-import { getSimParamsAsOf, buildPayload } from "./utils";
+import { CASH_ON_HAND_DEFAULTS, API, SIM_MAX } from "@/app/dashboard/constants";
+import { buildPayload, propagateInputs } from "./utils";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface Tier {
   threshold: number;
   annual_rate: number;
 }
 
-export interface SimEvent {
-  year: number;
-  net_income?: number;
-  income_growth?: number;
-  expenses?: number;
-  expense_growth?: number;
-  tiers?: Tier[];
+export interface CashFlowInputs {
+  net_income: number;
+  income_growth: number;
+  expenses: number;
+  expense_growth: number;
+  tiers: Tier[];
 }
 
-export interface YearSnapshot {
+export interface AssetFlowInputs {
+  asset_value: number;
+}
+
+export interface CashFlowResult {
   year: number;
   cash_on_hand: number;
   start_net_income: number;
@@ -25,31 +30,41 @@ export interface YearSnapshot {
   expenses: number;
 }
 
-// ─── State ────────────────────────────────────────────────────────────────────
+export interface Inputs {
+  cashflow: CashFlowInputs;
 
+}
+
+export interface YearData {
+  year: number;
+  inputs: CashFlowInputs;
+  userEditedFields: Set<keyof CashFlowInputs>; // which fields this year explicitly owns
+  result?: CashFlowResult; 
+}
+
+
+// ─── State ────────────────────────────────────────────────────────────────────
 type SimState = {
-  events: SimEvent[];
-  results: YearSnapshot[];
+  timeline: YearData[];
   currentYear: number;
   isPlaying: boolean;
   error: string | null;
   rerunFromYear: number | null;
 };
 
-const INITIAL_STATE: SimState = {
-  events: [],
-  results: [],
-  currentYear: 1,
-  isPlaying: false,
-  error: null,
-  rerunFromYear: 1,
-};
+function buildInitialTimeline(): YearData[] {
+  return Array.from({ length: SIM_MAX }, (_, i) => ({
+    year: i + 1,
+    inputs: { ...CASH_ON_HAND_DEFAULTS },
+    userEditedFields: new Set<keyof CashFlowInputs>(),
+  }));
+}
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
 
 type SimAction =
-  | { type: "UPDATE_EVENT"; event: SimEvent }
-  | { type: "SIMULATION_COMPLETE"; fromYear: number; snapshots: YearSnapshot[] }
+  | { type: "UPDATE_YEAR"; year: number; inputs: CashFlowInputs }
+  | { type: "SIMULATION_COMPLETE"; fromYear: number; snapshots: CashFlowResult[] }
   | { type: "SIMULATION_ERROR"; error: string }
   | { type: "SET_PLAYING"; isPlaying: boolean }
   | { type: "SEEK"; year: number }
@@ -60,23 +75,24 @@ type SimAction =
 
 function simReducer(state: SimState, action: SimAction): SimState {
   switch (action.type) {
-    case "UPDATE_EVENT":
+    case "UPDATE_YEAR": {
+      const timeline = propagateInputs(state.timeline, action.year, action.inputs);
       return {
         ...state,
-        events: [...state.events.filter((e) => e.year !== action.event.year), action.event]
-          .sort((a, b) => a.year - b.year),
-        rerunFromYear: state.rerunFromYear === null
-          ? action.event.year
-          : Math.min(state.rerunFromYear, action.event.year),
-        results: state.results.filter((r) => r.year < action.event.year),
+        timeline,
+        rerunFromYear: state.rerunFromYear === null ? action.year: Math.min(state.rerunFromYear, action.year),
       };
-    case "SIMULATION_COMPLETE":
-      return {
-        ...state,
-        results: [...state.results.filter((r) => r.year < action.fromYear), ...action.snapshots],
-        rerunFromYear: null,
-        error: null,
-      };
+    }
+    case "SIMULATION_COMPLETE": {
+      const timeline = state.timeline.map((yearData) => {
+        const snapshot = action.snapshots.find((s) => s.year === yearData.year);
+
+        if (!snapshot) return yearData;
+        return { ...yearData, result: snapshot };
+      });
+
+      return { ...state, timeline, rerunFromYear: null, error: null };
+    }
     case "SIMULATION_ERROR":
       return { ...state, error: action.error };
     case "SET_PLAYING":
@@ -86,45 +102,58 @@ function simReducer(state: SimState, action: SimAction): SimState {
     case "ADVANCE_YEAR":
       return { ...state, currentYear: state.currentYear + 1 };
     case "RESET":
-      return { ...INITIAL_STATE };
+      return { timeline: buildInitialTimeline(), currentYear: 1, isPlaying: false, error: null, rerunFromYear: 1 };
   }
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useSimulation() {
-  const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
-  const { events, results, currentYear, isPlaying, error, rerunFromYear } = state;
+  const [state, dispatch] = useReducer(simReducer, undefined, () => ({
+    timeline: buildInitialTimeline(),
+    currentYear: 1,
+    isPlaying: false,
+    error: null,
+    rerunFromYear: 1,
+  }));
 
+  console.log("sim state", state);
+  const { timeline, currentYear, isPlaying, error, rerunFromYear } = state;
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const currentResult = results.find((r) => r.year === currentYear) ?? null;
-  const lastResult = [...results].reverse().find((r) => r.year <= currentYear) ?? null;
-  const displayResult = currentResult ?? (isPlaying ? lastResult : null);
+  const currentYearData = timeline[currentYear - 1];
+  function getDisplayInputs(yearData: YearData): CashFlowInputs {
+    return {
+      ...yearData.inputs,
 
-  const currentEvent = events.find((e) => e.year === currentYear);
-  const resolvedBase = getSimParamsAsOf(events, currentYear);
-  const currentInputs = {
-    net_income: currentResult?.net_income ?? currentEvent?.net_income ?? resolvedBase.net_income,
-    income_growth: currentEvent?.income_growth ?? resolvedBase.income_growth,
-    expenses: currentResult?.expenses ?? currentEvent?.expenses ?? resolvedBase.expenses,
-    expense_growth: currentEvent?.expense_growth ?? resolvedBase.expense_growth,
-    tiers: currentEvent?.tiers ?? resolvedBase.tiers,
-  };
+      // override with actual values used in simulation IF they exist
+      net_income: yearData.result?.start_net_income ?? yearData.inputs.net_income,
+      expenses: yearData.result?.start_expenses ?? yearData.inputs.expenses,
+    };
+  }
+  // const currentInputs = currentYearData.inputs;
+  const currentInputs = getDisplayInputs(currentYearData);
 
-  const status =
-    isPlaying ? "playing" : rerunFromYear !== null ? "edited" : currentYear >= SIM_MAX ? "done" : "paused";
+  const hasResult = currentYearData.result?.cash_on_hand !== undefined;
+  const displayResult = hasResult ? {
+    year: currentYearData.year,
+    cash_on_hand: currentYearData.result!.cash_on_hand,
+  } : null;
+ 
+  const status = isPlaying ? "playing" : rerunFromYear !== null ? "edited" : currentYear >= SIM_MAX ? "done" : "paused";
 
   const runSimulation = async (fromYear: number) => {
     try {
-      const payload = buildPayload(events, results, fromYear);
+      const payload = buildPayload(timeline, fromYear);
+      console.log("simulation payload", payload);
+
       const res = await fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-      const snapshots: YearSnapshot[] = await res.json();
+      const snapshots: CashFlowResult[] = await res.json();
       dispatch({ type: "SIMULATION_COMPLETE", fromYear, snapshots });
     } catch (err) {
       dispatch({ type: "SIMULATION_ERROR", error: (err as Error).message });
@@ -151,8 +180,8 @@ export function useSimulation() {
     dispatch({ type: "SEEK", year });
   };
 
-  const updateEvent = (event: SimEvent) => {
-    dispatch({ type: "UPDATE_EVENT", event });
+  const updateYear = (year: number, inputs: CashFlowInputs) => {
+    dispatch({ type: "UPDATE_YEAR", year, inputs });
   };
 
   useEffect(() => {
@@ -164,16 +193,17 @@ export function useSimulation() {
 
   return {
     currentYear,
+    currentYearData,
     isPlaying,
     status,
     error,
     currentInputs,
-    currentResult,
     displayResult,
     play,
     pause,
     reset,
     seekTo,
-    updateEvent,
+    updateYear,
+    getDisplayInputs
   };
 }

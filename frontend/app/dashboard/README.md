@@ -32,3 +32,51 @@ currentEntry updates to the year 5 entry
 displayResult is just currentEntry.result — already non-null
 useEffect runs — entry.result !== null but isPlaying is false — nothing happens
 CashOnHandCalc re-renders with the year 5 data instantly from the ledger, no API call made
+
+
+
+
+#####################
+App load → timeline[0..29] all defaults, userEdited: false, rerunFromYear = 1
+
+User edits year 3 → timeline[2].overrides = {...}, userEdited: true
+                    rerunFromYear = min(1, 3) = 1
+
+User edits year 7 → timeline[6].overrides = {...}, userEdited: true
+                    rerunFromYear = min(1, 7) = 1
+
+Play (first run) → runs years 1-30
+  start_cash = 0
+  events = all userEdited entries (years 3 and 7)
+  results merged into timeline years 1-30
+  rerunFromYear = null
+
+User edits year 10 → rerunFromYear = min(null→10, 10) = 10
+User edits year 15 → rerunFromYear = min(10, 15) = 10
+
+Play (second run) → keeps years 1-9, runs 10-30
+  start_cash = timeline[8].cash_on_hand
+  events = userEdited entries where year >= 10
+  rerunFromYear = null
+
+
+year 5 edit:  net_income=90000, income_growth=0.05
+year 10 edit: net_income=120000
+
+year 6-9:   net_income=90000, income_growth=0.05  (from year 5)
+year 10:    net_income=120000, income_growth=0.05  (net_income overridden, growth inherited)
+year 11-30: net_income=120000, income_growth=0.05  (year 10's net_income, year 5's growth)
+
+year 13 edit: expenses=70000
+
+year 14-30: net_income=120000, income_growth=0.05, expenses=70000
+
+year 5:  net_income=90000 → userEditedFields={net_income}
+year 10: net_income=120000 → userEditedFields={net_income}
+
+year 5 edited again: income_growth=0.05
+  propagatingFields = {income_growth}
+  years 6-9: income_growth propagates ✅
+  year 10: has net_income in userEditedFields but NOT income_growth
+           → income_growth continues propagating ✅
+  years 11-30: income_growth=0.05 ✅

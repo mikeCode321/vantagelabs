@@ -1,14 +1,12 @@
 "use client";
 import "./dashboard.css";
 import { useState } from "react";
-import CashOnHandCalc from "@/components/Dashboard/CashOnHandCalc/CashOnHandCalc";
+import CashFlowPanel from "@/components/Dashboard/CashFlowPanel/CashFlowPanel";
 import SimControls from "@/components/Dashboard/SimControls/SimControls";
 import AssetPortfolio from "@/components/Dashboard/Assets/AssetPortfolio";
 import { Asset } from "@/components/Dashboard/Assets/types";
-import { INITIAL_ASSETS } from "@/app/dashboard/constants";
+import { INITIAL_ASSETS, SIM_MAX } from "@/app/dashboard/constants";
 import { useSimulation } from "./useSimulation";
-
-export const SIM_MAX = 30;
 
 export default function Dashboard() {
   
@@ -43,12 +41,12 @@ export default function Dashboard() {
 
         <div className="dash-grid">
           <div className="dash-cell dash-cell-md">
-            <CashOnHandCalc
+            <CashFlowPanel
               currentYear={sim.currentYear}
               inputs={sim.currentInputs}
-              result={sim.currentResult}
+              yearData={sim.currentYearData}
               displayResult={sim.displayResult}
-              onUpdate={sim.updateEvent}
+              onUpdate={sim.updateYear}
             />
           </div>
 

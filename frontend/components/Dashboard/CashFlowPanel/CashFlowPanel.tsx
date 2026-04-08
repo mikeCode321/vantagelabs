@@ -1,30 +1,21 @@
 "use client";
-import "./CashOnHandCalc.css";
+import "./CashFlowPanel.css";
 import { useState } from "react";
-import { YearSnapshot, Tier, SimEvent } from "@/app/dashboard/useSimulation";
-import { diffInputs } from "@/app/dashboard/utils";
-
-interface Inputs {
-  net_income: number;
-  income_growth: number;
-  expenses: number;
-  expense_growth: number;
-  tiers: Tier[];
-}
+import { CashFlowInputs, CashFlowResult, Tier } from "@/app/dashboard/useSimulation";
 
 interface Props {
   currentYear: number;
-  inputs: Inputs;
-  result: YearSnapshot | null;
-  displayResult: YearSnapshot | null;
-  onUpdate: (event: SimEvent) => void;
+  inputs: CashFlowInputs;
+  yearData: { year: number, inputs: CashFlowInputs, userEditedFields: Set<keyof CashFlowInputs>, result?: CashFlowResult };
+  displayResult: { cash_on_hand: number; year: number } | null;
+  onUpdate: (year: number, inputs: CashFlowInputs) => void; // updateYear(year: number, newInputs: CashFlowInputs): void;
 }
 
 const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-export default function CashOnHandCalc({ currentYear, inputs, result, displayResult, onUpdate }: Props) {
-  const [draft, setDraft] = useState<Inputs | null>(null);
+export default function CashFlowPanel({ currentYear, inputs, yearData, displayResult, onUpdate }: Props) {
+  const [draft, setDraft] = useState<CashFlowInputs | null>(null);
   const [open, setOpen] = useState(false);
 
   const openModal = () => {
@@ -46,10 +37,11 @@ export default function CashOnHandCalc({ currentYear, inputs, result, displayRes
 
   const handleSave = () => {
     if (!draft) return;
-    const changes = diffInputs(inputs, draft);
-    if (Object.keys(changes).length > 0) onUpdate({ year: currentYear, ...changes });
+    onUpdate(currentYear, draft);
     closeModal();
   };
+
+  const hasResult = yearData.result?.cash_on_hand !== undefined;
 
   return (
     <>
@@ -76,13 +68,13 @@ export default function CashOnHandCalc({ currentYear, inputs, result, displayRes
           <div className="coh-stat">
             <span className="coh-stat-label">Start Net Income</span>
             <span className="coh-stat-value">
-              {result ? `$${fmt(result.start_net_income)}` : `$${fmt(inputs.net_income)}`}
+              {hasResult ? `$${fmt(yearData.result!.start_net_income!)}` : `$${fmt(inputs.net_income)}`}
             </span>
           </div>
           <div className="coh-stat">
             <span className="coh-stat-label">End Net Income</span>
             <span className="coh-stat-value">
-              {result ? `$${fmt(result.net_income)}` : "—"}
+              {hasResult ? `$${fmt(yearData.result!.net_income!)}` : "—"}
             </span>
           </div>
           <div className="coh-stat" />
@@ -90,13 +82,13 @@ export default function CashOnHandCalc({ currentYear, inputs, result, displayRes
           <div className="coh-stat">
             <span className="coh-stat-label">Start Expenses</span>
             <span className="coh-stat-value">
-              {result ? `$${fmt(result.start_expenses)}` : `$${fmt(inputs.expenses)}`}
+              {hasResult ? `$${fmt(yearData.result!.start_expenses!)}` : `$${fmt(inputs.expenses)}`}
             </span>
           </div>
           <div className="coh-stat">
             <span className="coh-stat-label">End Expenses</span>
             <span className="coh-stat-value">
-              {result ? `$${fmt(result.expenses)}` : "—"}
+              {hasResult ? `$${fmt(yearData.result!.expenses!)}` : "—"}
             </span>
           </div>
           <div className="coh-stat" />
@@ -104,7 +96,7 @@ export default function CashOnHandCalc({ currentYear, inputs, result, displayRes
 
         <div className="coh-projection">
           <span className="coh-projection-label">
-            {result ? `End of Year ${currentYear}` : "\u00A0"}
+            {hasResult ? `End of Year ${currentYear}` : "\u00A0"}
           </span>
           <span className="coh-projection-value">
             {displayResult ? `$${fmt(displayResult.cash_on_hand)}` : "Press play to calculate"}

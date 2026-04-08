@@ -69,7 +69,12 @@ type SimAction =
   | { type: "SET_PLAYING"; isPlaying: boolean }
   | { type: "SEEK"; year: number }
   | { type: "ADVANCE_YEAR" }
-  | { type: "RESET" };
+  | { type: "RESET" }
+  | {type: "ADD_ASSET"; asset: NewAsset; year:number}
+  | {type: "SELL_ASSET"; id: number};
+
+
+
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 
@@ -191,11 +196,14 @@ export function useSimulation() {
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [isPlaying, currentYear]);
 
+  
+
   return {
     currentYear,
     currentYearData,
     isPlaying,
     status,
+    assets: visibleAssets,
     error,
     currentInputs,
     displayResult,

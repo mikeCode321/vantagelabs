@@ -1,7 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400&display=swap');
 
 * { box-sizing: border-box; }
-
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
 :root {
   --primary:   #2A4C65;
   --accent:    #F2A65A;

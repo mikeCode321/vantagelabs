@@ -6,6 +6,12 @@
   background: rgba(42, 76, 101, 0.82);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  transform: translateY(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.navbar-hidden {
+  transform: translateY(-100%);
 }
 
 .navbar-inner {

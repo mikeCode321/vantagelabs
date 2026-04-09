@@ -1,13 +1,13 @@
-import Link from "next/link";
-// import Image from "next/image";
+import Navbar from "@/components/Landing/Navbar";
+import HeroSection  from "@/components/Landing/HeroSection";
+import PricingSection from "@/components/Landing/PricingSection";
 
-export default function Home() {
-
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <Link href="/dashboard">
-        Click to go to dashboard
-      </Link>      
-    </div>
+    <main className="min-h-screen bg-black text-white">
+      <Navbar />
+      <HeroSection />
+      <PricingSection />
+    </main>
   );
 }

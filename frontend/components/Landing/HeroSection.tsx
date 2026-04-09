@@ -30,7 +30,7 @@ export default function HeroSection() {
         <div className="hero-right">
           <div className="hero-visual-card">
             <Image
-              src="/dashboard-preview.jpg"
+              src="/dashboard-preview.png"
               alt="Financial simulator preview"
               width={700}
               height={500}

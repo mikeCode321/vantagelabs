@@ -1,0 +1,141 @@
+.hero-section {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  padding: 48px 24px 72px;
+  background:
+    radial-gradient(circle at top left, rgba(95, 167, 171, 0.18), transparent 32%),
+    linear-gradient(180deg, var(--soft-bg) 0%, var(--off-white) 100%);
+}
+
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: center;
+  gap: 48px;
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hero-eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+.hero-title {
+  font-size: clamp(2.8rem, 5vw, 5rem);
+  line-height: 0.98;
+  font-weight: 800;
+  color: var(--primary);
+  max-width: 620px;
+}
+
+.hero-accent {
+  color: var(--accent);
+}
+
+.hero-description {
+  max-width: 560px;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(42, 76, 101, 0.85);
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.hero-button {
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.hero-button:hover {
+  transform: translateY(-1px);
+}
+
+.hero-button-primary {
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: var(--white);
+}
+
+.hero-button-primary:hover {
+  background: #203d52;
+}
+
+.hero-button-secondary {
+  border: 1px solid rgba(42, 76, 101, 0.18);
+  background: transparent;
+  color: var(--primary);
+}
+
+.hero-button-secondary:hover {
+  background: rgba(95, 167, 171, 0.1);
+  border-color: rgba(95, 167, 171, 0.4);
+}
+
+.hero-right {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-visual-card {
+  width: 100%;
+  max-width: 620px;
+  border-radius: 28px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 24px 70px rgba(42, 76, 101, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 20px;
+}
+
+@media (max-width: 960px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .hero-left {
+    text-align: center;
+    align-items: center;
+  }
+
+  .hero-description {
+    max-width: 680px;
+  }
+
+  .hero-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

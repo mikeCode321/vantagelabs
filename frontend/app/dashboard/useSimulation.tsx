@@ -32,7 +32,6 @@ export interface CashFlowResult {
 
 export interface Inputs {
   cashflow: CashFlowInputs;
-
 }
 
 export interface YearData {
@@ -70,8 +69,8 @@ type SimAction =
   | { type: "SEEK"; year: number }
   | { type: "ADVANCE_YEAR" }
   | { type: "RESET" }
-  | {type: "ADD_ASSET"; asset: NewAsset; year:number}
-  | {type: "SELL_ASSET"; id: number};
+  // | {type: "ADD_ASSET"; asset: NewAsset; year:number}
+  // | {type: "SELL_ASSET"; id: number};
 
 
 
@@ -203,7 +202,7 @@ export function useSimulation() {
     currentYearData,
     isPlaying,
     status,
-    assets: visibleAssets,
+    // assets: visibleAssets,
     error,
     currentInputs,
     displayResult,

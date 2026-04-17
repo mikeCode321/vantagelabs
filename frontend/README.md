@@ -77,3 +77,129 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
   //   creator: "@VantageLabs",
   // },
 // };
+
+
+
+
+current API output:
+[
+  {
+    "year": 1,
+    "net_worth": 436518.74,
+    "total_cash": 106518.74,
+    "total_income": 120000,
+    "total_expenses": 32000,
+    "sources": [
+      {
+        "id": "hysa_1",
+        "name": "bank_of_america",
+        "source_type": "liquid",
+        "asset_value": 106518.74,
+        "annual_cashflow": 1718.74,
+        "start_value": null,
+        "end_value": null
+      },
+      {
+        "id": "job_1",
+        "name": "Google",
+        "source_type": "job",
+        "asset_value": 0,
+        "annual_cashflow": 120000,
+        "start_value": 120000,
+        "end_value": 123600
+      },
+      {
+        "id": "exp_1",
+        "name": "Living Expenses",
+        "source_type": "expense",
+        "asset_value": 0,
+        "annual_cashflow": -32000,
+        "start_value": 32000,
+        "end_value": 32640
+      },
+      {
+        "id": "rental_1",
+        "name": "123 Lane St, Michigan 12345",
+        "source_type": "rental",
+        "asset_value": 330000,
+        "annual_cashflow": 16800,
+        "start_value": null,
+        "end_value": null
+      }
+    ]
+  },
+  {
+    "year": 2,
+    "net_worth": 559696.04,
+    "total_cash": 196696.04,
+    "total_income": 123600,
+    "total_expenses": 55000,
+    "sources": [
+      {
+        "id": "hysa_1",
+        "name": "bank_of_america",
+        "source_type": "liquid",
+        "asset_value": 196696.04,
+        "annual_cashflow": 4777.3,
+        "start_value": null,
+        "end_value": null
+      },
+      {
+        "id": "job_1",
+        "name": "Google",
+        "source_type": "job",
+        "asset_value": 0,
+        "annual_cashflow": 123600,
+        "start_value": 123600,
+        "end_value": 127308
+      },
+      {
+        "id": "exp_1",
+        "name": "Living Expenses",
+        "source_type": "expense",
+        "asset_value": 0,
+        "annual_cashflow": -55000,
+        "start_value": 55000,
+        "end_value": 56925
+      },
+      {
+        "id": "rental_1",
+        "name": "123 Lane St, Michigan 12345",
+        "source_type": "rental",
+        "asset_value": 363000,
+        "annual_cashflow": 16800,
+        "start_value": null,
+        "end_value": null
+      }
+    ]
+  }
+]
+
+
+When state changes, what reruns exactly?
+
+When you dispatch:
+
+dispatch({ type: "SET_PLAYING", isPlaying: true });
+
+or
+
+dispatch({ type: "UPDATE_YEAR", ... });
+
+this happens:
+
+Step-by-step
+dispatch is called
+
+React calls:
+
+simReducer(state, action)
+New state is returned
+
+React re-renders:
+
+useSimulation()
+
+Then React re-renders:
+
+Dashboard()

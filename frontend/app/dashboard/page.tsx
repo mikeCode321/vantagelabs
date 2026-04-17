@@ -1,17 +1,13 @@
 "use client";
 import "./dashboard.css";
-import { useState } from "react";
 import CashFlowPanel from "@/components/Dashboard/CashFlowPanel/CashFlowPanel";
 import SimControls from "@/components/Dashboard/SimControls/SimControls";
 import AssetPortfolio from "@/components/Dashboard/Assets/AssetPortfolio";
-import { Asset } from "@/components/Dashboard/Assets/types";
-import { INITIAL_ASSETS, SIM_MAX } from "@/app/dashboard/constants";
+import { SIM_MAX } from "@/app/dashboard/constants";
 import { useSimulation } from "./useSimulation";
 
 export default function Dashboard() {
-  
   const sim = useSimulation();
-
 
   return (
     <div className="dash-root">
@@ -54,6 +50,7 @@ export default function Dashboard() {
             <AssetPortfolio
               assets={sim.assets}
               currentYear={sim.currentYear}
+              currentResult={sim.currentYearData.result}
               onAddAsset={sim.addAsset}
               onSellAsset={sim.sellAsset}
             />

@@ -1,38 +1,39 @@
 "use client";
 import "./CashFlowPanel.css";
 import { useState } from "react";
-import { CashFlowInputs, CashFlowResult, Tier } from "@/app/dashboard/useSimulation";
+import type { YearInputs, YearData, SimYearResult, Tier } from "@/app/dashboard/useSimulation";
 
 interface Props {
   currentYear: number;
-  inputs: CashFlowInputs;
-  yearData: { year: number, inputs: CashFlowInputs, userEditedFields: Set<keyof CashFlowInputs>, result?: CashFlowResult };
-  displayResult: { cash_on_hand: number; year: number } | null;
-  onUpdate: (year: number, inputs: CashFlowInputs) => void; // updateYear(year: number, newInputs: CashFlowInputs): void;
+  inputs: YearInputs;
+  yearData: YearData;
+  displayResult: {
+    year: number;
+    total_cash: number;
+    net_worth: number;
+    total_income: number;
+    total_expenses: number;
+    sources: SimYearResult["sources"];
+  } | null;
+  onUpdate: (year: number, inputs: YearInputs) => void;
 }
 
-const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt = (n: number) =>
+  n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 export default function CashFlowPanel({ currentYear, inputs, yearData, displayResult, onUpdate }: Props) {
-  const [draft, setDraft] = useState<CashFlowInputs | null>(null);
+  const [draft, setDraft] = useState<YearInputs | null>(null);
   const [open, setOpen] = useState(false);
 
-  const openModal = () => {
-    setDraft(structuredClone(inputs));
-    setOpen(true);
-  };
-
-  const closeModal = () => {
-    setDraft(null);
-    setOpen(false);
-  };
+  const openModal = () => { setDraft(structuredClone(inputs)); setOpen(true); };
+  const closeModal = () => { setDraft(null); setOpen(false); };
 
   const updateTier = (i: number, field: keyof Tier, value: number) => {
     if (!draft) return;
-    const tiers = [...draft.tiers];
+    const tiers = [...draft.interest_tiers];
     tiers[i] = { ...tiers[i], [field]: value };
-    setDraft({ ...draft, tiers });
+    setDraft({ ...draft, interest_tiers: tiers });
   };
 
   const handleSave = () => {
@@ -41,13 +42,20 @@ export default function CashFlowPanel({ currentYear, inputs, yearData, displayRe
     closeModal();
   };
 
-  const hasResult = yearData.result?.cash_on_hand !== undefined;
+  const hasResult = yearData.result !== undefined;
+
+  // Pull per-source display values from result
+  const jobSnap = yearData.result?.sources.find((s) => s.source_type === "job");
+  const expSnap = yearData.result?.sources.find((s) => s.source_type === "expense");
+  const liquidSnap = yearData.result?.sources.find(
+    (s) => s.source_type === "liquid" || s.source_type === "cash"
+  );
 
   return (
     <>
       <div className="coh-card">
         <div className="coh-card-header">
-          <span className="coh-card-title">Cash on Hand</span>
+          <span className="coh-card-title">Cash Flow</span>
           <button className="coh-edit-btn" onClick={openModal}>Edit</button>
         </div>
 
@@ -65,33 +73,51 @@ export default function CashFlowPanel({ currentYear, inputs, yearData, displayRe
             <span className="coh-stat-value">{pct(inputs.expense_growth)}</span>
           </div>
 
+          {/* Income row */}
           <div className="coh-stat">
-            <span className="coh-stat-label">Start Net Income</span>
+            <span className="coh-stat-label">Start Income</span>
             <span className="coh-stat-value">
-              {hasResult ? `$${fmt(yearData.result!.start_net_income!)}` : `$${fmt(inputs.net_income)}`}
+              {hasResult && jobSnap?.start_value != null
+                ? `$${fmt(jobSnap.start_value)}`
+                : `$${fmt(inputs.net_income)}`}
             </span>
           </div>
           <div className="coh-stat">
-            <span className="coh-stat-label">End Net Income</span>
+            <span className="coh-stat-label">End Income</span>
             <span className="coh-stat-value">
-              {hasResult ? `$${fmt(yearData.result!.net_income!)}` : "—"}
+              {hasResult && jobSnap?.end_value != null ? `$${fmt(jobSnap.end_value)}` : "—"}
             </span>
           </div>
           <div className="coh-stat" />
 
+          {/* Expense row */}
           <div className="coh-stat">
             <span className="coh-stat-label">Start Expenses</span>
             <span className="coh-stat-value">
-              {hasResult ? `$${fmt(yearData.result!.start_expenses!)}` : `$${fmt(inputs.expenses)}`}
+              {hasResult && expSnap?.start_value != null
+                ? `$${fmt(expSnap.start_value)}`
+                : `$${fmt(inputs.annual_expense)}`}
             </span>
           </div>
           <div className="coh-stat">
             <span className="coh-stat-label">End Expenses</span>
             <span className="coh-stat-value">
-              {hasResult ? `$${fmt(yearData.result!.expenses!)}` : "—"}
+              {hasResult && expSnap?.end_value != null ? `$${fmt(expSnap.end_value)}` : "—"}
             </span>
           </div>
           <div className="coh-stat" />
+
+          {/* Interest earned */}
+          {hasResult && liquidSnap && (
+            <>
+              <div className="coh-stat">
+                <span className="coh-stat-label">Interest Earned</span>
+                <span className="coh-stat-value">${fmt(liquidSnap.annual_cashflow)}</span>
+              </div>
+              <div className="coh-stat" />
+              <div className="coh-stat" />
+            </>
+          )}
         </div>
 
         <div className="coh-projection">
@@ -99,9 +125,19 @@ export default function CashFlowPanel({ currentYear, inputs, yearData, displayRe
             {hasResult ? `End of Year ${currentYear}` : "\u00A0"}
           </span>
           <span className="coh-projection-value">
-            {displayResult ? `$${fmt(displayResult.cash_on_hand)}` : "Press play to calculate"}
+            {displayResult
+              ? `$${fmt(displayResult.total_cash)}`
+              : "Press play to calculate"}
           </span>
         </div>
+
+        {/* Net worth row — only shown once results exist */}
+        {displayResult && (
+          <div className="coh-networth">
+            <span className="coh-networth-label">Net Worth </span>
+            <span className="coh-networth-value">${fmt(displayResult.net_worth)}</span>
+          </div>
+        )}
       </div>
 
       {open && draft && (
@@ -118,13 +154,24 @@ export default function CashFlowPanel({ currentYear, inputs, yearData, displayRe
                 <div className="coh-row">
                   <div className="coh-field">
                     <label>Amount ($)</label>
-                    <input type="number" value={draft.net_income}
-                      onChange={(e) => setDraft({ ...draft, net_income: Number(e.target.value) || 0 })} />
+                    <input
+                      type="number"
+                      value={draft.net_income}
+                      onChange={(e) =>
+                        setDraft({ ...draft, net_income: Number(e.target.value) || 0 })
+                      }
+                    />
                   </div>
                   <div className="coh-field">
                     <label>Annual Growth</label>
-                    <input type="number" step="0.01" value={draft.income_growth}
-                      onChange={(e) => setDraft({ ...draft, income_growth: Number(e.target.value) || 0 })} />
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={draft.income_growth}
+                      onChange={(e) =>
+                        setDraft({ ...draft, income_growth: Number(e.target.value) || 0 })
+                      }
+                    />
                   </div>
                 </div>
               </div>
@@ -134,13 +181,24 @@ export default function CashFlowPanel({ currentYear, inputs, yearData, displayRe
                 <div className="coh-row">
                   <div className="coh-field">
                     <label>Amount ($)</label>
-                    <input type="number" value={draft.expenses}
-                      onChange={(e) => setDraft({ ...draft, expenses: Number(e.target.value) || 0 })} />
+                    <input
+                      type="number"
+                      value={draft.annual_expense}
+                      onChange={(e) =>
+                        setDraft({ ...draft, annual_expense: Number(e.target.value) || 0 })
+                      }
+                    />
                   </div>
                   <div className="coh-field">
                     <label>Annual Growth</label>
-                    <input type="number" step="0.01" value={draft.expense_growth}
-                      onChange={(e) => setDraft({ ...draft, expense_growth: Number(e.target.value) || 0 })} />
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={draft.expense_growth}
+                      onChange={(e) =>
+                        setDraft({ ...draft, expense_growth: Number(e.target.value) || 0 })
+                      }
+                    />
                   </div>
                 </div>
               </div>
@@ -148,25 +206,55 @@ export default function CashFlowPanel({ currentYear, inputs, yearData, displayRe
               <div className="coh-group">
                 <div className="coh-tier-header">
                   <span className="coh-group-label">Interest Tiers</span>
-                  <button className="coh-add-btn"
-                    onClick={() => setDraft({ ...draft, tiers: [...draft.tiers, { threshold: 0, annual_rate: 0 }] })}>
+                  <button
+                    className="coh-add-btn"
+                    onClick={() =>
+                      setDraft({
+                        ...draft,
+                        interest_tiers: [
+                          ...draft.interest_tiers,
+                          { threshold: 0, annual_rate: 0 },
+                        ],
+                      })
+                    }
+                  >
                     + Add
                   </button>
                 </div>
-                {draft.tiers.map((tier, i) => (
+                {draft.interest_tiers.map((tier, i) => (
                   <div key={i} className="coh-tier-row">
                     <div className="coh-field">
                       <label>Threshold ($)</label>
-                      <input type="number" value={tier.threshold}
-                        onChange={(e) => updateTier(i, "threshold", Number(e.target.value) || 0)} />
+                      <input
+                        type="number"
+                        value={tier.threshold}
+                        onChange={(e) =>
+                          updateTier(i, "threshold", Number(e.target.value) || 0)
+                        }
+                      />
                     </div>
                     <div className="coh-field">
                       <label>Annual Rate</label>
-                      <input type="number" step="0.001" value={tier.annual_rate}
-                        onChange={(e) => updateTier(i, "annual_rate", Number(e.target.value) || 0)} />
+                      <input
+                        type="number"
+                        step="0.001"
+                        value={tier.annual_rate}
+                        onChange={(e) =>
+                          updateTier(i, "annual_rate", Number(e.target.value) || 0)
+                        }
+                      />
                     </div>
-                    <button className="coh-remove-btn"
-                      onClick={() => setDraft({ ...draft, tiers: draft.tiers.filter((_, j) => j !== i) })}>×</button>
+                    <button
+                      className="coh-remove-btn"
+                      onClick={() =>
+                        setDraft({
+                          ...draft,
+                          interest_tiers: draft.interest_tiers.filter((_, j) => j !== i),
+                        })
+                      }
+                    >
+                      ×
+                    </button>
                   </div>
                 ))}
               </div>

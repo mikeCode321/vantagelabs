@@ -1,0 +1,23 @@
+{
+  "start_year": 1,
+  "end_year": 3,
+  "liquid_accounts": [],
+  "incomes": [
+    {
+      "id": "job_1",
+      "name": "Salary",
+      "net_income": 70000,
+      "income_growth": 0.02
+    }
+  ],
+  "expenses": [],
+  "assets": [],
+  "events": [
+    {
+      "year": 2,
+      "action": "remove",
+      "source_type": "income",
+      "source_id": "job_1"
+    }
+  ]
+}

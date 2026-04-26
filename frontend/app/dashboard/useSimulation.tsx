@@ -1,367 +1,410 @@
-import { useReducer, useEffect, useRef } from "react";
-import { API, SIM_MAX, DEFAULTS } from "@/app/dashboard/constants";
-import { buildPayload, propagateInputs } from "./utils";
-import { clear } from "console";
+// import { useReducer, useEffect, useRef } from "react";
+// import { API, SIM_MAX } from "@/app/dashboard/constants";
 
-// ─── API Types (mirrors backend schemas) ─────────────────────────────────────
-export interface Tier {
-  threshold: number;
-  annual_rate: number;
-}
+// /* ─────────────────────────────────────────────
+//    TYPES (match backend EXACTLY)
+// ───────────────────────────────────────────── */
 
-export interface LiquidAccount {
-  source_type: "liquid" | "cash";
-  id: string;
-  name: string;
-  balance: number;
-  interest_tiers: Tier[];
-}
+// export interface Tier {
+//   threshold: number;
+//   annual_rate: number;
+// }
 
-export interface JobIncome {
-  source_type: "job";
-  id: string;
-  name: string;
-  net_income: number;
-  income_growth: number;
-}
+// export interface LiquidAccount {
+//   source_type: "liquid";
+//   id: string;
+//   name: string;
+//   balance: number;
+//   interest_tiers: Tier[];
+// }
 
-export interface ExpenseSource {
-  source_type: "expense";
-  id: string;
-  name: string;
-  annual_expense: number;
-  expense_growth: number;
-}
+// export interface IncomeSource {
+//   source_type: "income";
+//   id: string;
+//   name: string;
+//   net_income: number;
+//   income_growth: number;
+// }
 
-export interface RentalProperty {
-  source_type: "rental";
-  id: string;
-  name: string;
-  purchase_price: number;
-  down_payment: number;
-  annual_appreciation: number;
-  monthly_rent: number;
-  monthly_expenses: number;
-}
+// export interface ExpenseSource {
+//   source_type: "expense";
+//   id: string;
+//   name: string;
+//   annual_expense: number;
+//   expense_growth: number;
+// }
 
-export type AssetSource = RentalProperty; // extend union as more types added
+// export interface RentalProperty {
+//   source_type: "rental";
+//   id: string;
+//   name: string;
+//   purchase_price: number;
+//   down_payment: number;
+//   annual_appreciation: number;
+//   monthly_income: number;
+//   monthly_expenses: number;
+// }
 
-export interface SourceSnapshot {
-  id: string;
-  name: string;
-  source_type: string;
-  asset_value: number;
-  annual_cashflow: number;
-  start_value: number | null;
-  end_value: number | null;
-}
+// export type AssetSource = RentalProperty;
 
-export interface SimYearResult {
-  year: number;
-  net_worth: number;
-  total_cash: number;
-  total_income: number;
-  total_expenses: number;
-  sources: SourceSnapshot[];
-}
+// /* ─── Events ───────────────────────────────── */
 
-// ─── Per-year editable inputs ─────────────────────────────────────────────────
-// These are the fields the user can override on a per-year basis.
-// Mirrors the "base" cashflow — liquid account tiers, job income, expenses.
+// export interface IncomeEvent {
+//   year: number;
+//   source_id: string;
+//   action: "update" | "remove";
+//   net_income?: number;
+//   income_growth?: number;
+// }
 
-export interface YearInputs {
-  // liquid account (one for now)
-  liquid_balance: number;
-  interest_tiers: Tier[];
-  // job income
-  net_income: number;
-  income_growth: number;
-  // living expenses
-  annual_expense: number;
-  expense_growth: number;
-}
+// export interface ExpenseEvent {
+//   year: number;
+//   source_id: string;
+//   action: "update" | "remove";
+//   annual_expense?: number;
+//   expense_growth?: number;
+// }
 
-export interface YearData {
-  year: number;
-  inputs: YearInputs;
-  userEditedFields: Set<keyof YearInputs>;
-  result?: SimYearResult;
-}
+// export interface AssetEvent {
+//   year: number;
+//   action: "add" | "remove" | "update";
+//   source: AssetSource;
+// }
 
-// ─── Asset state (managed separately from timeline) ──────────────────────────
+// export interface SimEvent {
+//   year: number;
+//   income_events: IncomeEvent[];
+//   expense_events: ExpenseEvent[];
+//   asset_events: AssetEvent[];
+// }
 
-export interface AssetEntry {
-  id: string;
-  source: AssetSource;
-  addedYear: number; // sim year the asset was added
-  soldYear?: number; // sim year the asset was sold
-}
+// /* ─── Request / Response ───────────────────── */
 
-// ─── Sim state ────────────────────────────────────────────────────────────────
+// export interface SimRequest {
+//   start_year: number;
+//   end_year: number;
 
-type SimState = {
-  timeline: YearData[];
-  assets: AssetEntry[];
-  currentYear: number;
-  isPlaying: boolean;
-  error: string | null;
-  rerunFromYear: number | null;
-};
+//   liquid_accounts: LiquidAccount[];
+//   incomes: IncomeSource[];
+//   expenses: ExpenseSource[];
+//   assets: AssetSource[];
 
-function buildInitialTimeline(): YearData[] {
-  return Array.from({ length: SIM_MAX }, (_, i) => ({
-    year: i + 1,
-    inputs: { ...DEFAULTS },
-    userEditedFields: new Set<keyof YearInputs>(),
-  }));
-}
+//   events: SimEvent[];
+// }
 
-// ─── Actions ──────────────────────────────────────────────────────────────────
+// export interface SourceSnapshot {
+//   id: string;
+//   name: string;
+//   source_type: string;
+//   asset_value: number;
+//   annual_cashflow: number;
+//   start_value?: number;
+//   end_value?: number;
+// }
 
-type SimAction =
-  | { type: "UPDATE_YEAR"; year: number; inputs: YearInputs }
-  | { type: "SIMULATION_COMPLETE"; fromYear: number; snapshots: SimYearResult[] }
-  | { type: "SIMULATION_ERROR"; error: string }
-  | { type: "SET_PLAYING"; isPlaying: boolean }
-  | { type: "SEEK"; year: number }
-  | { type: "ADVANCE_YEAR" }
-  | { type: "RESET" }
-  | { type: "ADD_ASSET"; asset: AssetSource; year: number }
-  | { type: "SELL_ASSET"; id: string; year: number };
+// export interface SimYearResult {
+//   year: number;
+//   net_worth: number;
+//   total_cash: number;
+//   total_income: number;
+//   total_expenses: number;
+//   sources: SourceSnapshot[];
+// }
 
-// ─── Reducer ──────────────────────────────────────────────────────────────────
+// /* ─────────────────────────────────────────────
+//    STATE
+// ───────────────────────────────────────────── */
 
-function updateRerun(from: number | null, year: number) {
-  return from === null ? year : Math.min(from, year);
-}
+// type SimState = {
+//   request: SimRequest;
+//   results: Map<number, SimYearResult>;
 
-function simReducer(state: SimState, action: SimAction): SimState {
-  switch (action.type) {
-    case "UPDATE_YEAR": {
-      const updatedTimeline = propagateInputs(state.timeline, action.year, action.inputs);
+//   currentYear: number;
+//   isPlaying: boolean;
+//   rerunFromYear: number | null;
+//   error: string | null;
+// };
 
-      return {
-        ...state,
-        timeline: updatedTimeline,
-        rerunFromYear: updateRerun(state.rerunFromYear, action.year),
-      };
-    }
+// /* ─────────────────────────────────────────────
+//    INITIAL STATE
+// ───────────────────────────────────────────── */
 
-    case "SIMULATION_COMPLETE": {
-      const timelineWithResults = state.timeline.map((yearEntry) => {
-        const matchingSnapshot = action.snapshots.find((snapshot) => snapshot.year === yearEntry.year);
+// const INITIAL_STATE: SimState = {
+//   request: {
+//     start_year: 1,
+//     end_year: SIM_MAX,
 
-        if (!matchingSnapshot) return yearEntry;
+//     liquid_accounts: [
+//       {
+//         source_type: "liquid",
+//         id: "hysa_1",
+//         name: "Primary Account",
+//         balance: 10000,
+//         interest_tiers: [
+//           { threshold: 50000, annual_rate: 0.045 },
+//           { threshold: 200000, annual_rate: 0.05 },
+//         ],
+//       },
+//     ],
 
-        return {
-          ...yearEntry,
-          result: matchingSnapshot,
-        };
-      });
+//     incomes: [
+//       {
+//         source_type: "income",
+//         id: "job_1",
+//         name: "Income",
+//         net_income: 80000,
+//         income_growth: 0.03,
+//       },
+//     ],
 
-      return {
-        ...state,
-        timeline: timelineWithResults,
-        rerunFromYear: null,
-        error: null,
-      };
-    }
+//     expenses: [
+//       {
+//         source_type: "expense",
+//         id: "exp_1",
+//         name: "Expenses",
+//         annual_expense: 40000,
+//         expense_growth: 0.02,
+//       },
+//     ],
 
-    case "SIMULATION_ERROR":
-      return {
-        ...state,
-        error: action.error,
-      };
+//     assets: [],
+//     events: [],
+//   },
 
-    case "SET_PLAYING":
-      return {
-        ...state,
-        isPlaying: action.isPlaying,
-      };
+//   results: new Map(),
 
-    case "SEEK":
-      return {
-        ...state,
-        isPlaying: false,
-        currentYear: Math.max(1, Math.min(SIM_MAX, action.year)),
-      };
+//   currentYear: 1,
+//   isPlaying: false,
+//   rerunFromYear: 1,
+//   error: null,
+// };
 
-    case "ADVANCE_YEAR":
-      return {
-        ...state,
-        currentYear: state.currentYear + 1,
-      };
+// /* ─────────────────────────────────────────────
+//    HELPERS
+// ───────────────────────────────────────────── */
 
-    case "RESET":
-      return {
-        timeline: buildInitialTimeline(),
-        assets: [],
-        currentYear: 1,
-        isPlaying: false,
-        error: null,
-        rerunFromYear: 1,
-      };
+// function updateRerun(from: number | null, year: number) {
+//   return from === null ? year : Math.min(from, year);
+// }
 
-    case "ADD_ASSET":
-      return {
-        ...state,
-        assets: [
-          ...state.assets,
-          {
-            id: action.asset.id,
-            source: action.asset,
-            addedYear: action.year,
-          },
-        ],
-        rerunFromYear: updateRerun(state.rerunFromYear, action.year),
-      };
+// function upsertEvent(events: SimEvent[], incoming: SimEvent): SimEvent[] {
+//   const existing = events.find(e => e.year === incoming.year);
 
-    case "SELL_ASSET":
-      return {
-        ...state,
-        assets: state.assets.map((assetEntry) => (assetEntry.id === action.id ? { ...assetEntry, soldYear: action.year } : assetEntry)),
-        rerunFromYear: updateRerun(state.rerunFromYear, action.year),
-      };
-  }
-}
+//   if (!existing) return [...events, incoming];
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
+//   return events.map(e =>
+//     e.year === incoming.year
+//       ? {
+//           ...e,
+//           income_events: [...e.income_events, ...incoming.income_events],
+//           expense_events: [...e.expense_events, ...incoming.expense_events],
+//           asset_events: [...e.asset_events, ...incoming.asset_events],
+//         }
+//       : e
+//   );
+// }
 
-// For display: prefer actual sim start values from result if available
-function getDisplayInputs(yearData: YearData): YearInputs {
-  const jobSnapshot = yearData.result?.sources.find((source) => source.source_type === "job");
-  const expenseSnapshot = yearData.result?.sources.find((source) => source.source_type === "expense");
+// /* ─────────────────────────────────────────────
+//    ACTIONS
+// ───────────────────────────────────────────── */
 
-  return {
-    ...yearData.inputs,
-    net_income: jobSnapshot?.start_value ?? yearData.inputs.net_income,
-    annual_expense: expenseSnapshot?.start_value ?? yearData.inputs.annual_expense,
-  };
-}
+// type SimAction =
+//   | { type: "ADD_EVENT"; event: SimEvent }
+//   | { type: "SIMULATION_COMPLETE"; results: SimYearResult[] }
+//   | { type: "SIMULATION_ERROR"; error: string }
+//   | { type: "SET_PLAYING"; isPlaying: boolean }
+//   | { type: "SEEK"; year: number }
+//   | { type: "ADVANCE_YEAR" }
+//   | { type: "RESET" };
 
-const initialState: SimState = {
-  timeline: buildInitialTimeline(),
-  assets: [],
-  currentYear: 1,
-  isPlaying: false,
-  error: null,
-  rerunFromYear: 1,
-};
+// /* ─────────────────────────────────────────────
+//    REDUCER
+// ───────────────────────────────────────────── */
 
-export function useSimulation() {
-  const [state, dispatch] = useReducer(simReducer, initialState);
-  // const [state, dispatch] = useReducer(simReducer, undefined, () => ({
-  //   timeline: buildInitialTimeline(),
-  //   assets: [],
-  //   currentYear: 1,
-  //   isPlaying: false,
-  //   error: null,
-  //   rerunFromYear: 1,
-  // }));
+// function simReducer(state: SimState, action: SimAction): SimState {
+//   switch (action.type) {
+//     case "ADD_EVENT":
+//       return {
+//         ...state,
+//         request: {
+//           ...state.request,
+//           events: upsertEvent(state.request.events, action.event),
+//         },
+//         rerunFromYear: updateRerun(state.rerunFromYear, action.event.year),
+//       };
 
-  const { timeline, assets, currentYear, isPlaying, error, rerunFromYear } = state;
+//     case "SIMULATION_COMPLETE": {
+//       const map = new Map(state.results);
 
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const clearTimer = () => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-  };
+//       action.results.forEach(r => {
+//         map.set(r.year, r);
+//       });
 
-  const currentYearData = timeline[currentYear - 1];
+//       return {
+//         ...state,
+//         results: map,
+//         rerunFromYear: null,
+//         error: null,
+//       };
+//     }
 
-  const currentInputs = getDisplayInputs(currentYearData);
+//     case "SIMULATION_ERROR":
+//       return { ...state, error: action.error };
 
-  const displayResult = currentYearData.result !== undefined ? currentYearData.result : null;
+//     case "SET_PLAYING":
+//       return { ...state, isPlaying: action.isPlaying };
 
-  const status = isPlaying ? "playing" : rerunFromYear !== null ? "edited" : currentYear >= SIM_MAX ? "done" : "paused";
+//     case "SEEK":
+//       return {
+//         ...state,
+//         isPlaying: false,
+//         currentYear: Math.max(1, Math.min(SIM_MAX, action.year)),
+//       };
 
-  const runSimulation = async (fromYear: number) => {
-    try {
-      const simulationPayload = buildPayload(timeline, assets, fromYear);
+//     case "ADVANCE_YEAR":
+//       return {
+//         ...state,
+//         currentYear: Math.min(state.currentYear + 1, SIM_MAX),
+//       };
 
-      const response = await fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(simulationPayload),
-      });
+//     case "RESET":
+//       return INITIAL_STATE;
 
-      if (!response.ok) {
-        throw new Error(`${response.status}: ${response.statusText}`);
-      }
+//     default:
+//       return state;
+//   }
+// }
 
-      const simulationSnapshots: SimYearResult[] = await response.json();
+// /* ─────────────────────────────────────────────
+//    HOOK
+// ───────────────────────────────────────────── */
 
-      dispatch({ type: "SIMULATION_COMPLETE", fromYear, snapshots: simulationSnapshots, });
-    } catch (error) {
-      dispatch({ type: "SIMULATION_ERROR", error: (error as Error).message, });
-    }
-  };
+// export function useSimulation() {
+//   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
 
-  const play = async () => {
-    if (rerunFromYear !== null) {
-      await runSimulation(rerunFromYear);
-    }
+//   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    dispatch({ type: "SET_PLAYING", isPlaying: true });
-  };
+//   const clearTimer = () => {
+//     if (timerRef.current) clearTimeout(timerRef.current);
+//   };
 
-  const pause = () => {
-    clearTimer();
-    dispatch({ type: "SET_PLAYING", isPlaying: false });
-  };
+//   const current = state.results.get(state.currentYear);
 
-  const reset = () => {
-    clearTimer();
-    dispatch({ type: "RESET" });
-  };
+//   /* ─── API ───────────────────────────────── */
 
-  const seekTo = (year: number) => {
-    clearTimer();
-    dispatch({ type: "SEEK", year });
-  };
+//   const runSimulation = async () => {
+//     try {
+//       const start = state.rerunFromYear ?? 1;
 
-  const updateYear = (year: number, inputs: YearInputs) => {
-    dispatch({ type: "UPDATE_YEAR", year, inputs });
-  };
+//       const response = await fetch(API, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({
+//           ...state.request,
+//           start_year: start,
+//         }),
+//       });
 
-  const addAsset = (assetSource: AssetSource) => {
-    dispatch({ type: "ADD_ASSET", asset: assetSource, year: currentYear, });
-  };
+//       const data: SimYearResult[] = await response.json();
 
-  const sellAsset = (assetId: string) => {
-    dispatch({ type: "SELL_ASSET", id: assetId, year: currentYear });
-  };
+//       dispatch({ type: "SIMULATION_COMPLETE", results: data });
+//     } catch (err) {
+//       dispatch({
+//         type: "SIMULATION_ERROR",
+//         error: (err as Error).message,
+//       });
+//     }
+//   };
 
-  useEffect(() => {
-    if (!isPlaying) return;
+//   /* ─── EVENT HELPERS ─────────────────────── */
 
-    if (currentYear >= SIM_MAX) {
-      dispatch({ type: "SET_PLAYING", isPlaying: false });
-      return;
-    }
+//   const updateIncome = (year: number, updates: Partial<IncomeEvent>) => {
+//     dispatch({
+//       type: "ADD_EVENT",
+//       event: {
+//         year,
+//         income_events: [
+//           {
+//             year,
+//             source_id: "job_1",
+//             action: "update",
+//             ...updates,
+//           },
+//         ],
+//         expense_events: [],
+//         asset_events: [],
+//       },
+//     });
+//   };
 
-    timerRef.current = setTimeout(() => {
-      dispatch({ type: "ADVANCE_YEAR" });
-    }, 600);
+//   const updateExpense = (year: number, updates: Partial<ExpenseEvent>) => {
+//     dispatch({
+//       type: "ADD_EVENT",
+//       event: {
+//         year,
+//         income_events: [],
+//         expense_events: [
+//           {
+//             year,
+//             source_id: "exp_1",
+//             action: "update",
+//             ...updates,
+//           },
+//         ],
+//         asset_events: [],
+//       },
+//     });
+//   };
 
-    return () => clearTimer();
-  }, [isPlaying, currentYear]);
+//   /* ─── PLAYBACK ─────────────────────────── */
 
-  return {
-    currentYear,
-    currentYearData,
-    assets,
-    isPlaying,
-    status,
-    error,
-    currentInputs,
-    displayResult,
-    play,
-    pause,
-    reset,
-    seekTo,
-    updateYear,
-    addAsset,
-    sellAsset,
-    getDisplayInputs,
-  };
-}
+//   const play = async () => {
+//     if (state.rerunFromYear !== null) {
+//       await runSimulation();
+//     }
+//     dispatch({ type: "SET_PLAYING", isPlaying: true });
+//   };
+
+//   const pause = () => {
+//     clearTimer();
+//     dispatch({ type: "SET_PLAYING", isPlaying: false });
+//   };
+
+//   const seekTo = (year: number) => {
+//     clearTimer();
+//     dispatch({ type: "SEEK", year });
+//   };
+
+//   /* ─── AUTO ADVANCE ─────────────────────── */
+
+//   useEffect(() => {
+//     if (!state.isPlaying) return;
+
+//     if (state.currentYear >= SIM_MAX) {
+//       dispatch({ type: "SET_PLAYING", isPlaying: false });
+//       return;
+//     }
+
+//     timerRef.current = setTimeout(() => {
+//       dispatch({ type: "ADVANCE_YEAR" });
+//     }, 600);
+
+//     return () => clearTimer();
+//   }, [state.isPlaying, state.currentYear]);
+
+//   return {
+//     currentYear: state.currentYear,
+//     currentResult: current,
+//     results: state.results,
+
+//     play,
+//     pause,
+//     seekTo,
+
+//     updateIncome,
+//     updateExpense,
+
+//     isPlaying: state.isPlaying,
+//     error: state.error,
+//   };
+// }

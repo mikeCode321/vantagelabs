@@ -5,16 +5,17 @@ finance.py — simulation service
 
 from typing import Dict, List
 from schemas.finance import (
+    Event,
     Tier,
     LiquidAccount,
-    JobIncome,
+    IncomeSource,
     RentalProperty,
     ExpenseSource,
     SimulateRequest,
     SourceSnapshot,
     SimYearResult,
 )
-
+from collections import defaultdict
 
 # ─── Tiered Interest ──────────────────────────────────────────────────────────
 
@@ -91,7 +92,7 @@ class _LiquidSim:
 # ─── Income Simulator ─────────────────────────────────────────────────────────
 
 class _JobSim:
-    def __init__(self, src: JobIncome):
+    def __init__(self, src: IncomeSource):
         self.id = src.id
         self.name = src.name
         self._annual = src.net_income
@@ -150,7 +151,7 @@ class _RentalSim:
         self.name = src.name
         self._value = src.purchase_price
         self._appreciation = src.annual_appreciation
-        self._monthly_rent = src.monthly_rent
+        self._monthly_rent = src.monthly_income
         self._monthly_expenses = src.monthly_expenses
 
     def monthly_cashflow(self) -> float:
@@ -180,6 +181,21 @@ def _get_asset_by_type(source):
         return _RentalSim(source)
     raise ValueError(f"Unknown asset source_type: {source.source_type}")
 
+# ─── Helpers ──────────────────────────────────────────────────────────────────
+
+def _build_sim_from_payload(payload):
+    if payload.source_type == "liquid":
+        return _LiquidSim(payload)
+    if payload.source_type == "income":
+        return _JobSim(payload)
+    if payload.source_type == "expense":
+        return _ExpenseSim(payload)
+    if payload.source_type == "rental":
+        return _RentalSim(payload)
+    raise ValueError(f"Unknown source_type: {payload.source_type}")
+
+
+
 
 # ─── Main Simulation ──────────────────────────────────────────────────────────
 
@@ -187,12 +203,12 @@ def simulate(req: SimulateRequest) -> List[SimYearResult]:
     periods_per_year = 12
     results: List[SimYearResult] = []
 
-    # ── Build simulators ──────────────────────────────────────────────────────
-    liquid_sims: Dict[str, _LiquidSim] = {acc.id: _LiquidSim(acc) for acc in req.liquid_accounts }
+    liquid_sims: Dict[str, _LiquidSim] = {
+        acc.id: _LiquidSim(acc) for acc in req.liquid_accounts
+    }
 
     if not liquid_sims:
         fallback = LiquidAccount(
-            source_type="liquid",
             id="__default__",
             name="Cash",
             balance=0.0,
@@ -200,77 +216,103 @@ def simulate(req: SimulateRequest) -> List[SimYearResult]:
         )
         liquid_sims["__default__"] = _LiquidSim(fallback)
 
-    default_liquid_id = next(iter(liquid_sims)) # Takes the first item produced by that iterator. Should add a value for primary liquid account in the future 
+    default_liquid_id = next(iter(liquid_sims))
 
-    income_sims:  Dict[str, _JobSim]     = {s.id: _JobSim(s)         for s in req.incomes}
-    expense_sims: Dict[str, _ExpenseSim] = {s.id: _ExpenseSim(s)     for s in req.expenses}
-    asset_sims:   Dict[str, _RentalSim]  = {s.id: _get_asset_by_type(s) for s in req.assets}
+    income_sims = {s.id: _JobSim(s) for s in req.incomes}
+    expense_sims = {s.id: _ExpenseSim(s) for s in req.expenses}
+    asset_sims = {s.id: _RentalSim(s) for s in req.assets}
 
-    events_by_year = {e.year: e for e in req.events}
+    events_by_year = defaultdict(list)
+    for e in req.events:
+        events_by_year[e.year].append(e)
 
     for year in range(req.start_year, req.end_year + 1):
+        # ── APPLY EVENTS ──────────────────────────────────────────────
+        for event in events_by_year.get(year, []):
+            stype = event.source_type
+            sid = event.source_id
 
-        # ── Apply year-level events ────────────────────────────────────────
-        event = events_by_year.get(year)
-        if event:
-            for ie in event.income_events:
-                sim = income_sims.get(ie.source_id)
-                if ie.action == "remove":
-                    income_sims.pop(ie.source_id, None)
-                elif ie.action == "update" and sim:
-                    if ie.net_income    is not None: 
-                        sim._annual  = ie.net_income
-                    if ie.income_growth is not None: 
-                        sim._growth  = ie.income_growth
+            if stype == "liquid":
+                target = liquid_sims
+            elif stype == "income":
+                target = income_sims
+            elif stype == "expense":
+                target = expense_sims
+            else:
+                target = asset_sims
 
-            for ee in event.expense_events:
-                sim = expense_sims.get(ee.source_id)
-                if ee.action == "remove":
-                    expense_sims.pop(ee.source_id, None)
-                elif ee.action == "update" and sim:
-                    if ee.annual_expense is not None: 
-                        sim._annual = ee.annual_expense
-                    if ee.expense_growth is not None: 
-                        sim._growth = ee.expense_growth
+            if event.action == "remove":
+                target.pop(sid, None)
+                continue
 
-            for ae in event.asset_events:
-                sid = ae.source.id
-                if ae.action == "add":
-                    asset_sims[sid] = _get_asset_by_type(ae.source)
-                elif ae.action == "remove":
-                    asset_sims.pop(sid, None)
-                elif ae.action == "update":
-                    asset_sims[sid] = _get_asset_by_type(ae.source)
+            if event.action == "add":
+                target[sid] = _build_sim_from_payload(event.add_payload)
+                continue
 
-        # ── Capture start values BEFORE anything mutates ──────────────────
-        income_start:  Dict[str, float] = {sid: sim._annual for sid, sim in income_sims.items()}
-        expense_start: Dict[str, float] = {sid: sim._annual for sid, sim in expense_sims.items()}
+            if event.action == "update":
+                sim = target.get(sid)
+                if not sim:
+                    continue
 
-        income_cashflows: Dict[str, float] = {sid: 0.0 for sid in income_sims}
-        expense_drains:   Dict[str, float] = {sid: 0.0 for sid in expense_sims}
-        asset_cashflows:  Dict[str, float] = {sid: 0.0 for sid in asset_sims}
+                upd = event.update_payload
 
-        # ── Monthly loop ──────────────────────────────────────────────────
+                if isinstance(sim, _LiquidSim):
+                    if upd.balance is not None:
+                        sim._balance = upd.balance
+                    if upd.interest_tiers is not None:
+                        sim._tiers = upd.interest_tiers
+
+                elif isinstance(sim, _JobSim):
+                    if upd.net_income is not None:
+                        sim._annual = upd.net_income
+                    if upd.income_growth is not None:
+                        sim._growth = upd.income_growth
+
+                elif isinstance(sim, _ExpenseSim):
+                    if upd.annual_expense is not None:
+                        sim._annual = upd.annual_expense
+                    if upd.expense_growth is not None:
+                        sim._growth = upd.expense_growth
+
+                elif isinstance(sim, _RentalSim):
+                    if upd.purchase_price is not None:
+                        sim._value = upd.purchase_price
+                    if upd.annual_appreciation is not None:
+                        sim._appreciation = upd.annual_appreciation
+                    if upd.monthly_income is not None:
+                        sim._monthly_rent = upd.monthly_income
+                    if upd.monthly_expenses is not None:
+                        sim._monthly_expenses = upd.monthly_expenses
+
+        # ── SNAPSHOT START VALUES ─────────────────────────────────────
+        income_start = {sid: sim._annual for sid, sim in income_sims.items()}
+        expense_start = {sid: sim._annual for sid, sim in expense_sims.items()}
+
+        income_cf = {sid: 0.0 for sid in income_sims}
+        expense_cf = {sid: 0.0 for sid in expense_sims}
+        asset_cf = {sid: 0.0 for sid in asset_sims}
+
+        # ── MONTHLY LOOP ──────────────────────────────────────────────
         for _ in range(periods_per_year):
             for sid, sim in income_sims.items():
                 cf = sim.monthly_cashflow()
                 liquid_sims[default_liquid_id].deposit(cf)
-                income_cashflows[sid] += cf
+                income_cf[sid] += cf
 
             for sid, sim in expense_sims.items():
-                drain = sim.monthly_drain()
-                liquid_sims[default_liquid_id].withdraw(drain)
-                expense_drains[sid] += drain
+                d = sim.monthly_drain()
+                liquid_sims[default_liquid_id].withdraw(d)
+                expense_cf[sid] += d
 
             for sid, sim in asset_sims.items():
                 cf = sim.monthly_cashflow()
                 liquid_sims[default_liquid_id].deposit(cf)
-                asset_cashflows[sid] += cf
+                asset_cf[sid] += cf
 
             for lsim in liquid_sims.values():
                 lsim.apply_interest(periods_per_year)
 
-        # ── End-of-year growth (annual, after monthly loop) ───────────────
+        # ── YEAR END ──────────────────────────────────────────────────
         for sim in income_sims.values():
             sim.end_of_year()
         for sim in expense_sims.values():
@@ -278,36 +320,24 @@ def simulate(req: SimulateRequest) -> List[SimYearResult]:
         for sim in asset_sims.values():
             sim.end_of_year()
 
-        # ── Snapshots ─────────────────────────────────────────────────────
-        liquid_snapshots = [
-            lsim.snapshot(lsim.flush_interest())
-            for lsim in liquid_sims.values()
-        ]
-        income_snapshots = [
-            sim.snapshot(income_cashflows[sid], income_start[sid])
-            for sid, sim in income_sims.items()
-        ]
-        expense_snapshots = [
-            sim.snapshot(expense_drains[sid], expense_start[sid])
-            for sid, sim in expense_sims.items()
-        ]
-        asset_snapshots = [
-            sim.snapshot(asset_cashflows[sid])
-            for sid, sim in asset_sims.items()
-        ]
+        # ── SNAPSHOTS ─────────────────────────────────────────────────
+        snapshots = (
+            [lsim.snapshot(lsim.flush_interest()) for lsim in liquid_sims.values()]
+            + [sim.snapshot(income_cf[sid], income_start[sid]) for sid, sim in income_sims.items()]
+            + [sim.snapshot(expense_cf[sid], expense_start[sid]) for sid, sim in expense_sims.items()]
+            + [sim.snapshot(asset_cf[sid]) for sid, sim in asset_sims.items()]
+        )
 
-        all_snapshots = liquid_snapshots + income_snapshots + expense_snapshots + asset_snapshots
-
-        total_cash        = sum(lsim.balance() for lsim in liquid_sims.values())
-        total_asset_value = sum(sim.asset_value() for sim in asset_sims.values())
+        total_cash = sum(lsim.balance() for lsim in liquid_sims.values())
+        total_assets = sum(sim.asset_value() for sim in asset_sims.values())
 
         results.append(SimYearResult(
             year=year,
-            net_worth=round(total_cash + total_asset_value, 2),
+            net_worth=round(total_cash + total_assets, 2),
             total_cash=round(total_cash, 2),
-            total_income=round(sum(income_cashflows.values()), 2),
-            total_expenses=round(sum(expense_drains.values()), 2),
-            sources=all_snapshots,
+            total_income=round(sum(income_cf.values()), 2),
+            total_expenses=round(sum(expense_cf.values()), 2),
+            sources=snapshots,
         ))
 
     return results

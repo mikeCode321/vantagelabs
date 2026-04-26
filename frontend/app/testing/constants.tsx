@@ -1,9 +1,9 @@
-// // Update this file to replace your existing constants.tsx
+// Update this file to replace your existing constants.tsx
 
 // import type { YearInputs } from "./useSimulation";
 
-// export const SIM_MAX = 30;
-// export const API = "http://127.0.0.1:8000/api/finance/simulate";
+export const SIM_MAX = 30;
+export const API = "http://127.0.0.1:8000/api/finance/simulate";
 
 // // Default values for a new timeline year — mirrors backend DEFAULTS
 // export const DEFAULTS: YearInputs = {

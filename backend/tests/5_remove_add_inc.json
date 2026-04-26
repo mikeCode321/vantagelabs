@@ -1,0 +1,45 @@
+
+
+{
+  "start_year": 1,
+  "end_year": 5,
+  "liquid_accounts": [
+    {
+      "id": "cash_1",
+      "name": "Cash",
+      "balance": 0,
+      "interest_tiers": []
+    }
+  ],
+  "incomes": [
+    {
+      "id": "job_1",
+      "name": "Salary",
+      "net_income": 70000,
+      "income_growth": 0.02
+    }
+  ],
+  "expenses": [],
+  "assets": [],
+  "events": [
+    {
+      "year": 2,
+      "action": "remove",
+      "source_type": "income",
+      "source_id": "job_1"
+    },
+    {
+      "year": 4,
+      "action": "add",
+      "source_type": "income",
+      "source_id": "job_1",
+      "add_payload": {
+        "source_type": "income",
+        "id": "job_1",
+        "name": "Main Job",
+        "net_income": 200000,
+        "income_growth": 0.1
+      }
+    }
+  ]
+}

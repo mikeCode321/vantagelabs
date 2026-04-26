@@ -1,0 +1,32 @@
+{
+  "start_year": 1,
+  "end_year": 3,
+  "liquid_accounts": [
+    {
+      "id": "cash_1",
+      "name": "Savings",
+      "balance": 10000,
+      "interest_tiers": [
+        { "threshold": 1000000, "annual_rate": 0.02 }
+      ]
+    }
+  ],
+  "incomes": [
+    {
+      "id": "job_1",
+      "name": "Salary",
+      "net_income": 60000,
+      "income_growth": 0.03
+    }
+  ],
+  "expenses": [
+    {
+      "id": "rent",
+      "name": "Rent",
+      "annual_expense": 24000,
+      "expense_growth": 0.02
+    }
+  ],
+  "assets": [],
+  "events": []
+}

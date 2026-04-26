@@ -16,24 +16,17 @@ class LiquidAccount(BaseModel):
     interest_tiers: List[Tier]  # positive = HYSA, near-zero/negative = cash inflation loss
 
 # ─── Job / Side Hustle ─────────────────────────────────────────────────────────
-class JobIncome(BaseModel):
-    source_type: Literal["job"] = "job"
+class IncomeSource(BaseModel):
+    source_type: Literal["income"] = "income"
     id: str
     name: str
     net_income: float
     income_growth: float
 
-# class SideHustle(BaseModel):
-#     source_type: Literal["side_hustle"] = "side_hustle"
-#     id: str
-#     name: str
-#     monthly_net: float
-#     growth_rate: float
-
-IncomeSource = Annotated[
-    Union[JobIncome], # SideHustle --- IGNORE ---],
-    Field(discriminator="source_type")
-]
+# IncomeSource = Annotated[
+#     Union[IncomeSource], # SideHustle --- IGNORE ---],
+#     Field(discriminator="source_type")
+# ]
 
 # ─── Asset Sources ─────────────────────────────────────────────────────────────
 class RentalProperty(BaseModel):
@@ -43,7 +36,7 @@ class RentalProperty(BaseModel):
     purchase_price: float
     down_payment: float
     annual_appreciation: float
-    monthly_rent: float
+    monthly_income: float
     monthly_expenses: float
 
 class StockPortfolio(BaseModel):
@@ -68,46 +61,115 @@ class ExpenseSource(BaseModel):
     annual_expense: float
     expense_growth: float
 
-# ─── Events (overrides for a specific year) ───────────────────────────────────
-class IncomeEvent(BaseModel):
-    year: int
-    source_id: str
-    action: Literal["update", "remove"]
+# # ─── Events (overrides for a specific year) ───────────────────────────────────
+# class IncomeEvent(BaseModel):
+#     year: int
+#     source_id: str
+#     action: Literal["update", "remove"]
 
+#     net_income: Optional[float] = None
+#     income_growth: Optional[float] = None
+
+# class ExpenseEvent(BaseModel):
+#     year: int
+#     source_id: str
+#     action: Literal["update", "remove"]
+#     annual_expense: Optional[float] = None
+#     expense_growth: Optional[float] = None
+
+# class AssetEvent(BaseModel):
+#     year: int
+#     action: Literal["add", "remove", "update"]
+#     source: AssetSource  # full source definition for add/update
+
+# class SimEvent(BaseModel):
+#     year: int
+#     income_events:  List[IncomeEvent] = []
+#     expense_events: List[ExpenseEvent] = []
+#     asset_events:   List[AssetEvent] = []
+
+
+# ─── UPDATE PAYLOADS (partial updates only) ───────────────────────────────────
+
+class LiquidUpdate(BaseModel):
+    balance: Optional[float] = None
+    interest_tiers: Optional[List[Tier]] = None
+
+
+class IncomeUpdate(BaseModel):
     net_income: Optional[float] = None
     income_growth: Optional[float] = None
 
-class ExpenseEvent(BaseModel):
-    year: int
-    source_id: str
-    action: Literal["update", "remove"]
+
+class ExpenseUpdate(BaseModel):
     annual_expense: Optional[float] = None
     expense_growth: Optional[float] = None
 
-class AssetEvent(BaseModel):
-    year: int
-    action: Literal["add", "remove", "update"]
-    source: AssetSource  # full source definition for add/update
 
-class SimEvent(BaseModel):
+class RentalUpdate(BaseModel):
+    purchase_price: Optional[float] = None
+    down_payment: Optional[float] = None
+    annual_appreciation: Optional[float] = None
+    monthly_income: Optional[float] = None
+    monthly_expenses: Optional[float] = None
+
+
+class StockUpdate(BaseModel):
+    initial_value: Optional[float] = None
+    annual_return: Optional[float] = None
+    monthly_contribution: Optional[float] = None
+    dividend_yield: Optional[float] = None
+
+
+UpdatePayload = Union[
+    LiquidUpdate,
+    IncomeUpdate,
+    ExpenseUpdate,
+    RentalUpdate,
+    StockUpdate,
+]
+
+
+AddPayload = Union[
+    LiquidAccount,
+    IncomeSource,
+    ExpenseSource,
+    RentalProperty,
+    StockPortfolio,
+]
+
+
+# ─── UNIFIED EVENT ────────────────────────────────────────────────────────────
+
+class Event(BaseModel):
     year: int
-    income_events:  List[IncomeEvent] = []
-    expense_events: List[ExpenseEvent] = []
-    asset_events:   List[AssetEvent] = []
+
+    action: Literal["add", "update", "remove"]
+
+    source_type: Literal["liquid", "income", "expense", "rental", "stock"]
+    source_id: str
+
+    # Only used when action == "add"
+    add_payload: Optional[AddPayload] = None
+
+    # Only used when action == "update"
+    update_payload: Optional[UpdatePayload] = None
+
 
 # ─── Request ──────────────────────────────────────────────────────────────────
+
+# ─── REQUEST ──────────────────────────────────────────────────────────────────
 
 class SimulateRequest(BaseModel):
     start_year: int
     end_year: int
 
     liquid_accounts: List[LiquidAccount] = []
-    assets:          List[AssetSource] = []
-    incomes:         List[IncomeSource] = []
-    expenses:        List[ExpenseSource] = []
+    assets: List[AssetSource] = []
+    incomes: List[IncomeSource] = []
+    expenses: List[ExpenseSource] = []
 
-    events:          List[SimEvent] = []
-
+    events: List[Event] = []
 
 # ─── Response ─────────────────────────────────────────────────────────────────
 

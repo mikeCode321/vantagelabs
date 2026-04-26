@@ -1,0 +1,33 @@
+{
+  "start_year": 1,
+  "end_year": 5,
+  "liquid_accounts": [],
+  "incomes": [
+    {
+      "id": "job_1",
+      "name": "Salary",
+      "net_income": 80000,
+      "income_growth": 0.02
+    }
+  ],
+  "expenses": [],
+  "assets": [],
+  "events": [
+    {
+      "year": 3,
+      "action": "add",
+      "source_type": "rental",
+      "source_id": "rental_1",
+      "add_payload": {
+        "source_type": "rental",
+        "id": "rental_1",
+        "name": "Duplex",
+        "purchase_price": 300000,
+        "down_payment": 60000,
+        "annual_appreciation": 0.04,
+        "monthly_income": 2500,
+        "monthly_expenses": 1200
+      }
+    }
+  ]
+}

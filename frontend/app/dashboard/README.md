@@ -80,3 +80,47 @@ year 5 edited again: income_growth=0.05
   year 10: has net_income in userEditedFields but NOT income_growth
            → income_growth continues propagating ✅
   years 11-30: income_growth=0.05 ✅
+
+
+
+<!-- ADDING SEGMENTS (EXPERIMENTAL) -->
+{
+  "start_year": 1,
+  "end_year": 30,
+  "liquid_accounts": [
+    {
+      "source_type": "liquid",
+      "id": "4a2779f8-a21f-46da-9cd0-e8c58ffaea97",
+      "name": "Liquid Account",
+      "segments": [
+        {
+          "id": "7ca04b77-1003-4cc4-9224-4aea9a504ed3",
+          "start_year": 5,
+          "end_year": 10,
+          "balance": 1000,
+          "interest_tiers": [
+            {
+              "threshold": 100,
+              "annual_rate": 0.1
+            }
+          ]
+        },
+        {
+          "id": "f37f557d-047d-4435-ab97-1026774196ff",
+          "start_year": 10,
+          "end_year": 30,
+          "balance": 1000,
+          "interest_tiers": [
+            {
+              "threshold": 100,
+              "annual_rate": 0.1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assets": [],
+  "incomes": [],
+  "expenses": []
+}

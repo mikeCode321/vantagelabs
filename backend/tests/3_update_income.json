@@ -1,0 +1,26 @@
+{
+  "start_year": 1,
+  "end_year": 5,
+  "liquid_accounts": [],
+  "incomes": [
+    {
+      "id": "job_1",
+      "name": "Salary",
+      "net_income": 50000,
+      "income_growth": 0.02
+    }
+  ],
+  "expenses": [],
+  "assets": [],
+  "events": [
+    {
+      "year": 3,
+      "action": "update",
+      "source_type": "income",
+      "source_id": "job_1",
+      "update_payload": {
+        "net_income": 90000
+      }
+    }
+  ]
+}

@@ -6,7 +6,7 @@ from slowapi.middleware import SlowAPIMiddleware
 
 from config.settings import ENV
 from logger import Logger
-from dependencies import limiter
+# from dependencies import limiter
 from routers import contacts, finance
 
 log = Logger(location='main.py')
@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 if ENV != "development":
-    app.state.limiter = limiter
+    # app.state.limiter = limiter
     app.add_middleware(SlowAPIMiddleware)
     app.add_exception_handler(
         RateLimitExceeded,

@@ -10,12 +10,12 @@ def get_db():
     finally:
         db.close()
 
-if ENV != "development":
-    limiter = Limiter(key_func=get_remote_address)
-else:
-    class DummyLimiter:
-        def limit(self, *args, **kwargs):
-            def decorator(func):
-                return func
-            return decorator
-    limiter = DummyLimiter()
+# if ENV != "development":
+#     limiter = Limiter(key_func=get_remote_address)
+# else:
+#     class DummyLimiter:
+#         def limit(self, *args, **kwargs):
+#             def decorator(func):
+#                 return func
+#             return decorator
+#     limiter = DummyLimiter()

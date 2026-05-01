@@ -203,3 +203,69 @@ useSimulation()
 Then React re-renders:
 
 Dashboard()
+
+
+FROM MONOLITH -> COMPONENTS 
+app/
+  dashboard/
+    page.tsx   (or Dashboard.tsx wrapper)
+
+features/
+  finance/
+    core/
+      types.ts
+      reducer.ts
+      initialState.ts
+
+    accounts/
+      components/
+        LiquidAccountForm.tsx
+        LiquidAccountRow.tsx
+        CheckingAccountForm.tsx
+      index.ts
+
+    income/
+      components/
+        SalaryForm.tsx
+        HourlyWageForm.tsx
+        InheritanceForm.tsx
+        IncomeRow.tsx
+        EditSalaryForm.tsx
+        EditHourlyWageForm.tsx
+        EditInheritanceForm.tsx
+      index.ts
+
+    expenses/
+      components/
+        LivingExpensesForm.tsx
+        RentExpenseForm.tsx
+        EducationExpenseForm.tsx
+        ExpenseRow.tsx
+      index.ts
+
+    assets/
+      components/
+        AssetForm.tsx
+        RentalPropertyForm.tsx
+        AssetRow.tsx
+      index.ts
+
+    simulation/
+      components/
+        SimulationControls.tsx
+        NetWorthStackedChart.tsx
+        SimResultViewer.tsx
+        CustomTooltip.tsx
+      api.ts
+      transform.ts
+      index.ts
+
+    ui/
+      FinancialEntity.tsx
+      FinancialEntityModal.tsx
+      FinancialEntities.tsx
+      modalStyles.ts
+      rowStyles.ts
+      containerStyles.ts
+
+    index.ts

@@ -150,7 +150,7 @@ type Action =
   | { type: "ADD_EXPENSE"; payload: ExpenseSource }
   | { type: "UPDATE_EXPENSE"; payload: ExpenseSource }
   | { type: "DELETE_EXPENSE"; payload: { id: string } }
-  
+
   | { type: "ADD_ASSET"; payload: AssetSource }
   | { type: "UPDATE_ASSET"; payload: AssetSource }
   | { type: "DELETE_ASSET"; payload: { id: string } };
@@ -930,6 +930,19 @@ function LiquidAccountList({ accounts, dispatch }: { accounts: LiquidAccount[]; 
   );
 }
 
+export function FinanicalEntity({entityName}){
+
+    return (
+        <>
+            <div>
+                <h1>{entityName}</h1>
+
+                <button>Add</button>
+            </div>
+        </>
+    )
+}
+
 import {
   BarChart,
   AreaChart,
@@ -1165,6 +1178,7 @@ export default function Dashboard() {
         </header>
 
         <pre>{JSON.stringify(state, null, 2)}</pre>
+        <FinanicalEntity entityName={"Accounts"}/>
         <IncomeList incomes={state.incomes} dispatch={dispatch} />
         <AssetList assets={state.assets} dispatch={dispatch} />
         <ExpenseList expenses={state.expenses} dispatch={dispatch} />

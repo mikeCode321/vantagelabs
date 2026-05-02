@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import "./Navbar.css";
 
-const navItems = ["Home", "Product", "Demo", "Pricing", "About"];
+const navItems = ["Home", "Product", "Demo", "Pricing", "About", "Feedback"];
 
 export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true);

@@ -6,7 +6,7 @@ const features = [
     eyebrow: "OPTIMIZE EXPENSES",
     title: "Find better ways to spend",
     description:
-      "Optimize your expenses by having Vantage point out affreituous expendatures on subscriptions and insurance",
+      "Vantage helps identify unnecessary spending across subscriptions, insurance, and recurring bills, then points you toward smarter ways to lower your monthly costs.",
   },
   {
     eyebrow: "VISUALIZE YOUR LIFESTYLE",
@@ -24,7 +24,7 @@ const features = [
     eyebrow: "AI OUTLOOK",
     title: "Get an agentic view of your plan",
     description:
-      "Vantage can analyze your simulation, highlight risks and opportunities, and explain what changes could improve your long-term financial path.",
+      "Vantage can analyze your simulation, highlight risks and opportunities, and explain what changes could improve your long term financial path.",
   },
 ];
 

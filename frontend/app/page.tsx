@@ -3,6 +3,7 @@ import HeroSection  from "@/components/Landing/HeroSection";
 import PricingSection from "@/components/Landing/PricingSection";
 import WhatIsVantageSection from "@/components/Landing/WhatIsVantageSection";
 import FeatureHighlightsSection from "@/components/Landing/FeatureHighlightSection";
+import Footer from "@/components/Landing/Footer";
 
 export default function HomePage() {
   return (
@@ -12,6 +13,7 @@ export default function HomePage() {
       <WhatIsVantageSection />
       <FeatureHighlightsSection />
       <PricingSection />
+      <Footer />
     </main>
   );
 }

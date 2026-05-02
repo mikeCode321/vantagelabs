@@ -1,4 +1,5 @@
 import Image from "next/image";
+// @ts-ignore: CSS import side effect declaration
 import "./HeroSection.css";
 
 export default function HeroSection() {
@@ -6,15 +7,14 @@ export default function HeroSection() {
     <section className="hero-section">
       <div className="hero-inner">
         <div className="hero-left">
-          <p className="hero-eyebrow">Financial Simulation Platform</p>
 
           <h1 className="hero-title">
             Take Ad<span className="hero-accent">vantage</span> of your future
           </h1>
 
           <p className="hero-description">
-            Build smarter financial plans, visualize outcomes, and explore your
-            future with a simulator designed to help you make clearer decisions.
+           Simulate your future and take control of your finances with tools
+           that turns complex decisions into clear, visual outcomes.
           </p>
 
           <div className="hero-actions">

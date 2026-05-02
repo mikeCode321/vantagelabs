@@ -1,0 +1,118 @@
+.features-section {
+    background: var(--off-white);
+    padding: 80px 24px 120px;
+    overflow: hidden;
+  }
+  
+  .features-inner {
+    max-width: 1220px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 110px;
+  }
+  
+  .feature-row {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    align-items: center;
+    gap: 72px;
+    opacity: 0;
+    transform: translateY(32px);
+    animation: featureFadeUp 0.8s ease forwards;
+    animation-timeline: view();
+    animation-range: entry 15% cover 35%;
+  }
+  
+  .feature-row-reverse {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+  
+  .feature-row-reverse .feature-copy {
+    order: 2;
+  }
+  
+  .feature-row-reverse .feature-visual {
+    order: 1;
+  }
+  
+  .feature-copy {
+    max-width: 560px;
+  }
+  
+  .feature-eyebrow {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  
+  .feature-title {
+    font-size: clamp(2.4rem, 4.5vw, 4.2rem);
+    line-height: 1.05;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 20px;
+  }
+  
+  .feature-description {
+    font-family: var(--font-sans);
+    font-size: 1.08rem;
+    line-height: 1.75;
+    color: rgba(42, 76, 101, 0.78);
+  }
+  
+  .feature-visual {
+    width: 100%;
+  }
+  
+  .feature-placeholder {
+    min-height: 390px;
+    border-radius: 30px;
+    background:
+      linear-gradient(135deg, rgba(42, 76, 101, 0.08), rgba(95, 167, 171, 0.16)),
+      rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(42, 76, 101, 0.1);
+    box-shadow: 0 24px 70px rgba(42, 76, 101, 0.13);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(42, 76, 101, 0.55);
+    font-family: var(--font-sans);
+    font-weight: 700;
+  }
+  
+  @keyframes featureFadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .features-inner {
+      gap: 80px;
+    }
+  
+    .feature-row,
+    .feature-row-reverse {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  
+    .feature-row-reverse .feature-copy,
+    .feature-row-reverse .feature-visual {
+      order: initial;
+    }
+  
+    .feature-copy {
+      max-width: 100%;
+      text-align: center;
+    }
+  
+    .feature-placeholder {
+      min-height: 280px;
+    }
+  }

@@ -117,7 +117,7 @@ type IncomeSource = SalaryIncome | HourlyWageIncome | SideHustleIncome;
 // ─────────────────────────────────────────────
 
 
-type Expense = {
+type LivingExpense = {
   source_type: "expense";
   variant: "living_expense";
 
@@ -135,7 +135,7 @@ type Expense = {
 // RENT
 // ─────────────────────────────────────────────
 
-type RentSource = {
+type RentExpense = {
   source_type: "expense";
   variant: "rent";
 
@@ -153,7 +153,7 @@ type RentSource = {
 // DEBT
 // ─────────────────────────────────────────────
 
-type DebtSource = {
+type DebtExpense = {
   source_type: "debt";
 
   id: ID;
@@ -169,7 +169,7 @@ type DebtSource = {
 };
 
 
-type ExpenseSource = Expense | RentSource | DebtSource;
+type ExpenseSource = LivingExpense | RentExpense | DebtExpense;
 
 
 // ─────────────────────────────────────────────
@@ -428,15 +428,15 @@ const ENTITY_CONFIG = {
       id: "house",
       name: "House",
       emoji: "🏡",
-      formComponent: HouseForm,
-      editFormComponent: EditHouseForm,
+      formComponent: HouseAssetForm,
+      editFormComponent: EditHouseAssetForm,
     },
     car: {
       id: "car",
       name: "Car",
       emoji: "🚗",
-      formComponent: CarForm,
-      editFormComponent: EditCarForm,
+      formComponent: CarAssetForm,
+      editFormComponent: EditCarAssetForm,
     },
   },
 };
@@ -979,7 +979,7 @@ function EmployerRetirementForm({ dispatch }) {
 }
 // ASSET FORMS
 
-function CarForm({ dispatch }) {
+function CarAssetForm({ dispatch }) {
   const [name, setName] = useState("");
   const [carValue, setCarValue] = useState("");
   const [depreciation, setDepreciation] = useState("");
@@ -1034,7 +1034,7 @@ function CarForm({ dispatch }) {
   );
 }
 
-function HouseForm({ dispatch }) {
+function HouseAssetForm({ dispatch }) {
   const [name, setName] = useState("");
   const [houseValue, setHouseValue] = useState("");
   const [appreciation, setAppreciation] = useState("");
@@ -1602,7 +1602,7 @@ export function EditSideHustleForm({ item, dispatch, onClose }) {
   );
 }
 /* -------------------- EDIT ASSET FORMS -------------------- */
-export function EditHouseForm({ item, dispatch, onClose }) {
+export function EditHouseAssetForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [houseValue, setHouseValue] = useState(item.house_value.toString());
   const [appreciation, setAppreciation] = useState((item.annual_appreciation * 100).toString());
@@ -1652,7 +1652,7 @@ export function EditHouseForm({ item, dispatch, onClose }) {
   );
 }
 
-export function EditCarForm({ item, dispatch, onClose }) {
+export function EditCarAssetForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [carValue, setCarValue] = useState(item.car_value.toString());
   const [depreciation, setDepreciation] = useState((item.annual_depreciation * 100).toString());

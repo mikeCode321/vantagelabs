@@ -46,13 +46,30 @@ type TaxableInvestmentAccount = {
   cash_out_account_id?: string;
 };
 
-type LiquidAccount = CheckingAccount | TaxableInvestmentAccount;
+type EmployerRetirementAccount = {
+  source_type: "liquid",
+  variant: "employer_retirement",
+  id: ID,
+  name: string;
+  start_year: number,
+  end_year: number,
+  starting_balance: number,
+  monthly_contribution: number,
+  expected_return: number,
+  employer_match: number,
+  retirement_age: number
+}
+
+type LiquidAccount = CheckingAccount | TaxableInvestmentAccount | EmployerRetirementAccount;
+
 // ─────────────────────────────────────────────
 // INCOME
 // ─────────────────────────────────────────────
 
-type IncomeSource = {
+type SalaryIncome = {
   source_type: "income";
+  variant: "salary";
+
   id: ID;
   name: string;
 
@@ -63,13 +80,47 @@ type IncomeSource = {
   income_growth: number;
 };
 
+type HourlyWageIncome = {
+  source_type: "income";
+  variant: "hourly";
+
+  id: ID;
+  name: string;
+
+  start_year: number;
+  end_year: number;
+
+  net_income: number;
+  income_growth: number;
+};
+
+type SideHustleIncome = {
+  source_type: "income";
+  variant: "side";
+
+  id: ID;
+  name: string;
+
+  start_year: number;
+  end_year: number;
+
+  net_income: number;
+  variability: number;
+  frequency: string;
+  average_income_per_period: number;
+};
+
+type IncomeSource = SalaryIncome | HourlyWageIncome | SideHustleIncome;
 
 // ─────────────────────────────────────────────
 // EXPENSES
 // ─────────────────────────────────────────────
 
+
+// TODO: Follow the standard set in income and account types above this ExpenseSource should be a union of the actual expense variants 
 type ExpenseSource = {
   source_type: "expense";
+  // TODO: add variant 
   id: ID;
   name: string;
 
@@ -80,12 +131,16 @@ type ExpenseSource = {
   expense_growth: number;
 };
 
+
+// TODO: do the same for assets 
+
+
 type SimRequest = {
   start_year: number;
   end_year: number;
 
   liquid_accounts: LiquidAccount[];
-  assets: AssetSource[];
+  // assets: AssetSource[]; //TODO: uncomment when asset source implemented above
   incomes: IncomeSource[];
   expenses: ExpenseSource[];
 };
@@ -122,7 +177,7 @@ type Action =
   | { type: "ADD_EXPENSE"; payload: ExpenseSource }
   | { type: "UPDATE_EXPENSE"; payload: ExpenseSource }
   | { type: "DELETE_EXPENSE"; payload: { id: string } }
-  // | { type: "ADD_ASSET"; payload: AssetSource }
+  // | { type: "ADD_ASSET"; payload: AssetSource } //TODO: uncomment when assets ready 
   // | { type: "UPDATE_ASSET"; payload: AssetSource }
   | { type: "DELETE_ASSET"; payload: { id: string } };
 
@@ -264,9 +319,10 @@ const ENTITY_CONFIG = {
       name: "Side Hustle",
       emoji: "🚀",
       formComponent: SideHustleForm,
-      // editFormComponent: EditSideHustleForm,
+      editFormComponent: EditSideHustleForm,
     },
   },
+  //TODO: implement expenses and asset below uncomment each form once its implemented 
   expense: {
     living: {
       id: "living",
@@ -286,7 +342,7 @@ const ENTITY_CONFIG = {
       id: "debt",
       name: "Debt",
       emoji: "💳",
-      // formComponent: DebtExpenseForm,
+      // formComponent: DebtExpenseForm, 
       // editFormComponent: EditDebtExpenseForm,
     },
   },
@@ -860,6 +916,7 @@ function LivingExpensesForm({ dispatch }) {
       type: "ADD_EXPENSE",
       payload: {
         source_type: "expense",
+        // TODO: add variant
         id: crypto.randomUUID(),
         name,
         start_year: Number(startYear),
@@ -905,6 +962,7 @@ function RentExpenseForm({ dispatch }) {
       type: "ADD_EXPENSE",
       payload: {
         source_type: "expense",
+        // TODO: add variant
         id: crypto.randomUUID(),
         name: "Rent",
         start_year: Number(startYear),
@@ -952,6 +1010,7 @@ export function SalaryForm({ dispatch }) {
       type: "ADD_INCOME",
       payload: {
         source_type: "income",
+        variant: "salary",
         id: crypto.randomUUID(),
         name,
 
@@ -1004,6 +1063,7 @@ function HourlyWageForm({ dispatch }) {
       type: "ADD_INCOME",
       payload: {
         source_type: "income",
+        variant: "hourly",
         id: crypto.randomUUID(),
         name: name || "Hourly Job",
 
@@ -1754,18 +1814,6 @@ const rowMetaStyle: CSSProperties = {
   alignItems: "center",
 };
 
-const rowMetaBadgeStyle: CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  gap: "4px",
-  padding: "2px 6px",
-  background: "#5FA7AB12",
-  border: "1px solid #5FA7AB22",
-  borderRadius: "2px",
-  fontSize: "0.62rem",
-  fontWeight: 500,
-};
-
 const rowActionsStyle: CSSProperties = {
   display: "flex",
   alignItems: "center",
@@ -1787,12 +1835,6 @@ const smallButtonStyle: CSSProperties = {
   transition: "all 0.15s",
 };
 
-const smallButtonHoverStyle: CSSProperties = {
-  ...smallButtonStyle,
-  background: "#5FA7AB08",
-  borderColor: "#5FA7AB66",
-};
-
 const smallDeleteButtonStyle: CSSProperties = {
   border: "1px solid #B46D6D44",
   background: "var(--white)",
@@ -1807,146 +1849,40 @@ const smallDeleteButtonStyle: CSSProperties = {
   transition: "all 0.15s",
 };
 
-const smallDeleteButtonHoverStyle: CSSProperties = {
-  ...smallDeleteButtonStyle,
-  background: "#B46D6D08",
-  borderColor: "#B46D6D66",
-};
 
-function IncomeRow({ income, dispatch, onEdit }) {
-  const [editHover, setEditHover] = useState(false);
-  const [deleteHover, setDeleteHover] = useState(false);
+function EntityRow({ item, category, dispatch, onEdit }) {
+  const handleDelete = () => {
+    const deleteType = {
+      account: "DELETE_LIQUID_ACCOUNT",
+      income: "DELETE_INCOME",
+      expense: "DELETE_EXPENSE",
+      asset: "DELETE_ASSET",
+    }[category];
 
-  return (
-    <div style={rowStyle}>
-      <div style={rowMainStyle}>
-        <p style={rowNameStyle}>{income.name}</p>
-        <div style={rowMetaStyle}>
-          <span>${income.net_income.toLocaleString()}</span>
-          {/* <span style={rowMetaBadgeStyle}>
-            {income.income_growth}% growth
-          </span> */}
-          <span style={rowMetaBadgeStyle}>
-            {income.start_year}–{income.end_year}
-          </span>
-        </div>
-      </div>
-
-      <div style={rowActionsStyle}>
-        <button style={editHover ? smallButtonHoverStyle : smallButtonStyle} onMouseEnter={() => setEditHover(true)} onMouseLeave={() => setEditHover(false)} onClick={() => onEdit && onEdit(income, "salary")}>
-          Edit
-        </button>
-        <button style={deleteHover ? smallDeleteButtonHoverStyle : smallDeleteButtonStyle} onMouseEnter={() => setDeleteHover(true)} onMouseLeave={() => setDeleteHover(false)} onClick={() => dispatch({ type: "DELETE_INCOME", payload: { id: income.id } })}>
-          ✕
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function AssetRow({ asset, dispatch, onEdit }) {
-  const [editHover, setEditHover] = useState(false);
-  const [deleteHover, setDeleteHover] = useState(false);
-
-  const getAssetFormType = () => {
-    return asset.source_type === "rental" ? "rental_property" : "stock";
+    dispatch({
+      type: deleteType,
+      payload: { id: item.id },
+    });
   };
 
   return (
     <div style={rowStyle}>
       <div style={rowMainStyle}>
-        <p style={rowNameStyle}>{asset.name}</p>
+        <p style={rowNameStyle}>{item.name}</p>
         <div style={rowMetaStyle}>
-          <span>{asset.source_type === "rental" ? `Rental • $${asset.monthly_income}/mo` : `Stock • $${asset.initial_value}`}</span>
-          <span style={rowMetaBadgeStyle}>
-            {asset.start_year}–{asset.end_year}
-          </span>
+          {item.balance && <span>${formatNumberWithCommas(item.balance.toString())}</span>}
+          {item.net_income && <span>${formatNumberWithCommas(item.net_income.toString())}</span>}
+          {item.annual_expense && <span>${formatNumberWithCommas(item.annual_expense.toString())}</span>}
+          {item.starting_balance && <span>${formatNumberWithCommas(item.starting_balance.toString())}</span>}
+          <span>{item.start_year}–{item.end_year}</span>
         </div>
       </div>
 
       <div style={rowActionsStyle}>
-        <button style={editHover ? smallButtonHoverStyle : smallButtonStyle} onMouseEnter={() => setEditHover(true)} onMouseLeave={() => setEditHover(false)} onClick={() => onEdit && onEdit(asset, getAssetFormType())}>
+        <button style={smallButtonStyle} onClick={() => onEdit(item, item.variant)}>
           Edit
         </button>
-        <button style={deleteHover ? smallDeleteButtonHoverStyle : smallDeleteButtonStyle} onMouseEnter={() => setDeleteHover(true)} onMouseLeave={() => setDeleteHover(false)} onClick={() => dispatch({ type: "DELETE_ASSET", payload: { id: asset.id } })}>
-          ✕
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function ExpenseRow({ expense, dispatch, onEdit }) {
-  const [editHover, setEditHover] = useState(false);
-  const [deleteHover, setDeleteHover] = useState(false);
-
-  const getExpenseFormType = () => {
-    if (expense.name === "Rent") return "rent";
-    if (expense.name === "Education") return "education";
-    return "living";
-  };
-
-  return (
-    <div style={rowStyle}>
-      <div style={rowMainStyle}>
-        <p style={rowNameStyle}>{expense.name}</p>
-        <div style={rowMetaStyle}>
-          <span>${expense.annual_expense.toLocaleString()}</span>
-          <span style={rowMetaBadgeStyle}>
-            {expense.start_year}–{expense.end_year}
-          </span>
-        </div>
-      </div>
-
-      <div style={rowActionsStyle}>
-        <button style={editHover ? smallButtonHoverStyle : smallButtonStyle} onMouseEnter={() => setEditHover(true)} onMouseLeave={() => setEditHover(false)} onClick={() => onEdit && onEdit(expense, getExpenseFormType())}>
-          Edit
-        </button>
-        <button
-          style={deleteHover ? smallDeleteButtonHoverStyle : smallDeleteButtonStyle}
-          onMouseEnter={() => setDeleteHover(true)}
-          onMouseLeave={() => setDeleteHover(false)}
-          onClick={() =>
-            dispatch({
-              type: "DELETE_EXPENSE",
-              payload: { id: expense.id },
-            })
-          }
-        >
-          ✕
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function AccountRow({ account, dispatch, onEdit }) {
-
-  return (
-    <div style={rowStyle}>
-      <div style={rowMainStyle}>
-        <p style={rowNameStyle}>{account.name}</p>
-        <div style={rowMetaStyle}>
-          {account.balance && <span>${account.balance}</span>}
-          {account.amount && <span>${account.amount}</span>}
-          {account.interest_tiers && (<span style={rowMetaBadgeStyle}>{account.interest_tiers[0]?.annual_rate}% interest</span> )}
-          {account.start_year && (<span style={rowMetaBadgeStyle}>{account.start_year}–{account.end_year}</span>)}
-        </div>
-      </div>
-
-      <div style={rowActionsStyle}>
-        <button style={smallButtonStyle} onClick={() => onEdit(account)}>
-          Edit
-        </button>
-        <button
-          style={smallDeleteButtonStyle}
-          onClick={() =>
-            dispatch({
-              type: `DELETE_LIQUID_ACCOUNT`,
-              payload: { id: account.id },
-            })
-          }
-        >
+        <button style={smallDeleteButtonStyle} onClick={handleDelete}>
           ✕
         </button>
       </div>
@@ -2009,6 +1945,21 @@ export function FinancialEntity({ state, entityName, category, dispatch }) {
 
   const data = Object.values(ENTITY_CONFIG[category]).map(v => ({ id: v.id, name: v.name, emoji: v.emoji }));
 
+  const getItems = () => {
+    switch(category) {
+      case "account":
+        return state.liquid_accounts;
+      case "income":
+        return state.incomes;
+      case "expense":
+        return state.expenses;
+      case "asset":
+        return state.assets;
+      default:
+        return [];
+    }
+  };
+
   return (
     <>
       <div style={cardStyle}>
@@ -2020,20 +1971,8 @@ export function FinancialEntity({ state, entityName, category, dispatch }) {
           </button>
         </div>
 
-        {category === "account" && state.liquid_accounts.map((item) => (
-          <AccountRow key={item.id} account={item} dispatch={dispatch} onEdit={handleEdit} />
-        ))}
-
-        {category === "income" && state.incomes.map((item) => (
-          <IncomeRow key={item.id} income={item} dispatch={dispatch} onEdit={handleEdit} />
-        ))}
-
-        {category === "expense" && state.expenses.map((item) => (
-          <ExpenseRow key={item.id} expense={item} dispatch={dispatch} onEdit={handleEdit} />
-        ))}
-
-        {category === "asset" && state.assets.map((item) => (
-          <AssetRow key={item.id} asset={item} dispatch={dispatch} onEdit={handleEdit} />
+        {getItems().map((item) => (
+          <EntityRow key={item.id} item={item} category={category} dispatch={dispatch} onEdit={handleEdit} />
         ))}
       </div>
 

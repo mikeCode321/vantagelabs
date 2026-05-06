@@ -117,30 +117,106 @@ type IncomeSource = SalaryIncome | HourlyWageIncome | SideHustleIncome;
 // ─────────────────────────────────────────────
 
 
-// TODO: Follow the standard set in income and account types above this ExpenseSource should be a union of the actual expense variants 
-type ExpenseSource = {
+type Expense = {
   source_type: "expense";
-  // TODO: add variant 
+  variant: "living_expense";
+
   id: ID;
   name: string;
 
   start_year: number;
-  end_year: number;
+  end_year?: number | null;
 
-  annual_expense: number;
+  monthly_expense: number;
   expense_growth: number;
 };
 
+// ─────────────────────────────────────────────
+// RENT
+// ─────────────────────────────────────────────
 
-// TODO: do the same for assets 
+type RentSource = {
+  source_type: "expense";
+  variant: "rent";
 
+  id: ID;
+  name: string;
+
+  start_year: number;
+  end_year?: number | null;
+
+  monthly_rent: number;
+  rent_growth: number; 
+};
+
+// ─────────────────────────────────────────────
+// DEBT
+// ─────────────────────────────────────────────
+
+type DebtSource = {
+  source_type: "debt";
+
+  id: ID;
+  name: string;
+
+  start_year: number;
+  end_year?: number | null;
+
+  debt_amount: number;
+  monthly_payment: number;
+
+  interest_rate?: number | null; 
+};
+
+
+type ExpenseSource = Expense | RentSource | DebtSource;
+
+
+// ─────────────────────────────────────────────
+// ] ASSET
+// ─────────────────────────────────────────────
+
+type HouseAsset = {
+  source_type: "asset";
+  variant: "house";
+
+  id: ID;
+  name: string;
+
+  start_year: number;
+  end_year?: number | null;
+
+  house_value: number;
+  annual_appreciation: number; // example: 0.03 = 3% yearly growth
+
+  down_payment?: number | null; // optional; deducted from cash if start_year > 0
+};
+
+
+type CarAsset = {
+  source_type: "asset";
+  variant: "car";
+
+  id: ID;
+  name: string;
+
+  start_year: number;
+  end_year?: number | null;
+
+  car_value: number;
+  annual_depreciation: number; // example: 0.12 = loses 12% per year
+
+  down_payment?: number | null; // optional; deducted from cash if start_year > 0
+};
+
+type AssetSource = HouseAsset | CarAsset;
 
 type SimRequest = {
   start_year: number;
   end_year: number;
 
   liquid_accounts: LiquidAccount[];
-  // assets: AssetSource[]; //TODO: uncomment when asset source implemented above
+  assets: AssetSource[]; 
   incomes: IncomeSource[];
   expenses: ExpenseSource[];
 };
@@ -177,9 +253,10 @@ type Action =
   | { type: "ADD_EXPENSE"; payload: ExpenseSource }
   | { type: "UPDATE_EXPENSE"; payload: ExpenseSource }
   | { type: "DELETE_EXPENSE"; payload: { id: string } }
-  // | { type: "ADD_ASSET"; payload: AssetSource } //TODO: uncomment when assets ready 
-  // | { type: "UPDATE_ASSET"; payload: AssetSource }
-  | { type: "DELETE_ASSET"; payload: { id: string } };
+  | { type: "ADD_ASSET"; payload: AssetSource }
+  | { type: "UPDATE_ASSET"; payload: AssetSource }
+  | { type: "DELETE_ASSET"; payload: { id: string } }
+  
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
@@ -342,8 +419,8 @@ const ENTITY_CONFIG = {
       id: "debt",
       name: "Debt",
       emoji: "💳",
-      // formComponent: DebtExpenseForm, 
-      // editFormComponent: EditDebtExpenseForm,
+      formComponent: DebtExpenseForm, 
+      editFormComponent: EditDebtExpenseForm,
     },
   },
   asset: {
@@ -351,15 +428,15 @@ const ENTITY_CONFIG = {
       id: "house",
       name: "House",
       emoji: "🏡",
-      // formComponent: HouseForm,
-      // editFormComponent: EditHouseForm,
+      formComponent: HouseForm,
+      editFormComponent: EditHouseForm,
     },
     car: {
       id: "car",
       name: "Car",
       emoji: "🚗",
-      // formComponent: CarForm,
-      // editFormComponent: EditCarForm,
+      formComponent: CarForm,
+      editFormComponent: EditCarForm,
     },
   },
 };
@@ -900,7 +977,117 @@ function EmployerRetirementForm({ dispatch }) {
     </div>
   );
 }
+// ASSET FORMS
 
+function CarForm({ dispatch }) {
+  const [name, setName] = useState("");
+  const [carValue, setCarValue] = useState("");
+  const [depreciation, setDepreciation] = useState("");
+  const [downPayment, setDownPayment] = useState("");
+  const [startYear, setStartYear] = useState("");
+  const [endYear, setEndYear] = useState("");
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "ADD_ASSET",
+      payload: {
+        source_type: "asset",
+        variant: "car",
+        id: crypto.randomUUID(),
+        name: name || "Car",
+        start_year: Number(startYear),
+        end_year: endYear === "" ? null : Number(endYear),
+        car_value: Number(carValue),
+        annual_depreciation: Number(depreciation) / 100,
+        down_payment: downPayment === "" ? null : Number(downPayment),
+      },
+    });
+
+    setName("");
+    setCarValue("");
+    setDepreciation("");
+    setDownPayment("");
+    setStartYear("");
+    setEndYear("");
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <h3>Add Car</h3>
+
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Car Name" />
+
+      <input value={carValue} onChange={(e) => setCarValue(e.target.value)} placeholder="Car Value" type="number" />
+
+      <input value={depreciation} onChange={(e) => setDepreciation(e.target.value)} placeholder="Annual Depreciation %" type="number" />
+
+      <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+
+      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+
+      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+
+      <button type="submit">Add Car</button>
+    </form>
+  );
+}
+
+function HouseForm({ dispatch }) {
+  const [name, setName] = useState("");
+  const [houseValue, setHouseValue] = useState("");
+  const [appreciation, setAppreciation] = useState("");
+  const [downPayment, setDownPayment] = useState("");
+  const [startYear, setStartYear] = useState("");
+  const [endYear, setEndYear] = useState("");
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "ADD_ASSET",
+      payload: {
+        source_type: "asset",
+        variant: "house",
+        id: crypto.randomUUID(),
+        name: name || "House",
+        start_year: Number(startYear),
+        end_year: endYear === "" ? null : Number(endYear),
+        house_value: Number(houseValue),
+        annual_appreciation: Number(appreciation) / 100,
+        down_payment: downPayment === "" ? null : Number(downPayment),
+      },
+    });
+
+    setName("");
+    setHouseValue("");
+    setAppreciation("");
+    setDownPayment("");
+    setStartYear("");
+    setEndYear("");
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <h3>Add House</h3>
+
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="House Name" />
+
+      <input value={houseValue} onChange={(e) => setHouseValue(e.target.value)} placeholder="House Value" type="number" />
+
+      <input value={appreciation} onChange={(e) => setAppreciation(e.target.value)} placeholder="Annual Appreciation %" type="number" />
+
+      <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+
+      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+
+      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+
+      <button type="submit">Add House</button>
+    </form>
+  );
+}
 // EXPENSE FORMS
 function LivingExpensesForm({ dispatch }) {
   const [name, setName] = useState("Living Expenses");
@@ -916,7 +1103,7 @@ function LivingExpensesForm({ dispatch }) {
       type: "ADD_EXPENSE",
       payload: {
         source_type: "expense",
-        // TODO: add variant
+        variant: "living",
         id: crypto.randomUUID(),
         name,
         start_year: Number(startYear),
@@ -949,6 +1136,94 @@ function LivingExpensesForm({ dispatch }) {
   );
 }
 
+
+function DebtExpenseForm({ dispatch }) {
+  const [name, setName] = useState("");
+  const [debtAmount, setDebtAmount] = useState("");
+  const [monthlyPayment, setMonthlyPayment] = useState("");
+  const [interestRate, setInterestRate] = useState("");
+  const [startYear, setStartYear] = useState("");
+  const [endYear, setEndYear] = useState("");
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "ADD_EXPENSE",
+      payload: {
+        source_type: "debt",
+        id: crypto.randomUUID(),
+        name: name || "Debt",
+        start_year: Number(startYear),
+        end_year: endYear === "" ? null : Number(endYear),
+        debt_amount: Number(debtAmount),
+        monthly_payment: Number(monthlyPayment),
+        interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
+      },
+    });
+
+    setName("");
+    setDebtAmount("");
+    setMonthlyPayment("");
+    setInterestRate("");
+    setStartYear("");
+    setEndYear("");
+  };
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-3">
+      <input
+        type="text"
+        placeholder="Debt name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+
+      <input
+        type="number"
+        placeholder="Debt amount"
+        value={debtAmount}
+        onChange={(e) => setDebtAmount(e.target.value)}
+        required
+      />
+
+      <input
+        type="number"
+        placeholder="Monthly payment"
+        value={monthlyPayment}
+        onChange={(e) => setMonthlyPayment(e.target.value)}
+        required
+      />
+
+      <input
+        type="number"
+        placeholder="Interest rate % (optional)"
+        value={interestRate}
+        onChange={(e) => setInterestRate(e.target.value)}
+      />
+
+      <input
+        type="number"
+        placeholder="Start year"
+        value={startYear}
+        onChange={(e) => setStartYear(e.target.value)}
+        required
+      />
+
+      <input
+        type="number"
+        placeholder="End year (optional)"
+        value={endYear}
+        onChange={(e) => setEndYear(e.target.value)}
+      />
+
+      <button type="submit">
+        Add Debt
+      </button>
+    </form>
+  );
+}
+
 function RentExpenseForm({ dispatch }) {
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("");
@@ -962,7 +1237,7 @@ function RentExpenseForm({ dispatch }) {
       type: "ADD_EXPENSE",
       payload: {
         source_type: "expense",
-        // TODO: add variant
+        variant: "rent",
         id: crypto.randomUUID(),
         name: "Rent",
         start_year: Number(startYear),
@@ -994,6 +1269,7 @@ function RentExpenseForm({ dispatch }) {
     </form>
   );
 }
+
 
 // INCOME FORMS
 export function SalaryForm({ dispatch }) {
@@ -1168,6 +1444,7 @@ function SideHustleForm({ dispatch }) {
   );
 }
 
+
 /* -------------------- EDIT INCOME FORMS -------------------- */
 
 export function EditSalaryForm({ item, dispatch, onClose }) {
@@ -1324,15 +1601,114 @@ export function EditSideHustleForm({ item, dispatch, onClose }) {
     </form>
   );
 }
+/* -------------------- EDIT ASSET FORMS -------------------- */
+export function EditHouseForm({ item, dispatch, onClose }) {
+  const [name, setName] = useState(item.name);
+  const [houseValue, setHouseValue] = useState(item.house_value.toString());
+  const [appreciation, setAppreciation] = useState((item.annual_appreciation * 100).toString());
+  const [downPayment, setDownPayment] = useState(item.down_payment == null ? "" : item.down_payment.toString());
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
 
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "UPDATE_ASSET",
+      payload: {
+        ...item,
+        source_type: "asset",
+        variant: "house",
+        name: name || "House",
+        start_year: Number(startYear),
+        end_year: endYear === "" ? null : Number(endYear),
+        house_value: Number(houseValue),
+        annual_appreciation: Number(appreciation) / 100,
+        down_payment: downPayment === "" ? null : Number(downPayment),
+      },
+    });
+
+    onClose();
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <h3>Edit House</h3>
+
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="House Name" />
+
+      <input value={houseValue} onChange={(e) => setHouseValue(e.target.value)} placeholder="House Value" type="number" />
+
+      <input value={appreciation} onChange={(e) => setAppreciation(e.target.value)} placeholder="Annual Appreciation %" type="number" />
+
+      <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+
+      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+
+      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+
+      <button type="submit">Save House</button>
+    </form>
+  );
+}
+
+export function EditCarForm({ item, dispatch, onClose }) {
+  const [name, setName] = useState(item.name);
+  const [carValue, setCarValue] = useState(item.car_value.toString());
+  const [depreciation, setDepreciation] = useState((item.annual_depreciation * 100).toString());
+  const [downPayment, setDownPayment] = useState(item.down_payment == null ? "" : item.down_payment.toString());
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "UPDATE_ASSET",
+      payload: {
+        ...item,
+        source_type: "asset",
+        variant: "car",
+        name: name || "Car",
+        start_year: Number(startYear),
+        end_year: endYear === "" ? null : Number(endYear),
+        car_value: Number(carValue),
+        annual_depreciation: Number(depreciation) / 100,
+        down_payment: downPayment === "" ? null : Number(downPayment),
+      },
+    });
+
+    onClose();
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <h3>Edit Car</h3>
+
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Car Name" />
+
+      <input value={carValue} onChange={(e) => setCarValue(e.target.value)} placeholder="Car Value" type="number" />
+
+      <input value={depreciation} onChange={(e) => setDepreciation(e.target.value)} placeholder="Annual Depreciation %" type="number" />
+
+      <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+
+      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+
+      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+
+      <button type="submit">Save Car</button>
+    </form>
+  );
+}
 /* -------------------- EDIT EXPENSE FORMS -------------------- */
 
 export function EditLivingExpensesForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
-  const [amount, setAmount] = useState(item.annual_expense.toString());
-  const [growth, setGrowth] = useState(item.expense_growth.toString());
+  const [amount, setAmount] = useState(item.monthly_expense.toString());
+  const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1343,9 +1719,9 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
         ...item,
         name,
         start_year: Number(startYear),
-        end_year: Number(endYear),
-        annual_expense: Number(amount),
-        expense_growth: Number(growth),
+        end_year: endYear === "" ? null : Number(endYear),
+        monthly_expense: Number(amount),
+        expense_growth: Number(growth) / 100,
       },
     });
 
@@ -1356,13 +1732,35 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit Living Expenses</h3>
 
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Annual Living Cost" />
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Expense Name"
+      />
 
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth %" />
+      <input
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        placeholder="Monthly Living Expense"
+      />
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+      <input
+        value={growth}
+        onChange={(e) => setGrowth(e.target.value)}
+        placeholder="Growth %"
+      />
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+      <input
+        value={startYear}
+        onChange={(e) => setStartYear(e.target.value)}
+        placeholder="Start Year"
+      />
+
+      <input
+        value={endYear}
+        onChange={(e) => setEndYear(e.target.value)}
+        placeholder="End Year optional"
+      />
 
       <button type="submit">Save Living Expenses</button>
     </form>
@@ -1385,8 +1783,8 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
         name: "Rent",
         start_year: Number(startYear),
         end_year: Number(endYear),
-        annual_expense: Number(amount),
-        expense_growth: Number(growth),
+        monthly_expense: Number(amount),
+        rent_growth: Number(growth) /100,
       },
     });
 
@@ -1397,7 +1795,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit Rent</h3>
 
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Annual Rent" />
+      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Montly Rent" />
 
       <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Rent Growth %" />
 
@@ -1410,6 +1808,85 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
   );
 }
 
+export function EditDebtExpenseForm({ item, dispatch, onClose }) {
+  const [name, setName] = useState(item.name);
+  const [debtAmount, setDebtAmount] = useState(item.debt_amount.toString());
+  const [monthlyPayment, setMonthlyPayment] = useState(item.monthly_payment.toString());
+  const [interestRate, setInterestRate] = useState(
+    item.interest_rate == null ? "" : (item.interest_rate * 100).toString()
+  );
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "UPDATE_EXPENSE",
+      payload: {
+        ...item,
+        source_type: "debt",
+        name: name || "Debt",
+        start_year: Number(startYear),
+        end_year: endYear === "" ? null : Number(endYear),
+        debt_amount: Number(debtAmount),
+        monthly_payment: Number(monthlyPayment),
+        interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
+      },
+    });
+
+    onClose();
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <h3>Edit Debt</h3>
+
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Debt Name"
+      />
+
+      <input
+        value={debtAmount}
+        onChange={(e) => setDebtAmount(e.target.value)}
+        placeholder="Debt Amount"
+        type="number"
+      />
+
+      <input
+        value={monthlyPayment}
+        onChange={(e) => setMonthlyPayment(e.target.value)}
+        placeholder="Monthly Payment"
+        type="number"
+      />
+
+      <input
+        value={interestRate}
+        onChange={(e) => setInterestRate(e.target.value)}
+        placeholder="Interest Rate % optional"
+        type="number"
+      />
+
+      <input
+        value={startYear}
+        onChange={(e) => setStartYear(e.target.value)}
+        placeholder="Start Year"
+        type="number"
+      />
+
+      <input
+        value={endYear}
+        onChange={(e) => setEndYear(e.target.value)}
+        placeholder="End Year optional"
+        type="number"
+      />
+
+      <button type="submit">Save Debt</button>
+    </form>
+  );
+}
 /* -------------------- EDIT ACCOUNT FORMS -------------------- */
 
 export function EditCheckingAccountForm({ item, dispatch, onClose }) {

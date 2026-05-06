@@ -119,7 +119,7 @@ type IncomeSource = SalaryIncome | HourlyWageIncome | SideHustleIncome;
 
 type LivingExpense = {
   source_type: "expense";
-  variant: "living_expense";
+  variant: "living";
 
   id: ID;
   name: string;
@@ -154,7 +154,8 @@ type RentExpense = {
 // ─────────────────────────────────────────────
 
 type DebtExpense = {
-  source_type: "debt";
+  source_type: "expense";
+  variant: "debt"
 
   id: ID;
   name: string;
@@ -1108,11 +1109,12 @@ function LivingExpensesForm({ dispatch }) {
         name,
         start_year: Number(startYear),
         end_year: Number(endYear),
-        annual_expense: Number(amount),
+        monthly_expense: Number(amount),
         expense_growth: Number(growth),
       },
     });
 
+    setName("Living Expense");
     setAmount("");
     setGrowth("");
     setStartYear("");
@@ -1123,7 +1125,7 @@ function LivingExpensesForm({ dispatch }) {
     <form onSubmit={onSubmit}>
       <h3>Living Expenses</h3>
 
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Annual Living Cost" />
+      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Monthly Living Cost" />
 
       <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth %" />
 
@@ -1138,7 +1140,7 @@ function LivingExpensesForm({ dispatch }) {
 
 
 function DebtExpenseForm({ dispatch }) {
-  const [name, setName] = useState("");
+  const [name, setName] = useState("Debt Expense");
   const [debtAmount, setDebtAmount] = useState("");
   const [monthlyPayment, setMonthlyPayment] = useState("");
   const [interestRate, setInterestRate] = useState("");
@@ -1151,7 +1153,8 @@ function DebtExpenseForm({ dispatch }) {
     dispatch({
       type: "ADD_EXPENSE",
       payload: {
-        source_type: "debt",
+        source_type: "expense",
+        variant: "debt",
         id: crypto.randomUUID(),
         name: name || "Debt",
         start_year: Number(startYear),
@@ -1162,7 +1165,7 @@ function DebtExpenseForm({ dispatch }) {
       },
     });
 
-    setName("");
+    setName("Debt Expense");
     setDebtAmount("");
     setMonthlyPayment("");
     setInterestRate("");
@@ -1242,7 +1245,7 @@ function RentExpenseForm({ dispatch }) {
         name: "Rent",
         start_year: Number(startYear),
         end_year: Number(endYear),
-        annual_expense: Number(amount),
+        monthly_expense: Number(amount),
         expense_growth: Number(growth),
       },
     });
@@ -1257,9 +1260,9 @@ function RentExpenseForm({ dispatch }) {
     <form onSubmit={onSubmit}>
       <h3>Rent</h3>
 
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Annual Rent" />
+      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Monthly Rent" />
 
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Rent Growth %" />
+      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Annual Rent Growth %" />
 
       <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
 
@@ -1747,7 +1750,7 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
       <input
         value={growth}
         onChange={(e) => setGrowth(e.target.value)}
-        placeholder="Growth %"
+        placeholder="Annual Growth %"
       />
 
       <input
@@ -1768,7 +1771,7 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
 }
 
 export function EditRentExpenseForm({ item, dispatch, onClose }) {
-  const [amount, setAmount] = useState(item.annual_expense.toString());
+  const [amount, setAmount] = useState(item.monthly_expense.toString());
   const [growth, setGrowth] = useState(item.expense_growth.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
@@ -1825,7 +1828,6 @@ export function EditDebtExpenseForm({ item, dispatch, onClose }) {
       type: "UPDATE_EXPENSE",
       payload: {
         ...item,
-        source_type: "debt",
         name: name || "Debt",
         start_year: Number(startYear),
         end_year: endYear === "" ? null : Number(endYear),

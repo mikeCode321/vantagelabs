@@ -20,18 +20,33 @@ type Tier = {
 // LIQUID ACCOUNTS
 // ─────────────────────────────────────────────
 
-type LiquidAccount = {
+type CheckingAccount = {
   source_type: "liquid";
+  variant: "checking";
   id: ID;
   name: string;
-
   start_year: number;
   end_year: number;
-
   balance: number;
   interest_tiers: Tier[];
 };
 
+type TaxableInvestmentAccount = {
+  source_type: "liquid";
+  variant: "taxable_investments";
+  id: ID;
+  name: string;
+  start_year: number;
+  end_year: number;
+  starting_balance: number;
+  monthly_contribution: number;
+  expected_return: number;
+  dividend_yield: number;
+  dividend_reinvestment: "drip" | "cash_out";
+  cash_out_account_id?: string;
+};
+
+type LiquidAccount = CheckingAccount | TaxableInvestmentAccount;
 // ─────────────────────────────────────────────
 // INCOME
 // ─────────────────────────────────────────────
@@ -48,49 +63,6 @@ type IncomeSource = {
   income_growth: number;
 };
 
-// ─────────────────────────────────────────────
-// RENTAL
-// ─────────────────────────────────────────────
-
-type RentalProperty = {
-  source_type: "rental";
-  id: ID;
-  name: string;
-
-  start_year: number;
-  end_year: number;
-
-  purchase_price: number;
-  down_payment: number;
-  annual_appreciation: number;
-
-  monthly_income: number;
-  monthly_expenses: number;
-};
-
-// ─────────────────────────────────────────────
-// STOCKS
-// ─────────────────────────────────────────────
-
-type StockPortfolio = {
-  source_type: "stock";
-  id: ID;
-  name: string;
-
-  start_year: number;
-  end_year: number;
-
-  initial_value: number;
-  annual_return: number;
-  monthly_contribution: number;
-  dividend_yield: number;
-};
-
-// ─────────────────────────────────────────────
-// ASSETS
-// ─────────────────────────────────────────────
-
-type AssetSource = RentalProperty | StockPortfolio;
 
 // ─────────────────────────────────────────────
 // EXPENSES
@@ -107,6 +79,7 @@ type ExpenseSource = {
   annual_expense: number;
   expense_growth: number;
 };
+
 type SimRequest = {
   start_year: number;
   end_year: number;
@@ -149,8 +122,8 @@ type Action =
   | { type: "ADD_EXPENSE"; payload: ExpenseSource }
   | { type: "UPDATE_EXPENSE"; payload: ExpenseSource }
   | { type: "DELETE_EXPENSE"; payload: { id: string } }
-  | { type: "ADD_ASSET"; payload: AssetSource }
-  | { type: "UPDATE_ASSET"; payload: AssetSource }
+  // | { type: "ADD_ASSET"; payload: AssetSource }
+  // | { type: "UPDATE_ASSET"; payload: AssetSource }
   | { type: "DELETE_ASSET"; payload: { id: string } };
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
@@ -243,114 +216,266 @@ const INITIAL_STATE: SimRequest = {
   assets: [],
   incomes: [],
   expenses: [],
-
-  // events: []
 };
 
-const accountTypes = [
-  { id: "savings", name: "Savings", emoji: "🏦" },
-  { id: "checking", name: "Checking", emoji: "💳" },
-  { id: "taxable_investments", name: "Taxable Investments", emoji: "📊" },
-  { id: "ira", name: "Individual Retirement Accounts", emoji: "🧓" },
-  { id: "employer_retirement", name: "Employer Retirement Accounts", emoji: "🏢" },
-];
 
-const incomeTypes = [
-  { id: "salary", name: "Salary", emoji: "💼" },
-  { id: "hourly", name: "Hourly Wage", emoji: "⏱️" },
-  { id: "social_security", name: "Social Security", emoji: "📈" },
-  { id: "inheritance", name: "Inheritance", emoji: "🏠" },
-  { id: "side", name: "Side Hustle", emoji: "🚀" },
-  { id: "custom_income", name: "Custom Income", emoji: "➕" },
-];
+// ENTITY DATA:
+const ENTITY_CONFIG = {
+  account: {
+    checking: {
+      id: "checking",
+      name: "Checking",
+      emoji: "💳",
+      formComponent: CheckingAccountForm,
+      editFormComponent: EditCheckingAccountForm,
+    },
+    taxable_investments: {
+      id: "taxable_investments",
+      name: "Taxable Investments",
+      emoji: "📊",
+      formComponent: TaxableInvestmentAccountForm,
+      editFormComponent: EditTaxableInvestmentAccountForm,
+    },
+    employer_retirement: {
+      id: "employer_retirement",
+      name: "Employer Retirement Accounts",
+      emoji: "🏢",
+      formComponent: EmployerRetirementForm,
+      editFormComponent: EditEmployerRetirementForm,
+    },
+  },
+  income: {
+    salary: {
+      id: "salary",
+      name: "Salary",
+      emoji: "💼",
+      formComponent: SalaryForm,
+      editFormComponent: EditSalaryForm,
+    },
+    hourly: {
+      id: "hourly",
+      name: "Hourly Wage",
+      emoji: "⏱️",
+      formComponent: HourlyWageForm,
+      editFormComponent: EditHourlyWageForm,
+    },
+    side: {
+      id: "side",
+      name: "Side Hustle",
+      emoji: "🚀",
+      formComponent: SideHustleForm,
+      // editFormComponent: EditSideHustleForm,
+    },
+  },
+  expense: {
+    living: {
+      id: "living",
+      name: "Living Expenses",
+      emoji: "🏠",
+      formComponent: LivingExpensesForm,
+      editFormComponent: EditLivingExpensesForm,
+    },
+    rent: {
+      id: "rent",
+      name: "Rent",
+      emoji: "🏢",
+      formComponent: RentExpenseForm,
+      editFormComponent: EditRentExpenseForm,
+    },
+    debt: {
+      id: "debt",
+      name: "Debt",
+      emoji: "💳",
+      // formComponent: DebtExpenseForm,
+      // editFormComponent: EditDebtExpenseForm,
+    },
+  },
+  asset: {
+    house: {
+      id: "house",
+      name: "House",
+      emoji: "🏡",
+      // formComponent: HouseForm,
+      // editFormComponent: EditHouseForm,
+    },
+    car: {
+      id: "car",
+      name: "Car",
+      emoji: "🚗",
+      // formComponent: CarForm,
+      // editFormComponent: EditCarForm,
+    },
+  },
+};
 
-const expenseTypes = [
-  { id: "living", name: "Living Expenses", emoji: "🏠" },
-  { id: "rent", name: "Rent", emoji: "🏢" },
-  { id: "debt", name: "Debt", emoji: "💳" },
-  { id: "education", name: "Education", emoji: "🎓" },
-  { id: "vacation", name: "Vacation", emoji: "🏖️" },
-  { id: "custom_expense", name: "Custom Expense", emoji: "➕" },
-];
+/* -------------------- Form Styles -------------------- */
 
-const assetTypes = [
-  { id: "house", name: "House", emoji: "🏡" },
-  { id: "rental_property", name: "Rental Property", emoji: "🏘️" },
-  { id: "precious_metals", name: "Precious Metals", emoji: "🥇" },
-  { id: "custom_asset", name: "Custom Asset", emoji: "➕" },
-];
+const formContainerStyle: CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "1px",
+};
 
+const formSectionStyle: CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "14px",
+};
 
-export function LiquidAccountForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
-  const [name, setName] = useState("");
-  const [balance, setBalance] = useState("");
-  const [threshold, setThreshold] = useState("");
-  const [rate, setRate] = useState("");
+const formLabelStyle: CSSProperties = {
+  fontSize: "0.72rem",
+  letterSpacing: "0.12em",
+  textTransform: "uppercase",
+  color: "var(--teal)",
+  fontWeight: 600,
+  marginBottom: "2px",
+};
 
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+const formInputStyle: CSSProperties = {
+  width: "100%",
+  border: "1px solid #5FA7AB33",
+  background: "var(--white)",
+  color: "var(--primary)",
+  borderRadius: "3px",
+  padding: "10px 12px",
+  fontFamily: "'DM Mono', monospace",
+  fontSize: "0.72rem",
+  outline: "none",
+  transition: "all 0.15s",
+};
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+const formGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)",
+  gap: "12px",
+};
 
-    const payload: LiquidAccount = {
-      source_type: "liquid",
-      id: crypto.randomUUID(),
-      name: name,
+const formSubmitButtonStyle: CSSProperties = {
+  background: "var(--teal)",
+  color: "var(--white)",
+  border: "1px solid var(--teal)",
+  borderRadius: "3px",
+  padding: "10px 16px",
+  fontFamily: "'DM Mono', monospace",
+  fontSize: "0.72rem",
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+  fontWeight: 600,
+  cursor: "pointer",
+  transition: "all 0.15s",
+};
 
-      start_year: Number(startYear),
-      end_year: Number(endYear),
+const tierHeaderStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  marginBottom: "12px",
+};
 
-      balance: Number(balance),
-      interest_tiers: [
-        {
-          threshold: Number(threshold),
-          annual_rate: Number(rate),
-        },
-      ],
-    };
+const tierTitleStyle: CSSProperties = {
+  fontSize: "0.72rem",
+  letterSpacing: "0.12em",
+  textTransform: "uppercase",
+  color: "var(--primary)",
+  fontWeight: 600,
+};
 
-    dispatch({
-      type: "ADD_LIQUID_ACCOUNT",
-      payload,
-    });
+const addTierButtonStyle: CSSProperties = {
+  background: "var(--white)",
+  color: "var(--teal)",
+  border: "1px solid var(--teal)",
+  borderRadius: "3px",
+  padding: "5px 10px",
+  fontFamily: "'DM Mono', monospace",
+  fontSize: "0.62rem",
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+  cursor: "pointer",
+  transition: "all 0.15s",
+};
 
-    setName("");
-    setBalance("");
-    setThreshold("");
-    setRate("");
-    setStartYear("");
-    setEndYear("");
-  };
+const tierItemStyle: CSSProperties = {
+  background: "#FAFCFC",
+  border: "1px solid #5FA7AB22",
+  borderRadius: "3px",
+  padding: "12px",
+  display: "flex",
+  gap: "12px",
+  alignItems: "flex-end",
+};
 
-  return (
-    <div>
-      <p>Balance: {balance}</p>
+const tierInputStyle: CSSProperties = {
+  flex: 1,
+  minWidth: 0,
+};
 
-      <form onSubmit={onSubmit}>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+const tierDeleteButtonStyle: CSSProperties = {
+  background: "var(--white)",
+  color: "#B46D6D",
+  border: "1px solid #B46D6D44",
+  borderRadius: "3px",
+  padding: "8px 10px",
+  fontFamily: "'DM Mono', monospace",
+  fontSize: "0.62rem",
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+  cursor: "pointer",
+  transition: "all 0.15s",
+};
 
-        <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+/* -------------------- Number Formatting Utilities -------------------- */
 
-        <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+/**
+ * Format a number string with commas every 3 digits (display only)
+ */
+function formatNumberWithCommas(value: string): string {
+  if (!value) return "";
 
-        <input value={balance} onChange={(e) => setBalance(e.target.value)} placeholder="Balance" />
+  const isNegative = value.startsWith("-");
+  const numStr = isNegative ? value.slice(1) : value;
+  const [integerPart, decimalPart] = numStr.split(".");
 
-        <input value={threshold} onChange={(e) => setThreshold(e.target.value)} placeholder="Threshold" />
+  const withCommas = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const formatted = decimalPart ? `${withCommas}.${decimalPart}` : withCommas;
 
-        <input value={rate} onChange={(e) => setRate(e.target.value)} placeholder="Rate" />
-
-        <button type="submit">Add</button>
-      </form>
-    </div>
-  );
+  return isNegative ? `-${formatted}` : formatted;
 }
 
-function CheckingAccountForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
+/**
+ * Handle number input - keeps raw value in state, displays formatted
+ */
+function handleNumberInput(e, setState) {
+  let value = e.target.value;
+
+  value = value.replace(/,/g, "");
+
+  value = value.replace(/[^\d.\-]/g, "");
+
+  const parts = value.split(".");
+  if (parts.length > 2) return;
+
+  setState(value);
+}
+
+function handleTierThresholdInput(e, index, tiers, setTiers) {
+  let value = e.target.value;
+  value = value.replace(/,/g, "");
+  value = value.replace(/[^\d.\-]/g, "");
+  const parts = value.split(".");
+  if (parts.length > 2) return;
+
+  const updated = [...tiers];
+  updated[index].threshold = Number(value) || 0;
+  setTiers(updated);
+}
+
+// ACCOUNT FORMS 
+function CheckingAccountForm({ dispatch }) {
   const [name, setName] = useState("Checking Account");
-  const [balance, setBalance] = useState("");
+  const [balance, setBalance] = useState(""); // ← Store raw number
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
+  const [tiers, setTiers] = useState<Array<{ threshold: number; annual_rate: number }>>([{ threshold: 0, annual_rate: 0 }]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -359,290 +484,369 @@ function CheckingAccountForm({ dispatch }: { dispatch: React.Dispatch<Action> })
       type: "ADD_LIQUID_ACCOUNT",
       payload: {
         source_type: "liquid",
+        variant: "checking",
         id: crypto.randomUUID(),
         name,
         start_year: Number(startYear),
         end_year: Number(endYear),
-        balance: Number(balance),
-        interest_tiers: [
-          {
-            threshold: 0,
-            annual_rate: 0, // checking usually earns nothing
-          },
-        ],
+        balance: Number(balance), // ← Send raw number (no commas)
+        interest_tiers: tiers,
       },
     });
 
+    setName("Checking Account");
     setBalance("");
     setStartYear("");
     setEndYear("");
+    setTiers([{ threshold: 0, annual_rate: 0 }]);
+  };
+
+  const addTier = () => {
+    setTiers([
+      ...tiers,
+      {
+        threshold: tiers[tiers.length - 1]?.threshold ?? 0 + 50000,
+        annual_rate: 0.0,
+      },
+    ]);
+  };
+
+  const removeTier = (index: number) => {
+    if (tiers.length > 1) {
+      setTiers(tiers.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateTier = (index: number, field: "threshold" | "annual_rate", value: string) => {
+    const updated = [...tiers];
+    updated[index][field] = Number(value);
+    setTiers(updated);
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Checking Account</h3>
+    <div style={formContainerStyle}>
+      <div>
+        <h3 style={{ margin: "0 0 13px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Add Checking Account</h3>
+      </div>
 
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Account Name" />
+      <form onSubmit={onSubmit} style={formContainerStyle}>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Account Name</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. Main Checking, Emergency Fund" />
+        </div>
 
-      <input value={balance} onChange={(e) => setBalance(e.target.value)} placeholder="Starting Balance" />
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Starting Balance</label>
+          <input
+            value={formatNumberWithCommas(balance)} // ← Display with commas
+            onChange={(e) => handleNumberInput(e, setBalance)} // ← Store raw
+            style={formInputStyle}
+            placeholder="e.g. 100000"
+            type="text"
+            inputMode="decimal"
+          />
+        </div>
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+        {/* Years */}
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Timeline</label>
+          <div style={formGridStyle}>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
+              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            </div>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
+              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+            </div>
+          </div>
+        </div>
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+        {/* Interest Tiers */}
+        <div style={formSectionStyle}>
+          <div style={tierHeaderStyle}>
+            <label style={tierTitleStyle}>Interest Tiers</label>
+            <button type="button" style={addTierButtonStyle} onClick={addTier}>
+              + Add Tier
+            </button>
+          </div>
 
-      <button type="submit">Add Checking Account</button>
-    </form>
+          {tiers.map((tier, index) => (
+            <div key={index}>
+              <div style={tierItemStyle}>
+                <div style={{ ...tierInputStyle, flex: 0.6 }}>
+                  <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
+                  <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
+                </div>
+
+                <div style={{ ...tierInputStyle, flex: 0.6 }}>
+                  <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
+                  <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder="0.03" type="number" step="0.0001" />
+                </div>
+
+                {tiers.length > 1 && (
+                  <button type="button" style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Submit Button */}
+        <button type="submit" style={formSubmitButtonStyle}>
+          Add Checking Account
+        </button>
+      </form>
+    </div>
   );
 }
 
-
-export function AssetForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
-  type AssetSourceType = "rental" | "stock";
-
-  const [sourceType, setSourceType] = useState<AssetSourceType>("rental");
-  const [name, setName] = useState("");
-
+function TaxableInvestmentAccountForm({ dispatch }) {
+  const [name, setName] = useState("Taxable Investments");
+  const [balance, setBalance] = useState("");
+  const [monthlyContribution, setMonthlyContribution] = useState("");
+  const [expectedReturn, setExpectedReturn] = useState("");
+  const [dividendYield, setDividendYield] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
-
-  // rental
-  const [purchasePrice, setPurchasePrice] = useState("");
-  const [downPayment, setDownPayment] = useState("");
-  const [annualAppreciation, setAnnualAppreciation] = useState("");
-  const [monthlyIncome, setMonthlyIncome] = useState("");
-  const [monthlyExpenses, setMonthlyExpenses] = useState("");
-
-  // stock
-  const [initialValue, setInitialValue] = useState("");
-  const [annualReturn, setAnnualReturn] = useState("");
-  const [monthlyContribution, setMonthlyContribution] = useState("");
-  const [dividendYield, setDividendYield] = useState("");
+  const [dividendStrategy, setDividendStrategy] = useState<"drip" | "cash_out">("drip");
+  const [cashOutAccountId, setCashOutAccountId] = useState("");
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    let payload: AssetSource;
-
-    if (sourceType === "rental") {
-      payload = {
-        source_type: "rental",
-        id: crypto.randomUUID(),
-        name,
-
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-
-        purchase_price: Number(purchasePrice),
-        down_payment: Number(downPayment),
-        annual_appreciation: Number(annualAppreciation),
-        monthly_income: Number(monthlyIncome),
-        monthly_expenses: Number(monthlyExpenses),
-      };
-    } else {
-      payload = {
-        source_type: "stock",
-        id: crypto.randomUUID(),
-        name,
-
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-
-        initial_value: Number(initialValue),
-        annual_return: Number(annualReturn),
-        monthly_contribution: Number(monthlyContribution),
-        dividend_yield: Number(dividendYield),
-      };
+    if (dividendStrategy === "cash_out" && !cashOutAccountId) {
+      alert("Please select a checking account for dividend payouts");
+      return;
     }
 
     dispatch({
-      type: "ADD_ASSET",
-      payload,
+      type: "ADD_LIQUID_ACCOUNT",
+      payload: {
+        source_type: "liquid",
+        variant: "taxable_investments",
+        id: crypto.randomUUID(),
+        name,
+        start_year: Number(startYear),
+        end_year: Number(endYear),
+        starting_balance: Number(balance),
+        monthly_contribution: Number(monthlyContribution),
+        expected_return: Number(expectedReturn) / 100,
+        dividend_yield: Number(dividendYield) / 100,
+        dividend_reinvestment: dividendStrategy,
+        cash_out_account_id: dividendStrategy === "cash_out" ? cashOutAccountId : undefined,
+      },
     });
 
-    // reset
-    setName("");
-    setStartYear("");
-    setEndYear("");
-
-    setPurchasePrice("");
-    setDownPayment("");
-    setAnnualAppreciation("");
-    setMonthlyIncome("");
-    setMonthlyExpenses("");
-
-    setInitialValue("");
-    setAnnualReturn("");
+    setName("Taxable Investments");
+    setBalance("");
     setMonthlyContribution("");
+    setExpectedReturn("");
     setDividendYield("");
+    setStartYear("");
+    setEndYear("");
+    setDividendStrategy("drip");
+    setCashOutAccountId("");
   };
 
   return (
-    <div>
-      <h3>Add Asset</h3>
+    <div style={formContainerStyle}>
+      <div>
+        <h3 style={{ margin: "0 0 16px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Add Taxable Investment Account</h3>
+      </div>
 
-      <form onSubmit={onSubmit}>
-        {/* TYPE SELECT */}
-        <select value={sourceType} onChange={(e) => setSourceType(e.target.value as AssetSourceType)}>
-          <option value="rental">Rental Property</option>
-          <option value="stock">Stock Portfolio</option>
-        </select>
+      <form onSubmit={onSubmit} style={formContainerStyle}>
+        {/* Account Name */}
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Account Name</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. Fidelity Brokerage, Individual Stocks" />
+        </div>
 
-        {/* COMMON */}
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+        {/* Starting Balance */}
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Starting Balance</label>
+          <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} style={formInputStyle} placeholder="e.g. 50000" type="text" inputMode="decimal" />
+        </div>
 
-        <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-        <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+        {/* Contribution Amount */}
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Monthly Contribution</label>
+          <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} style={formInputStyle} placeholder="e.g. 1000" type="text" inputMode="decimal" />
+        </div>
 
-        {/* RENTAL FIELDS */}
-        {sourceType === "rental" && (
-          <>
-            <input value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} placeholder="Purchase Price" />
-            <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment" />
-            <input value={annualAppreciation} onChange={(e) => setAnnualAppreciation(e.target.value)} placeholder="Annual Appreciation (%)" />
-            <input value={monthlyIncome} onChange={(e) => setMonthlyIncome(e.target.value)} placeholder="Monthly Income" />
-            <input value={monthlyExpenses} onChange={(e) => setMonthlyExpenses(e.target.value)} placeholder="Monthly Expenses" />
-          </>
-        )}
+        {/* Expected Return & Dividend */}
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Annual Returns</label>
+          <div style={formGridStyle}>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Expected Return (%)</label>
+              <input value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} style={formInputStyle} placeholder="8.0" type="number" step="0.1" />
+            </div>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Dividend Yield (%)</label>
+              <input value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} style={formInputStyle} placeholder="2.0" type="number" step="0.1" />
+            </div>
+          </div>
+        </div>
 
-        {/* STOCK FIELDS */}
-        {sourceType === "stock" && (
-          <>
-            <input value={initialValue} onChange={(e) => setInitialValue(e.target.value)} placeholder="Initial Value" />
-            <input value={annualReturn} onChange={(e) => setAnnualReturn(e.target.value)} placeholder="Annual Return (%)" />
-            <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} placeholder="Monthly Contribution" />
-            <input value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} placeholder="Dividend Yield (%)" />
-          </>
-        )}
+        {/* Timeline */}
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Timeline</label>
+          <div style={formGridStyle}>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
+              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            </div>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
+              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+            </div>
+          </div>
+        </div>
 
-        <button type="submit">Add Asset</button>
+        {/* Dividend Strategy */}
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Dividend Strategy</label>
+          <div style={{ display: "flex", gap: "16px", marginTop: "8px" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+              <input
+                type="radio"
+                value="drip"
+                checked={dividendStrategy === "drip"}
+                onChange={(e) => {
+                  setDividendStrategy(e.target.value as "drip" | "cash_out");
+                  setCashOutAccountId("");
+                }}
+              />
+              <span style={{ fontSize: "0.72rem", color: "var(--primary)" }}>DRIP (Reinvest)</span>
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+              <input type="radio" value="cash_out" checked={dividendStrategy === "cash_out"} onChange={(e) => setDividendStrategy(e.target.value as "drip" | "cash_out")} />
+              <span style={{ fontSize: "0.72rem", color: "var(--primary)" }}>Cash Out</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Select Checking Account (only if cash_out) */}
+        {/* {dividendStrategy === "cash_out" && (
+          <div style={formSectionStyle}>
+            <label style={formLabelStyle}>Send Dividends To</label>
+            <select value={cashOutAccountId} onChange={(e) => setCashOutAccountId(e.target.value)} style={formInputStyle}>
+              <option value="">— Select Account —</option>
+              {liquidAccounts
+                .filter((acc) => acc.name.toLowerCase().includes("checking") || acc.name.toLowerCase().includes("savings"))
+                .map((acc) => (
+                  <option key={acc.id} value={acc.id}>
+                    {acc.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+        )} */}
+
+        {/* Submit Button */}
+        <button type="submit" style={formSubmitButtonStyle}>
+          Add Taxable Investment Account
+        </button>
       </form>
     </div>
   );
 }
 
-function RentalPropertyForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
-  const [name, setName] = useState("Rental Property");
-
-  const [purchasePrice, setPurchasePrice] = useState("");
-  const [downPayment, setDownPayment] = useState("");
-  const [appreciation, setAppreciation] = useState("");
-
-  const [monthlyIncome, setMonthlyIncome] = useState("");
-  const [monthlyExpenses, setMonthlyExpenses] = useState("");
-
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "ADD_ASSET",
-      payload: {
-        source_type: "rental",
-        id: crypto.randomUUID(),
-        name,
-
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-
-        purchase_price: Number(purchasePrice),
-        down_payment: Number(downPayment),
-        annual_appreciation: Number(appreciation),
-
-        monthly_income: Number(monthlyIncome),
-        monthly_expenses: Number(monthlyExpenses),
-      },
-    });
-
-    setPurchasePrice("");
-    setDownPayment("");
-    setAppreciation("");
-    setMonthlyIncome("");
-    setMonthlyExpenses("");
-    setStartYear("");
-    setEndYear("");
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Rental Property</h3>
-
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Property Name" />
-
-      <input value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} placeholder="Purchase Price" />
-
-      <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment" />
-
-      <input value={appreciation} onChange={(e) => setAppreciation(e.target.value)} placeholder="Annual Appreciation %" />
-
-      <input value={monthlyIncome} onChange={(e) => setMonthlyIncome(e.target.value)} placeholder="Monthly Rent Income" />
-
-      <input value={monthlyExpenses} onChange={(e) => setMonthlyExpenses(e.target.value)} placeholder="Monthly Expenses" />
-
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-
-      <button type="submit">Add Rental Property</button>
-    </form>
-  );
-}
-
-
-export function ExpenseForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
+function EmployerRetirementForm({ dispatch }) {
   const [name, setName] = useState("");
-  const [annualExpense, setAnnualExpense] = useState("");
-  const [growth, setGrowth] = useState("");
+  const [balance, setBalance] = useState("");
+  const [monthlyContribution, setMonthlyContribution] = useState("");
+  const [expectedReturn, setExpectedReturn] = useState("");
+  const [employerMatch, setEmployerMatch] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
-
-  const onSubmit = (e: React.FormEvent) => {
+  const [retirementAge, setRetirementAge] = useState("");
+ 
+  const onSubmit = (e) => {
     e.preventDefault();
-
     dispatch({
-      type: "ADD_EXPENSE",
+      type: "ADD_LIQUID_ACCOUNT",
       payload: {
-        source_type: "expense",
+        source_type: "liquid",
+        variant: "employer_retirement",
         id: crypto.randomUUID(),
         name,
-
         start_year: Number(startYear),
         end_year: Number(endYear),
-
-        annual_expense: Number(annualExpense),
-        expense_growth: Number(growth),
+        starting_balance: Number(balance),
+        monthly_contribution: Number(monthlyContribution),
+        expected_return: Number(expectedReturn) / 100,
+        employer_match: Number(employerMatch) / 100,
+        retirement_age: Number(retirementAge),
       },
     });
-
     setName("");
-    setAnnualExpense("");
-    setGrowth("");
+    setBalance("");
+    setMonthlyContribution("");
+    setExpectedReturn("");
+    setEmployerMatch("");
     setStartYear("");
     setEndYear("");
+    setRetirementAge("");
   };
-
+ 
   return (
-    <div>
-      <h3>Add Expense</h3>
-
-      <form onSubmit={onSubmit}>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name (e.g. Rent)" />
-
-        <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-        <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-
-        <input value={annualExpense} onChange={(e) => setAnnualExpense(e.target.value)} placeholder="Annual Expense" />
-
-        <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth Rate" />
-
-        <button type="submit">Add Expense</button>
+    <div style={formContainerStyle}>
+      <h3 style={{ margin: "0 0 16px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Add Employer Retirement Account</h3>
+      <form onSubmit={onSubmit} style={formContainerStyle}>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Account Name</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. 401(k)" required />
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Starting Balance</label>
+          <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Monthly Contribution</label>
+          <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} style={formInputStyle} placeholder="e.g. 2000" type="text" inputMode="decimal" />
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Returns & Match</label>
+          <div style={formGridStyle}>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Expected Return (%)</label>
+              <input value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} style={formInputStyle} placeholder="7.0" type="number" step="0.1" />
+            </div>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Employer Match (%)</label>
+              <input value={employerMatch} onChange={(e) => setEmployerMatch(e.target.value)} style={formInputStyle} placeholder="3.0" type="number" step="0.1" />
+            </div>
+          </div>
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Timeline</label>
+          <div style={formGridStyle}>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
+              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            </div>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
+              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" />
+            </div>
+          </div>
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Retirement Age</label>
+          <input value={retirementAge} onChange={(e) => setRetirementAge(e.target.value)} style={formInputStyle} placeholder="65" type="number" />
+        </div>
+        <button type="submit" style={formSubmitButtonStyle}>Add Employer Retirement Account</button>
       </form>
     </div>
   );
 }
 
-function LivingExpensesForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
+// EXPENSE FORMS
+function LivingExpensesForm({ dispatch }) {
   const [name, setName] = useState("Living Expenses");
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("");
@@ -688,7 +892,7 @@ function LivingExpensesForm({ dispatch }: { dispatch: React.Dispatch<Action> }) 
   );
 }
 
-function RentExpenseForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
+function RentExpenseForm({ dispatch }) {
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("");
   const [startYear, setStartYear] = useState("");
@@ -733,44 +937,7 @@ function RentExpenseForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
   );
 }
 
-function EducationExpenseForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
-  const [amount, setAmount] = useState("");
-  const [year, setYear] = useState("");
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "ADD_EXPENSE",
-      payload: {
-        source_type: "expense",
-        id: crypto.randomUUID(),
-        name: "Education",
-        start_year: Number(year),
-        end_year: Number(year),
-        annual_expense: Number(amount),
-        expense_growth: 0,
-      },
-    });
-
-    setAmount("");
-    setYear("");
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Education Expense</h3>
-
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Education Cost" />
-
-      <input value={year} onChange={(e) => setYear(e.target.value)} placeholder="Year" />
-
-      <button type="submit">Add Education Expense</button>
-    </form>
-  );
-}
-
-
+// INCOME FORMS
 export function SalaryForm({ dispatch }) {
   const [name, setName] = useState("");
   const [netIncome, setNetIncome] = useState("");
@@ -820,7 +987,7 @@ export function SalaryForm({ dispatch }) {
   );
 }
 
-function HourlyWageForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
+function HourlyWageForm({ dispatch }) {
   const [name, setName] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
@@ -863,40 +1030,695 @@ function HourlyWageForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
   );
 }
 
-function InheritanceForm({ dispatch }: { dispatch: React.Dispatch<Action> }) {
-  const [amount, setAmount] = useState("");
-  const [year, setYear] = useState("");
+function SideHustleForm({ dispatch }) {
+  const [name, setName] = useState("");
+  const [startYear, setStartYear] = useState("");
+  const [endYear, setEndYear] = useState("");
+  const [averageIncome, setAverageIncome] = useState("");
+  const [frequency, setFrequency] = useState("monthly");
+  const [variability, setVariability] = useState("5");
+ 
+  const onSubmit = (e) => {
+    e.preventDefault();
+ 
+    const frequencyMultiplier = {
+      weekly: 52,
+      biweekly: 26,
+      monthly: 12,
+      quarterly: 4,
+      annual: 1,
+    }[frequency] || 12;
+ 
+    const annualIncome = Number(averageIncome) * frequencyMultiplier;
+ 
+    dispatch({
+      type: "ADD_INCOME",
+      payload: {
+        source_type: "income",
+        variant: "side",
+        id: crypto.randomUUID(),
+        name: name || "Side Hustle",
+        start_year: Number(startYear),
+        end_year: Number(endYear),
+        net_income: annualIncome,
+        variability: Number(variability) / 100,
+        frequency: frequency,
+        average_income_per_period: Number(averageIncome),
+      },
+    });
+ 
+    setName("");
+    setStartYear("");
+    setEndYear("");
+    setAverageIncome("");
+    setFrequency("monthly");
+    setVariability("5");
+  };
+ 
+  return (
+    <form onSubmit={onSubmit}>
+      <h3>Side Hustle</h3>
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Side Hustle Name" />
+      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" type="number" />
+      
+      <div>
+        <label>Average Income Per Period</label>
+        <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} placeholder="e.g. 500" type="number" step="0.01" />
+      </div>
+ 
+      <div>
+        <label>Frequency</label>
+        <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
+          <option value="weekly">Weekly</option>
+          <option value="biweekly">Bi-weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="quarterly">Quarterly</option>
+          <option value="annual">Annual</option>
+        </select>
+      </div>
+ 
+      <div>
+        <label>Variability (%) - {variability}%</label>
+        <input value={variability} onChange={(e) => setVariability(e.target.value)} type="range" min="0" max="20" step="1" />
+      </div>
+ 
+      <button type="submit">Add Side Hustle</button>
+    </form>
+  );
+}
+
+/* -------------------- EDIT INCOME FORMS -------------------- */
+
+export function EditSalaryForm({ item, dispatch, onClose }) {
+  const [name, setName] = useState(item.name);
+  const [netIncome, setNetIncome] = useState(item.net_income.toString());
+  const [growth, setGrowth] = useState(item.income_growth.toString());
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year.toString());
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     dispatch({
-      type: "ADD_INCOME",
+      type: "UPDATE_INCOME",
       payload: {
-        source_type: "income",
-        id: crypto.randomUUID(),
-        name: "Inheritance",
-        start_year: Number(year),
-        end_year: Number(year),
-        net_income: Number(amount),
-        income_growth: 0,
+        ...item,
+        name,
+        net_income: Number(netIncome),
+        income_growth: Number(growth),
+        start_year: Number(startYear),
+        end_year: Number(endYear),
       },
     });
+
+    onClose();
+  };
+
+  return (
+    <div>
+      <h3>Edit Salary Income</h3>
+
+      <form onSubmit={onSubmit}>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+        <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+        <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+        <input value={netIncome} onChange={(e) => setNetIncome(e.target.value)} placeholder="Annual Income" />
+        <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth Rate" />
+
+        <button type="submit">Save Income</button>
+      </form>
+    </div>
+  );
+}
+
+export function EditHourlyWageForm({ item, dispatch, onClose }) {
+  const [name, setName] = useState(item.name);
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [hourlyRate, setHourlyRate] = useState("");
+  const [hoursPerWeek, setHoursPerWeek] = useState("");
+  const [growth, setGrowth] = useState(item.income_growth.toString());
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const annualIncome = Number(hourlyRate) * Number(hoursPerWeek) * 52;
+
+    dispatch({
+      type: "UPDATE_INCOME",
+      payload: {
+        ...item,
+        name,
+        start_year: Number(startYear),
+        end_year: Number(endYear),
+        net_income: annualIncome,
+        income_growth: Number(growth),
+      },
+    });
+
+    onClose();
   };
 
   return (
     <form onSubmit={onSubmit}>
-      <h3>Inheritance</h3>
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount Received" />
-      <input value={year} onChange={(e) => setYear(e.target.value)} placeholder="Year Received" />
-      <button type="submit">Add Inheritance</button>
+      <h3>Edit Hourly Wage</h3>
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Job Name" />
+      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+      <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} placeholder="Hourly Rate" />
+      <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} placeholder="Hours / Week" />
+      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth %" />
+      <button type="submit">Save Hourly Income</button>
     </form>
   );
 }
 
+export function EditSideHustleForm({ item, dispatch, onClose }) {
+  const [name, setName] = useState(item.name);
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [averageIncome, setAverageIncome] = useState(item.average_income_per_period?.toString() || "");
+  const [frequency, setFrequency] = useState(item.frequency || "monthly");
+  const [variability, setVariability] = useState((item.variability * 100)?.toString() || "5");
+ 
+  const onSubmit = (e) => {
+    e.preventDefault();
+ 
+    const frequencyMultiplier = {
+      weekly: 52,
+      biweekly: 26,
+      monthly: 12,
+      quarterly: 4,
+      annual: 1,
+    }[frequency] || 12;
+ 
+    const annualIncome = Number(averageIncome) * frequencyMultiplier;
+ 
+    dispatch({
+      type: "UPDATE_INCOME",
+      payload: {
+        ...item,
+        name,
+        start_year: Number(startYear),
+        end_year: Number(endYear),
+        net_income: annualIncome,
+        variability: Number(variability) / 100,
+        frequency: frequency,
+        average_income_per_period: Number(averageIncome),
+      },
+    });
+ 
+    onClose();
+  };
+ 
+  return (
+    <form onSubmit={onSubmit}>
+      <h3>Edit Side Hustle</h3>
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Side Hustle Name" />
+      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" type="number" />
+      
+      <div>
+        <label>Average Income Per Period</label>
+        <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} placeholder="e.g. 500" type="number" step="0.01" />
+      </div>
+ 
+      <div>
+        <label>Frequency</label>
+        <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
+          <option value="weekly">Weekly</option>
+          <option value="biweekly">Bi-weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="quarterly">Quarterly</option>
+          <option value="annual">Annual</option>
+        </select>
+      </div>
+ 
+      <div>
+        <label>Variability (%) - {variability}%</label>
+        <input value={variability} onChange={(e) => setVariability(e.target.value)} type="range" min="0" max="20" step="1" />
+      </div>
+ 
+      <button type="submit">Save Side Hustle</button>
+    </form>
+  );
+}
 
+/* -------------------- EDIT EXPENSE FORMS -------------------- */
 
-/* -------------------- Row Styles -------------------- */
+export function EditLivingExpensesForm({ item, dispatch, onClose }) {
+  const [name, setName] = useState(item.name);
+  const [amount, setAmount] = useState(item.annual_expense.toString());
+  const [growth, setGrowth] = useState(item.expense_growth.toString());
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year.toString());
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "UPDATE_EXPENSE",
+      payload: {
+        ...item,
+        name,
+        start_year: Number(startYear),
+        end_year: Number(endYear),
+        annual_expense: Number(amount),
+        expense_growth: Number(growth),
+      },
+    });
+
+    onClose();
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <h3>Edit Living Expenses</h3>
+
+      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Annual Living Cost" />
+
+      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth %" />
+
+      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+
+      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+
+      <button type="submit">Save Living Expenses</button>
+    </form>
+  );
+}
+
+export function EditRentExpenseForm({ item, dispatch, onClose }) {
+  const [amount, setAmount] = useState(item.annual_expense.toString());
+  const [growth, setGrowth] = useState(item.expense_growth.toString());
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year.toString());
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "UPDATE_EXPENSE",
+      payload: {
+        ...item,
+        name: "Rent",
+        start_year: Number(startYear),
+        end_year: Number(endYear),
+        annual_expense: Number(amount),
+        expense_growth: Number(growth),
+      },
+    });
+
+    onClose();
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <h3>Edit Rent</h3>
+
+      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Annual Rent" />
+
+      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Rent Growth %" />
+
+      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+
+      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+
+      <button type="submit">Save Rent</button>
+    </form>
+  );
+}
+
+/* -------------------- EDIT ACCOUNT FORMS -------------------- */
+
+export function EditCheckingAccountForm({ item, dispatch, onClose }) {
+  const [name, setName] = useState(item.name);
+  const [balance, setBalance] = useState(item.balance.toString());
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [tiers, setTiers] = useState(item.interest_tiers && item.interest_tiers.length > 0 ? item.interest_tiers : [{ threshold: 0, annual_rate: 0 }]);
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "UPDATE_LIQUID_ACCOUNT",
+      payload: {
+        ...item,
+        name,
+        start_year: Number(startYear),
+        end_year: Number(endYear),
+        balance: Number(balance),
+        interest_tiers: tiers,
+      },
+    });
+
+    onClose();
+  };
+
+  const addTier = () => {
+    setTiers([
+      ...tiers,
+      {
+        threshold: tiers[tiers.length - 1]?.threshold ?? 0 + 50000,
+        annual_rate: 0.0,
+      },
+    ]);
+  };
+
+  const removeTier = (index: number) => {
+    if (tiers.length > 1) {
+      setTiers(tiers.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateTier = (index: number, field: "threshold" | "annual_rate", value: string) => {
+    const updated = [...tiers];
+    updated[index][field] = Number(value);
+    setTiers(updated);
+  };
+
+  return (
+    <div style={formContainerStyle}>
+      <div>
+        <h3 style={{ margin: "0 0 13px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Edit Checking Account</h3>
+      </div>
+
+      <form onSubmit={onSubmit} style={formContainerStyle}>
+        {/* Account Name */}
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Account Name</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. Main Checking, Emergency Fund" />
+        </div>
+
+        {/* Balance - Display formatted, store raw */}
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Starting Balance</label>
+          <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
+        </div>
+
+        {/* Years */}
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Timeline</label>
+          <div style={formGridStyle}>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
+              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            </div>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
+              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+            </div>
+          </div>
+        </div>
+
+        {/* Interest Tiers */}
+        <div style={formSectionStyle}>
+          <div style={tierHeaderStyle}>
+            <label style={tierTitleStyle}>Interest Tiers</label>
+            <button type="button" style={addTierButtonStyle} onClick={addTier}>
+              + Add Tier
+            </button>
+          </div>
+
+          {tiers.map((tier, index) => (
+            <div key={index}>
+              <div style={tierItemStyle}>
+                <div style={{ ...tierInputStyle, flex: 0.6 }}>
+                  <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
+                  <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
+                </div>
+
+                <div style={{ ...tierInputStyle, flex: 0.6 }}>
+                  <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
+                  <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder="0.03" type="number" step="0.0001" />
+                </div>
+
+                {tiers.length > 1 && (
+                  <button type="button" style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Submit Button */}
+        <button type="submit" style={formSubmitButtonStyle}>
+          Save Checking Account
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
+  const [name, setName] = useState(item.name);
+  const [balance, setBalance] = useState(item.starting_balance.toString());
+  const [monthlyContribution, setMonthlyContribution] = useState(item.monthly_contribution?.toString() || "");
+  const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "");
+  const [dividendYield, setDividendYield] = useState((item.dividend_yield * 100)?.toString() || "");
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [dividendStrategy, setDividendStrategy] = useState(item.dividend_reinvestment || "drip");
+ 
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: "UPDATE_LIQUID_ACCOUNT",
+      payload: {
+        ...item,
+        name,
+        start_year: Number(startYear),
+        end_year: Number(endYear),
+        starting_balance: Number(balance),
+        monthly_contribution: Number(monthlyContribution),
+        expected_return: Number(expectedReturn) / 100,
+        dividend_yield: Number(dividendYield) / 100,
+        dividend_reinvestment: dividendStrategy,
+      },
+    });
+    onClose();
+  };
+ 
+  return (
+    <div style={formContainerStyle}>
+      <h3 style={{ margin: "0 0 16px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Edit Taxable Investment Account</h3>
+      <form onSubmit={onSubmit} style={formContainerStyle}>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Account Name</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. Fidelity Brokerage" />
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Starting Balance</label>
+          <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} style={formInputStyle} placeholder="e.g. 50000" type="text" inputMode="decimal" />
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Monthly Contribution</label>
+          <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} style={formInputStyle} placeholder="e.g. 1000" type="text" inputMode="decimal" />
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Annual Returns</label>
+          <div style={formGridStyle}>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Expected Return (%)</label>
+              <input value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} style={formInputStyle} placeholder="8.0" type="number" step="0.1" />
+            </div>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Dividend Yield (%)</label>
+              <input value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} style={formInputStyle} placeholder="2.0" type="number" step="0.1" />
+            </div>
+          </div>
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Timeline</label>
+          <div style={formGridStyle}>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
+              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            </div>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
+              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+            </div>
+          </div>
+        </div>
+        <button type="submit" style={formSubmitButtonStyle}>Save Taxable Investment Account</button>
+      </form>
+    </div>
+  );
+}
+
+function EditEmployerRetirementForm({ item, dispatch, onClose }) {
+  const [name, setName] = useState(item.name);
+  const [balance, setBalance] = useState(item.starting_balance.toString());
+  const [monthlyContribution, setMonthlyContribution] = useState(item.monthly_contribution?.toString() || "");
+  const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "");
+  const [employerMatch, setEmployerMatch] = useState((item.employer_match * 100)?.toString() || "");
+  const [startYear, setStartYear] = useState(item.start_year.toString());
+  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [retirementAge, setRetirementAge] = useState(item.retirement_age?.toString() || "");
+ 
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: "UPDATE_LIQUID_ACCOUNT",
+      payload: {
+        ...item,
+        name,
+        start_year: Number(startYear),
+        end_year: Number(endYear),
+        starting_balance: Number(balance),
+        monthly_contribution: Number(monthlyContribution),
+        expected_return: Number(expectedReturn) / 100,
+        employer_match: Number(employerMatch) / 100,
+        retirement_age: Number(retirementAge),
+      },
+    });
+    onClose();
+  };
+ 
+  return (
+    <div style={formContainerStyle}>
+      <h3 style={{ margin: "0 0 16px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Edit Employer Retirement Account</h3>
+      <form onSubmit={onSubmit} style={formContainerStyle}>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Account Name</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. 401(k)" />
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Starting Balance</label>
+          <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Monthly Contribution</label>
+          <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} style={formInputStyle} placeholder="e.g. 2000" type="text" inputMode="decimal" />
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Returns & Match</label>
+          <div style={formGridStyle}>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Expected Return (%)</label>
+              <input value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} style={formInputStyle} placeholder="7.0" type="number" step="0.1" />
+            </div>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Employer Match (%)</label>
+              <input value={employerMatch} onChange={(e) => setEmployerMatch(e.target.value)} style={formInputStyle} placeholder="3.0" type="number" step="0.1" />
+            </div>
+          </div>
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Timeline</label>
+          <div style={formGridStyle}>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
+              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            </div>
+            <div>
+              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
+              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" />
+            </div>
+          </div>
+        </div>
+        <div style={formSectionStyle}>
+          <label style={formLabelStyle}>Retirement Age</label>
+          <input value={retirementAge} onChange={(e) => setRetirementAge(e.target.value)} style={formInputStyle} placeholder="65" type="number" />
+        </div>
+        <button type="submit" style={formSubmitButtonStyle}>Save Employer Retirement Account</button>
+      </form>
+    </div>
+  );
+}
+
+/* -------------------- Modal -------------------- */
+
+const overlayStyle: CSSProperties = {
+  position: "fixed",
+  inset: 0,
+  background: "rgba(0,0,0,0.4)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 1000,
+};
+
+const modalStyle: CSSProperties = {
+  background: "#fff",
+  padding: "2rem",
+  borderRadius: "10px",
+  width: "500px",
+  maxHeight: "80vh",
+  overflowY: "auto",
+  position: "relative",
+};
+
+const closeBtn: CSSProperties = {
+  position: "absolute",
+  top: 10,
+  right: 10,
+};
+
+const cellStyle: CSSProperties = {
+  flex: "1 1 160px",
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
+  padding: "12px",
+  border: "1px solid #e5e5e5",
+  borderRadius: "10px",
+};
+
+export function FinancialEntityModalCell({ item, setSelectedVariant }) {
+  return (
+    <div style={cellStyle} onClick={() => setSelectedVariant(item.id)}>
+      <span>{item.emoji}</span>
+      <span>{item.name}</span>
+    </div>
+  );
+}
+
+export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEdited }) {
+  const [selectedVariant, setSelectedVariant] = useState(variantBeingEdited?.variant || null);
+  
+  const goBack = () => setSelectedVariant(null);
+  const closeModal = () => setIsModalOpen(false);
+
+  const FormComponent = selectedVariant 
+    ? ( variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent)
+    : null;
+
+  return (
+    <div style={overlayStyle}>
+      <div style={modalStyle}>
+        {selectedVariant && <button onClick={goBack}>← Back</button>}
+
+        <button style={closeBtn} onClick={closeModal}>
+          close
+        </button>
+
+        {/* ENTITY SOURCE SELECTION MODAL */}
+        {!selectedVariant && !variantBeingEdited && (
+          <div style={{ display: "grid", gap: "10px" }}>
+            {data.map((item) => (
+              <FinancialEntityModalCell key={item.id} item={item} setSelectedVariant={setSelectedVariant} />
+            ))}
+          </div>
+        )}
+
+        {/* EDIT/ADD Modal */}
+        {selectedVariant && (FormComponent ? 
+          variantBeingEdited 
+            ? <FormComponent item={variantBeingEdited} dispatch={dispatch} onClose={closeModal} /> 
+            : <FormComponent dispatch={dispatch} onClose={closeModal} />
+          : <div>Form not implemented</div>)
+        }
+      </div>
+    </div>
+  );
+}
+
 
 /* -------------------- Row Styles -------------------- */
 
@@ -1011,20 +1833,10 @@ function IncomeRow({ income, dispatch, onEdit }) {
       </div>
 
       <div style={rowActionsStyle}>
-        <button
-          style={editHover ? smallButtonHoverStyle : smallButtonStyle}
-          onMouseEnter={() => setEditHover(true)}
-          onMouseLeave={() => setEditHover(false)}
-          onClick={() => onEdit && onEdit(income, "salary")}
-        >
+        <button style={editHover ? smallButtonHoverStyle : smallButtonStyle} onMouseEnter={() => setEditHover(true)} onMouseLeave={() => setEditHover(false)} onClick={() => onEdit && onEdit(income, "salary")}>
           Edit
         </button>
-        <button
-          style={deleteHover ? smallDeleteButtonHoverStyle : smallDeleteButtonStyle}
-          onMouseEnter={() => setDeleteHover(true)}
-          onMouseLeave={() => setDeleteHover(false)}
-          onClick={() => dispatch({ type: "DELETE_INCOME", payload: { id: income.id } })}
-        >
+        <button style={deleteHover ? smallDeleteButtonHoverStyle : smallDeleteButtonStyle} onMouseEnter={() => setDeleteHover(true)} onMouseLeave={() => setDeleteHover(false)} onClick={() => dispatch({ type: "DELETE_INCOME", payload: { id: income.id } })}>
           ✕
         </button>
       </div>
@@ -1032,7 +1844,7 @@ function IncomeRow({ income, dispatch, onEdit }) {
   );
 }
 
-function AssetRow({ asset, dispatch, onEdit }: { asset: AssetSource; dispatch: React.Dispatch<Action>; onEdit?: (item: AssetSource, formType: string) => void }) {
+function AssetRow({ asset, dispatch, onEdit }) {
   const [editHover, setEditHover] = useState(false);
   const [deleteHover, setDeleteHover] = useState(false);
 
@@ -1053,20 +1865,10 @@ function AssetRow({ asset, dispatch, onEdit }: { asset: AssetSource; dispatch: R
       </div>
 
       <div style={rowActionsStyle}>
-        <button
-          style={editHover ? smallButtonHoverStyle : smallButtonStyle}
-          onMouseEnter={() => setEditHover(true)}
-          onMouseLeave={() => setEditHover(false)}
-          onClick={() => onEdit && onEdit(asset, getAssetFormType())}
-        >
+        <button style={editHover ? smallButtonHoverStyle : smallButtonStyle} onMouseEnter={() => setEditHover(true)} onMouseLeave={() => setEditHover(false)} onClick={() => onEdit && onEdit(asset, getAssetFormType())}>
           Edit
         </button>
-        <button
-          style={deleteHover ? smallDeleteButtonHoverStyle : smallDeleteButtonStyle}
-          onMouseEnter={() => setDeleteHover(true)}
-          onMouseLeave={() => setDeleteHover(false)}
-          onClick={() => dispatch({ type: "DELETE_ASSET", payload: { id: asset.id } })}
-        >
+        <button style={deleteHover ? smallDeleteButtonHoverStyle : smallDeleteButtonStyle} onMouseEnter={() => setDeleteHover(true)} onMouseLeave={() => setDeleteHover(false)} onClick={() => dispatch({ type: "DELETE_ASSET", payload: { id: asset.id } })}>
           ✕
         </button>
       </div>
@@ -1074,7 +1876,7 @@ function AssetRow({ asset, dispatch, onEdit }: { asset: AssetSource; dispatch: R
   );
 }
 
-function ExpenseRow({ expense, dispatch, onEdit }: { expense: ExpenseSource; dispatch: React.Dispatch<Action>; onEdit?: (item: ExpenseSource, formType: string) => void }) {
+function ExpenseRow({ expense, dispatch, onEdit }) {
   const [editHover, setEditHover] = useState(false);
   const [deleteHover, setDeleteHover] = useState(false);
 
@@ -1090,9 +1892,6 @@ function ExpenseRow({ expense, dispatch, onEdit }: { expense: ExpenseSource; dis
         <p style={rowNameStyle}>{expense.name}</p>
         <div style={rowMetaStyle}>
           <span>${expense.annual_expense.toLocaleString()}</span>
-          {/* <span style={rowMetaBadgeStyle}>
-            {expense.expense_growth}% growth
-          </span> */}
           <span style={rowMetaBadgeStyle}>
             {expense.start_year}–{expense.end_year}
           </span>
@@ -1100,12 +1899,7 @@ function ExpenseRow({ expense, dispatch, onEdit }: { expense: ExpenseSource; dis
       </div>
 
       <div style={rowActionsStyle}>
-        <button
-          style={editHover ? smallButtonHoverStyle : smallButtonStyle}
-          onMouseEnter={() => setEditHover(true)}
-          onMouseLeave={() => setEditHover(false)}
-          onClick={() => onEdit && onEdit(expense, getExpenseFormType())}
-        >
+        <button style={editHover ? smallButtonHoverStyle : smallButtonStyle} onMouseEnter={() => setEditHover(true)} onMouseLeave={() => setEditHover(false)} onClick={() => onEdit && onEdit(expense, getExpenseFormType())}>
           Edit
         </button>
         <button
@@ -1126,45 +1920,29 @@ function ExpenseRow({ expense, dispatch, onEdit }: { expense: ExpenseSource; dis
   );
 }
 
-function LiquidAccountRow({ account, dispatch, onEdit }: { account: LiquidAccount; dispatch: React.Dispatch<Action>; onEdit?: (item: LiquidAccount, formType: string) => void }) {
-  const [editHover, setEditHover] = useState(false);
-  const [deleteHover, setDeleteHover] = useState(false);
-
-  const getAccountFormType = () => {
-    return account.name.toLowerCase().includes("checking") ? "checking" : "savings";
-  };
+function AccountRow({ account, dispatch, onEdit }) {
 
   return (
     <div style={rowStyle}>
       <div style={rowMainStyle}>
         <p style={rowNameStyle}>{account.name}</p>
         <div style={rowMetaStyle}>
-          <span>${account.balance.toLocaleString()}</span>
-          <span style={rowMetaBadgeStyle}>
-            {account.interest_tiers[0]?.annual_rate}% interest
-          </span>
-          <span style={rowMetaBadgeStyle}>
-            {account.start_year}–{account.end_year}
-          </span>
+          {account.balance && <span>${account.balance}</span>}
+          {account.amount && <span>${account.amount}</span>}
+          {account.interest_tiers && (<span style={rowMetaBadgeStyle}>{account.interest_tiers[0]?.annual_rate}% interest</span> )}
+          {account.start_year && (<span style={rowMetaBadgeStyle}>{account.start_year}–{account.end_year}</span>)}
         </div>
       </div>
 
       <div style={rowActionsStyle}>
-        <button
-          style={editHover ? smallButtonHoverStyle : smallButtonStyle}
-          onMouseEnter={() => setEditHover(true)}
-          onMouseLeave={() => setEditHover(false)}
-          onClick={() => onEdit && onEdit(account, getAccountFormType())}
-        >
+        <button style={smallButtonStyle} onClick={() => onEdit(account)}>
           Edit
         </button>
         <button
-          style={deleteHover ? smallDeleteButtonHoverStyle : smallDeleteButtonStyle}
-          onMouseEnter={() => setDeleteHover(true)}
-          onMouseLeave={() => setDeleteHover(false)}
+          style={smallDeleteButtonStyle}
           onClick={() =>
             dispatch({
-              type: "DELETE_LIQUID_ACCOUNT",
+              type: `DELETE_LIQUID_ACCOUNT`,
               payload: { id: account.id },
             })
           }
@@ -1175,615 +1953,6 @@ function LiquidAccountRow({ account, dispatch, onEdit }: { account: LiquidAccoun
     </div>
   );
 }
-
-/* -------------------- EDIT INCOME FORMS -------------------- */
-
-export function EditSalaryForm({ income: item, dispatch, onClose }) {
-  const [name, setName] = useState(item.name);
-  const [netIncome, setNetIncome] = useState(item.net_income.toString());
-  const [growth, setGrowth] = useState(item.income_growth.toString());
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year.toString());
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "UPDATE_INCOME",
-      payload: {
-        ...item,
-        name,
-        net_income: Number(netIncome),
-        income_growth: Number(growth),
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-      },
-    });
-
-    onClose();
-  };
-
-  return (
-    <div>
-      <h3>Edit Salary Income</h3>
-
-      <form onSubmit={onSubmit}>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-        <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-        <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-        <input value={netIncome} onChange={(e) => setNetIncome(e.target.value)} placeholder="Annual Income" />
-        <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth Rate" />
-
-        <button type="submit">Save Income</button>
-      </form>
-    </div>
-  );
-}
-
-export function EditHourlyWageForm({ income, dispatch, onClose }: { income: IncomeSource; dispatch: React.Dispatch<Action>; onClose: () => void }) {
-  const [name, setName] = useState(income.name);
-  const [startYear, setStartYear] = useState(income.start_year.toString());
-  const [endYear, setEndYear] = useState(income.end_year.toString());
-  const [hourlyRate, setHourlyRate] = useState("");
-  const [hoursPerWeek, setHoursPerWeek] = useState("");
-  const [growth, setGrowth] = useState(income.income_growth.toString());
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const annualIncome = Number(hourlyRate) * Number(hoursPerWeek) * 52;
-
-    dispatch({
-      type: "UPDATE_INCOME",
-      payload: {
-        ...income,
-        name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-        net_income: annualIncome,
-        income_growth: Number(growth),
-      },
-    });
-
-    onClose();
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Hourly Wage</h3>
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Job Name" />
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-      <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} placeholder="Hourly Rate" />
-      <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} placeholder="Hours / Week" />
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth %" />
-      <button type="submit">Save Hourly Income</button>
-    </form>
-  );
-}
-
-export function EditInheritanceForm({ income, dispatch, onClose }: { income: IncomeSource; dispatch: React.Dispatch<Action>; onClose: () => void }) {
-  const [amount, setAmount] = useState(income.net_income.toString());
-  const [year, setYear] = useState(income.start_year.toString());
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "UPDATE_INCOME",
-      payload: {
-        ...income,
-        name: "Inheritance",
-        net_income: Number(amount),
-        start_year: Number(year),
-        end_year: Number(year),
-        income_growth: 0,
-      },
-    });
-
-    onClose();
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Inheritance</h3>
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount Received" />
-      <input value={year} onChange={(e) => setYear(e.target.value)} placeholder="Year Received" />
-      <button type="submit">Save Inheritance</button>
-    </form>
-  );
-}
-
-/* -------------------- EDIT EXPENSE FORMS -------------------- */
-
-export function EditLivingExpensesForm({ expense, dispatch, onClose }: { expense: ExpenseSource; dispatch: React.Dispatch<Action>; onClose: () => void }) {
-  const [name, setName] = useState(expense.name);
-  const [amount, setAmount] = useState(expense.annual_expense.toString());
-  const [growth, setGrowth] = useState(expense.expense_growth.toString());
-  const [startYear, setStartYear] = useState(expense.start_year.toString());
-  const [endYear, setEndYear] = useState(expense.end_year.toString());
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "UPDATE_EXPENSE",
-      payload: {
-        ...expense,
-        name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-        annual_expense: Number(amount),
-        expense_growth: Number(growth),
-      },
-    });
-
-    onClose();
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Living Expenses</h3>
-
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Annual Living Cost" />
-
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth %" />
-
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-
-      <button type="submit">Save Living Expenses</button>
-    </form>
-  );
-}
-
-export function EditRentExpenseForm({ expense, dispatch, onClose }: { expense: ExpenseSource; dispatch: React.Dispatch<Action>; onClose: () => void }) {
-  const [amount, setAmount] = useState(expense.annual_expense.toString());
-  const [growth, setGrowth] = useState(expense.expense_growth.toString());
-  const [startYear, setStartYear] = useState(expense.start_year.toString());
-  const [endYear, setEndYear] = useState(expense.end_year.toString());
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "UPDATE_EXPENSE",
-      payload: {
-        ...expense,
-        name: "Rent",
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-        annual_expense: Number(amount),
-        expense_growth: Number(growth),
-      },
-    });
-
-    onClose();
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Rent</h3>
-
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Annual Rent" />
-
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Rent Growth %" />
-
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-
-      <button type="submit">Save Rent</button>
-    </form>
-  );
-}
-
-export function EditEducationExpenseForm({ expense, dispatch, onClose }: { expense: ExpenseSource; dispatch: React.Dispatch<Action>; onClose: () => void }) {
-  const [amount, setAmount] = useState(expense.annual_expense.toString());
-  const [year, setYear] = useState(expense.start_year.toString());
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "UPDATE_EXPENSE",
-      payload: {
-        ...expense,
-        name: "Education",
-        start_year: Number(year),
-        end_year: Number(year),
-        annual_expense: Number(amount),
-        expense_growth: 0,
-      },
-    });
-
-    onClose();
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Education Expense</h3>
-
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Education Cost" />
-
-      <input value={year} onChange={(e) => setYear(e.target.value)} placeholder="Year" />
-
-      <button type="submit">Save Education Expense</button>
-    </form>
-  );
-}
-
-/* -------------------- EDIT ACCOUNT FORMS -------------------- */
-
-export function EditCheckingAccountForm({ account, dispatch, onClose }: { account: LiquidAccount; dispatch: React.Dispatch<Action>; onClose: () => void }) {
-  const [name, setName] = useState(account.name);
-  const [balance, setBalance] = useState(account.balance.toString());
-  const [startYear, setStartYear] = useState(account.start_year.toString());
-  const [endYear, setEndYear] = useState(account.end_year.toString());
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "UPDATE_LIQUID_ACCOUNT",
-      payload: {
-        ...account,
-        name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-        balance: Number(balance),
-        interest_tiers: [
-          {
-            threshold: 0,
-            annual_rate: 0,
-          },
-        ],
-      },
-    });
-
-    onClose();
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Checking Account</h3>
-
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Account Name" />
-
-      <input value={balance} onChange={(e) => setBalance(e.target.value)} placeholder="Starting Balance" />
-
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-
-      <button type="submit">Save Checking Account</button>
-    </form>
-  );
-}
-
-export function EditSavingsAccountForm({ account, dispatch, onClose }: { account: LiquidAccount; dispatch: React.Dispatch<Action>; onClose: () => void }) {
-  const [name, setName] = useState(account.name);
-  const [balance, setBalance] = useState(account.balance.toString());
-  const [startYear, setStartYear] = useState(account.start_year.toString());
-  const [endYear, setEndYear] = useState(account.end_year.toString());
-  const [threshold, setThreshold] = useState(account.interest_tiers[0]?.threshold?.toString() ?? "");
-  const [rate, setRate] = useState(account.interest_tiers[0]?.annual_rate?.toString() ?? "");
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "UPDATE_LIQUID_ACCOUNT",
-      payload: {
-        ...account,
-        name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-        balance: Number(balance),
-        interest_tiers: [
-          {
-            threshold: Number(threshold),
-            annual_rate: Number(rate),
-          },
-        ],
-      },
-    });
-
-    onClose();
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Savings Account</h3>
-
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Account Name" />
-
-      <input value={balance} onChange={(e) => setBalance(e.target.value)} placeholder="Starting Balance" />
-
-      <input value={threshold} onChange={(e) => setThreshold(e.target.value)} placeholder="Interest Threshold" />
-
-      <input value={rate} onChange={(e) => setRate(e.target.value)} placeholder="Annual Interest Rate %" />
-
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-
-      <button type="submit">Save Savings Account</button>
-    </form>
-  );
-}
-
-/* -------------------- EDIT ASSET FORMS -------------------- */
-
-export function EditRentalPropertyForm({ asset, dispatch, onClose }: { asset: AssetSource; dispatch: React.Dispatch<Action>; onClose: () => void }) {
-  if (asset.source_type !== "rental") return null;
-
-  const [name, setName] = useState(asset.name);
-  const [purchasePrice, setPurchasePrice] = useState(asset.purchase_price.toString());
-  const [downPayment, setDownPayment] = useState(asset.down_payment.toString());
-  const [appreciation, setAppreciation] = useState(asset.annual_appreciation.toString());
-  const [monthlyIncome, setMonthlyIncome] = useState(asset.monthly_income.toString());
-  const [monthlyExpenses, setMonthlyExpenses] = useState(asset.monthly_expenses.toString());
-  const [startYear, setStartYear] = useState(asset.start_year.toString());
-  const [endYear, setEndYear] = useState(asset.end_year.toString());
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "UPDATE_ASSET",
-      payload: {
-        ...asset,
-        name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-        purchase_price: Number(purchasePrice),
-        down_payment: Number(downPayment),
-        annual_appreciation: Number(appreciation),
-        monthly_income: Number(monthlyIncome),
-        monthly_expenses: Number(monthlyExpenses),
-      },
-    });
-
-    onClose();
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Rental Property</h3>
-
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Property Name" />
-
-      <input value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} placeholder="Purchase Price" />
-
-      <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment" />
-
-      <input value={appreciation} onChange={(e) => setAppreciation(e.target.value)} placeholder="Annual Appreciation %" />
-
-      <input value={monthlyIncome} onChange={(e) => setMonthlyIncome(e.target.value)} placeholder="Monthly Rent Income" />
-
-      <input value={monthlyExpenses} onChange={(e) => setMonthlyExpenses(e.target.value)} placeholder="Monthly Expenses" />
-
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-
-      <button type="submit">Save Rental Property</button>
-    </form>
-  );
-}
-
-export function EditStockPortfolioForm({ asset, dispatch, onClose }: { asset: AssetSource; dispatch: React.Dispatch<Action>; onClose: () => void }) {
-  if (asset.source_type !== "stock") return null;
-
-  const [name, setName] = useState(asset.name);
-  const [initialValue, setInitialValue] = useState(asset.initial_value.toString());
-  const [annualReturn, setAnnualReturn] = useState(asset.annual_return.toString());
-  const [monthlyContribution, setMonthlyContribution] = useState(asset.monthly_contribution.toString());
-  const [dividendYield, setDividendYield] = useState(asset.dividend_yield.toString());
-  const [startYear, setStartYear] = useState(asset.start_year.toString());
-  const [endYear, setEndYear] = useState(asset.end_year.toString());
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "UPDATE_ASSET",
-      payload: {
-        ...asset,
-        name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-        initial_value: Number(initialValue),
-        annual_return: Number(annualReturn),
-        monthly_contribution: Number(monthlyContribution),
-        dividend_yield: Number(dividendYield),
-      },
-    });
-
-    onClose();
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Stock Portfolio</h3>
-
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Portfolio Name" />
-
-      <input value={initialValue} onChange={(e) => setInitialValue(e.target.value)} placeholder="Initial Value" />
-
-      <input value={annualReturn} onChange={(e) => setAnnualReturn(e.target.value)} placeholder="Annual Return %" />
-
-      <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} placeholder="Monthly Contribution" />
-
-      <input value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} placeholder="Dividend Yield %" />
-
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-
-      <button type="submit">Save Stock Portfolio</button>
-    </form>
-  );
-}
-
-const cellStyle: CSSProperties = {
-  flex: "1 1 160px",
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-  padding: "12px",
-  border: "1px solid #e5e5e5",
-  borderRadius: "10px",
-};
-
-const gridStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: "12px",
-};
-
-const incomeFormMap = {
-  salary: SalaryForm,
-  hourly: HourlyWageForm,
-  inheritance: InheritanceForm,
-};
-
-const expenseFormMap = {
-  living: LivingExpensesForm,
-  rent: RentExpenseForm,
-  education: EducationExpenseForm,
-};
-
-const assetFormMap = {
-  rental_property: RentalPropertyForm,
-};
-
-const accountFromMap = {
-  checking: CheckingAccountForm,
-};
-
-const incomeEditFormMap = {
-  salary: EditSalaryForm,
-  hourly: EditHourlyWageForm,
-  inheritance: EditInheritanceForm,
-};
-
-const expenseEditFormMap = {
-  living: EditLivingExpensesForm,
-  rent: EditRentExpenseForm,
-  education: EditEducationExpenseForm,
-};
-
-const assetEditFormMap = {
-  rental_property: EditRentalPropertyForm,
-  stock: EditStockPortfolioForm,
-};
-
-const accountEditFormMap = {
-  checking: EditCheckingAccountForm,
-  savings: EditSavingsAccountForm,
-};
-/* -------------------- Modal -------------------- */
-
-const overlayStyle: CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0,0,0,0.4)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 1000,
-};
-
-const modalStyle: CSSProperties = {
-  background: "#fff",
-  padding: "2rem",
-  borderRadius: "10px",
-  width: "500px",
-  maxHeight: "80vh",
-  overflowY: "auto",
-  position: "relative",
-};
-
-const closeBtn: CSSProperties = {
-  position: "absolute",
-  top: 10,
-  right: 10,
-};
-
-export function FinancialEntityModalCell({ item, setSelectedForm }) {
-  return (
-    <div style={cellStyle} onClick={() => setSelectedForm(item.id)}>
-      <span>{item.emoji}</span>
-      <span>{item.name}</span>
-    </div>
-  );
-}
-
-export function Modal({ setIsModalOpen, data, entityType, dispatch, editingItem, editFormType }) {
-  const [selectedForm, setSelectedForm] = useState(editingItem ? editFormType : null);
-
-  const goBack = () => setSelectedForm(null);
-
-  const closeModal = () => setIsModalOpen(false);
-
-  // Determine which form map to use based on whether we're editing or adding
-  let formMap;
-  if (editingItem) {
-    // Edit mode — use edit form maps
-    formMap = entityType === "income" ? incomeEditFormMap : entityType === "expense" ? expenseEditFormMap : entityType === "asset" ? assetEditFormMap : entityType === "account" ? accountEditFormMap : null;
-  } else {
-    // Add mode — use add form maps
-    formMap = entityType === "income" ? incomeFormMap : entityType === "expense" ? expenseFormMap : entityType === "asset" ? assetFormMap : entityType === "account" ? accountFromMap : null;
-  }
-
-  const FormComponent = formMap && selectedForm ? formMap[selectedForm] : null;
-
-  return (
-    <div style={overlayStyle}>
-      <div style={modalStyle}>
-        <button style={closeBtn} onClick={closeModal}>
-          close
-        </button>
-
-        {!selectedForm && !editingItem && (
-          <div style={{ display: "grid", gap: "10px" }}>
-            {data.map((item) => (
-              <FinancialEntityModalCell key={item.id} item={item} setSelectedForm={setSelectedForm} />
-            ))}
-          </div>
-        )}
-
-        {selectedForm && (
-          <div>
-            {!editingItem && <button onClick={goBack}>← Back</button>}
-
-            {FormComponent ? (
-              editingItem ? (
-                entityType === "income" ? (
-                  <FormComponent income={editingItem} dispatch={dispatch} onClose={closeModal} />
-                ) : entityType === "expense" ? (
-                  <FormComponent expense={editingItem} dispatch={dispatch} onClose={closeModal} />
-                ) : entityType === "asset" ? (
-                  <FormComponent asset={editingItem} dispatch={dispatch} onClose={closeModal} />
-                ) : entityType === "account" ? (
-                  <FormComponent account={editingItem} dispatch={dispatch} onClose={closeModal} />
-                ) : null
-              ) : (
-                <FormComponent dispatch={dispatch} />
-              )
-            ) : (
-              <div>Form not implemented</div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 /* -------------------- Financial Entity Card -------------------- */
 
 const financialEntityContainer: CSSProperties = {
@@ -1824,22 +1993,21 @@ const cardStyle: CSSProperties = {
   minHeight: "80px",
 };
 
-export function FinancialEntity({ state, entityName, data, entityType, dispatch }) {
+export function FinancialEntity({ state, entityName, category, dispatch }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
-  const [editFormType, setEditFormType] = useState(null);
+  const [variantBeingEdited, setVariantBeingEdited] = useState(null);
 
-  const handleEdit = (item, formType) => {
-    setEditingItem(item);
-    setEditFormType(formType);
+  const handleEdit = (item) => {
+    setVariantBeingEdited(item);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setEditingItem(null);
-    setEditFormType(null);
+    setVariantBeingEdited(null);
   };
+
+  const data = Object.values(ENTITY_CONFIG[category]).map(v => ({ id: v.id, name: v.name, emoji: v.emoji }));
 
   return (
     <>
@@ -1852,40 +2020,28 @@ export function FinancialEntity({ state, entityName, data, entityType, dispatch 
           </button>
         </div>
 
-        {state.liquid_accounts.map((item) => {
-          if (entityType === "account") {
-            return <LiquidAccountRow key={item.id} account={item} dispatch={dispatch} onEdit={handleEdit} />;
-          }
-          return null;
-        })}
+        {category === "account" && state.liquid_accounts.map((item) => (
+          <AccountRow key={item.id} account={item} dispatch={dispatch} onEdit={handleEdit} />
+        ))}
 
-        {state.incomes.map((item) => {
-          if (entityType === "income") {
-            return <IncomeRow key={item.id} income={item} dispatch={dispatch} onEdit={handleEdit} />;
-          }
-          return null;
-        })}
+        {category === "income" && state.incomes.map((item) => (
+          <IncomeRow key={item.id} income={item} dispatch={dispatch} onEdit={handleEdit} />
+        ))}
 
-        {state.expenses.map((item) => {
-          if (entityType === "expense") {
-            return <ExpenseRow key={item.id} expense={item} dispatch={dispatch} onEdit={handleEdit} />;
-          }
-          return null;
-        })}
+        {category === "expense" && state.expenses.map((item) => (
+          <ExpenseRow key={item.id} expense={item} dispatch={dispatch} onEdit={handleEdit} />
+        ))}
 
-        {state.assets.map((item) => {
-          if (entityType === "asset") {
-            return <AssetRow key={item.id} asset={item} dispatch={dispatch} onEdit={handleEdit} />;
-          }
-          return null;
-        })}
+        {category === "asset" && state.assets.map((item) => (
+          <AssetRow key={item.id} asset={item} dispatch={dispatch} onEdit={handleEdit} />
+        ))}
       </div>
 
-      {isModalOpen && <Modal setIsModalOpen={handleCloseModal} data={data} entityType={entityType} dispatch={dispatch} editingItem={editingItem} editFormType={editFormType} />}
+      {isModalOpen && <Modal setIsModalOpen={handleCloseModal} data={data} category={category} dispatch={dispatch} variantBeingEdited={variantBeingEdited}/>}
     </>
   );
 }
-/* -------------------- Horizontal Container -------------------- */
+/* -------------------- Financial Entities (Horizontal Container) -------------------- */
 
 const containerWrapper: CSSProperties = {
   position: "relative",
@@ -1926,7 +2082,7 @@ const arrowStyle: CSSProperties = {
 };
 
 export function FinancialEntities({ state, dispatch }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef(null);
 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -1939,7 +2095,7 @@ export function FinancialEntities({ state, dispatch }) {
       setShowArrows(window.innerWidth <= 1250);
     };
 
-    handleResize(); // run on mount
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
@@ -1959,7 +2115,7 @@ export function FinancialEntities({ state, dispatch }) {
     updateScrollState();
   }, []);
 
-  const scrollByStep = (direction: "left" | "right") => {
+  const scrollByStep = (direction) => {
     const el = ref.current;
     if (!el) return;
 
@@ -1983,14 +2139,12 @@ export function FinancialEntities({ state, dispatch }) {
         `}
       </style>
 
-      {/* LEFT ARROW (only small screens) */}
       {showArrows && canScrollLeft && (
         <button style={{ ...arrowStyle, left: "6px" }} onClick={() => scrollByStep("left")}>
           ◀
         </button>
       )}
 
-      {/* RIGHT ARROW (only small screens) */}
       {showArrows && canScrollRight && (
         <button style={{ ...arrowStyle, right: "6px" }} onClick={() => scrollByStep("right")}>
           ▶
@@ -1999,27 +2153,26 @@ export function FinancialEntities({ state, dispatch }) {
 
       <div ref={ref} style={containerStyle} className="hide-scrollbar" onScroll={updateScrollState}>
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName="Accounts" data={accountTypes} entityType="account" dispatch={dispatch} />
+          <FinancialEntity state={state} entityName="Accounts" category="account" dispatch={dispatch} />
         </div>
 
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName="Income" data={incomeTypes} entityType="income" dispatch={dispatch} />
+          <FinancialEntity state={state} entityName="Income" category="income" dispatch={dispatch} />
         </div>
 
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName="Expenses" data={expenseTypes} entityType="expense" dispatch={dispatch} />
+          <FinancialEntity state={state} entityName="Expenses" category="expense" dispatch={dispatch} />
         </div>
 
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName="Assets" data={assetTypes} entityType="asset" dispatch={dispatch} />
+          <FinancialEntity state={state} entityName="Assets" category="asset" dispatch={dispatch} />
         </div>
       </div>
     </div>
   );
 }
 
-import { BarChart, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer, Line, Bar } from "recharts";
-import { start } from "repl";
+import { BarChart, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer, Bar } from "recharts";
 
 function transformData(simResult: SimYearResult[]) {
   return simResult.map((year) => {
@@ -2061,7 +2214,7 @@ export function CustomTooltip({ active, payload, label }) {
   );
 }
 
-export function NetWorthStackedChart({ simResult }: { simResult: SimYearResult[] }) {
+export function NetWorthStackedChart({ simResult }) {
   if (!simResult.length)
     return (
       <>
@@ -2250,10 +2403,6 @@ export default function Dashboard() {
 
         <pre>{JSON.stringify(state, null, 2)}</pre>
         <FinancialEntities state={state} dispatch={dispatch} />
-        {/* <IncomeList incomes={state.incomes} dispatch={dispatch} />
-        <AssetList assets={state.assets} dispatch={dispatch} />
-        <ExpenseList expenses={state.expenses} dispatch={dispatch} />
-        <LiquidAccountList accounts={state.liquid_accounts} dispatch={dispatch} /> */}
 
         <SimulationControls state={state} setSimResult={setSimResult} />
         <NetWorthStackedChart simResult={simResult} />

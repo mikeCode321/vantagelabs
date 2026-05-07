@@ -1692,6 +1692,296 @@ function EditEmployerRetirementForm({ item, dispatch, onClose }) {
   );
 }
 
+/* -------------------- Feedback Model -------------------- */
+function getAnonymousId() {
+  const storageKey = "vantage_anonymous_id";
+
+  let anonymousId = localStorage.getItem(storageKey);
+
+  if (!anonymousId) {
+    anonymousId = crypto.randomUUID();
+    localStorage.setItem(storageKey, anonymousId);
+  }
+
+  return anonymousId;
+}
+
+function FeedbackModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const [rating, setRating] = useState("");
+  const [category, setCategory] = useState("General");
+  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState("");
+
+  if (!isOpen) return null;
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const feedbackPayload = {
+      userProvided: {
+        satisfaction: Number(rating),
+        category,
+        message,
+        email: email || null,
+      },
+      capturedAutomatically: {
+        anonymousId: getAnonymousId(),
+        pageUrl: window.location.href,
+        path: window.location.pathname,
+        timestamp: new Date().toISOString(),
+        browserAndOS: navigator.userAgent,
+        referralSource: document.referrer || null,
+        utmParams: Object.fromEntries(
+          new URLSearchParams(window.location.search).entries()
+        ),
+      },
+    };
+
+    console.log("User Feedback Submitted:", feedbackPayload);
+
+    setRating("");
+    setCategory("General");
+    setMessage("");
+    setEmail("");
+
+    onClose();
+  }
+
+  return (
+    <div style={feedbackOverlayStyle} onClick={onClose}>
+      <div
+        style={feedbackModalStyle}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div style={feedbackHeaderStyle}>
+          <div>
+            <h2 style={feedbackTitleStyle}>Leave Feedback</h2>
+            <p style={feedbackDescriptionStyle}>
+            We’re a small team building quickly, and we’d genuinely appreciate any feedback that could help us improve. 
+            </p>
+          </div>
+
+          <button type="button" style={feedbackCloseStyle} onClick={onClose}>
+            ×
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} style={feedbackFormStyle}>
+          <label style={feedbackLabelStyle}>
+            Satisfaction Rating
+            <select
+              value={rating}
+              onChange={(event) => setRating(event.target.value)}
+              required
+              style={feedbackInputStyle}
+            >
+              <option value="">Select a rating</option>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number) => (
+                <option key={number} value={number}>
+                  {number}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label style={feedbackLabelStyle}>
+            Feedback Category
+            <select
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+              style={feedbackInputStyle}
+            >
+              <option>Bug</option>
+              <option>Feature Request</option>
+              <option>UX Confusion</option>
+              <option>Questions</option>
+              <option>General</option>
+            </select>
+          </label>
+
+          <label style={feedbackLabelStyle}>
+            Feedback / Questions
+            <textarea
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              placeholder="Write your feedback or questions..."
+              rows={5}
+              required
+              style={feedbackInputStyle}
+            />
+          </label>
+
+          <label style={feedbackLabelStyle}>
+            Email Optional
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="Only if you want a follow-up"
+              style={feedbackInputStyle}
+            />
+          </label>
+
+          <div style={feedbackActionsStyle}>
+            <button type="button" style={feedbackSecondaryStyle} onClick={onClose}>
+              Cancel
+            </button>
+
+            <button type="submit" style={feedbackPrimaryStyle}>
+              Submit Feedback
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+const feedbackOverlayStyle: CSSProperties = {
+  position: "fixed",
+  inset: 0,
+  background: "rgba(15, 12, 30, 0.45)",
+  backdropFilter: "blur(8px)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 9999,
+  padding: "24px",
+};
+
+const feedbackModalStyle: CSSProperties = {
+  width: "100%",
+  maxWidth: "560px",
+  maxHeight: "85vh",
+  overflowY: "auto",
+  background: "#ffffff",
+  border: "1px solid rgba(124, 58, 237, 0.14)",
+  borderRadius: "24px",
+  boxShadow: "0 24px 80px rgba(31, 18, 74, 0.24)",
+  padding: "28px",
+  position: "relative",
+
+  fontFamily:
+  '"Inter", "Manrope", "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+};
+
+const feedbackHeaderStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "flex-start",
+  justifyContent: "space-between",
+  gap: "20px",
+  marginBottom: "24px",
+};
+
+const feedbackEyebrowStyle: CSSProperties = {
+  margin: "0 0 6px",
+  color: "#7c3aed",
+  fontSize: "0.75rem",
+  fontWeight: 700,
+  letterSpacing: "0.12em",
+  textTransform: "uppercase",
+};
+
+const feedbackTitleStyle: CSSProperties = {
+  margin: 0,
+  color: "#161225",
+  fontSize: "1.85rem",
+  fontWeight: 900,
+  letterSpacing: "-0.04em",
+  lineHeight: 1.05,
+};
+
+const feedbackDescriptionStyle: CSSProperties = {
+  margin: "10px 0 0",
+  color: "#6b647c",
+  fontSize: "0.95rem",
+  fontWeight: 500,
+  lineHeight: 1.55,
+};
+
+const feedbackCloseStyle: CSSProperties = {
+  border: "none",
+  background: "#f4efff",
+  color: "#6d28d9",
+  width: "36px",
+  height: "36px",
+  borderRadius: "999px",
+  fontSize: "24px",
+  cursor: "pointer",
+  lineHeight: 1,
+};
+
+const feedbackFormStyle: CSSProperties = {
+  display: "grid",
+  gap: "18px",
+};
+
+const feedbackLabelStyle: CSSProperties = {
+  display: "grid",
+  gap: "8px",
+  color: "#27213a",
+  fontSize: "0.9rem",
+  fontWeight: 800,
+  letterSpacing: "-0.01em",
+};
+
+const feedbackInputStyle: CSSProperties = {
+  width: "100%",
+  border: "1px solid #e4ddf5",
+  background: "#fbfaff",
+  borderRadius: "14px",
+  padding: "12px 14px",
+  color: "#161225",
+  font: "inherit",
+  outline: "none",
+  boxSizing: "border-box",
+};
+
+const feedbackActionsStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "flex-end",
+  gap: "12px",
+  marginTop: "8px",
+};
+
+const feedbackSecondaryStyle: CSSProperties = {
+  border: "none",
+  borderRadius: "14px",
+  padding: "12px 18px",
+  fontWeight: 800,
+  cursor: "pointer",
+  background: "#f5f2fb",
+  color: "#4b4263",
+  letterSpacing: "-0.02em",
+};
+
+const feedbackPrimaryStyle: CSSProperties = {
+  border: "none",
+  borderRadius: "14px",
+  padding: "12px 18px",
+  fontWeight: 900,
+  cursor: "pointer",
+  background: "linear-gradient(135deg, #7c3aed, #9f67ff)",
+  color: "white",
+  boxShadow: "0 10px 28px rgba(124, 58, 237, 0.28)",
+  letterSpacing: "-0.02em",
+};
+
+const feedbackNavButtonStyle: CSSProperties = {
+  border: "none",
+  background: "transparent",
+  width: "100%",
+  textAlign: "left",
+  cursor: "pointer",
+  fontFamily: "inherit",
+};
+
 /* -------------------- Modal -------------------- */
 
 const overlayStyle: CSSProperties = {
@@ -2306,7 +2596,7 @@ export default function Dashboard() {
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
   const [simResult, setSimResult] = useState<SimYearResult[]>([]);
-
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   return (
     <div className="dash-root">
       <aside className="dash-sidebar">
@@ -2321,11 +2611,24 @@ export default function Dashboard() {
           <a href="#" className="dash-nav-item dash-nav-active">
             TESTING VISUALS
           </a>
+          <button
+            type="button"
+            className="dash-nav-item"
+            style={feedbackNavButtonStyle}
+            onClick={() => setIsFeedbackOpen(true)}
+          >
+            LEAVE FEEDBACK
+          </button>
         </nav>
         <div className="dash-sidebar-footer">
           <span className="dash-year-badge">FY 2025</span>
         </div>
       </aside>
+
+      <FeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+      />
 
       <main className="dash-main">
         <header className="dash-topbar">

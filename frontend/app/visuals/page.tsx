@@ -350,62 +350,81 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
       };
     }
 
-    // EXPENSE  ================== TODO: Need to update/validate this logic i tried to do it for you here but it might be causing issues 
-    // case "ADD_EXPENSE": {
-    //   const expense = action.payload;
-    //   const variant: "living" | "rent" | "debt" = (expense as any).variant || "living";
-    //   return {
-    //     ...state,
-    //     expenses: {
-    //       ...state.expenses,
-    //       [variant]: [...state.expenses[variant], expense],
-    //     },
-    //   };
-    // }
+    // EXPENSE  ==================
+    case "ADD_EXPENSE": {
+      const expense = action.payload;
+      const variant: "living" | "rent" | "debt" = expense.variant;
+      return {
+        ...state,
+        expenses: {
+          ...state.expenses,
+          [variant]: [...state.expenses[variant], expense],
+        },
+      };
+    }
 
-    // case "UPDATE_EXPENSE": {
-    //   const expense = action.payload;
-    //   const variant: "living" | "rent" | "debt" = (expense as any).variant || "living";
-    //   return {
-    //     ...state,
-    //     expenses: {
-    //       ...state.expenses,
-    //       [variant]: state.expenses[variant].map((e) =>
-    //         e.id === expense.id ? expense : e
-    //       ),
-    //     },
-    //   };
-    // }
+    case "UPDATE_EXPENSE": {
+      const expense = action.payload;
+      const variant: "living" | "rent" | "debt" = expense.variant;
+      return {
+        ...state,
+        expenses: {
+          ...state.expenses,
+          [variant]: state.expenses[variant].map((e) =>
+            e.id === expense.id ? expense : e
+          ),
+        },
+      };
+    }
 
-    // case "DELETE_EXPENSE": {
-    //   const { id, variant } = action.payload;
-    //   return {
-    //     ...state,
-    //     expenses: {
-    //       ...state.expenses,
-    //       [variant]: state.expenses[variant].filter((e) => e.id !== id),
-    //     },
-    //   };
-    // }
+    case "DELETE_EXPENSE": {
+      const { id, variant } = action.payload;
+      return {
+        ...state,
+        expenses: {
+          ...state.expenses,
+          [variant]: state.expenses[variant].filter((e) => e.id !== id),
+        },
+      };
+    }
 
-    // ASSET ================== TODO: Need to update these 
-    // case "ADD_ASSET":
-    //   return {
-    //     ...state,
-    //     assets: [...state.assets, action.payload],
-    //   };
+    // ASSET  ==================
+    case "ADD_ASSET": {
+      const asset = action.payload;
+      const variant: "house" | "car" = asset.variant;
+      return {
+        ...state,
+        assets: {
+          ...state.assets,
+          [variant]: [...state.assets[variant], asset],
+        },
+      };
+    }
 
-    // case "UPDATE_ASSET":
-    //   return {
-    //     ...state,
-    //     assets: state.assets.map((a) => (a.id === action.payload.id ? action.payload : a)),
-    //   };
+    case "UPDATE_ASSET": {
+      const asset = action.payload;
+      const variant: "house" | "car" = asset.variant;
+      return {
+        ...state,
+        assets: {
+          ...state.assets,
+          [variant]: state.assets[variant].map((a) =>
+            a.id === asset.id ? asset : a
+          ),
+        },
+      };
+    }
 
-    // case "DELETE_ASSET":
-    //   return {
-    //     ...state,
-    //     assets: state.assets.filter((a) => a.id !== action.payload.id),
-    //   };
+    case "DELETE_ASSET": {
+      const { id, variant } = action.payload;
+      return {
+        ...state,
+        assets: {
+          ...state.assets,
+          [variant]: state.assets[variant].filter((a) => a.id !== id),
+        },
+      };
+    }
 
     default:
       return state;
@@ -1805,6 +1824,7 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
       type: "UPDATE_EXPENSE",
       payload: {
         ...item,
+        variant: "living",
         name,
         start_year: Number(startYear),
         end_year: endYear === "" ? null : Number(endYear),
@@ -1868,6 +1888,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
       type: "UPDATE_EXPENSE",
       payload: {
         ...item,
+        variant: "rent",
         name: "Rent",
         start_year: Number(startYear),
         end_year: Number(endYear),
@@ -1913,6 +1934,7 @@ export function EditDebtExpenseForm({ item, dispatch, onClose }) {
       type: "UPDATE_EXPENSE",
       payload: {
         ...item,
+        variant: "debt",
         name: name || "Debt",
         start_year: Number(startYear),
         end_year: endYear === "" ? null : Number(endYear),

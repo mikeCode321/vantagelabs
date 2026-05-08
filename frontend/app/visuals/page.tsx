@@ -2,7 +2,6 @@
 import "./dashboard.css";
 import { SIM_MAX } from "@/app/testing/constants";
 import { useState, useReducer, useEffect, CSSProperties, useRef } from "react";
-// import { DollarSign, Clock, TrendingUp, Home, Rocket } from "lucide-react";
 import React from "react";
 
 // ─────────────────────────────────────────────
@@ -215,11 +214,25 @@ type AssetSource = HouseAsset | CarAsset;
 type SimRequest = {
   start_year: number;
   end_year: number;
-
-  liquid_accounts: LiquidAccount[];
-  assets: AssetSource[]; 
-  incomes: IncomeSource[];
-  expenses: ExpenseSource[];
+  accounts: {
+    checking: CheckingAccount[];
+    taxable_investments: TaxableInvestmentAccount[];
+    employer_retirement: EmployerRetirementAccount[];
+  };
+  incomes: {
+    salary: SalaryIncome[];
+    hourly: HourlyWageIncome[];
+    side: SideHustleIncome[];
+  };
+  expenses: {
+    living: ExpenseSource[]; // TODO: expenses will need to be updated 
+    rent: ExpenseSource[];
+    debt: ExpenseSource[];
+  };
+  assets: {
+    house: any[]; // TODO: Replace with HouseAsset[] when implemented
+    car: any[]; // TODO: Replace with CarAsset[] when implemented
+  };
 };
 
 type SourceSnapshot = {
@@ -245,96 +258,154 @@ type SimYearResult = {
 };
 
 type Action =
-  | { type: "ADD_LIQUID_ACCOUNT"; payload: LiquidAccount }
-  | { type: "UPDATE_LIQUID_ACCOUNT"; payload: LiquidAccount }
-  | { type: "DELETE_LIQUID_ACCOUNT"; payload: { id: string } }
+  | { type: "ADD_ACCOUNT"; payload: LiquidAccount }
+  | { type: "UPDATE_ACCOUNT"; payload: LiquidAccount }
+  | { type: "DELETE_ACCOUNT"; payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" } }
   | { type: "ADD_INCOME"; payload: IncomeSource }
   | { type: "UPDATE_INCOME"; payload: IncomeSource }
-  | { type: "DELETE_INCOME"; payload: { id: string } }
+  | { type: "DELETE_INCOME"; payload: { id: string; variant: "salary" | "hourly" | "side" } }
   | { type: "ADD_EXPENSE"; payload: ExpenseSource }
   | { type: "UPDATE_EXPENSE"; payload: ExpenseSource }
-  | { type: "DELETE_EXPENSE"; payload: { id: string } }
+  | { type: "DELETE_EXPENSE"; payload: { id: string; variant: "living" | "rent" | "debt" } }
   | { type: "ADD_ASSET"; payload: AssetSource }
   | { type: "UPDATE_ASSET"; payload: AssetSource }
-  | { type: "DELETE_ASSET"; payload: { id: string } }
+  | { type: "DELETE_ASSET"; payload: { id: string; variant: "house" | "car" } }
   
+ 
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
-    case "ADD_LIQUID_ACCOUNT":
+    case "ADD_ACCOUNT": {
+      const account = action.payload;
+      const variant: "checking" | "taxable_investments" | "employer_retirement" = account.variant;
       return {
         ...state,
-        liquid_accounts: [...state.liquid_accounts, action.payload],
+        accounts: {
+          ...state.accounts,
+          [variant]: [...state.accounts[variant], account],
+        },
       };
-
-    case "UPDATE_LIQUID_ACCOUNT":
+    }
+ 
+    case "UPDATE_ACCOUNT": {
+      const account = action.payload;
+      const variant: "checking" | "taxable_investments" | "employer_retirement" = account.variant;
       return {
         ...state,
-        liquid_accounts: state.liquid_accounts.map((a) => (a.id === action.payload.id ? action.payload : a)),
+        accounts: {
+          ...state.accounts,
+          [variant]: state.accounts[variant].map((a) => 
+            a.id === account.id ? account : a
+          ),
+        },
       };
-
-    case "DELETE_LIQUID_ACCOUNT":
+    }
+ 
+    case "DELETE_ACCOUNT": {
+      const { id, variant } = action.payload;
       return {
         ...state,
-        liquid_accounts: state.liquid_accounts.filter((a) => a.id !== action.payload.id),
+        accounts: {
+          ...state.accounts,
+          [variant]: state.accounts[variant].filter((a) => a.id !== id),
+        },
       };
-
+    }
+ 
     // INCOME  ==================
-    case "ADD_INCOME":
+    case "ADD_INCOME": {
+      const income = action.payload;
+      const variant: "salary" | "hourly" | "side" = income.variant;
       return {
         ...state,
-        incomes: [...state.incomes, action.payload],
+        incomes: {
+          ...state.incomes,
+          [variant]: [...state.incomes[variant], income],
+        },
       };
+    }
+ 
+    case "UPDATE_INCOME": {
+      const income = action.payload;
+      const variant: "salary" | "hourly" | "side" = income.variant;
+      return {
+        ...state,
+        incomes: {
+          ...state.incomes,
+          [variant]: state.incomes[variant].map((i) => 
+            i.id === income.id ? income : i
+          ),
+        },
+      };
+    }
+ 
+    case "DELETE_INCOME": {
+      const { id, variant } = action.payload;
+      return {
+        ...state,
+        incomes: {
+          ...state.incomes,
+          [variant]: state.incomes[variant].filter((i) => i.id !== id),
+        },
+      };
+    }
 
-    case "UPDATE_INCOME":
-      return {
-        ...state,
-        incomes: state.incomes.map((i) => (i.id === action.payload.id ? action.payload : i)),
-      };
+    // EXPENSE  ================== TODO: Need to update/validate this logic i tried to do it for you here but it might be causing issues 
+    // case "ADD_EXPENSE": {
+    //   const expense = action.payload;
+    //   const variant: "living" | "rent" | "debt" = (expense as any).variant || "living";
+    //   return {
+    //     ...state,
+    //     expenses: {
+    //       ...state.expenses,
+    //       [variant]: [...state.expenses[variant], expense],
+    //     },
+    //   };
+    // }
 
-    case "DELETE_INCOME":
-      return {
-        ...state,
-        incomes: state.incomes.filter((i) => i.id !== action.payload.id),
-      };
+    // case "UPDATE_EXPENSE": {
+    //   const expense = action.payload;
+    //   const variant: "living" | "rent" | "debt" = (expense as any).variant || "living";
+    //   return {
+    //     ...state,
+    //     expenses: {
+    //       ...state.expenses,
+    //       [variant]: state.expenses[variant].map((e) =>
+    //         e.id === expense.id ? expense : e
+    //       ),
+    //     },
+    //   };
+    // }
 
-    // EXPENSE  ==================
-    case "ADD_EXPENSE":
-      return {
-        ...state,
-        expenses: [...state.expenses, action.payload],
-      };
+    // case "DELETE_EXPENSE": {
+    //   const { id, variant } = action.payload;
+    //   return {
+    //     ...state,
+    //     expenses: {
+    //       ...state.expenses,
+    //       [variant]: state.expenses[variant].filter((e) => e.id !== id),
+    //     },
+    //   };
+    // }
 
-    case "UPDATE_EXPENSE":
-      return {
-        ...state,
-        expenses: state.expenses.map((e) => (e.id === action.payload.id ? action.payload : e)),
-      };
+    // ASSET ================== TODO: Need to update these 
+    // case "ADD_ASSET":
+    //   return {
+    //     ...state,
+    //     assets: [...state.assets, action.payload],
+    //   };
 
-    case "DELETE_EXPENSE":
-      return {
-        ...state,
-        expenses: state.expenses.filter((e) => e.id !== action.payload.id),
-      };
+    // case "UPDATE_ASSET":
+    //   return {
+    //     ...state,
+    //     assets: state.assets.map((a) => (a.id === action.payload.id ? action.payload : a)),
+    //   };
 
-    // ASSET ==================
-    case "ADD_ASSET":
-      return {
-        ...state,
-        assets: [...state.assets, action.payload],
-      };
-
-    case "UPDATE_ASSET":
-      return {
-        ...state,
-        assets: state.assets.map((a) => (a.id === action.payload.id ? action.payload : a)),
-      };
-
-    case "DELETE_ASSET":
-      return {
-        ...state,
-        assets: state.assets.filter((a) => a.id !== action.payload.id),
-      };
+    // case "DELETE_ASSET":
+    //   return {
+    //     ...state,
+    //     assets: state.assets.filter((a) => a.id !== action.payload.id),
+    //   };
 
     default:
       return state;
@@ -344,13 +415,27 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
 const INITIAL_STATE: SimRequest = {
   start_year: 1,
   end_year: SIM_MAX,
-
-  liquid_accounts: [],
-  assets: [],
-  incomes: [],
-  expenses: [],
+ 
+  accounts: {
+    checking: [],
+    taxable_investments: [],
+    employer_retirement: [],
+  },
+  incomes: {
+    salary: [],
+    hourly: [],
+    side: [],
+  },
+  expenses: {
+    living: [],
+    rent: [],
+    debt: [],
+  },
+  assets: {
+    house: [],
+    car: [],
+  },
 };
-
 
 // ENTITY DATA:
 const ENTITY_CONFIG = {
@@ -610,12 +695,12 @@ function CheckingAccountForm({ dispatch }) {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
   const [tiers, setTiers] = useState<Array<{ threshold: number; annual_rate: number }>>([{ threshold: 0, annual_rate: 0 }]);
-
+ 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+ 
     dispatch({
-      type: "ADD_LIQUID_ACCOUNT",
+      type: "ADD_ACCOUNT",
       payload: {
         source_type: "liquid",
         variant: "checking",
@@ -627,48 +712,48 @@ function CheckingAccountForm({ dispatch }) {
         interest_tiers: tiers,
       },
     });
-
+ 
     setName("Checking Account");
     setBalance("");
     setStartYear("");
     setEndYear("");
     setTiers([{ threshold: 0, annual_rate: 0 }]);
   };
-
+ 
   const addTier = () => {
     setTiers([
       ...tiers,
       {
-        threshold: tiers[tiers.length - 1]?.threshold ?? 0 + 50000,
+        threshold: tiers[tiers.length - 1]?.threshold ?? 0,
         annual_rate: 0.0,
       },
     ]);
   };
-
+ 
   const removeTier = (index: number) => {
     if (tiers.length > 1) {
       setTiers(tiers.filter((_, i) => i !== index));
     }
   };
-
+ 
   const updateTier = (index: number, field: "threshold" | "annual_rate", value: string) => {
     const updated = [...tiers];
     updated[index][field] = Number(value);
     setTiers(updated);
   };
-
+ 
   return (
     <div style={formContainerStyle}>
       <div>
         <h3 style={{ margin: "0 0 13px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Add Checking Account</h3>
       </div>
-
+ 
       <form onSubmit={onSubmit} style={formContainerStyle}>
         <div style={formSectionStyle}>
           <label style={formLabelStyle}>Account Name</label>
           <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. Main Checking, Emergency Fund" />
         </div>
-
+ 
         <div style={formSectionStyle}>
           <label style={formLabelStyle}>Starting Balance</label>
           <input
@@ -680,7 +765,7 @@ function CheckingAccountForm({ dispatch }) {
             inputMode="decimal"
           />
         </div>
-
+ 
         {/* Years */}
         <div style={formSectionStyle}>
           <label style={formLabelStyle}>Timeline</label>
@@ -695,7 +780,7 @@ function CheckingAccountForm({ dispatch }) {
             </div>
           </div>
         </div>
-
+ 
         {/* Interest Tiers */}
         <div style={formSectionStyle}>
           <div style={tierHeaderStyle}>
@@ -704,7 +789,7 @@ function CheckingAccountForm({ dispatch }) {
               + Add Tier
             </button>
           </div>
-
+ 
           {tiers.map((tier, index) => (
             <div key={index}>
               <div style={tierItemStyle}>
@@ -712,12 +797,12 @@ function CheckingAccountForm({ dispatch }) {
                   <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
                   <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
                 </div>
-
+ 
                 <div style={{ ...tierInputStyle, flex: 0.6 }}>
                   <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
                   <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder="0.03" type="number" step="0.0001" />
                 </div>
-
+ 
                 {tiers.length > 1 && (
                   <button type="button" style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
                     Remove
@@ -727,7 +812,7 @@ function CheckingAccountForm({ dispatch }) {
             </div>
           ))}
         </div>
-
+ 
         {/* Submit Button */}
         <button type="submit" style={formSubmitButtonStyle}>
           Add Checking Account
@@ -736,7 +821,7 @@ function CheckingAccountForm({ dispatch }) {
     </div>
   );
 }
-
+ 
 function TaxableInvestmentAccountForm({ dispatch }) {
   const [name, setName] = useState("Taxable Investments");
   const [balance, setBalance] = useState("");
@@ -747,17 +832,17 @@ function TaxableInvestmentAccountForm({ dispatch }) {
   const [endYear, setEndYear] = useState("");
   const [dividendStrategy, setDividendStrategy] = useState<"drip" | "cash_out">("drip");
   const [cashOutAccountId, setCashOutAccountId] = useState("");
-
+ 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+ 
     if (dividendStrategy === "cash_out" && !cashOutAccountId) {
       alert("Please select a checking account for dividend payouts");
       return;
     }
-
+ 
     dispatch({
-      type: "ADD_LIQUID_ACCOUNT",
+      type: "ADD_ACCOUNT",
       payload: {
         source_type: "liquid",
         variant: "taxable_investments",
@@ -773,7 +858,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
         cash_out_account_id: dividendStrategy === "cash_out" ? cashOutAccountId : undefined,
       },
     });
-
+ 
     setName("Taxable Investments");
     setBalance("");
     setMonthlyContribution("");
@@ -784,32 +869,32 @@ function TaxableInvestmentAccountForm({ dispatch }) {
     setDividendStrategy("drip");
     setCashOutAccountId("");
   };
-
+ 
   return (
     <div style={formContainerStyle}>
       <div>
         <h3 style={{ margin: "0 0 16px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Add Taxable Investment Account</h3>
       </div>
-
+ 
       <form onSubmit={onSubmit} style={formContainerStyle}>
         {/* Account Name */}
         <div style={formSectionStyle}>
           <label style={formLabelStyle}>Account Name</label>
           <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. Fidelity Brokerage, Individual Stocks" />
         </div>
-
+ 
         {/* Starting Balance */}
         <div style={formSectionStyle}>
           <label style={formLabelStyle}>Starting Balance</label>
           <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} style={formInputStyle} placeholder="e.g. 50000" type="text" inputMode="decimal" />
         </div>
-
+ 
         {/* Contribution Amount */}
         <div style={formSectionStyle}>
           <label style={formLabelStyle}>Monthly Contribution</label>
           <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} style={formInputStyle} placeholder="e.g. 1000" type="text" inputMode="decimal" />
         </div>
-
+ 
         {/* Expected Return & Dividend */}
         <div style={formSectionStyle}>
           <label style={formLabelStyle}>Annual Returns</label>
@@ -824,7 +909,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
             </div>
           </div>
         </div>
-
+ 
         {/* Timeline */}
         <div style={formSectionStyle}>
           <label style={formLabelStyle}>Timeline</label>
@@ -839,7 +924,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
             </div>
           </div>
         </div>
-
+ 
         {/* Dividend Strategy */}
         <div style={formSectionStyle}>
           <label style={formLabelStyle}>Dividend Strategy</label>
@@ -862,7 +947,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
             </label>
           </div>
         </div>
-
+ 
         {/* Select Checking Account (only if cash_out) */}
         {/* {dividendStrategy === "cash_out" && (
           <div style={formSectionStyle}>
@@ -879,7 +964,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
             </select>
           </div>
         )} */}
-
+ 
         {/* Submit Button */}
         <button type="submit" style={formSubmitButtonStyle}>
           Add Taxable Investment Account
@@ -888,7 +973,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
     </div>
   );
 }
-
+ 
 function EmployerRetirementForm({ dispatch }) {
   const [name, setName] = useState("");
   const [balance, setBalance] = useState("");
@@ -902,7 +987,7 @@ function EmployerRetirementForm({ dispatch }) {
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch({
-      type: "ADD_LIQUID_ACCOUNT",
+      type: "ADD_ACCOUNT",
       payload: {
         source_type: "liquid",
         variant: "employer_retirement",
@@ -1346,8 +1431,8 @@ function HourlyWageForm({ dispatch }) {
         id: crypto.randomUUID(),
         name: name || "Hourly Job",
 
-        start_year: startYear,
-        end_year: endYear,
+        start_year: Number(startYear),
+        end_year: Number(endYear),
 
         net_income: annualIncome,
         income_growth: Number(growth),
@@ -1902,7 +1987,7 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
     e.preventDefault();
 
     dispatch({
-      type: "UPDATE_LIQUID_ACCOUNT",
+      type: "UPDATE_ACCOUNT",
       payload: {
         ...item,
         name,
@@ -1920,7 +2005,7 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
     setTiers([
       ...tiers,
       {
-        threshold: tiers[tiers.length - 1]?.threshold ?? 0 + 50000,
+        threshold: (tiers[tiers.length - 1]?.threshold ?? 0) + 50000,
         annual_rate: 0.0,
       },
     ]);
@@ -2026,7 +2111,7 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch({
-      type: "UPDATE_LIQUID_ACCOUNT",
+      type: "UPDATE_ACCOUNT",
       payload: {
         ...item,
         name,
@@ -2103,7 +2188,7 @@ function EditEmployerRetirementForm({ item, dispatch, onClose }) {
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch({
-      type: "UPDATE_LIQUID_ACCOUNT",
+      type: "UPDATE_ACCOUNT",
       payload: {
         ...item,
         name,
@@ -2223,22 +2308,20 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
   
   const goBack = () => setSelectedVariant(null);
   const closeModal = () => setIsModalOpen(false);
-
+ 
   const FormComponent = selectedVariant 
     ? ( variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent)
     : null;
-
+ 
   return (
     <div style={overlayStyle}>
       <div style={modalStyle}>
-        {selectedVariant && !variantBeingEdited && (
-          <button onClick={goBack}>← Back</button>
-        )}
-
+        {selectedVariant && !variantBeingEdited && <button onClick={goBack}>← Back</button>}
+ 
         <button style={closeBtn} onClick={closeModal}>
           close
         </button>
-
+ 
         {/* ENTITY SOURCE SELECTION MODAL */}
         {!selectedVariant && !variantBeingEdited && (
           <div style={{ display: "grid", gap: "10px" }}>
@@ -2247,7 +2330,7 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
             ))}
           </div>
         )}
-
+ 
         {/* EDIT/ADD Modal */}
         {selectedVariant && (FormComponent ? 
           variantBeingEdited 
@@ -2259,7 +2342,6 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
     </div>
   );
 }
-
 
 /* -------------------- Row Styles -------------------- */
 
@@ -2334,7 +2416,7 @@ const smallDeleteButtonStyle: CSSProperties = {
 function EntityRow({ item, category, dispatch, onEdit }) {
   const handleDelete = () => {
     const deleteType = {
-      account: "DELETE_LIQUID_ACCOUNT",
+      account: "DELETE_ACCOUNT",
       income: "DELETE_INCOME",
       expense: "DELETE_EXPENSE",
       asset: "DELETE_ASSET",
@@ -2342,7 +2424,7 @@ function EntityRow({ item, category, dispatch, onEdit }) {
 
     dispatch({
       type: deleteType,
-      payload: { id: item.id },
+      payload: { id: item.id, variant: item.variant },
     });
   };
 
@@ -2351,10 +2433,10 @@ function EntityRow({ item, category, dispatch, onEdit }) {
       <div style={rowMainStyle}>
         <p style={rowNameStyle}>{item.name}</p>
         <div style={rowMetaStyle}>
-          {item.balance && <span>${formatNumberWithCommas(item.balance.toString())}</span>}
-          {item.net_income && <span>${formatNumberWithCommas(item.net_income.toString())}</span>}
-          {item.annual_expense && <span>${formatNumberWithCommas(item.annual_expense.toString())}</span>}
-          {item.starting_balance && <span>${formatNumberWithCommas(item.starting_balance.toString())}</span>}
+          {item.balance != null && <span>${formatNumberWithCommas(item.balance.toString())}</span>}
+          {item.net_income != null && <span>${formatNumberWithCommas(item.net_income.toString())}</span>}
+          {item.annual_expense != null && <span>${formatNumberWithCommas(item.annual_expense.toString())}</span>}
+          {item.starting_balance != null && <span>${formatNumberWithCommas(item.starting_balance.toString())}</span>}
           <span>{item.start_year}–{item.end_year}</span>
         </div>
       </div>
@@ -2413,50 +2495,65 @@ const cardStyle: CSSProperties = {
 export function FinancialEntity({ state, entityName, category, dispatch }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [variantBeingEdited, setVariantBeingEdited] = useState(null);
-
+ 
   const handleEdit = (item) => {
     setVariantBeingEdited(item);
     setIsModalOpen(true);
   };
-
+ 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setVariantBeingEdited(null);
   };
-
+ 
   const data = Object.values(ENTITY_CONFIG[category]).map(v => ({ id: v.id, name: v.name, emoji: v.emoji }));
-
+ 
   const getItems = () => {
     switch(category) {
       case "account":
-        return state.liquid_accounts;
+        return [
+          ...state.accounts.checking,
+          ...state.accounts.taxable_investments,
+          ...state.accounts.employer_retirement,
+        ];
       case "income":
-        return state.incomes;
+        return [
+          ...state.incomes.salary,
+          ...state.incomes.hourly,
+          ...state.incomes.side,
+        ];
       case "expense":
-        return state.expenses;
+        return [
+          ...state.expenses.living,
+          ...state.expenses.rent,
+          ...state.expenses.debt,
+        ];
       case "asset":
-        return state.assets;
+        return [
+          ...state.assets.house,
+          ...state.assets.car,
+        ];
       default:
         return [];
     }
   };
-
+ 
   return (
     <>
       <div style={cardStyle}>
         <div style={financialEntityContainer}>
           <h1 style={titleStyle}>{entityName}</h1>
-
+ 
           <button style={addButtonStyle} onClick={() => setIsModalOpen(true)}>
             +
           </button>
         </div>
-
+ 
         {getItems().map((item) => (
           <EntityRow key={item.id} item={item} category={category} dispatch={dispatch} onEdit={handleEdit} />
         ))}
       </div>
-
+ 
       {isModalOpen && <Modal setIsModalOpen={handleCloseModal} data={data} category={category} dispatch={dispatch} variantBeingEdited={variantBeingEdited}/>}
     </>
   );
@@ -2503,52 +2600,52 @@ const arrowStyle: CSSProperties = {
 
 export function FinancialEntities({ state, dispatch }) {
   const ref = useRef(null);
-
+ 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [showArrows, setShowArrows] = useState(false);
-
+ 
   const STEP_SIZE = 266;
-
+ 
   useEffect(() => {
     const handleResize = () => {
       setShowArrows(window.innerWidth <= 1250);
     };
-
+ 
     handleResize();
     window.addEventListener("resize", handleResize);
-
+ 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
+ 
   const updateScrollState = () => {
     const el = ref.current;
     if (!el) return;
-
+ 
     const { scrollLeft, scrollWidth, clientWidth } = el;
-
+ 
     setCanScrollLeft(scrollLeft > 5);
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
   };
-
+ 
   useEffect(() => {
     updateScrollState();
   }, []);
-
+ 
   const scrollByStep = (direction) => {
     const el = ref.current;
     if (!el) return;
-
+ 
     const amount = direction === "left" ? -STEP_SIZE : STEP_SIZE;
-
+ 
     el.scrollBy({
       left: amount,
       behavior: "smooth",
     });
-
+ 
     setTimeout(updateScrollState, 300);
   };
-
+ 
   return (
     <div style={containerWrapper}>
       <style>
@@ -2558,32 +2655,32 @@ export function FinancialEntities({ state, dispatch }) {
           }
         `}
       </style>
-
+ 
       {showArrows && canScrollLeft && (
         <button style={{ ...arrowStyle, left: "6px" }} onClick={() => scrollByStep("left")}>
           ◀
         </button>
       )}
-
+ 
       {showArrows && canScrollRight && (
         <button style={{ ...arrowStyle, right: "6px" }} onClick={() => scrollByStep("right")}>
           ▶
         </button>
       )}
-
+ 
       <div ref={ref} style={containerStyle} className="hide-scrollbar" onScroll={updateScrollState}>
         <div style={itemStyle}>
           <FinancialEntity state={state} entityName="Accounts" category="account" dispatch={dispatch} />
         </div>
-
+ 
         <div style={itemStyle}>
           <FinancialEntity state={state} entityName="Income" category="income" dispatch={dispatch} />
         </div>
-
+ 
         <div style={itemStyle}>
           <FinancialEntity state={state} entityName="Expenses" category="expense" dispatch={dispatch} />
         </div>
-
+ 
         <div style={itemStyle}>
           <FinancialEntity state={state} entityName="Assets" category="asset" dispatch={dispatch} />
         </div>
@@ -2670,7 +2767,7 @@ export function NetWorthStackedChart({ simResult }) {
   );
 }
 
-export function SimulationControls({ state, setSimResult }: { state: SimRequest; setSimResult: React.Dispatch<React.SetStateAction<SimYearResult[]>> }) {
+export function SimulationControls({ state, setSimResult }) {
   const [hasResults, setHasResults] = useState(false);
 
   async function runSimulation() {
@@ -2818,8 +2915,6 @@ export default function Dashboard() {
             <span className="dash-sim-badge">Sim: {SIM_MAX}yr</span>
           </div>
         </header>
-
-        <h3>50-create-aggregated-components</h3>
 
         <pre>{JSON.stringify(state, null, 2)}</pre>
         <FinancialEntities state={state} dispatch={dispatch} />

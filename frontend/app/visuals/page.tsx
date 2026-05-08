@@ -1246,7 +1246,7 @@ function RentExpenseForm({ dispatch }) {
         start_year: Number(startYear),
         end_year: Number(endYear),
         monthly_expense: Number(amount),
-        expense_growth: Number(growth),
+        rent_growth: Number(growth) / 100,
       },
     });
 
@@ -1772,7 +1772,7 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
 
 export function EditRentExpenseForm({ item, dispatch, onClose }) {
   const [amount, setAmount] = useState(item.monthly_expense.toString());
-  const [growth, setGrowth] = useState(item.expense_growth.toString());
+  const [growth, setGrowth] = useState(item.rent_growth.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
 
@@ -1787,7 +1787,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
         start_year: Number(startYear),
         end_year: Number(endYear),
         monthly_expense: Number(amount),
-        rent_growth: Number(growth) /100,
+        rent_growth: Number(growth) / 100,
       },
     });
 
@@ -2231,7 +2231,9 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
   return (
     <div style={overlayStyle}>
       <div style={modalStyle}>
-        {selectedVariant && <button onClick={goBack}>← Back</button>}
+        {selectedVariant && !variantBeingEdited && (
+          <button onClick={goBack}>← Back</button>
+        )}
 
         <button style={closeBtn} onClick={closeModal}>
           close

@@ -1980,6 +1980,7 @@ const feedbackNavButtonStyle: CSSProperties = {
   textAlign: "left",
   cursor: "pointer",
   fontFamily: "inherit",
+  marginTop: "512px"
 };
 
 /* -------------------- Modal -------------------- */

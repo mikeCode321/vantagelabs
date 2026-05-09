@@ -2518,6 +2518,30 @@ export function SimulationControls({ state, setSimResult }: { state: SimRequest;
   );
 }
 
+function generateMockResults(years = 20, sourcesPerYear = 2): SimYearResult[] {
+  return Array.from({ length: years }, (_, i) => {
+    const year = 2025 + i;
+
+    return {
+      year,
+      net_worth: 500000 + i * 25000,
+      total_cash: 50000 + i * 5000,
+      total_income: 120000 + i * 3000,
+      total_expenses: 80000 + i * 2000,
+
+      sources: Array.from({ length: sourcesPerYear }, (_, j) => ({
+        id: `${year}-${j}`,
+        name: `Asset ${j + 1}`,
+        source_type: j % 2 === 0 ? "investment" : "property",
+        asset_value: 100000 + j * 10000,
+        annual_cashflow: 5000 + j * 500,
+        start_value: 80000 + j * 8000,
+        end_value: 120000 + j * 12000,
+      })),
+    };
+  });
+}
+
 export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
   const [openYears, setOpenYears] = useState<number[]>([]);
 
@@ -2539,11 +2563,14 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
     });
   };
 
+  const mockResults = generateMockResults();
+
   return (
     <div className="section">
       <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         <h2>Simulation Results</h2>
 
+        {/* to generate fake data use mockResults instead of simResult */}
         <button onClick={() => setOpenYears(simResult.map((y) => y.year))}>Expand All</button>
         <button onClick={() => setOpenYears([])}>Collapse All</button>
       </div>
@@ -2562,6 +2589,7 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
         </thead>
 
         <tbody>
+          {/* to generate fake data use mockResults instead of simResult */}
           {simResult.map((yearData) => (
             <React.Fragment key={yearData.year}>
               {/* YEAR SUMMARY ROW */}
@@ -2612,7 +2640,8 @@ export default function Dashboard() {
           <a href="#" className="dash-nav-item dash-nav-active">
             TESTING VISUALS
           </a>
-          <button
+        </nav>
+         <button
             type="button"
             className="dash-nav-item"
             style={feedbackNavButtonStyle}
@@ -2620,10 +2649,6 @@ export default function Dashboard() {
           >
             LEAVE FEEDBACK
           </button>
-        </nav>
-        <div className="dash-sidebar-footer">
-          <span className="dash-year-badge">FY 2025</span>
-        </div>
       </aside>
 
       <FeedbackModal

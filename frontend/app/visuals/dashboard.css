@@ -2,16 +2,24 @@
    Dashboard Layout
 ═════════════════════════════════════════ */
 
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 .dash-root {
   display: flex;
-  min-height: 100vh;
+  height: 100dvh; /* instead of min-height */
+  overflow: hidden;
   background: var(--off-white);
   font-family: 'DM Mono', monospace;
 }
 
 .dash-sidebar {
   width: 200px;
-  min-height: 100vh;
+  height: 100dvh; /* instead of min-height */
+  overflow-y: auto;
   background: var(--primary);
   display: flex;
   flex-direction: column;
@@ -99,6 +107,9 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+
+  overflow-y: auto; /* THIS makes main scroll */
+  height: 100dvh;
 }
 
 .dash-topbar {

@@ -1730,7 +1730,7 @@ function FeedbackModal({
         message,
         email: email || null,
       },
-      capturedAutomatically: {
+      metaData: {
         anonymousId: getAnonymousId(),
         pageUrl: window.location.href,
         path: window.location.pathname,

@@ -144,7 +144,7 @@ type RentExpense = {
   start_year: number;
   end_year?: number | null;
 
-  monthly_rent: number;
+  monthly_expense: number;
   rent_growth: number; 
 };
 
@@ -163,7 +163,7 @@ type DebtExpense = {
   end_year?: number | null;
 
   debt_amount: number;
-  monthly_payment: number;
+  monthly_expense: number;
 
   interest_rate?: number | null; 
 };
@@ -186,7 +186,7 @@ type HouseAsset = {
   start_year: number;
   end_year?: number | null;
 
-  house_value: number;
+  asset_value: number;
   annual_appreciation: number; // example: 0.03 = 3% yearly growth
 
   down_payment?: number | null; // optional; deducted from cash if start_year > 0
@@ -203,7 +203,7 @@ type CarAsset = {
   start_year: number;
   end_year?: number | null;
 
-  car_value: number;
+  asset_value: number;
   annual_depreciation: number; // example: 0.12 = loses 12% per year
 
   down_payment?: number | null; // optional; deducted from cash if start_year > 0
@@ -1104,7 +1104,7 @@ function CarAssetForm({ dispatch }) {
         name: name || "Car",
         start_year: Number(startYear),
         end_year: endYear === "" ? null : Number(endYear),
-        car_value: Number(carValue),
+        asset_value: Number(carValue),
         annual_depreciation: Number(depreciation) / 100,
         down_payment: downPayment === "" ? null : Number(downPayment),
       },
@@ -1159,7 +1159,7 @@ function HouseAssetForm({ dispatch }) {
         name: name || "House",
         start_year: Number(startYear),
         end_year: endYear === "" ? null : Number(endYear),
-        house_value: Number(houseValue),
+        asset_value: Number(houseValue),
         annual_appreciation: Number(appreciation) / 100,
         down_payment: downPayment === "" ? null : Number(downPayment),
       },
@@ -1264,7 +1264,7 @@ function DebtExpenseForm({ dispatch }) {
         start_year: Number(startYear),
         end_year: endYear === "" ? null : Number(endYear),
         debt_amount: Number(debtAmount),
-        monthly_payment: Number(monthlyPayment),
+        monthly_expense: Number(monthlyPayment),
         interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
       },
     });
@@ -1350,7 +1350,7 @@ function RentExpenseForm({ dispatch }) {
         start_year: Number(startYear),
         end_year: Number(endYear),
         monthly_expense: Number(amount),
-        rent_growth: Number(growth) / 100,
+        expense_growth: Number(growth) / 100,
       },
     });
 
@@ -1711,7 +1711,7 @@ export function EditSideHustleForm({ item, dispatch, onClose }) {
 /* -------------------- EDIT ASSET FORMS -------------------- */
 export function EditHouseAssetForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
-  const [houseValue, setHouseValue] = useState(item.house_value.toString());
+  const [houseValue, setHouseValue] = useState(item.asset_value.toString());
   const [appreciation, setAppreciation] = useState((item.annual_appreciation * 100).toString());
   const [downPayment, setDownPayment] = useState(item.down_payment == null ? "" : item.down_payment.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
@@ -1729,7 +1729,7 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
         name: name || "House",
         start_year: Number(startYear),
         end_year: endYear === "" ? null : Number(endYear),
-        house_value: Number(houseValue),
+        asset_value: Number(houseValue),
         annual_appreciation: Number(appreciation) / 100,
         down_payment: downPayment === "" ? null : Number(downPayment),
       },
@@ -1761,7 +1761,7 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
 
 export function EditCarAssetForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
-  const [carValue, setCarValue] = useState(item.car_value.toString());
+  const [carValue, setCarValue] = useState(item.asset_value.toString());
   const [depreciation, setDepreciation] = useState((item.annual_depreciation * 100).toString());
   const [downPayment, setDownPayment] = useState(item.down_payment == null ? "" : item.down_payment.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
@@ -1779,7 +1779,7 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
         name: name || "Car",
         start_year: Number(startYear),
         end_year: endYear === "" ? null : Number(endYear),
-        car_value: Number(carValue),
+        asset_value: Number(carValue),
         annual_depreciation: Number(depreciation) / 100,
         down_payment: downPayment === "" ? null : Number(downPayment),
       },
@@ -1877,7 +1877,7 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
 
 export function EditRentExpenseForm({ item, dispatch, onClose }) {
   const [amount, setAmount] = useState(item.monthly_expense.toString());
-  const [growth, setGrowth] = useState(item.rent_growth.toString());
+  const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
 
@@ -1893,7 +1893,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
         start_year: Number(startYear),
         end_year: Number(endYear),
         monthly_expense: Number(amount),
-        rent_growth: Number(growth) / 100,
+        expense_growth: Number(growth) / 100,
       },
     });
 
@@ -1920,7 +1920,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
 export function EditDebtExpenseForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [debtAmount, setDebtAmount] = useState(item.debt_amount.toString());
-  const [monthlyPayment, setMonthlyPayment] = useState(item.monthly_payment.toString());
+  const [monthlyPayment, setMonthlyPayment] = useState(item.monthly_expense.toString());
   const [interestRate, setInterestRate] = useState(
     item.interest_rate == null ? "" : (item.interest_rate * 100).toString()
   );
@@ -1939,7 +1939,7 @@ export function EditDebtExpenseForm({ item, dispatch, onClose }) {
         start_year: Number(startYear),
         end_year: endYear === "" ? null : Number(endYear),
         debt_amount: Number(debtAmount),
-        monthly_payment: Number(monthlyPayment),
+        monthly_expense: Number(monthlyPayment),
         interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
       },
     });
@@ -2457,8 +2457,8 @@ function EntityRow({ item, category, dispatch, onEdit }) {
         <div style={rowMetaStyle}>
           {item.balance != null && <span>${formatNumberWithCommas(item.balance.toString())}</span>}
           {item.net_income != null && <span>${formatNumberWithCommas(item.net_income.toString())}</span>}
-          {item.annual_expense != null && <span>${formatNumberWithCommas(item.annual_expense.toString())}</span>}
-          {item.starting_balance != null && <span>${formatNumberWithCommas(item.starting_balance.toString())}</span>}
+          {item.monthly_expense != null && <span>${formatNumberWithCommas(item.monthly_expense.toString())}</span>}
+          {item.asset_value != null && <span>${formatNumberWithCommas(item.asset_value.toString())}</span>}
           <span>{item.start_year}–{item.end_year}</span>
         </div>
       </div>

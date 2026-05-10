@@ -77,6 +77,8 @@ type SalaryIncome = {
 
   net_income: number;
   income_growth: number;
+
+  linked_401k_id?: string;
 };
 
 type HourlyWageIncome = {
@@ -256,7 +258,10 @@ type SimYearResult = {
 type Action =
   | { type: "ADD_ACCOUNT"; payload: LiquidAccount }
   | { type: "UPDATE_ACCOUNT"; payload: LiquidAccount }
-  | { type: "DELETE_ACCOUNT"; payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" } }
+  | {
+      type: "DELETE_ACCOUNT";
+      payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" };
+    }
   | { type: "ADD_INCOME"; payload: IncomeSource }
   | { type: "UPDATE_INCOME"; payload: IncomeSource }
   | { type: "DELETE_INCOME"; payload: { id: string; variant: "salary" | "hourly" | "side" } }
@@ -288,7 +293,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         accounts: {
           ...state.accounts,
-          [variant]: state.accounts[variant].map((a) => (a.id === account.id ? account : a)),
+          [variant]: state.accounts[variant].map(a => (a.id === account.id ? account : a)),
         },
       };
     }
@@ -299,7 +304,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         accounts: {
           ...state.accounts,
-          [variant]: state.accounts[variant].filter((a) => a.id !== id),
+          [variant]: state.accounts[variant].filter(a => a.id !== id),
         },
       };
     }
@@ -324,7 +329,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         incomes: {
           ...state.incomes,
-          [variant]: state.incomes[variant].map((i) => (i.id === income.id ? income : i)),
+          [variant]: state.incomes[variant].map(i => (i.id === income.id ? income : i)),
         },
       };
     }
@@ -335,7 +340,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         incomes: {
           ...state.incomes,
-          [variant]: state.incomes[variant].filter((i) => i.id !== id),
+          [variant]: state.incomes[variant].filter(i => i.id !== id),
         },
       };
     }
@@ -360,7 +365,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         expenses: {
           ...state.expenses,
-          [variant]: state.expenses[variant].map((e) => (e.id === expense.id ? expense : e)),
+          [variant]: state.expenses[variant].map(e => (e.id === expense.id ? expense : e)),
         },
       };
     }
@@ -371,7 +376,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         expenses: {
           ...state.expenses,
-          [variant]: state.expenses[variant].filter((e) => e.id !== id),
+          [variant]: state.expenses[variant].filter(e => e.id !== id),
         },
       };
     }
@@ -396,7 +401,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         assets: {
           ...state.assets,
-          [variant]: state.assets[variant].map((a) => (a.id === asset.id ? asset : a)),
+          [variant]: state.assets[variant].map(a => (a.id === asset.id ? asset : a)),
         },
       };
     }
@@ -407,7 +412,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         assets: {
           ...state.assets,
-          [variant]: state.assets[variant].filter((a) => a.id !== id),
+          [variant]: state.assets[variant].filter(a => a.id !== id),
         },
       };
     }
@@ -696,7 +701,7 @@ function handleTierThresholdInput(e, index, tiers, setTiers) {
 // ACCOUNT FORMS
 function CheckingAccountForm({ dispatch }) {
   const [name, setName] = useState("Checking Account");
-  const [balance, setBalance] = useState(""); // ← Store raw number
+  const [balance, setBalance] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
   const [tiers, setTiers] = useState<Array<{ threshold: number; annual_rate: number }>>([{ threshold: 0, annual_rate: 0 }]);
@@ -713,7 +718,7 @@ function CheckingAccountForm({ dispatch }) {
         name,
         start_year: Number(startYear),
         end_year: Number(endYear),
-        balance: Number(balance), // ← Send raw number (no commas)
+        balance: Number(balance),
         interest_tiers: tiers,
       },
     });
@@ -748,78 +753,162 @@ function CheckingAccountForm({ dispatch }) {
   };
 
   return (
-    <div style={formContainerStyle}>
-      <div>
-        <h3 style={{ margin: "0 0 13px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Add Checking Account</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "14px",
+          paddingBottom: "20px",
+          marginBottom: "24px",
+          borderBottom: "1px solid #5FA7AB22",
+        }}>
+        <div
+          style={{
+            width: "42px",
+            height: "42px",
+            borderRadius: "10px",
+            background: "#5FA7AB18",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            flexShrink: 0,
+          }}>
+          💰
+        </div>
+        <div>
+          <h3
+            style={{
+              margin: "0 0 3px 0",
+              fontSize: "1rem",
+              fontWeight: 700,
+              color: "var(--primary)",
+              letterSpacing: "-0.01em",
+            }}>
+            Add Checking Account
+          </h3>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "0.75rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.5,
+            }}>
+            Track your checking account balance and tiered interest rates.
+          </p>
+        </div>
       </div>
 
-      <form onSubmit={onSubmit} style={formContainerStyle}>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Account Name</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. Main Checking, Emergency Fund" />
-        </div>
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Account Details
+            </p>
 
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Starting Balance</label>
-          <input
-            value={formatNumberWithCommas(balance)} // ← Display with commas
-            onChange={(e) => handleNumberInput(e, setBalance)} // ← Store raw
-            style={formInputStyle}
-            placeholder="e.g. 100000"
-            type="text"
-            inputMode="decimal"
-          />
-        </div>
-
-        {/* Years */}
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Timeline</label>
-          <div style={formGridStyle}>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
-              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            {/* Account Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Account Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Main Checking, Emergency Fund' required />
             </div>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
-              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
-            </div>
-          </div>
-        </div>
 
-        {/* Interest Tiers */}
-        <div style={formSectionStyle}>
-          <div style={tierHeaderStyle}>
-            <label style={tierTitleStyle}>Interest Tiers</label>
-            <button type="button" style={addTierButtonStyle} onClick={addTier}>
-              + Add Tier
-            </button>
-          </div>
-
-          {tiers.map((tier, index) => (
-            <div key={index}>
-              <div style={tierItemStyle}>
-                <div style={{ ...tierInputStyle, flex: 0.6 }}>
-                  <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
-                  <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
-                </div>
-
-                <div style={{ ...tierInputStyle, flex: 0.6 }}>
-                  <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
-                  <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder="0.03" type="number" step="0.0001" />
-                </div>
-
-                {tiers.length > 1 && (
-                  <button type="button" style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
-                    Remove
-                  </button>
-                )}
+            {/* Starting Balance */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Starting Balance</label>
+              <div style={{ position: "relative" }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='10,000' type='number' required />
               </div>
             </div>
-          ))}
+
+            {/* Interest Tiers */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={tierHeaderStyle}>
+                <label style={tierTitleStyle}>Interest Tiers</label>
+                <button type='button' style={addTierButtonStyle} onClick={addTier}>
+                  + Add Tier
+                </button>
+              </div>
+
+              {tiers.map((tier, index) => (
+                <div key={index}>
+                  <div style={tierItemStyle}>
+                    <div style={{ ...tierInputStyle, flex: 0.6 }}>
+                      <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
+                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={e => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder='e.g. 100000' type='text' inputMode='decimal' />
+                    </div>
+
+                    <div style={{ ...tierInputStyle, flex: 0.6 }}>
+                      <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
+                      <input value={tier.annual_rate} onChange={e => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder='0.03' type='number' step='0.0001' />
+                    </div>
+
+                    {tiers.length > 1 && (
+                      <button type='button' style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Timeline
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' required />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='40' type='number' required />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Submit Button */}
-        <button type="submit" style={formSubmitButtonStyle}>
+        <button type='submit' style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
           Add Checking Account
         </button>
       </form>
@@ -876,102 +965,196 @@ function TaxableInvestmentAccountForm({ dispatch }) {
   };
 
   return (
-    <div style={formContainerStyle}>
-      <div>
-        <h3 style={{ margin: "0 0 16px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Add Taxable Investment Account</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "14px",
+          paddingBottom: "20px",
+          marginBottom: "24px",
+          borderBottom: "1px solid #5FA7AB22",
+        }}>
+        <div
+          style={{
+            width: "42px",
+            height: "42px",
+            borderRadius: "10px",
+            background: "#5FA7AB18",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            flexShrink: 0,
+          }}>
+          📈
+        </div>
+        <div>
+          <h3
+            style={{
+              margin: "0 0 3px 0",
+              fontSize: "1rem",
+              fontWeight: 700,
+              color: "var(--primary)",
+              letterSpacing: "-0.01em",
+            }}>
+            Add Taxable Investment Account
+          </h3>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "0.75rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.5,
+            }}>
+            Track your brokerage account with returns and dividend strategies.
+          </p>
+        </div>
       </div>
 
-      <form onSubmit={onSubmit} style={formContainerStyle}>
-        {/* Account Name */}
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Account Name</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. Fidelity Brokerage, Individual Stocks" />
-        </div>
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Account Details
+            </p>
 
-        {/* Starting Balance */}
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Starting Balance</label>
-          <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} style={formInputStyle} placeholder="e.g. 50000" type="text" inputMode="decimal" />
-        </div>
-
-        {/* Contribution Amount */}
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Monthly Contribution</label>
-          <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} style={formInputStyle} placeholder="e.g. 1000" type="text" inputMode="decimal" />
-        </div>
-
-        {/* Expected Return & Dividend */}
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Annual Returns</label>
-          <div style={formGridStyle}>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Expected Return (%)</label>
-              <input value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} style={formInputStyle} placeholder="8.0" type="number" step="0.1" />
+            {/* Account Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Account Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Fidelity Brokerage' required />
             </div>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Dividend Yield (%)</label>
-              <input value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} style={formInputStyle} placeholder="2.0" type="number" step="0.1" />
+
+            {/* Starting Balance */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Starting Balance</label>
+              <div style={{ position: "relative" }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='50,000' type='number' />
+              </div>
+            </div>
+
+            {/* Monthly Contribution */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Monthly Contribution</label>
+              <div style={{ position: "relative" }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.68rem",
+                    color: "#5FA7AB99",
+                    pointerEvents: "none",
+                  }}>
+                  /mo
+                </span>
+                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder='1,000' type='number' />
+              </div>
+            </div>
+
+            {/* Expected Return slider */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Expected Annual Return</label>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "var(--primary)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}>
+                  {Number(expectedReturn).toFixed(1)}%
+                </span>
+              </div>
+              <input type='range' min={0} max={20} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+
+            {/* Dividend Yield slider */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Dividend Yield</label>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "var(--primary)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}>
+                  {Number(dividendYield).toFixed(1)}%
+                </span>
+              </div>
+              <input type='range' min={0} max={10} step={0.1} value={dividendYield} onChange={e => setDividendYield(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Timeline
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' required />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='40' type='number' required />
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Timeline */}
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Timeline</label>
-          <div style={formGridStyle}>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
-              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
-            </div>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
-              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
-            </div>
-          </div>
-        </div>
-
-        {/* Dividend Strategy */}
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Dividend Strategy</label>
-          <div style={{ display: "flex", gap: "16px", marginTop: "8px" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-              <input
-                type="radio"
-                value="drip"
-                checked={dividendStrategy === "drip"}
-                onChange={(e) => {
-                  setDividendStrategy(e.target.value as "drip" | "cash_out");
-                  setCashOutAccountId("");
-                }}
-              />
-              <span style={{ fontSize: "0.72rem", color: "var(--primary)" }}>DRIP (Reinvest)</span>
-            </label>
-            <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-              <input type="radio" value="cash_out" checked={dividendStrategy === "cash_out"} onChange={(e) => setDividendStrategy(e.target.value as "drip" | "cash_out")} />
-              <span style={{ fontSize: "0.72rem", color: "var(--primary)" }}>Cash Out</span>
-            </label>
-          </div>
-        </div>
-
-        {/* Select Checking Account (only if cash_out) */}
-        {/* {dividendStrategy === "cash_out" && (
-          <div style={formSectionStyle}>
-            <label style={formLabelStyle}>Send Dividends To</label>
-            <select value={cashOutAccountId} onChange={(e) => setCashOutAccountId(e.target.value)} style={formInputStyle}>
-              <option value="">— Select Account —</option>
-              {liquidAccounts
-                .filter((acc) => acc.name.toLowerCase().includes("checking") || acc.name.toLowerCase().includes("savings"))
-                .map((acc) => (
-                  <option key={acc.id} value={acc.id}>
-                    {acc.name}
-                  </option>
-                ))}
-            </select>
-          </div>
-        )} */}
 
         {/* Submit Button */}
-        <button type="submit" style={formSubmitButtonStyle}>
+        <button type='submit' style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
           Add Taxable Investment Account
         </button>
       </form>
@@ -999,7 +1182,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
   const annualEmployer = (annualEmployee * matchPercent) / 100;
   const annualTotal = annualEmployee + annualEmployer;
 
-  const handleLinkToggle = (enabled) => {
+  const handleLinkToggle = enabled => {
     setLinkEnabled(enabled);
     if (enabled && salaries.length > 0 && !linkedIncomeId) {
       // Auto-select first job and sync years
@@ -1010,7 +1193,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
     }
   };
 
-  const handleJobSelect = (jobId) => {
+  const handleJobSelect = jobId => {
     setLinkedIncomeId(jobId);
     const job = salaries.find(s => s.id === jobId);
     if (job) {
@@ -1019,11 +1202,11 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
     }
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = e => {
     e.preventDefault();
-    
+
     const newAccountId = crypto.randomUUID();
-    
+
     const newAccount = {
       source_type: "liquid",
       variant: "employer_retirement",
@@ -1066,22 +1249,52 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
     setLinkedIncomeId("");
   };
 
-  const linkedSalary = linkedIncomeId 
-    ? salaries.find(s => s.id === linkedIncomeId) 
-    : null;
+  const linkedSalary = linkedIncomeId ? salaries.find(s => s.id === linkedIncomeId) : null;
 
   return (
     <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "14px",
+          paddingBottom: "20px",
+          marginBottom: "24px",
+          borderBottom: "1px solid #5FA7AB22",
+        }}>
+        <div
+          style={{
+            width: "42px",
+            height: "42px",
+            borderRadius: "10px",
+            background: "#5FA7AB18",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            flexShrink: 0,
+          }}>
           🏢
         </div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
+          <h3
+            style={{
+              margin: "0 0 3px 0",
+              fontSize: "1rem",
+              fontWeight: 700,
+              color: "var(--primary)",
+              letterSpacing: "-0.01em",
+            }}>
             Add Employer Retirement Account
           </h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "0.75rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.5,
+            }}>
             Track your 401(k), 403(b), or pension and optionally link it to a job.
           </p>
         </div>
@@ -1089,25 +1302,45 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
 
       <form onSubmit={onSubmit}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
-
           {/* ── LEFT ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
               Account Details
             </p>
 
             {/* Account Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="Fidelity 401(k)" required />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Fidelity 401(k)' required />
             </div>
 
             {/* Starting Balance */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Starting Balance</label>
               <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={balance} onChange={(e) => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="25,000" type="number" />
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='25,000' type='number' />
               </div>
             </div>
 
@@ -1115,9 +1348,31 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Monthly Contribution</label>
               <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
-                <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="500" type="number" />
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.68rem",
+                    color: "#5FA7AB99",
+                    pointerEvents: "none",
+                  }}>
+                  /mo
+                </span>
+                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder='500' type='number' />
               </div>
             </div>
 
@@ -1125,90 +1380,128 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <label style={formLabelStyle}>Expected Annual Return</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "var(--primary)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}>
                   {Number(expectedReturn).toFixed(1)}%
                 </span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={expectedReturn}
-                onChange={(e) => setExpectedReturn(e.target.value)}
-                style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }}
-              />
+              <input type='range' min={0} max={15} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
             </div>
 
             {/* Employer Match slider */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <label style={formLabelStyle}>Employer Match</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "var(--primary)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}>
                   {Number(employerMatch).toFixed(1)}%
                 </span>
               </div>
-              <input type="range" min={0} max={10} step={0.1} value={employerMatch}
-                onChange={(e) => setEmployerMatch(e.target.value)}
-                style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }}
-              />
+              <input type='range' min={0} max={10} step={0.1} value={employerMatch} onChange={e => setEmployerMatch(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
               Timeline
             </p>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={{ ...formInputStyle, opacity: linkEnabled ? 0.45 : 1 }} placeholder="1" type="number" disabled={linkEnabled} required />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={{ ...formInputStyle }} placeholder='1' type='number' required />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={{ ...formInputStyle, opacity: linkEnabled ? 0.45 : 1 }} placeholder="40" type="number" disabled={linkEnabled} required />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={{ ...formInputStyle }} placeholder='40' type='number' required />
               </div>
             </div>
 
             {/* Link to job card */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB33", background: "#FAFCFC", overflow: "hidden" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px" }}>
+            <div
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #5FA7AB33",
+                background: "#FAFCFC",
+                overflow: "hidden",
+              }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "12px 14px",
+                }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <span style={{ fontSize: "15px" }}>💼</span>
                   <div>
-                    <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--primary)", marginBottom: "1px" }}>Link to a job</div>
+                    <div
+                      style={{
+                        fontSize: "0.78rem",
+                        fontWeight: 700,
+                        color: "var(--primary)",
+                        marginBottom: "1px",
+                      }}>
+                      Link to a job
+                    </div>
                     <div style={{ fontSize: "0.68rem", color: "var(--text-secondary)" }}>Sync contribution years automatically</div>
                   </div>
                 </div>
                 {/* Toggle */}
-                <div
-                  onClick={() => salaries.length > 0 && handleLinkToggle(!linkEnabled)}
-                  style={{
-                    width: "36px", height: "20px", borderRadius: "10px", flexShrink: 0, cursor: salaries.length === 0 ? "not-allowed" : "pointer",
-                    background: linkEnabled ? "#5FA7AB" : "#D1D5DB",
-                    position: "relative", transition: "background 0.2s",
-                  }}
-                >
-                  <div style={{
-                    position: "absolute", top: "3px", left: linkEnabled ? "19px" : "3px",
-                    width: "14px", height: "14px", borderRadius: "50%", background: "#fff",
-                    transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-                  }} />
+                <div onClick={() => salaries.length > 0 && handleLinkToggle(!linkEnabled)} style={{ width: "36px", height: "20px", borderRadius: "10px", flexShrink: 0, cursor: salaries.length === 0 ? "not-allowed" : "pointer", background: linkEnabled ? "#5FA7AB" : "#D1D5DB", position: "relative", transition: "background 0.2s" }}>
+                  <div style={{ position: "absolute", top: "3px", left: linkEnabled ? "19px" : "3px", width: "14px", height: "14px", borderRadius: "50%", background: "#fff", transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
                 </div>
               </div>
 
               {linkEnabled && (
-                <div style={{ padding: "0 14px 14px", borderTop: "1px solid #5FA7AB22", paddingTop: "12px" }}>
+                <div
+                  style={{
+                    padding: "0 14px 14px",
+                    borderTop: "1px solid #5FA7AB22",
+                    paddingTop: "12px",
+                  }}>
                   {salaries.length === 0 ? (
-                    <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                      No jobs yet — add a salary first.
-                    </p>
+                    <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)" }}>No jobs yet — add a salary first.</p>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <select value={linkedIncomeId} onChange={(e) => handleJobSelect(e.target.value)}
-                        style={{ ...formInputStyle, background: "#fff" }}>
-                        <option value="">Select a job</option>
-                        {salaries.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                      <select value={linkedIncomeId} onChange={e => handleJobSelect(e.target.value)} style={{ ...formInputStyle, background: "#fff" }}>
+                        <option value=''>Select a job</option>
+                        {salaries.map(s => (
+                          <option key={s.id} value={s.id}>
+                            {s.name}
+                          </option>
+                        ))}
                       </select>
                       {linkedSalary && (
-                        <div style={{ fontSize: "0.68rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "5px" }}>
+                        <div
+                          style={{
+                            fontSize: "0.68rem",
+                            color: "var(--text-secondary)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "5px",
+                          }}>
                           🔗 Synced years {linkedSalary.start_year}–{linkedSalary.end_year}
                         </div>
                       )}
@@ -1219,16 +1512,44 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
             </div>
 
             {/* Annual contribution preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+            <div
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #5FA7AB22",
+                background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)",
+                padding: "16px",
+              }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
                 <span style={{ fontSize: "12px" }}>✨</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
+                <span
+                  style={{
+                    fontSize: "0.62rem",
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.12em",
+                    color: "#5FA7AB",
+                  }}>
                   Annual Contribution
                 </span>
               </div>
-              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div
+                style={{
+                  fontSize: "1.75rem",
+                  fontWeight: 700,
+                  color: "var(--primary)",
+                  fontVariantNumeric: "tabular-nums",
+                  lineHeight: 1,
+                }}>
                 ${annualTotal.toLocaleString()}
-                <span style={{ fontSize: "0.85rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span
+                  style={{
+                    fontSize: "0.85rem",
+                    fontWeight: 400,
+                    color: "var(--text-secondary)",
+                    marginLeft: "4px",
+                  }}>
+                  /yr
+                </span>
               </div>
               <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
                 ${annualEmployee.toLocaleString()} you + ${annualEmployer.toLocaleString()} employer match
@@ -1238,12 +1559,16 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
         </div>
 
         {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          {/* <button type="button" onClick={onClose}
-            style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>
-            Cancel
-          </button> */}
-          <button type="submit" style={formSubmitButtonStyle}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "8px",
+            marginTop: "28px",
+            paddingTop: "18px",
+            borderTop: "1px solid #5FA7AB22",
+          }}>
+          <button type='submit' style={formSubmitButtonStyle}>
             Save Account
           </button>
         </div>
@@ -1292,19 +1617,19 @@ function CarAssetForm({ dispatch }) {
     <form onSubmit={onSubmit}>
       <h3>Add Car</h3>
 
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Car Name" />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder='Car Name' />
 
-      <input value={carValue} onChange={(e) => setCarValue(e.target.value)} placeholder="Car Value" type="number" />
+      <input value={carValue} onChange={e => setCarValue(e.target.value)} placeholder='Car Value' type='number' />
 
-      <input value={depreciation} onChange={(e) => setDepreciation(e.target.value)} placeholder="Annual Depreciation %" type="number" />
+      <input value={depreciation} onChange={e => setDepreciation(e.target.value)} placeholder='Annual Depreciation %' type='number' />
 
-      <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder='Down Payment optional' type='number' />
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' type='number' />
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' type='number' />
 
-      <button type="submit">Add Car</button>
+      <button type='submit'>Add Car</button>
     </form>
   );
 }
@@ -1347,19 +1672,19 @@ function HouseAssetForm({ dispatch }) {
     <form onSubmit={onSubmit}>
       <h3>Add House</h3>
 
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="House Name" />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder='House Name' />
 
-      <input value={houseValue} onChange={(e) => setHouseValue(e.target.value)} placeholder="House Value" type="number" />
+      <input value={houseValue} onChange={e => setHouseValue(e.target.value)} placeholder='House Value' type='number' />
 
-      <input value={appreciation} onChange={(e) => setAppreciation(e.target.value)} placeholder="Annual Appreciation %" type="number" />
+      <input value={appreciation} onChange={e => setAppreciation(e.target.value)} placeholder='Annual Appreciation %' type='number' />
 
-      <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder='Down Payment optional' type='number' />
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' type='number' />
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' type='number' />
 
-      <button type="submit">Add House</button>
+      <button type='submit'>Add House</button>
     </form>
   );
 }
@@ -1399,15 +1724,15 @@ function LivingExpensesForm({ dispatch }) {
     <form onSubmit={onSubmit}>
       <h3>Living Expenses</h3>
 
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Monthly Living Cost" />
+      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder='Monthly Living Cost' />
 
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth %" />
+      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder='Growth %' />
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' />
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year' />
 
-      <button type="submit">Add Living Expenses</button>
+      <button type='submit'>Add Living Expenses</button>
     </form>
   );
 }
@@ -1447,20 +1772,20 @@ function DebtExpenseForm({ dispatch }) {
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3">
-      <input type="text" placeholder="Debt name" value={name} onChange={(e) => setName(e.target.value)} />
+    <form onSubmit={onSubmit} className='space-y-3'>
+      <input type='text' placeholder='Debt name' value={name} onChange={e => setName(e.target.value)} />
 
-      <input type="number" placeholder="Debt amount" value={debtAmount} onChange={(e) => setDebtAmount(e.target.value)} required />
+      <input type='number' placeholder='Debt amount' value={debtAmount} onChange={e => setDebtAmount(e.target.value)} required />
 
-      <input type="number" placeholder="Monthly payment" value={monthlyPayment} onChange={(e) => setMonthlyPayment(e.target.value)} required />
+      <input type='number' placeholder='Monthly payment' value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} required />
 
-      <input type="number" placeholder="Interest rate % (optional)" value={interestRate} onChange={(e) => setInterestRate(e.target.value)} />
+      <input type='number' placeholder='Interest rate % (optional)' value={interestRate} onChange={e => setInterestRate(e.target.value)} />
 
-      <input type="number" placeholder="Start year" value={startYear} onChange={(e) => setStartYear(e.target.value)} required />
+      <input type='number' placeholder='Start year' value={startYear} onChange={e => setStartYear(e.target.value)} required />
 
-      <input type="number" placeholder="End year (optional)" value={endYear} onChange={(e) => setEndYear(e.target.value)} />
+      <input type='number' placeholder='End year (optional)' value={endYear} onChange={e => setEndYear(e.target.value)} />
 
-      <button type="submit">Add Debt</button>
+      <button type='submit'>Add Debt</button>
     </form>
   );
 }
@@ -1498,26 +1823,29 @@ function RentExpenseForm({ dispatch }) {
     <form onSubmit={onSubmit}>
       <h3>Rent</h3>
 
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Monthly Rent" />
+      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder='Monthly Rent' />
 
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Annual Rent Growth %" />
+      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder='Annual Rent Growth %' />
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' />
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year' />
 
-      <button type="submit">Add Rent</button>
+      <button type='submit'>Add Rent</button>
     </form>
   );
 }
 
 // INCOME FORMS
-export function SalaryForm({ dispatch }) {
+export function SalaryForm({ dispatch, state }) {
   const [name, setName] = useState("");
   const [netIncome, setNetIncome] = useState("");
   const [growth, setGrowth] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
+  const [linked401kId, setLinked401kId] = useState("");
+
+  const available401ks = state?.accounts?.employer_retirement || [];
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1529,12 +1857,11 @@ export function SalaryForm({ dispatch }) {
         variant: "salary",
         id: crypto.randomUUID(),
         name,
-
         start_year: Number(startYear),
         end_year: Number(endYear),
-
         net_income: Number(netIncome),
         income_growth: Number(growth),
+        linked_401k_id: linked401kId || undefined,
       },
     });
 
@@ -1543,37 +1870,245 @@ export function SalaryForm({ dispatch }) {
     setGrowth("");
     setStartYear("");
     setEndYear("");
+    setLinked401kId("");
   };
 
   return (
-    <div>
-      <h3>Add Income</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "14px",
+          paddingBottom: "20px",
+          marginBottom: "24px",
+          borderBottom: "1px solid #5FA7AB22",
+        }}>
+        <div
+          style={{
+            width: "42px",
+            height: "42px",
+            borderRadius: "10px",
+            background: "#5FA7AB18",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            flexShrink: 0,
+          }}>
+          💼
+        </div>
+        <div>
+          <h3
+            style={{
+              margin: "0 0 3px 0",
+              fontSize: "1rem",
+              fontWeight: 700,
+              color: "var(--primary)",
+              letterSpacing: "-0.01em",
+            }}>
+            Add Salary Income
+          </h3>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "0.75rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.5,
+            }}>
+            Track your employment income and annual growth rate.
+          </p>
+        </div>
+      </div>
 
       <form onSubmit={onSubmit}>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-        <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-        <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-        <input value={netIncome} onChange={(e) => setNetIncome(e.target.value)} placeholder="Annual Income" />
-        <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth Rate" />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Income Details
+            </p>
 
-        <button type="submit">Add Income</button>
+            {/* Job Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Job Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Software Engineer' required />
+            </div>
+
+            {/* Annual Income */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Annual Net Income</label>
+              <div style={{ position: "relative" }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <input value={netIncome} onChange={e => setNetIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='120,000' type='number' required />
+              </div>
+            </div>
+
+            {/* Annual Growth */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Annual Growth Rate</label>
+              <div style={{ position: "relative" }}>
+                <input value={growth} onChange={e => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder='3' type='number' step='0.1' />
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.68rem",
+                    color: "#5FA7AB99",
+                    pointerEvents: "none",
+                  }}>
+                  %
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Timeline
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' required />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='30' type='number' required />
+              </div>
+            </div>
+
+            {/* Link to 401k card */}
+            <div
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #5FA7AB33",
+                background: "#FAFCFC",
+                padding: "14px",
+              }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  fontSize: "0.65rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.12em",
+                  color: "var(--teal)",
+                }}>
+                Link to a 401(k) Account
+              </label>
+
+              {available401ks.length > 0 ? (
+                <>
+                  <select value={linked401kId} onChange={e => setLinked401kId(e.target.value)} style={formInputStyle}>
+                    <option value=''>Select an account</option>
+
+                    {available401ks.map(account => (
+                      <option key={account.id} value={account.id}>
+                        {account.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {linked401kId && (
+                    <div
+                      style={{
+                        fontSize: "0.68rem",
+                        color: "#5FA7AB",
+                        marginTop: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                      }}>
+                      🔗 Linked to {available401ks.find(a => a.id === linked401kId)?.name}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div
+                  style={{
+                    fontSize: "0.72rem",
+                    color: "var(--text-secondary)",
+                    padding: "10px 12px",
+                    border: "1px dashed #5FA7AB44",
+                    borderRadius: "6px",
+                    background: "#fff",
+                  }}>
+                  No 401(k) accounts available yet.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "8px",
+            marginTop: "28px",
+            paddingTop: "18px",
+            borderTop: "1px solid #5FA7AB22",
+          }}>
+          <button type='submit' style={formSubmitButtonStyle}>
+            Add Salary
+          </button>
+        </div>
       </form>
     </div>
   );
 }
-
-function HourlyWageForm({ dispatch }) {
+function HourlyWageForm({ dispatch, state }) {
   const [name, setName] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
   const [hourlyRate, setHourlyRate] = useState("");
   const [hoursPerWeek, setHoursPerWeek] = useState("");
   const [growth, setGrowth] = useState("");
+  const [linked401kId, setLinked401kId] = useState("");
+
+  const available401ks = state?.accounts?.employer_retirement || [];
+  const annualIncome = (Number(hourlyRate) || 0) * (Number(hoursPerWeek) || 0) * 52;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const annualIncome = Number(hourlyRate) * Number(hoursPerWeek) * 52;
 
     dispatch({
       type: "ADD_INCOME",
@@ -1582,27 +2117,154 @@ function HourlyWageForm({ dispatch }) {
         variant: "hourly",
         id: crypto.randomUUID(),
         name: name || "Hourly Job",
-
         start_year: Number(startYear),
         end_year: Number(endYear),
-
         net_income: annualIncome,
         income_growth: Number(growth),
+        linked_401k_id: linked401kId || undefined,
       },
     });
+
+    setName("");
+    setStartYear("");
+    setEndYear("");
+    setHourlyRate("");
+    setHoursPerWeek("");
+    setGrowth("");
+    setLinked401kId("");
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Hourly Wage</h3>
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Job Name" />
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-      <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} placeholder="Hourly Rate" />
-      <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} placeholder="Hours / Week" />
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth %" />
-      <button type="submit">Add Hourly Income</button>
-    </form>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
+          ⏱️
+        </div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
+            Add Hourly Wage Income
+          </h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+            Track hourly income, weekly hours, and projected growth.
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
+              Income Details
+            </p>
+
+            {/* Job Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Job Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="Barista" />
+            </div>
+
+            {/* Hourly Rate */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Hourly Rate</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/hr</span>
+                <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="25" type="number" step="0.01" />
+              </div>
+            </div>
+
+            {/* Hours Per Week */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Hours Per Week</label>
+              <div style={{ position: "relative" }}>
+                <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} style={{ ...formInputStyle, paddingRight: "45px" }} placeholder="40" type="number" />
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>hrs/wk</span>
+              </div>
+            </div>
+
+            {/* Growth Rate */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Annual Growth Rate</label>
+              <div style={{ position: "relative" }}>
+                <input value={growth} onChange={(e) => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="3" type="number" step="0.1" />
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
+              Timeline
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              </div>
+            </div>
+
+            {/* Link to 401k card */}
+            {available401ks.length > 0 && (
+              <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB33", background: "#FAFCFC", padding: "14px" }}>
+                <label style={{ display: "block", marginBottom: "8px", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)" }}>
+                  Link 401(k) Account
+                </label>
+                <select
+                  value={linked401kId}
+                  onChange={(e) => setLinked401kId(e.target.value)}
+                  style={formInputStyle}
+                >
+                  <option value="">None - No linking</option>
+                  {available401ks.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name}
+                    </option>
+                  ))}
+                </select>
+                {linked401kId && (
+                  <div style={{ fontSize: "0.68rem", color: "#5FA7AB", marginTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>
+                    🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Annual Income Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>💰</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
+                  Estimated Annual Income
+                </span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${annualIncome.toLocaleString()}
+                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${(Number(hourlyRate) || 0).toLocaleString()}/hr × {(Number(hoursPerWeek) || 0).toLocaleString()} hrs/week
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="submit" style={formSubmitButtonStyle}>
+            Add Hourly Income
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -1614,19 +2276,12 @@ function SideHustleForm({ dispatch }) {
   const [frequency, setFrequency] = useState("monthly");
   const [variability, setVariability] = useState("5");
 
-  const onSubmit = (e) => {
+  const frequencyMultiplier = { weekly: 52, biweekly: 26, monthly: 12, quarterly: 4, annual: 1 }[frequency] || 12;
+  const annualIncome = Number(averageIncome) * frequencyMultiplier;
+  const variabilityPercent = Number(variability) || 0;
+
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const frequencyMultiplier =
-      {
-        weekly: 52,
-        biweekly: 26,
-        monthly: 12,
-        quarterly: 4,
-        annual: 1,
-      }[frequency] || 12;
-
-    const annualIncome = Number(averageIncome) * frequencyMultiplier;
 
     dispatch({
       type: "ADD_INCOME",
@@ -1653,46 +2308,135 @@ function SideHustleForm({ dispatch }) {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Side Hustle</h3>
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Side Hustle Name" />
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" type="number" />
-
-      <div>
-        <label>Average Income Per Period</label>
-        <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} placeholder="e.g. 500" type="number" step="0.01" />
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
+          🚀
+        </div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
+            Add Side Hustle Income
+          </h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+            Track variable income with frequency and variability estimates.
+          </p>
+        </div>
       </div>
 
-      <div>
-        <label>Frequency</label>
-        <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
-          <option value="weekly">Weekly</option>
-          <option value="biweekly">Bi-weekly</option>
-          <option value="monthly">Monthly</option>
-          <option value="quarterly">Quarterly</option>
-          <option value="annual">Annual</option>
-        </select>
-      </div>
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
 
-      <div>
-        <label>Variability (%) - {variability}%</label>
-        <input value={variability} onChange={(e) => setVariability(e.target.value)} type="range" min="0" max="20" step="1" />
-      </div>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
+              Income Details
+            </p>
 
-      <button type="submit">Add Side Hustle</button>
-    </form>
+            {/* Side Hustle Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Side Hustle Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="Freelance Writing" />
+            </div>
+
+            {/* Average Income Per Period */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Average Income Per Period</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="500" type="number" step="0.01" />
+              </div>
+            </div>
+
+            {/* Frequency */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Frequency</label>
+              <select value={frequency} onChange={(e) => setFrequency(e.target.value)} style={formInputStyle}>
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Bi-weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="annual">Annual</option>
+              </select>
+            </div>
+
+                      {/* Variability Slider */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Income Variability</label>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>
+                  ±{variabilityPercent.toFixed(1)}%
+                </span>
+              </div>
+              <input type="range" min={0} max={50} step={0.1} value={variability}
+                onChange={(e) => setVariability(e.target.value)}
+                style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }}
+              />
+              <p style={{ margin: 0, fontSize: "0.65rem", color: "var(--text-secondary)" }}>
+                Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </p>
+            </div>
+
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
+              Timeline
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              </div>
+            </div>
+
+            {/* Annual Income Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>💰</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
+                  Estimated Annual Income
+                </span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${annualIncome.toLocaleString()}
+                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${(Number(averageIncome) || 0).toLocaleString()} {frequency}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="submit" style={formSubmitButtonStyle}>
+            Add Side Hustle
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 
 /* -------------------- EDIT INCOME FORMS -------------------- */
 
-export function EditSalaryForm({ item, dispatch, onClose }) {
+export function EditSalaryForm({ item, state, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [netIncome, setNetIncome] = useState(item.net_income.toString());
   const [growth, setGrowth] = useState(item.income_growth.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
+
+  const available401ks = state?.accounts?.employer_retirement || [];
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1706,6 +2450,7 @@ export function EditSalaryForm({ item, dispatch, onClose }) {
         income_growth: Number(growth),
         start_year: Number(startYear),
         end_year: Number(endYear),
+        linked_401k_id: linked401kId || undefined,
       },
     });
 
@@ -1713,34 +2458,334 @@ export function EditSalaryForm({ item, dispatch, onClose }) {
   };
 
   return (
-    <div>
-      <h3>Edit Salary Income</h3>
+    <div
+      style={{
+        fontFamily: "'DM Mono', monospace",
+        margin: "25px",
+      }}>
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "14px",
+          paddingBottom: "20px",
+          marginBottom: "24px",
+          borderBottom: "1px solid #5FA7AB22",
+        }}>
+        <div
+          style={{
+            width: "42px",
+            height: "42px",
+            borderRadius: "10px",
+            background: "#5FA7AB18",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            flexShrink: 0,
+          }}>
+          💼
+        </div>
+
+        <div>
+          <h3
+            style={{
+              margin: "0 0 3px 0",
+              fontSize: "1rem",
+              fontWeight: 700,
+              color: "var(--primary)",
+              letterSpacing: "-0.01em",
+            }}>
+            Edit Salary Income
+          </h3>
+
+          <p
+            style={{
+              margin: 0,
+              fontSize: "0.75rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.5,
+            }}>
+            Update your employment income and growth details.
+          </p>
+        </div>
+      </div>
 
       <form onSubmit={onSubmit}>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-        <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-        <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-        <input value={netIncome} onChange={(e) => setNetIncome(e.target.value)} placeholder="Annual Income" />
-        <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth Rate" />
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "28px",
+          }}>
+          {/* ── LEFT ── */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "18px",
+            }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Income Details
+            </p>
 
-        <button type="submit">Save Income</button>
+            {/* Job Name */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "6px",
+              }}>
+              <label style={formLabelStyle}>Job Name</label>
+
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Software Engineer' />
+            </div>
+
+            {/* Annual Income */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "6px",
+              }}>
+              <label style={formLabelStyle}>Annual Net Income</label>
+
+              <div style={{ position: "relative" }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+
+                <input
+                  value={netIncome}
+                  onChange={e => setNetIncome(e.target.value)}
+                  style={{
+                    ...formInputStyle,
+                    paddingLeft: "22px",
+                  }}
+                  placeholder='120,000'
+                  type='number'
+                />
+              </div>
+            </div>
+
+            {/* Annual Growth */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "6px",
+              }}>
+              <label style={formLabelStyle}>Annual Growth Rate</label>
+
+              <div style={{ position: "relative" }}>
+                <input
+                  value={growth}
+                  onChange={e => setGrowth(e.target.value)}
+                  style={{
+                    ...formInputStyle,
+                    paddingRight: "28px",
+                  }}
+                  placeholder='3'
+                  type='number'
+                  step='0.1'
+                />
+
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.68rem",
+                    color: "#5FA7AB99",
+                    pointerEvents: "none",
+                  }}>
+                  %
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "18px",
+            }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Timeline
+            </p>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "10px",
+              }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "6px",
+                }}>
+                <label style={formLabelStyle}>Start yr</label>
+
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' />
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "6px",
+                }}>
+                <label style={formLabelStyle}>End yr</label>
+
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='30' type='number' />
+              </div>
+            </div>
+
+            {/* Link to 401k card */}
+            <div
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #5FA7AB33",
+                background: "#FAFCFC",
+                padding: "14px",
+              }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  fontSize: "0.65rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.12em",
+                  color: "var(--teal)",
+                }}>
+                Link to a 401(k) Account
+              </label>
+
+              {available401ks.length > 0 ? (
+                <>
+                  <select value={linked401kId} onChange={e => setLinked401kId(e.target.value)} style={formInputStyle}>
+                    <option value=''>Select an account</option>
+
+                    {available401ks.map(account => (
+                      <option key={account.id} value={account.id}>
+                        {account.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {linked401kId && (
+                    <div
+                      style={{
+                        fontSize: "0.68rem",
+                        color: "#5FA7AB",
+                        marginTop: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                      }}>
+                      🔗 Linked to {available401ks.find(a => a.id === linked401kId)?.name}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div
+                  style={{
+                    fontSize: "0.72rem",
+                    color: "var(--text-secondary)",
+                    padding: "10px 12px",
+                    border: "1px dashed #5FA7AB44",
+                    borderRadius: "6px",
+                    background: "#fff",
+                  }}>
+                  No 401(k) accounts available yet.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "8px",
+            marginTop: "28px",
+            paddingTop: "18px",
+            borderTop: "1px solid #5FA7AB22",
+          }}>
+          <button
+            type='button'
+            onClick={onClose}
+            style={{
+              ...formSubmitButtonStyle,
+              background: "transparent",
+              color: "var(--primary)",
+              border: "1px solid #5FA7AB44",
+              fontWeight: 500,
+            }}>
+            Cancel
+          </button>
+
+          <button type='submit' style={formSubmitButtonStyle}>
+            Update Salary
+          </button>
+        </div>
       </form>
     </div>
   );
 }
 
-export function EditHourlyWageForm({ item, dispatch, onClose }) {
+function EditHourlyWageForm({ item, state, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
-  const [hourlyRate, setHourlyRate] = useState("");
-  const [hoursPerWeek, setHoursPerWeek] = useState("");
+  const [hourlyRate, setHourlyRate] = useState(item.hourly_rate?.toString() || "");
+  const [hoursPerWeek, setHoursPerWeek] = useState(item.hours_per_week?.toString() || "");
   const [growth, setGrowth] = useState(item.income_growth.toString());
+  const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
+
+  const available401ks = state?.accounts?.employer_retirement || [];
+  const annualIncome = (Number(hourlyRate) || 0) * (Number(hoursPerWeek) || 0) * 52;
+  const growthRate = Number(growth) || 0;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const annualIncome = Number(hourlyRate) * Number(hoursPerWeek) * 52;
 
     dispatch({
       type: "UPDATE_INCOME",
@@ -1749,8 +2794,11 @@ export function EditHourlyWageForm({ item, dispatch, onClose }) {
         name,
         start_year: Number(startYear),
         end_year: Number(endYear),
+        hourly_rate: Number(hourlyRate),
+        hours_per_week: Number(hoursPerWeek),
         net_income: annualIncome,
         income_growth: Number(growth),
+        linked_401k_id: linked401kId || undefined,
       },
     });
 
@@ -1758,20 +2806,144 @@ export function EditHourlyWageForm({ item, dispatch, onClose }) {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Hourly Wage</h3>
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Job Name" />
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
-      <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} placeholder="Hourly Rate" />
-      <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} placeholder="Hours / Week" />
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Growth %" />
-      <button type="submit">Save Hourly Income</button>
-    </form>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
+          ⏱️
+        </div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
+            Edit Hourly Wage Income
+          </h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+            Update hourly rate, weekly hours, and growth details.
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
+              Income Details
+            </p>
+
+            {/* Job Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Job Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="Barista" />
+            </div>
+
+            {/* Hourly Rate */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Hourly Rate</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/hr</span>
+                <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="25" type="number" step="0.01" />
+              </div>
+            </div>
+
+            {/* Hours Per Week */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Hours Per Week</label>
+              <div style={{ position: "relative" }}>
+                <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} style={{ ...formInputStyle, paddingRight: "45px" }} placeholder="40" type="number" />
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>hrs/wk</span>
+              </div>
+            </div>
+
+            {/* Growth Rate */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Annual Growth Rate</label>
+              <div style={{ position: "relative" }}>
+                <input value={growth} onChange={(e) => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="3" type="number" step="0.1" />
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
+              Timeline
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              </div>
+            </div>
+
+            {/* Link to 401k card */}
+            {available401ks.length > 0 && (
+              <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB33", background: "#FAFCFC", padding: "14px" }}>
+                <label style={{ display: "block", marginBottom: "8px", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)" }}>
+                  Link 401(k) Account
+                </label>
+                <select
+                  value={linked401kId}
+                  onChange={(e) => setLinked401kId(e.target.value)}
+                  style={formInputStyle}
+                >
+                  <option value="">None - No linking</option>
+                  {available401ks.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name}
+                    </option>
+                  ))}
+                </select>
+                {linked401kId && (
+                  <div style={{ fontSize: "0.68rem", color: "#5FA7AB", marginTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>
+                    🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Annual Income Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>💰</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
+                  Estimated Annual Income
+                </span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${annualIncome.toLocaleString()}
+                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${(Number(hourlyRate) || 0).toLocaleString()}/hr × {(Number(hoursPerWeek) || 0).toLocaleString()} hrs/week
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="button" onClick={onClose}
+            style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>
+            Cancel
+          </button>
+          <button type="submit" style={formSubmitButtonStyle}>
+            Update Hourly Income
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 
-export function EditSideHustleForm({ item, dispatch, onClose }) {
+function EditSideHustleForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
@@ -1779,19 +2951,12 @@ export function EditSideHustleForm({ item, dispatch, onClose }) {
   const [frequency, setFrequency] = useState(item.frequency || "monthly");
   const [variability, setVariability] = useState((item.variability * 100)?.toString() || "5");
 
-  const onSubmit = (e) => {
+  const frequencyMultiplier = { weekly: 52, biweekly: 26, monthly: 12, quarterly: 4, annual: 1 }[frequency] || 12;
+  const annualIncome = Number(averageIncome) * frequencyMultiplier;
+  const variabilityPercent = Number(variability) || 0;
+
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const frequencyMultiplier =
-      {
-        weekly: 52,
-        biweekly: 26,
-        monthly: 12,
-        quarterly: 4,
-        annual: 1,
-      }[frequency] || 12;
-
-    const annualIncome = Number(averageIncome) * frequencyMultiplier;
 
     dispatch({
       type: "UPDATE_INCOME",
@@ -1811,37 +2976,127 @@ export function EditSideHustleForm({ item, dispatch, onClose }) {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Side Hustle</h3>
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Side Hustle Name" />
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" type="number" />
-
-      <div>
-        <label>Average Income Per Period</label>
-        <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} placeholder="e.g. 500" type="number" step="0.01" />
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
+          🚀
+        </div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
+            Edit Side Hustle Income
+          </h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+            Update frequency, variability, and income details.
+          </p>
+        </div>
       </div>
 
-      <div>
-        <label>Frequency</label>
-        <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
-          <option value="weekly">Weekly</option>
-          <option value="biweekly">Bi-weekly</option>
-          <option value="monthly">Monthly</option>
-          <option value="quarterly">Quarterly</option>
-          <option value="annual">Annual</option>
-        </select>
-      </div>
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
 
-      <div>
-        <label>Variability (%) - {variability}%</label>
-        <input value={variability} onChange={(e) => setVariability(e.target.value)} type="range" min="0" max="20" step="1" />
-      </div>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
+              Income Details
+            </p>
 
-      <button type="submit">Save Side Hustle</button>
-    </form>
+            {/* Side Hustle Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Side Hustle Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="Freelance Writing" />
+            </div>
+
+            {/* Average Income Per Period */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Average Income Per Period</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="500" type="number" step="0.01" />
+              </div>
+            </div>
+
+            {/* Frequency */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Frequency</label>
+              <select value={frequency} onChange={(e) => setFrequency(e.target.value)} style={formInputStyle}>
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Bi-weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="annual">Annual</option>
+              </select>
+            </div>
+
+            {/* Variability Slider */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Income Variability</label>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>
+                  ±{variabilityPercent.toFixed(1)}%
+                </span>
+              </div>
+              <input type="range" min={0} max={50} step={0.1} value={variability}
+                onChange={(e) => setVariability(e.target.value)}
+                style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }}
+              />
+              <p style={{ margin: 0, fontSize: "0.65rem", color: "var(--text-secondary)" }}>
+                Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </p>
+            </div>
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
+              Timeline
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              </div>
+            </div>
+
+            {/* Annual Income Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>💰</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
+                  Estimated Annual Income
+                </span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${annualIncome.toLocaleString()}
+                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${(Number(averageIncome) || 0).toLocaleString()} {frequency}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="button" onClick={onClose}
+            style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>
+            Cancel
+          </button>
+          <button type="submit" style={formSubmitButtonStyle}>
+            Update Side Hustle
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
+
 /* -------------------- EDIT ASSET FORMS -------------------- */
 export function EditHouseAssetForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
@@ -1876,19 +3131,19 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit House</h3>
 
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="House Name" />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder='House Name' />
 
-      <input value={houseValue} onChange={(e) => setHouseValue(e.target.value)} placeholder="House Value" type="number" />
+      <input value={houseValue} onChange={e => setHouseValue(e.target.value)} placeholder='House Value' type='number' />
 
-      <input value={appreciation} onChange={(e) => setAppreciation(e.target.value)} placeholder="Annual Appreciation %" type="number" />
+      <input value={appreciation} onChange={e => setAppreciation(e.target.value)} placeholder='Annual Appreciation %' type='number' />
 
-      <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder='Down Payment optional' type='number' />
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' type='number' />
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' type='number' />
 
-      <button type="submit">Save House</button>
+      <button type='submit'>Save House</button>
     </form>
   );
 }
@@ -1926,19 +3181,19 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit Car</h3>
 
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Car Name" />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder='Car Name' />
 
-      <input value={carValue} onChange={(e) => setCarValue(e.target.value)} placeholder="Car Value" type="number" />
+      <input value={carValue} onChange={e => setCarValue(e.target.value)} placeholder='Car Value' type='number' />
 
-      <input value={depreciation} onChange={(e) => setDepreciation(e.target.value)} placeholder="Annual Depreciation %" type="number" />
+      <input value={depreciation} onChange={e => setDepreciation(e.target.value)} placeholder='Annual Depreciation %' type='number' />
 
-      <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder='Down Payment optional' type='number' />
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' type='number' />
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' type='number' />
 
-      <button type="submit">Save Car</button>
+      <button type='submit'>Save Car</button>
     </form>
   );
 }
@@ -1974,17 +3229,17 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit Living Expenses</h3>
 
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Expense Name" />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder='Expense Name' />
 
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Monthly Living Expense" />
+      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder='Monthly Living Expense' />
 
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Annual Growth %" />
+      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder='Annual Growth %' />
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' />
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year optional" />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' />
 
-      <button type="submit">Save Living Expenses</button>
+      <button type='submit'>Save Living Expenses</button>
     </form>
   );
 }
@@ -2018,15 +3273,15 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit Rent</h3>
 
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Montly Rent" />
+      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder='Montly Rent' />
 
-      <input value={growth} onChange={(e) => setGrowth(e.target.value)} placeholder="Rent Growth %" />
+      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder='Rent Growth %' />
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' />
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year" />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year' />
 
-      <button type="submit">Save Rent</button>
+      <button type='submit'>Save Rent</button>
     </form>
   );
 }
@@ -2063,19 +3318,19 @@ export function EditDebtExpenseForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit Debt</h3>
 
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Debt Name" />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder='Debt Name' />
 
-      <input value={debtAmount} onChange={(e) => setDebtAmount(e.target.value)} placeholder="Debt Amount" type="number" />
+      <input value={debtAmount} onChange={e => setDebtAmount(e.target.value)} placeholder='Debt Amount' type='number' />
 
-      <input value={monthlyPayment} onChange={(e) => setMonthlyPayment(e.target.value)} placeholder="Monthly Payment" type="number" />
+      <input value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} placeholder='Monthly Payment' type='number' />
 
-      <input value={interestRate} onChange={(e) => setInterestRate(e.target.value)} placeholder="Interest Rate % optional" type="number" />
+      <input value={interestRate} onChange={e => setInterestRate(e.target.value)} placeholder='Interest Rate % optional' type='number' />
 
-      <input value={startYear} onChange={(e) => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' type='number' />
 
-      <input value={endYear} onChange={(e) => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' type='number' />
 
-      <button type="submit">Save Debt</button>
+      <button type='submit'>Save Debt</button>
     </form>
   );
 }
@@ -2129,73 +3384,162 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
   };
 
   return (
-    <div style={formContainerStyle}>
-      <div>
-        <h3 style={{ margin: "0 0 13px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Edit Checking Account</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "14px",
+          paddingBottom: "20px",
+          marginBottom: "24px",
+          borderBottom: "1px solid #5FA7AB22",
+        }}>
+        <div
+          style={{
+            width: "42px",
+            height: "42px",
+            borderRadius: "10px",
+            background: "#5FA7AB18",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            flexShrink: 0,
+          }}>
+          💰
+        </div>
+        <div>
+          <h3
+            style={{
+              margin: "0 0 3px 0",
+              fontSize: "1rem",
+              fontWeight: 700,
+              color: "var(--primary)",
+              letterSpacing: "-0.01em",
+            }}>
+            Edit Checking Account
+          </h3>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "0.75rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.5,
+            }}>
+            Update your checking account balance and tiered interest rates.
+          </p>
+        </div>
       </div>
 
-      <form onSubmit={onSubmit} style={formContainerStyle}>
-        {/* Account Name */}
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Account Name</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. Main Checking, Emergency Fund" />
-        </div>
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Account Details
+            </p>
 
-        {/* Balance - Display formatted, store raw */}
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Starting Balance</label>
-          <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
-        </div>
-
-        {/* Years */}
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Timeline</label>
-          <div style={formGridStyle}>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
-              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            {/* Account Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Account Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Main Checking, Emergency Fund' />
             </div>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
-              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
-            </div>
-          </div>
-        </div>
 
-        {/* Interest Tiers */}
-        <div style={formSectionStyle}>
-          <div style={tierHeaderStyle}>
-            <label style={tierTitleStyle}>Interest Tiers</label>
-            <button type="button" style={addTierButtonStyle} onClick={addTier}>
-              + Add Tier
-            </button>
-          </div>
-
-          {tiers.map((tier, index) => (
-            <div key={index}>
-              <div style={tierItemStyle}>
-                <div style={{ ...tierInputStyle, flex: 0.6 }}>
-                  <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
-                  <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
-                </div>
-
-                <div style={{ ...tierInputStyle, flex: 0.6 }}>
-                  <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
-                  <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder="0.03" type="number" step="0.0001" />
-                </div>
-
-                {tiers.length > 1 && (
-                  <button type="button" style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
-                    Remove
-                  </button>
-                )}
+            {/* Starting Balance */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Starting Balance</label>
+              <div style={{ position: "relative" }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='10,000' type='number' />
               </div>
             </div>
-          ))}
+
+            {/* Interest Tiers */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={tierHeaderStyle}>
+                <label style={tierTitleStyle}>Interest Tiers</label>
+                <button type='button' style={addTierButtonStyle} onClick={addTier}>
+                  + Add Tier
+                </button>
+              </div>
+
+              {tiers.map((tier, index) => (
+                <div key={index}>
+                  <div style={tierItemStyle}>
+                    <div style={{ ...tierInputStyle, flex: 0.6 }}>
+                      <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
+                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={e => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder='e.g. 100000' type='text' inputMode='decimal' />
+                    </div>
+
+                    <div style={{ ...tierInputStyle, flex: 0.6 }}>
+                      <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
+                      <input value={tier.annual_rate} onChange={e => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder='0.03' type='number' step='0.0001' />
+                    </div>
+
+                    {tiers.length > 1 && (
+                      <button type='button' style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Timeline
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='40' type='number' />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Submit Button */}
-        <button type="submit" style={formSubmitButtonStyle}>
+        <button type='submit' style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
           Save Checking Account
         </button>
       </form>
@@ -2213,7 +3557,7 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
   const [endYear, setEndYear] = useState(item.end_year.toString());
   const [dividendStrategy, setDividendStrategy] = useState(item.dividend_reinvestment || "drip");
 
-  const onSubmit = (e) => {
+  const onSubmit = e => {
     e.preventDefault();
     dispatch({
       type: "UPDATE_ACCOUNT",
@@ -2233,48 +3577,196 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
   };
 
   return (
-    <div style={formContainerStyle}>
-      <h3 style={{ margin: "0 0 16px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Edit Taxable Investment Account</h3>
-      <form onSubmit={onSubmit} style={formContainerStyle}>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Account Name</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. Fidelity Brokerage" />
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "14px",
+          paddingBottom: "20px",
+          marginBottom: "24px",
+          borderBottom: "1px solid #5FA7AB22",
+        }}>
+        <div
+          style={{
+            width: "42px",
+            height: "42px",
+            borderRadius: "10px",
+            background: "#5FA7AB18",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            flexShrink: 0,
+          }}>
+          📈
         </div>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Starting Balance</label>
-          <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} style={formInputStyle} placeholder="e.g. 50000" type="text" inputMode="decimal" />
+        <div>
+          <h3
+            style={{
+              margin: "0 0 3px 0",
+              fontSize: "1rem",
+              fontWeight: 700,
+              color: "var(--primary)",
+              letterSpacing: "-0.01em",
+            }}>
+            Edit Taxable Investment Account
+          </h3>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "0.75rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.5,
+            }}>
+            Update your brokerage account with returns and dividend strategies.
+          </p>
         </div>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Monthly Contribution</label>
-          <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} style={formInputStyle} placeholder="e.g. 1000" type="text" inputMode="decimal" />
-        </div>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Annual Returns</label>
-          <div style={formGridStyle}>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Expected Return (%)</label>
-              <input value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} style={formInputStyle} placeholder="8.0" type="number" step="0.1" />
+      </div>
+
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Account Details
+            </p>
+
+            {/* Account Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Account Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Fidelity Brokerage' />
             </div>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Dividend Yield (%)</label>
-              <input value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} style={formInputStyle} placeholder="2.0" type="number" step="0.1" />
+
+            {/* Starting Balance */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Starting Balance</label>
+              <div style={{ position: "relative" }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='50,000' type='number' />
+              </div>
+            </div>
+
+            {/* Monthly Contribution */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Monthly Contribution</label>
+              <div style={{ position: "relative" }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.68rem",
+                    color: "#5FA7AB99",
+                    pointerEvents: "none",
+                  }}>
+                  /mo
+                </span>
+                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder='1,000' type='number' />
+              </div>
+            </div>
+
+            {/* Expected Return slider */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Expected Annual Return</label>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "var(--primary)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}>
+                  {Number(expectedReturn).toFixed(1)}%
+                </span>
+              </div>
+              <input type='range' min={0} max={20} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+
+            {/* Dividend Yield slider */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Dividend Yield</label>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "var(--primary)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}>
+                  {Number(dividendYield).toFixed(1)}%
+                </span>
+              </div>
+              <input type='range' min={0} max={10} step={0.1} value={dividendYield} onChange={e => setDividendYield(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Timeline
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='40' type='number' />
+              </div>
             </div>
           </div>
         </div>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Timeline</label>
-          <div style={formGridStyle}>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
-              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
-            </div>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
-              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
-            </div>
-          </div>
-        </div>
-        <button type="submit" style={formSubmitButtonStyle}>
+
+        {/* Submit Button */}
+        <button type='submit' style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
           Save Taxable Investment Account
         </button>
       </form>
@@ -2282,83 +3774,430 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
   );
 }
 
-function EditEmployerRetirementAccountForm({ item, dispatch, onClose }) {
+function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [monthlyContribution, setMonthlyContribution] = useState(item.monthly_contribution?.toString() || "");
-  const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "");
-  const [employerMatch, setEmployerMatch] = useState((item.employer_match * 100)?.toString() || "");
+  const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "7");
+  const [employerMatch, setEmployerMatch] = useState((item.employer_match * 100)?.toString() || "4");
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [linkEnabled, setLinkEnabled] = useState(!!item.linked_income_id);
+  const [linkedIncomeId, setLinkedIncomeId] = useState(item.linked_income_id || "");
 
-  const onSubmit = (e) => {
+  const salaries = state.incomes.salary;
+
+  // Calculate annual contribution preview
+  const monthlyNum = Number(monthlyContribution) || 0;
+  const matchPercent = Number(employerMatch) || 0;
+  const annualEmployee = monthlyNum * 12;
+  const annualEmployer = (annualEmployee * matchPercent) / 100;
+  const annualTotal = annualEmployee + annualEmployer;
+
+  const handleLinkToggle = enabled => {
+    setLinkEnabled(enabled);
+    if (enabled && salaries.length > 0 && !linkedIncomeId) {
+      // Auto-select first job and sync years
+      const firstJob = salaries[0];
+      setLinkedIncomeId(firstJob.id);
+      setStartYear(firstJob.start_year.toString());
+      setEndYear(firstJob.end_year.toString());
+    }
+  };
+
+  const handleJobSelect = jobId => {
+    setLinkedIncomeId(jobId);
+    const job = salaries.find(s => s.id === jobId);
+    if (job) {
+      setStartYear(job.start_year.toString());
+      setEndYear(job.end_year.toString());
+    }
+  };
+
+  const onSubmit = e => {
     e.preventDefault();
-    dispatch({
-      type: "UPDATE_ACCOUNT",
-      payload: {
-        ...item,
-        name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-        starting_balance: Number(balance),
-        monthly_contribution: Number(monthlyContribution),
-        expected_return: Number(expectedReturn) / 100,
-        employer_match: Number(employerMatch) / 100,
-      },
-    });
+
+    const updatedAccount = {
+      source_type: "liquid",
+      variant: "employer_retirement",
+      id: item.id,
+      name,
+      start_year: Number(startYear),
+      end_year: Number(endYear),
+      starting_balance: Number(balance),
+      monthly_contribution: Number(monthlyContribution),
+      expected_return: Number(expectedReturn) / 100,
+      employer_match: Number(employerMatch) / 100,
+      linked_income_id: linkEnabled && linkedIncomeId ? linkedIncomeId : null,
+    };
+
+    dispatch({ type: "UPDATE_ACCOUNT", payload: updatedAccount });
+
     onClose();
   };
 
+  const linkedSalary = linkedIncomeId ? salaries.find(s => s.id === linkedIncomeId) : null;
+
   return (
-    <div style={formContainerStyle}>
-      <h3 style={{ margin: "0 0 16px 0", fontSize: "1.1rem", color: "var(--primary)" }}>Edit Employer Retirement Account</h3>
-      <form onSubmit={onSubmit} style={formContainerStyle}>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Account Name</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="e.g. 401(k)" />
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "14px",
+          paddingBottom: "20px",
+          marginBottom: "24px",
+          borderBottom: "1px solid #5FA7AB22",
+        }}>
+        <div
+          style={{
+            width: "42px",
+            height: "42px",
+            borderRadius: "10px",
+            background: "#5FA7AB18",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            flexShrink: 0,
+          }}>
+          🏢
         </div>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Starting Balance</label>
-          <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
+        <div>
+          <h3
+            style={{
+              margin: "0 0 3px 0",
+              fontSize: "1rem",
+              fontWeight: 700,
+              color: "var(--primary)",
+              letterSpacing: "-0.01em",
+            }}>
+            Edit Employer Retirement Account
+          </h3>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "0.75rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.5,
+            }}>
+            Update your 401(k), 403(b), or pension details.
+          </p>
         </div>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Monthly Contribution</label>
-          <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} style={formInputStyle} placeholder="e.g. 2000" type="text" inputMode="decimal" />
-        </div>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Returns & Match</label>
-          <div style={formGridStyle}>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Expected Return (%)</label>
-              <input value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} style={formInputStyle} placeholder="7.0" type="number" step="0.1" />
+      </div>
+
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Account Details
+            </p>
+
+            {/* Account Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Account Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Fidelity 401(k)' />
             </div>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Employer Match (%)</label>
-              <input value={employerMatch} onChange={(e) => setEmployerMatch(e.target.value)} style={formInputStyle} placeholder="3.0" type="number" step="0.1" />
+
+            {/* Starting Balance */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Starting Balance</label>
+              <div style={{ position: "relative" }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='25,000' type='number' />
+              </div>
+            </div>
+
+            {/* Monthly Contribution */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Monthly Contribution</label>
+              <div style={{ position: "relative" }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.72rem",
+                    color: "#5FA7AB",
+                    pointerEvents: "none",
+                  }}>
+                  $
+                </span>
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "11px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "0.68rem",
+                    color: "#5FA7AB99",
+                    pointerEvents: "none",
+                  }}>
+                  /mo
+                </span>
+                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder='500' type='number' />
+              </div>
+            </div>
+
+            {/* Expected Return slider */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Expected Annual Return</label>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "var(--primary)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}>
+                  {Number(expectedReturn).toFixed(1)}%
+                </span>
+              </div>
+              <input type='range' min={0} max={15} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+
+            {/* Employer Match slider */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Employer Match</label>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "var(--primary)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}>
+                  {Number(employerMatch).toFixed(1)}%
+                </span>
+              </div>
+              <input type='range' min={0} max={10} step={0.1} value={employerMatch} onChange={e => setEmployerMatch(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
+
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--teal)",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #5FA7AB22",
+              }}>
+              Timeline
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={{ ...formInputStyle }} placeholder='1' type='number' />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={{ ...formInputStyle }} placeholder='30' type='number' />
+              </div>
+            </div>
+
+            {/* Link to job card */}
+            <div
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #5FA7AB33",
+                background: "#FAFCFC",
+                overflow: "hidden",
+              }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "12px 14px",
+                }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span style={{ fontSize: "15px" }}>💼</span>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "0.78rem",
+                        fontWeight: 700,
+                        color: "var(--primary)",
+                        marginBottom: "1px",
+                      }}>
+                      Link to a job
+                    </div>
+                    <div style={{ fontSize: "0.68rem", color: "var(--text-secondary)" }}>Sync contribution years automatically</div>
+                  </div>
+                </div>
+                {/* Toggle */}
+                <div
+                  onClick={() => salaries.length > 0 && handleLinkToggle(!linkEnabled)}
+                  style={{
+                    width: "36px",
+                    height: "20px",
+                    borderRadius: "10px",
+                    flexShrink: 0,
+                    cursor: salaries.length === 0 ? "not-allowed" : "pointer",
+                    background: linkEnabled ? "#5FA7AB" : "#D1D5DB",
+                    position: "relative",
+                    transition: "background 0.2s",
+                  }}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "3px",
+                      left: linkEnabled ? "19px" : "3px",
+                      width: "14px",
+                      height: "14px",
+                      borderRadius: "50%",
+                      background: "#fff",
+                      transition: "left 0.2s",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {linkEnabled && (
+                <div
+                  style={{
+                    padding: "0 14px 14px",
+                    borderTop: "1px solid #5FA7AB22",
+                    paddingTop: "12px",
+                  }}>
+                  {salaries.length === 0 ? (
+                    <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)" }}>No jobs yet — add a salary first.</p>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <select value={linkedIncomeId} onChange={e => handleJobSelect(e.target.value)} style={{ ...formInputStyle, background: "#fff" }}>
+                        <option value=''>Select a job</option>
+                        {salaries.map(s => (
+                          <option key={s.id} value={s.id}>
+                            {s.name}
+                          </option>
+                        ))}
+                      </select>
+                      {linkedSalary && (
+                        <div
+                          style={{
+                            fontSize: "0.68rem",
+                            color: "var(--text-secondary)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "5px",
+                          }}>
+                          🔗 Synced years {linkedSalary.start_year}–{linkedSalary.end_year}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Annual contribution preview */}
+            <div
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #5FA7AB22",
+                background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)",
+                padding: "16px",
+              }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
+                <span style={{ fontSize: "12px" }}>✨</span>
+                <span
+                  style={{
+                    fontSize: "0.62rem",
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.12em",
+                    color: "#5FA7AB",
+                  }}>
+                  Annual Contribution
+                </span>
+              </div>
+              <div
+                style={{
+                  fontSize: "1.75rem",
+                  fontWeight: 700,
+                  color: "var(--primary)",
+                  fontVariantNumeric: "tabular-nums",
+                  lineHeight: 1,
+                }}>
+                ${annualTotal.toLocaleString()}
+                <span
+                  style={{
+                    fontSize: "0.85rem",
+                    fontWeight: 400,
+                    color: "var(--text-secondary)",
+                    marginLeft: "4px",
+                  }}>
+                  /yr
+                </span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${annualEmployee.toLocaleString()} you + ${annualEmployer.toLocaleString()} employer match
+              </div>
             </div>
           </div>
         </div>
-        <div style={formSectionStyle}>
-          <label style={formLabelStyle}>Timeline</label>
-          <div style={formGridStyle}>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Start Year</label>
-              <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
-            </div>
-            <div>
-              <label style={{ ...formLabelStyle, marginBottom: "6px" }}>End Year</label>
-              <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" />
-            </div>
-          </div>
+
+        {/* Footer */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "8px",
+            marginTop: "28px",
+            paddingTop: "18px",
+            borderTop: "1px solid #5FA7AB22",
+          }}>
+          <button
+            type='button'
+            onClick={onClose}
+            style={{
+              ...formSubmitButtonStyle,
+              background: "transparent",
+              color: "var(--primary)",
+              border: "1px solid #5FA7AB44",
+              fontWeight: 500,
+            }}>
+            Cancel
+          </button>
+          <button type='submit' style={formSubmitButtonStyle}>
+            Update Account
+          </button>
         </div>
-        <button type="submit" style={formSubmitButtonStyle}>
-          Save Employer Retirement Account
-        </button>
       </form>
     </div>
   );
 }
-
 /* -------------------- Feedback Model -------------------- */
 function getAnonymousId() {
   const storageKey = "vantage_anonymous_id";
@@ -2373,13 +4212,7 @@ function getAnonymousId() {
   return anonymousId;
 }
 
-function FeedbackModal({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
+function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [rating, setRating] = useState("");
   const [category, setCategory] = useState("General");
   const [message, setMessage] = useState("");
@@ -2404,9 +4237,7 @@ function FeedbackModal({
         timestamp: new Date().toISOString(),
         browserAndOS: navigator.userAgent,
         referralSource: document.referrer || null,
-        utmParams: Object.fromEntries(
-          new URLSearchParams(window.location.search).entries()
-        ),
+        utmParams: Object.fromEntries(new URLSearchParams(window.location.search).entries()),
       },
     };
 
@@ -2422,19 +4253,14 @@ function FeedbackModal({
 
   return (
     <div style={feedbackOverlayStyle} onClick={onClose}>
-      <div
-        style={feedbackModalStyle}
-        onClick={(event) => event.stopPropagation()}
-      >
+      <div style={feedbackModalStyle} onClick={event => event.stopPropagation()}>
         <div style={feedbackHeaderStyle}>
           <div>
             <h2 style={feedbackTitleStyle}>Leave Feedback</h2>
-            <p style={feedbackDescriptionStyle}>
-            We’re a small team building quickly, and we’d genuinely appreciate any feedback that could help us improve. 
-            </p>
+            <p style={feedbackDescriptionStyle}>We’re a small team building quickly, and we’d genuinely appreciate any feedback that could help us improve.</p>
           </div>
 
-          <button type="button" style={feedbackCloseStyle} onClick={onClose}>
+          <button type='button' style={feedbackCloseStyle} onClick={onClose}>
             ×
           </button>
         </div>
@@ -2442,14 +4268,9 @@ function FeedbackModal({
         <form onSubmit={handleSubmit} style={feedbackFormStyle}>
           <label style={feedbackLabelStyle}>
             Satisfaction Rating
-            <select
-              value={rating}
-              onChange={(event) => setRating(event.target.value)}
-              required
-              style={feedbackInputStyle}
-            >
-              <option value="">Select a rating</option>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number) => (
+            <select value={rating} onChange={event => setRating(event.target.value)} required style={feedbackInputStyle}>
+              <option value=''>Select a rating</option>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(number => (
                 <option key={number} value={number}>
                   {number}
                 </option>
@@ -2459,11 +4280,7 @@ function FeedbackModal({
 
           <label style={feedbackLabelStyle}>
             Feedback Category
-            <select
-              value={category}
-              onChange={(event) => setCategory(event.target.value)}
-              style={feedbackInputStyle}
-            >
+            <select value={category} onChange={event => setCategory(event.target.value)} style={feedbackInputStyle}>
               <option>Bug</option>
               <option>Feature Request</option>
               <option>UX Confusion</option>
@@ -2474,33 +4291,20 @@ function FeedbackModal({
 
           <label style={feedbackLabelStyle}>
             Feedback / Questions
-            <textarea
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
-              placeholder="Write your feedback or questions..."
-              rows={5}
-              required
-              style={feedbackInputStyle}
-            />
+            <textarea value={message} onChange={event => setMessage(event.target.value)} placeholder='Write your feedback or questions...' rows={5} required style={feedbackInputStyle} />
           </label>
 
           <label style={feedbackLabelStyle}>
             Email Optional
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="Only if you want a follow-up"
-              style={feedbackInputStyle}
-            />
+            <input type='email' value={email} onChange={event => setEmail(event.target.value)} placeholder='Only if you want a follow-up' style={feedbackInputStyle} />
           </label>
 
           <div style={feedbackActionsStyle}>
-            <button type="button" style={feedbackSecondaryStyle} onClick={onClose}>
+            <button type='button' style={feedbackSecondaryStyle} onClick={onClose}>
               Cancel
             </button>
 
-            <button type="submit" style={feedbackPrimaryStyle}>
+            <button type='submit' style={feedbackPrimaryStyle}>
               Submit Feedback
             </button>
           </div>
@@ -2534,8 +4338,7 @@ const feedbackModalStyle: CSSProperties = {
   padding: "28px",
   position: "relative",
 
-  fontFamily:
-  '"Inter", "Manrope", "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  fontFamily: '"Inter", "Manrope", "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 };
 
 const feedbackHeaderStyle: CSSProperties = {
@@ -2647,7 +4450,7 @@ const feedbackNavButtonStyle: CSSProperties = {
   textAlign: "left",
   cursor: "pointer",
   fontFamily: "inherit",
-  marginTop: "512px"
+  marginTop: "512px",
 };
 
 /* -------------------- Modal -------------------- */
@@ -2676,9 +4479,7 @@ const modalStyle: CSSProperties = {
 };
 
 const closeBtn: CSSProperties = {
-  // position: "absolute",
-  // top: 10,
-  // right: 10,
+  marginLeft: "auto",
 };
 
 const cellStyle: CSSProperties = {
@@ -2699,7 +4500,7 @@ const modalHeaderStyle: CSSProperties = {
   alignItems: "flex-start",
   gap: "12px",
   padding: "20px 24px",
-  justifyContent: "space-between"
+  justifyContent: "space-between",
 };
 
 const modalBodyStyle: CSSProperties = {
@@ -2718,7 +4519,6 @@ export function FinancialEntityModalCell({ item, setSelectedVariant }) {
   );
 }
 
-
 export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEdited, state }) {
   const [selectedVariant, setSelectedVariant] = useState(variantBeingEdited?.variant || null);
 
@@ -2733,8 +4533,11 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
     if (!FormComponent) {
       renderedForm = <div>Form not implemented</div>;
     } else if (variantBeingEdited) {
-      renderedForm = <FormComponent item={variantBeingEdited} dispatch={dispatch} onClose={closeModal} />;
+      // i'm not sure how passing state for one edit form doesn't affect others check on this, but it works for now
+      renderedForm = <FormComponent item={variantBeingEdited} state={state} dispatch={dispatch} onClose={closeModal} />;
     } else if (selectedVariant === "employer_retirement") {
+      renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
+    } else if (selectedVariant === "salary") {
       renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
     } else {
       renderedForm = <FormComponent dispatch={dispatch} onClose={closeModal} />;
@@ -2744,28 +4547,41 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
   return (
     <div style={overlayStyle}>
       <div style={modalStyle}>
-        {selectedVariant && !variantBeingEdited && (
-          <div style={modalHeaderStyle}>
-            <button onClick={goBack}>← Back</button>
-            <button style={closeBtn} onClick={closeModal}>close</button>
-          </div>
-          )
-        }
-
+        {/* ENTITY PICKER HEADER */}
         {!selectedVariant && !variantBeingEdited && (
           <div style={modalHeaderStyle}>
-            <div>icon + title + description</div>
             <button style={closeBtn} onClick={closeModal}>
-                close
+              close
             </button>
           </div>
         )}
-        
+
+        {/* ADD FORM HEADER */}
+        {selectedVariant && !variantBeingEdited && (
+          <div style={modalHeaderStyle}>
+            <button onClick={goBack}>← Back</button>
+
+            <button style={closeBtn} onClick={closeModal}>
+              close
+            </button>
+          </div>
+        )}
+
+        {/* EDIT FORM HEADER */}
+        {variantBeingEdited && (
+          <div style={modalHeaderStyle}>
+            {/* <div>icon + title + description</div> */}
+
+            <button style={closeBtn} onClick={closeModal}>
+              close
+            </button>
+          </div>
+        )}
 
         {/* ENTITY SOURCE SELECTION MODAL */}
         {!selectedVariant && !variantBeingEdited && (
           <div style={modalBodyStyle}>
-            {data.map((item) => (
+            {data.map(item => (
               <FinancialEntityModalCell key={item.id} item={item} setSelectedVariant={setSelectedVariant} />
             ))}
           </div>
@@ -2932,7 +4748,7 @@ export function FinancialEntity({ state, entityName, category, dispatch }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [variantBeingEdited, setVariantBeingEdited] = useState(null);
 
-  const handleEdit = (item) => {
+  const handleEdit = item => {
     setVariantBeingEdited(item);
     setIsModalOpen(true);
   };
@@ -2942,7 +4758,11 @@ export function FinancialEntity({ state, entityName, category, dispatch }) {
     setVariantBeingEdited(null);
   };
 
-  const data = Object.values(ENTITY_CONFIG[category]).map((v) => ({ id: v.id, name: v.name, emoji: v.emoji }));
+  const data = Object.values(ENTITY_CONFIG[category]).map(v => ({
+    id: v.id,
+    name: v.name,
+    emoji: v.emoji,
+  }));
 
   const getItems = () => {
     switch (category) {
@@ -2970,7 +4790,7 @@ export function FinancialEntity({ state, entityName, category, dispatch }) {
           </button>
         </div>
 
-        {getItems().map((item) => (
+        {getItems().map(item => (
           <EntityRow key={item.id} item={item} category={category} dispatch={dispatch} onEdit={handleEdit} />
         ))}
       </div>
@@ -3053,7 +4873,7 @@ export function FinancialEntities({ state, dispatch }) {
     updateScrollState();
   }, []);
 
-  const scrollByStep = (direction) => {
+  const scrollByStep = direction => {
     const el = ref.current;
     if (!el) return;
 
@@ -3089,21 +4909,21 @@ export function FinancialEntities({ state, dispatch }) {
         </button>
       )}
 
-      <div ref={ref} style={containerStyle} className="hide-scrollbar" onScroll={updateScrollState}>
+      <div ref={ref} style={containerStyle} className='hide-scrollbar' onScroll={updateScrollState}>
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName="Accounts" category="account" dispatch={dispatch} />
+          <FinancialEntity state={state} entityName='Accounts' category='account' dispatch={dispatch} />
         </div>
 
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName="Incomes" category="income" dispatch={dispatch} />
+          <FinancialEntity state={state} entityName='Incomes' category='income' dispatch={dispatch} />
         </div>
 
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName="Expenses" category="expense" dispatch={dispatch} />
+          <FinancialEntity state={state} entityName='Expenses' category='expense' dispatch={dispatch} />
         </div>
 
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName="Assets" category="asset" dispatch={dispatch} />
+          <FinancialEntity state={state} entityName='Assets' category='asset' dispatch={dispatch} />
         </div>
       </div>
     </div>
@@ -3113,7 +4933,7 @@ export function FinancialEntities({ state, dispatch }) {
 import { BarChart, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer, Bar } from "recharts";
 
 function transformData(simResult: SimYearResult[]) {
-  return simResult.map((year) => {
+  return simResult.map(year => {
     const totalAssets = year.sources.reduce((sum, src) => {
       if (src.source_type === "rental" || src.source_type === "stock") {
         return sum + (src.asset_value || 0);
@@ -3133,8 +4953,8 @@ function transformData(simResult: SimYearResult[]) {
 export function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
 
-  const cash = payload.find((p) => p.dataKey === "cash")?.value || 0;
-  const assets = payload.find((p) => p.dataKey === "assets")?.value || 0;
+  const cash = payload.find(p => p.dataKey === "cash")?.value || 0;
+  const assets = payload.find(p => p.dataKey === "assets")?.value || 0;
 
   const netWorth = cash + assets;
 
@@ -3171,17 +4991,17 @@ export function NetWorthStackedChart({ simResult }) {
 
       <ResponsiveContainer>
         <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="year" />
+          <CartesianGrid strokeDasharray='3 3' />
+          <XAxis dataKey='year' />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
 
           {/* bottom layer */}
-          <Bar dataKey="cash" stackId="1" fill="#82ca9d" />
+          <Bar dataKey='cash' stackId='1' fill='#82ca9d' />
 
           {/* top layer */}
-          <Bar dataKey="assets" stackId="1" fill="#8884d8" />
+          <Bar dataKey='assets' stackId='1' fill='#8884d8' />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -3228,7 +5048,7 @@ export function SimulationControls({ state, setSimResult }) {
 
 function generateMockResults(years = 20, sourcesPerYear = 2): SimYearResult[] {
   return Array.from({ length: years }, (_, i) => {
-    const year = 2025 + i;
+    const year = 1 + i;
 
     return {
       year,
@@ -3254,13 +5074,13 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
   const [openYears, setOpenYears] = useState<number[]>([]);
 
   const toggleYear = (year: number) => {
-    setOpenYears((previousState) => {
+    setOpenYears(previousState => {
       console.log("Previous state from React:", previousState);
 
       const isOpen = previousState.includes(year);
 
       if (isOpen) {
-        const nextState = previousState.filter((y) => y !== year);
+        const nextState = previousState.filter(y => y !== year);
         console.log("Closing year → new state:", nextState);
         return nextState;
       }
@@ -3274,16 +5094,16 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
   const mockResults = generateMockResults();
 
   return (
-    <div className="section">
+    <div className='section'>
       <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         <h2>Simulation Results</h2>
 
         {/* to generate fake data use mockResults instead of simResult */}
-        <button onClick={() => setOpenYears(simResult.map((y) => y.year))}>Expand All</button>
+        <button onClick={() => setOpenYears(simResult.map(y => y.year))}>Expand All</button>
         <button onClick={() => setOpenYears([])}>Collapse All</button>
       </div>
 
-      <table className="mega-table">
+      <table className='mega-table'>
         <thead>
           <tr>
             <th>Year</th>
@@ -3298,10 +5118,10 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
 
         <tbody>
           {/* to generate fake data use mockResults instead of simResult */}
-          {simResult.map((yearData) => (
+          {simResult.map(yearData => (
             <React.Fragment key={yearData.year}>
               {/* YEAR SUMMARY ROW */}
-              <tr className="year-row" onClick={() => toggleYear(yearData.year)}>
+              <tr className='year-row' onClick={() => toggleYear(yearData.year)}>
                 <td>{yearData.year}</td>
                 <td colSpan={6}>
                   Net Worth: ${yearData.net_worth} | Cash: ${yearData.total_cash} | Income: ${yearData.total_income} | Expenses: ${yearData.total_expenses}
@@ -3310,8 +5130,8 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
 
               {/* SOURCE ROWS */}
               {openYears.includes(yearData.year) &&
-                yearData.sources.map((src) => (
-                  <tr key={src.id} className="source-row">
+                yearData.sources.map(src => (
+                  <tr key={src.id} className='source-row'>
                     <td></td>
                     <td>{src.name}</td>
                     <td>{src.source_type}</td>
@@ -3335,43 +5155,35 @@ export default function Dashboard() {
   const [simResult, setSimResult] = useState<SimYearResult[]>([]);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   return (
-    <div className="dash-root">
-      <aside className="dash-sidebar">
-        <div className="dash-logo">
-          <span className="dash-logo-mark">VL</span>
-          <span className="dash-logo-text">VantageLabs</span>
+    <div className='dash-root'>
+      <aside className='dash-sidebar'>
+        <div className='dash-logo'>
+          <span className='dash-logo-mark'>VL</span>
+          <span className='dash-logo-text'>VantageLabs</span>
         </div>
-        <nav className="dash-nav">
-          <a href="/testing" className="dash-nav-item dash-nav-active">
+        <nav className='dash-nav'>
+          <a href='/testing' className='dash-nav-item dash-nav-active'>
             TESTING GROUNDS
           </a>
-          <a href="#" className="dash-nav-item dash-nav-active">
+          <a href='#' className='dash-nav-item dash-nav-active'>
             TESTING VISUALS
           </a>
         </nav>
-         <button
-            type="button"
-            className="dash-nav-item"
-            style={feedbackNavButtonStyle}
-            onClick={() => setIsFeedbackOpen(true)}
-          >
-            LEAVE FEEDBACK
-          </button>
+        <button type='button' className='dash-nav-item' style={feedbackNavButtonStyle} onClick={() => setIsFeedbackOpen(true)}>
+          LEAVE FEEDBACK
+        </button>
       </aside>
 
-      <FeedbackModal
-        isOpen={isFeedbackOpen}
-        onClose={() => setIsFeedbackOpen(false)}
-      />
+      <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
-      <main className="dash-main">
-        <header className="dash-topbar">
+      <main className='dash-main'>
+        <header className='dash-topbar'>
           <div>
-            <h1 className="dash-page-title">Financial Overview</h1>
-            <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
+            <h1 className='dash-page-title'>Financial Overview</h1>
+            <p className='dash-page-sub'>Stepwise simulation · Annual variables</p>
           </div>
-          <div className="dash-topbar-right">
-            <span className="dash-sim-badge">Sim: {SIM_MAX}yr</span>
+          <div className='dash-topbar-right'>
+            <span className='dash-sim-badge'>Sim: {SIM_MAX}yr</span>
           </div>
         </header>
 

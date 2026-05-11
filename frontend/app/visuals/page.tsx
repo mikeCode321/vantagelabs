@@ -1,7 +1,7 @@
 "use client";
 import "./dashboard.css";
 import { SIM_MAX } from "@/app/testing/constants";
-import { useState, useReducer, useEffect, CSSProperties, useRef } from "react";
+import { useState, useReducer, useEffect, useRef } from "react";
 import React from "react";
 
 // ─────────────────────────────────────────────
@@ -192,16 +192,11 @@ type HouseLoanExpense = {
   original_principal: number; //  house asset_value - down_payment
   interest_rate: number; // example: 0.0675 = 6.75%
   loan_term_years: number; // example: 30
-
-  
 };
-
 
 // ─────────────────────────────────────────────
 // CAR LOAN
 // ─────────────────────────────────────────────
-
-
 
 type CarLoanExpense = {
   source_type: "expense";
@@ -221,10 +216,7 @@ type CarLoanExpense = {
   original_principal: number; //  car asset_value - down_payment
   interest_rate: number; // example: 0.072 = 7.2%
   loan_term_years: number; // example: 5
-
-
 };
-
 
 type ExpenseSource = LivingExpense | RentExpense | DebtExpense | CarLoanExpense | HouseLoanExpense;
 
@@ -282,7 +274,7 @@ type SimRequest = {
   expenses: {
     living: LivingExpense[]; // TODO: expenses will need to be updated
     rent: RentExpense[];
-    car_loan : CarLoanExpense[];
+    car_loan: CarLoanExpense[];
     house_loan: HouseLoanExpense[];
     debt: DebtExpense[];
   };
@@ -352,7 +344,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         accounts: {
           ...state.accounts,
-          [variant]: state.accounts[variant].map(a => (a.id === account.id ? account : a)),
+          [variant]: state.accounts[variant].map((a) => (a.id === account.id ? account : a)),
         },
       };
     }
@@ -363,7 +355,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         accounts: {
           ...state.accounts,
-          [variant]: state.accounts[variant].filter(a => a.id !== id),
+          [variant]: state.accounts[variant].filter((a) => a.id !== id),
         },
       };
     }
@@ -388,7 +380,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         incomes: {
           ...state.incomes,
-          [variant]: state.incomes[variant].map(i => (i.id === income.id ? income : i)),
+          [variant]: state.incomes[variant].map((i) => (i.id === income.id ? income : i)),
         },
       };
     }
@@ -399,7 +391,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         incomes: {
           ...state.incomes,
-          [variant]: state.incomes[variant].filter(i => i.id !== id),
+          [variant]: state.incomes[variant].filter((i) => i.id !== id),
         },
       };
     }
@@ -424,7 +416,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         expenses: {
           ...state.expenses,
-          [variant]: state.expenses[variant].map(e => (e.id === expense.id ? expense : e)),
+          [variant]: state.expenses[variant].map((e) => (e.id === expense.id ? expense : e)),
         },
       };
     }
@@ -435,7 +427,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         expenses: {
           ...state.expenses,
-          [variant]: state.expenses[variant].filter(e => e.id !== id),
+          [variant]: state.expenses[variant].filter((e) => e.id !== id),
         },
       };
     }
@@ -460,7 +452,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         assets: {
           ...state.assets,
-          [variant]: state.assets[variant].map(a => (a.id === asset.id ? asset : a)),
+          [variant]: state.assets[variant].map((a) => (a.id === asset.id ? asset : a)),
         },
       };
     }
@@ -471,7 +463,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
         ...state,
         assets: {
           ...state.assets,
-          [variant]: state.assets[variant].filter(a => a.id !== id),
+          [variant]: state.assets[variant].filter((a) => a.id !== id),
         },
       };
     }
@@ -586,7 +578,7 @@ const ENTITY_CONFIG = {
       //formComponent: HouseLoanExpenseForm,
       //editFormComponent: EditHouseLoanExpenseForm,
     },
-  
+
     car_loan: {
       id: "car_loan",
       name: "Car Loan",
@@ -611,121 +603,6 @@ const ENTITY_CONFIG = {
       editFormComponent: EditCarAssetForm,
     },
   },
-};
-
-/* -------------------- Form Styles -------------------- */
-
-const formContainerStyle: CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "1px",
-};
-
-const formSectionStyle: CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "14px",
-};
-
-const formLabelStyle: CSSProperties = {
-  fontSize: "0.72rem",
-  letterSpacing: "0.12em",
-  textTransform: "uppercase",
-  color: "var(--teal)",
-  fontWeight: 600,
-  marginBottom: "2px",
-};
-
-const formInputStyle: CSSProperties = {
-  width: "100%",
-  border: "1px solid #5FA7AB33",
-  background: "var(--white)",
-  color: "var(--primary)",
-  borderRadius: "3px",
-  padding: "10px 12px",
-  fontFamily: "'DM Mono', monospace",
-  fontSize: "0.72rem",
-  outline: "none",
-  transition: "all 0.15s",
-};
-
-const formGridStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(2, 1fr)",
-  gap: "12px",
-};
-
-const formSubmitButtonStyle: CSSProperties = {
-  background: "var(--teal)",
-  color: "var(--white)",
-  border: "1px solid var(--teal)",
-  borderRadius: "3px",
-  padding: "10px 16px",
-  fontFamily: "'DM Mono', monospace",
-  fontSize: "0.72rem",
-  letterSpacing: "0.08em",
-  textTransform: "uppercase",
-  fontWeight: 600,
-  cursor: "pointer",
-  transition: "all 0.15s",
-};
-
-const tierHeaderStyle: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  marginBottom: "12px",
-};
-
-const tierTitleStyle: CSSProperties = {
-  fontSize: "0.72rem",
-  letterSpacing: "0.12em",
-  textTransform: "uppercase",
-  color: "var(--primary)",
-  fontWeight: 600,
-};
-
-const addTierButtonStyle: CSSProperties = {
-  background: "var(--white)",
-  color: "var(--teal)",
-  border: "1px solid var(--teal)",
-  borderRadius: "3px",
-  padding: "5px 10px",
-  fontFamily: "'DM Mono', monospace",
-  fontSize: "0.62rem",
-  letterSpacing: "0.08em",
-  textTransform: "uppercase",
-  cursor: "pointer",
-  transition: "all 0.15s",
-};
-
-const tierItemStyle: CSSProperties = {
-  background: "#FAFCFC",
-  border: "1px solid #5FA7AB22",
-  borderRadius: "3px",
-  padding: "12px",
-  display: "flex",
-  gap: "12px",
-  alignItems: "flex-end",
-};
-
-const tierInputStyle: CSSProperties = {
-  flex: 1,
-  minWidth: 0,
-};
-
-const tierDeleteButtonStyle: CSSProperties = {
-  background: "var(--white)",
-  color: "#B46D6D",
-  border: "1px solid #B46D6D44",
-  borderRadius: "3px",
-  padding: "8px 10px",
-  fontFamily: "'DM Mono', monospace",
-  fontSize: "0.62rem",
-  letterSpacing: "0.08em",
-  textTransform: "uppercase",
-  cursor: "pointer",
-  transition: "all 0.15s",
 };
 
 /* -------------------- Number Formatting Utilities -------------------- */
@@ -829,122 +706,61 @@ function CheckingAccountForm({ dispatch }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "14px",
-          paddingBottom: "20px",
-          marginBottom: "24px",
-          borderBottom: "1px solid #5FA7AB22",
-        }}>
-        <div
-          style={{
-            width: "42px",
-            height: "42px",
-            borderRadius: "10px",
-            background: "#5FA7AB18",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            flexShrink: 0,
-          }}>
-          💰
-        </div>
+      <div className="form-header">
+        <div className="form-header-icon">💰</div>
         <div>
-          <h3
-            style={{
-              margin: "0 0 3px 0",
-              fontSize: "1rem",
-              fontWeight: 700,
-              color: "var(--primary)",
-              letterSpacing: "-0.01em",
-            }}>
-            Add Checking Account
-          </h3>
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.75rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.5,
-            }}>
-            Track your checking account balance and tiered interest rates.
-          </p>
+          <h3 className="form-header-title">Add Checking Account</h3>
+          <p className="form-header-desc">Track your checking account balance and tiered interest rates.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Account Details
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Account Details</p>
 
             {/* Account Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Main Checking, Emergency Fund" required />
+            <div className="form-field">
+              <label className="form-label">Account Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Main Checking, Emergency Fund" required />
             </div>
 
             {/* Starting Balance */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Starting Balance</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="10,000" type="number" required />
+            <div className="form-field">
+              <label className="form-label">Starting Balance</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input--prefix-dollar" placeholder="10,000" type="text" inputMode="decimal" required />
               </div>
             </div>
 
             {/* Interest Tiers */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <div style={tierHeaderStyle}>
-                <label style={tierTitleStyle}>Interest Tiers</label>
-                <button type="button" style={addTierButtonStyle} onClick={addTier}>
+            <div className="tier-list">
+              <div className="tier-header">
+                <label className="tier-title">Interest Tiers</label>
+                <button type="button" className="tier-btn-add" onClick={addTier}>
                   + Add Tier
                 </button>
               </div>
 
               {tiers.map((tier, index) => (
                 <div key={index}>
-                  <div style={tierItemStyle}>
-                    <div style={{ ...tierInputStyle, flex: 0.6 }}>
-                      <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
-                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={e => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
+                  <div className="tier-item">
+                    <div className="tier-input-wrap--narrow">
+                      <label className="form-label">Threshold</label>
+                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} className="form-input" placeholder="e.g. 100000" type="text" inputMode="decimal" />
                     </div>
 
-                    <div style={{ ...tierInputStyle, flex: 0.6 }}>
-                      <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
-                      <input value={tier.annual_rate} onChange={e => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder="0.03" type="number" step="0.0001" />
+                    <div className="tier-input-wrap--narrow">
+                      <label className="form-label">APY (%)</label>
+                      <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} className="form-input" placeholder="0.03" type="number" step="0.0001" />
                     </div>
 
                     {tiers.length > 1 && (
-                      <button type="button" style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
+                      <button type="button" className="tier-btn-remove" onClick={() => removeTier(index)}>
                         Remove
                       </button>
                     )}
@@ -955,36 +771,24 @@ function CheckingAccountForm({ dispatch }) {
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" required />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" required />
               </div>
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
-        <button type="submit" style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
+        <button type="submit" className="form-btn-submit form-btn-submit--mt">
           Add Checking Account
         </button>
       </form>
@@ -1041,196 +845,85 @@ function TaxableInvestmentAccountForm({ dispatch }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "14px",
-          paddingBottom: "20px",
-          marginBottom: "24px",
-          borderBottom: "1px solid #5FA7AB22",
-        }}>
-        <div
-          style={{
-            width: "42px",
-            height: "42px",
-            borderRadius: "10px",
-            background: "#5FA7AB18",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            flexShrink: 0,
-          }}>
-          📈
-        </div>
+      <div className="form-header">
+        <div className="form-header-icon">📈</div>
         <div>
-          <h3
-            style={{
-              margin: "0 0 3px 0",
-              fontSize: "1rem",
-              fontWeight: 700,
-              color: "var(--primary)",
-              letterSpacing: "-0.01em",
-            }}>
-            Add Taxable Investment Account
-          </h3>
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.75rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.5,
-            }}>
-            Track your brokerage account with returns and dividend strategies.
-          </p>
+          <h3 className="form-header-title">Add Taxable Investment Account</h3>
+          <p className="form-header-desc">Track your brokerage account with returns and dividend strategies.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Account Details
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Account Details</p>
 
             {/* Account Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Fidelity Brokerage" required />
+            <div className="form-field">
+              <label className="form-label">Account Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Fidelity Brokerage" required />
             </div>
 
             {/* Starting Balance */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Starting Balance</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="50,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">Starting Balance</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={balance} onChange={(e) => setBalance(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="50,000" type="number" />
               </div>
             </div>
 
             {/* Monthly Contribution */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Monthly Contribution</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <span
-                  style={{
-                    position: "absolute",
-                    right: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.68rem",
-                    color: "#5FA7AB99",
-                    pointerEvents: "none",
-                  }}>
-                  /mo
-                </span>
-                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="1,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">Monthly Contribution</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/mo</span>
+                <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="1,000" type="number" />
               </div>
             </div>
 
             {/* Expected Return slider */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Expected Annual Return</label>
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    color: "var(--primary)",
-                    fontVariantNumeric: "tabular-nums",
-                  }}>
-                  {Number(expectedReturn).toFixed(1)}%
-                </span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Expected Annual Return</label>
+                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
             </div>
 
             {/* Dividend Yield slider */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Dividend Yield</label>
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    color: "var(--primary)",
-                    fontVariantNumeric: "tabular-nums",
-                  }}>
-                  {Number(dividendYield).toFixed(1)}%
-                </span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Dividend Yield</label>
+                <span className="form-slider-value">{Number(dividendYield).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={10} step={0.1} value={dividendYield} onChange={e => setDividendYield(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={10} step={0.1} value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" required />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" required />
               </div>
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
-        <button type="submit" style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
+        <button type="submit" className="form-btn-submit form-btn-submit--mt">
           Add Taxable Investment Account
         </button>
       </form>
@@ -1261,7 +954,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
   const annualEmployer = (annualEmployee * matchPercent) / 100;
   const annualTotal = annualEmployee + annualEmployer;
 
-  const handleLinkToggle = enabled => {
+  const handleLinkToggle = (enabled) => {
     setLinkEnabled(enabled);
     if (enabled && hasIncomes && !linkedIncomeId) {
       // Auto-select first job and sync years
@@ -1272,16 +965,16 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
     }
   };
 
-  const handleJobSelect = jobId => {
+  const handleJobSelect = (jobId) => {
     setLinkedIncomeId(jobId);
-    const job = allJobs.find(j => j.id === jobId);
+    const job = allJobs.find((j) => j.id === jobId);
     if (job) {
       setStartYear(job.start_year.toString());
       setEndYear(job.end_year.toString());
     }
   };
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
 
     const newAccountId = crypto.randomUUID();
@@ -1304,7 +997,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
 
     // Update linked salary
     if (linkEnabled && linkedIncomeId) {
-      const linkedJob = allJobs.find(j => j.id === linkedIncomeId);
+      const linkedJob = allJobs.find((j) => j.id === linkedIncomeId);
       if (linkedJob) {
         dispatch({
           type: "UPDATE_INCOME",
@@ -1328,259 +1021,116 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
     setLinkedIncomeId("");
   };
 
-  const linkedJob = linkedIncomeId ? allJobs.find(job => job.id === linkedIncomeId) : null;
+  const linkedJob = linkedIncomeId ? allJobs.find((job) => job.id === linkedIncomeId) : null;
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "14px",
-          paddingBottom: "20px",
-          marginBottom: "24px",
-          borderBottom: "1px solid #5FA7AB22",
-        }}>
-        <div
-          style={{
-            width: "42px",
-            height: "42px",
-            borderRadius: "10px",
-            background: "#5FA7AB18",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            flexShrink: 0,
-          }}>
-          🏢
-        </div>
+      <div className="form-header">
+        <div className="form-header-icon">🏢</div>
         <div>
-          <h3
-            style={{
-              margin: "0 0 3px 0",
-              fontSize: "1rem",
-              fontWeight: 700,
-              color: "var(--primary)",
-              letterSpacing: "-0.01em",
-            }}>
-            Add Employer Retirement Account
-          </h3>
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.75rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.5,
-            }}>
-            Track your 401(k), 403(b), or pension and optionally link it to a job.
-          </p>
+          <h3 className="form-header-title">Add Employer Retirement Account</h3>
+          <p className="form-header-desc">Track your 401(k), 403(b), or pension and optionally link it to a job.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Account Details
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Account Details</p>
 
             {/* Account Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Fidelity 401(k)" required />
+            <div className="form-field">
+              <label className="form-label">Account Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Fidelity 401(k)" required />
             </div>
 
             {/* Starting Balance */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Starting Balance</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="25,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">Starting Balance</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={balance} onChange={(e) => setBalance(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="25,000" type="number" />
               </div>
             </div>
 
             {/* Monthly Contribution */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Monthly Contribution</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <span
-                  style={{
-                    position: "absolute",
-                    right: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.68rem",
-                    color: "#5FA7AB99",
-                    pointerEvents: "none",
-                  }}>
-                  /mo
-                </span>
-                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="500" type="number" />
+            <div className="form-field">
+              <label className="form-label">Monthly Contribution</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/mo</span>
+                <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="500" type="number" />
               </div>
             </div>
 
             {/* Expected Return slider */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Expected Annual Return</label>
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    color: "var(--primary)",
-                    fontVariantNumeric: "tabular-nums",
-                  }}>
-                  {Number(expectedReturn).toFixed(1)}%
-                </span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Expected Annual Return</label>
+                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
             </div>
 
             {/* Employer Match slider */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Employer Match</label>
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    color: "var(--primary)",
-                    fontVariantNumeric: "tabular-nums",
-                  }}>
-                  {Number(employerMatch).toFixed(1)}%
-                </span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Employer Match</label>
+                <span className="form-slider-value">{Number(employerMatch).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={10} step={0.1} value={employerMatch} onChange={e => setEmployerMatch(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={10} step={0.1} value={employerMatch} onChange={(e) => setEmployerMatch(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={{ ...formInputStyle }} placeholder="1" type="number" required />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={{ ...formInputStyle }} placeholder="40" type="number" required />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" required />
               </div>
             </div>
 
             {/* Link to job card */}
-            <div
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #5FA7AB33",
-                background: "#FAFCFC",
-                overflow: "hidden",
-              }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "12px 14px",
-                }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span style={{ fontSize: "15px" }}>💼</span>
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">💼</span>
                   <div>
-                    <div
-                      style={{
-                        fontSize: "0.78rem",
-                        fontWeight: 700,
-                        color: "var(--primary)",
-                        marginBottom: "1px",
-                      }}>
-                      Link to a job
-                    </div>
-                    <div style={{ fontSize: "0.68rem", color: "var(--text-secondary)" }}>Sync contribution years automatically</div>
+                    <div className="link-card__title">Link to a job</div>
+                    <div className="link-card__sub">Sync contribution years automatically</div>
                   </div>
                 </div>
                 {/* Toggle */}
-                <div onClick={() => hasIncomes && handleLinkToggle(!linkEnabled)} style={{ width: "36px", height: "20px", borderRadius: "10px", flexShrink: 0, cursor: hasIncomes ? "pointer" : "not-allowed", background: linkEnabled ? "#5FA7AB" : "#D1D5DB", position: "relative", transition: "background 0.2s" }}>
-                  <div style={{ position: "absolute", top: "3px", left: linkEnabled ? "19px" : "3px", width: "14px", height: "14px", borderRadius: "50%", background: "#fff", transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+                <div onClick={() => hasIncomes && handleLinkToggle(!linkEnabled)} className={`toggle ${linkEnabled ? "toggle--on" : ""} ${hasIncomes ? "toggle--enabled" : "toggle--disabled"}`}>
+                  <div className={`toggle__knob ${linkEnabled ? "toggle__knob--on" : "toggle__knob--off"}`} />
                 </div>
               </div>
 
               {linkEnabled && (
-                <div
-                  style={{
-                    padding: "0 14px 14px",
-                    borderTop: "1px solid #5FA7AB22",
-                    paddingTop: "12px",
-                  }}>
+                <div className="link-card__body">
                   {!hasIncomes ? (
-                    <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)" }}>No jobs yet — add a qualifying job first.</p>
+                    <p className="link-card__no-jobs">No jobs yet — add a qualifying job first.</p>
                   ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <select value={linkedIncomeId} onChange={e => handleJobSelect(e.target.value)} style={{ ...formInputStyle, background: "#fff" }}>
+                    <div className="form-field--gap8">
+                      <select value={linkedIncomeId} onChange={(e) => handleJobSelect(e.target.value)} className="form-input">
                         <option value="">Select a job</option>
-                        {allJobs.map(job => (
+                        {allJobs.map((job) => (
                           <option key={job.id} value={job.id}>
                             {job.name}
                           </option>
                         ))}
                       </select>
                       {linkedJob && (
-                        <div
-                          style={{
-                            fontSize: "0.68rem",
-                            color: "var(--text-secondary)",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "5px",
-                          }}>
+                        <div className="link-card__synced">
                           🔗 Synced years {linkedJob.start_year}–{linkedJob.end_year}
                         </div>
                       )}
@@ -1591,46 +1141,16 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
             </div>
 
             {/* Annual contribution preview */}
-            <div
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #5FA7AB22",
-                background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)",
-                padding: "16px",
-              }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
-                <span style={{ fontSize: "12px" }}>✨</span>
-                <span
-                  style={{
-                    fontSize: "0.62rem",
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.12em",
-                    color: "#5FA7AB",
-                  }}>
-                  Annual Contribution
-                </span>
+            <div className="preview-card">
+              <div className="preview-card__header preview-card__header--mb10">
+                <span className="preview-icon">✨</span>
+                <span className="preview-card__label">Annual Contribution</span>
               </div>
-              <div
-                style={{
-                  fontSize: "1.75rem",
-                  fontWeight: 700,
-                  color: "var(--primary)",
-                  fontVariantNumeric: "tabular-nums",
-                  lineHeight: 1,
-                }}>
+              <div className="preview-card__amount preview-card__amount--lg">
                 ${annualTotal.toLocaleString()}
-                <span
-                  style={{
-                    fontSize: "0.85rem",
-                    fontWeight: 400,
-                    color: "var(--text-secondary)",
-                    marginLeft: "4px",
-                  }}>
-                  /yr
-                </span>
+                <span className="preview-card__unit preview-card__unit--lg">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__sub">
                 ${annualEmployee.toLocaleString()} you + ${annualEmployer.toLocaleString()} employer match
               </div>
             </div>
@@ -1638,16 +1158,8 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
         </div>
 
         {/* Footer */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: "8px",
-            marginTop: "28px",
-            paddingTop: "18px",
-            borderTop: "1px solid #5FA7AB22",
-          }}>
-          <button type="submit" style={formSubmitButtonStyle}>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
             Save Account
           </button>
         </div>
@@ -1692,89 +1204,93 @@ function CarAssetForm({ dispatch }) {
     setEndYear("");
   };
 
-  const annualCost = (Number(downPayment) || 0);
+  const annualCost = Number(downPayment) || 0;
   const depreciatedValue = Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🚗</div>
+      <div className="form-header">
+        <div className="form-header-icon">🚗</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Car</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track a vehicle asset with depreciation and optional down payment.</p>
+          <h3 className="form-header-title">Add Car</h3>
+          <p className="form-header-desc">Track a vehicle asset with depreciation and optional down payment.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Vehicle Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Vehicle Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Car Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Toyota Camry, Tesla Model 3" />
+            <div className="form-field">
+              <label className="form-label">Car Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Toyota Camry, Tesla Model 3" />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Car Value</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={carValue} onChange={e => setCarValue(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="30,000" type="number" required />
+            <div className="form-field">
+              <label className="form-label">Car Value</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={carValue} onChange={(e) => setCarValue(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="30,000" type="number" required />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Down Payment <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={downPayment} onChange={e => setDownPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="5,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">
+                Down Payment <span className="form-label--muted">(optional)</span>
+              </label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="5,000" type="number" />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Annual Depreciation</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(depreciation).toFixed(1)}%</span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Depreciation</label>
+                <span className="form-slider-value">{Number(depreciation).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={30} step={0.5} value={depreciation} onChange={e => setDepreciation(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={30} step={0.5} value={depreciation} onChange={(e) => setDepreciation(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="10" type="number" />
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
+                </label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="10" type="number" />
               </div>
             </div>
 
             {/* Value Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>📉</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Value After Year 1</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">📉</span>
+                <span className="preview-card__label">Value After Year 1</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
-                ${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-              </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__amount">${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+              <div className="preview-card__sub">
                 −{Number(depreciation).toFixed(1)}% per year from ${(Number(carValue) || 0).toLocaleString()}
               </div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="submit" style={formSubmitButtonStyle}>Add Car</button>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
+            Add Car
+          </button>
         </div>
       </form>
     </div>
@@ -1818,85 +1334,89 @@ function HouseAssetForm({ dispatch }) {
   const appreciatedValue = Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏡</div>
+      <div className="form-header">
+        <div className="form-header-icon">🏡</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add House</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track a property asset with appreciation and optional down payment.</p>
+          <h3 className="form-header-title">Add House</h3>
+          <p className="form-header-desc">Track a property asset with appreciation and optional down payment.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Property Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Property Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Property Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Primary Residence, Rental Property" />
+            <div className="form-field">
+              <label className="form-label">Property Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Primary Residence, Rental Property" />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>House Value</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={houseValue} onChange={e => setHouseValue(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="400,000" type="number" required />
+            <div className="form-field">
+              <label className="form-label">House Value</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={houseValue} onChange={(e) => setHouseValue(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="400,000" type="number" required />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Down Payment <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={downPayment} onChange={e => setDownPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="80,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">
+                Down Payment <span className="form-label--muted">(optional)</span>
+              </label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="80,000" type="number" />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Annual Appreciation</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(appreciation).toFixed(1)}%</span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Appreciation</label>
+                <span className="form-slider-value">{Number(appreciation).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={appreciation} onChange={e => setAppreciation(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={15} step={0.1} value={appreciation} onChange={(e) => setAppreciation(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
+                </label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
             {/* Value Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>📈</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Value After Year 1</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">📈</span>
+                <span className="preview-card__label">Value After Year 1</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
-                ${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-              </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__amount">${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+              <div className="preview-card__sub">
                 +{Number(appreciation).toFixed(1)}% per year from ${(Number(houseValue) || 0).toLocaleString()}
               </div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="submit" style={formSubmitButtonStyle}>Add House</button>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
+            Add House
+          </button>
         </div>
       </form>
     </div>
@@ -1938,79 +1458,81 @@ function LivingExpensesForm({ dispatch }) {
   const annualExpense = Number(amount) * 12;
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏠</div>
+      <div className="form-header">
+        <div className="form-header-icon">🏠</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Living Expenses</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track recurring monthly costs like groceries, utilities, and subscriptions.</p>
+          <h3 className="form-header-title">Add Living Expenses</h3>
+          <p className="form-header-desc">Track recurring monthly costs like groceries, utilities, and subscriptions.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Expense Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Expense Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Expense Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Groceries, Utilities, etc." />
+            <div className="form-field">
+              <label className="form-label">Expense Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Groceries, Utilities, etc." />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Monthly Amount</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
-                <input value={amount} onChange={e => setAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="3,000" type="number" required />
+            <div className="form-field">
+              <label className="form-label">Monthly Amount</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/mo</span>
+                <input value={amount} onChange={(e) => setAmount(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="3,000" type="number" required />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Annual Growth Rate</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(growth).toFixed(1)}%</span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Growth Rate</label>
+                <span className="form-slider-value">{Number(growth).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={e => setGrowth(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" />
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
+                </label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" />
               </div>
             </div>
 
             {/* Annual Cost Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>💸</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Cost</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">💸</span>
+                <span className="preview-card__label">Annual Cost</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div className="preview-card__amount">
                 ${annualExpense.toLocaleString()}
-                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span className="preview-card__unit">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
-                ${(Number(amount) || 0).toLocaleString()}/mo × 12
-              </div>
+              <div className="preview-card__sub">${(Number(amount) || 0).toLocaleString()}/mo × 12</div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="submit" style={formSubmitButtonStyle}>Add Living Expenses</button>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
+            Add Living Expenses
+          </button>
         </div>
       </form>
     </div>
@@ -2054,79 +1576,83 @@ function DebtExpenseForm({ dispatch }) {
   const annualPayment = Number(monthlyPayment) * 12;
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>💳</div>
+      <div className="form-header">
+        <div className="form-header-icon">💳</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Debt</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track loans, credit cards, or any outstanding debt with monthly payments.</p>
+          <h3 className="form-header-title">Add Debt</h3>
+          <p className="form-header-desc">Track loans, credit cards, or any outstanding debt with monthly payments.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit} className="space-y-3">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Debt Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Debt Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Debt Name</label>
-              <input type="text" placeholder="Student Loan, Car Loan, Credit Card" value={name} onChange={e => setName(e.target.value)} style={formInputStyle} />
+            <div className="form-field">
+              <label className="form-label">Debt Name</label>
+              <input type="text" placeholder="Student Loan, Car Loan, Credit Card" value={name} onChange={(e) => setName(e.target.value)} className="form-input" />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Total Debt Amount</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input type="number" placeholder="25,000" value={debtAmount} onChange={e => setDebtAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} required />
+            <div className="form-field">
+              <label className="form-label">Total Debt Amount</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input type="number" placeholder="25,000" value={debtAmount} onChange={(e) => setDebtAmount(e.target.value)} className="form-input form-input--prefix-dollar" required />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Monthly Payment</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
-                <input type="number" placeholder="400" value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} required />
+            <div className="form-field">
+              <label className="form-label">Monthly Payment</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/mo</span>
+                <input type="number" placeholder="400" value={monthlyPayment} onChange={(e) => setMonthlyPayment(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" required />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Interest Rate <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
-              <div style={{ position: "relative" }}>
-                <input type="number" placeholder="6.5" value={interestRate} onChange={e => setInterestRate(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} />
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>%</span>
+            <div className="form-field">
+              <label className="form-label">
+                Interest Rate <span className="form-label--muted">(optional)</span>
+              </label>
+              <div className="form-input-wrap">
+                <input type="number" placeholder="6.5" value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input form-input--suffix" />
+                <span className="form-input-suffix">%</span>
               </div>
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input type="number" placeholder="1" value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} required />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input type="number" placeholder="1" value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" required />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
-                <input type="number" placeholder="10" value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} />
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
+                </label>
+                <input type="number" placeholder="10" value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" />
               </div>
             </div>
 
             {/* Annual Payment Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>💸</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Payment</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">💸</span>
+                <span className="preview-card__label">Annual Payment</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div className="preview-card__amount">
                 ${annualPayment.toLocaleString()}
-                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span className="preview-card__unit">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__sub">
                 ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
                 {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
               </div>
@@ -2134,8 +1660,10 @@ function DebtExpenseForm({ dispatch }) {
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="submit" style={formSubmitButtonStyle}>Add Debt</button>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
+            Add Debt
+          </button>
         </div>
       </form>
     </div>
@@ -2174,74 +1702,78 @@ function RentExpenseForm({ dispatch }) {
   const annualRent = Number(amount) * 12;
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏢</div>
+      <div className="form-header">
+        <div className="form-header-icon">🏢</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Rent</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track monthly rent payments with expected annual rent growth.</p>
+          <h3 className="form-header-title">Add Rent</h3>
+          <p className="form-header-desc">Track monthly rent payments with expected annual rent growth.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Rent Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Rent Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Monthly Rent</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
-                <input value={amount} onChange={e => setAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="2,000" type="number" required />
+            <div className="form-field">
+              <label className="form-label">Monthly Rent</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/mo</span>
+                <input value={amount} onChange={(e) => setAmount(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="2,000" type="number" required />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Annual Rent Growth</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(growth).toFixed(1)}%</span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Rent Growth</label>
+                <span className="form-slider-value">{Number(growth).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={e => setGrowth(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="10" type="number" />
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
+                </label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="10" type="number" />
               </div>
             </div>
 
             {/* Annual Cost Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>💸</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Rent Cost</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">💸</span>
+                <span className="preview-card__label">Annual Rent Cost</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div className="preview-card__amount">
                 ${annualRent.toLocaleString()}
-                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span className="preview-card__unit">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__sub">
                 ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
               </div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="submit" style={formSubmitButtonStyle}>Add Rent</button>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
+            Add Rent
+          </button>
         </div>
       </form>
     </div>
@@ -2286,172 +1818,74 @@ export function SalaryForm({ dispatch, state }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "14px",
-          paddingBottom: "20px",
-          marginBottom: "24px",
-          borderBottom: "1px solid #5FA7AB22",
-        }}>
-        <div
-          style={{
-            width: "42px",
-            height: "42px",
-            borderRadius: "10px",
-            background: "#5FA7AB18",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            flexShrink: 0,
-          }}>
-          💼
-        </div>
+      <div className="form-header">
+        <div className="form-header-icon">💼</div>
         <div>
-          <h3
-            style={{
-              margin: "0 0 3px 0",
-              fontSize: "1rem",
-              fontWeight: 700,
-              color: "var(--primary)",
-              letterSpacing: "-0.01em",
-            }}>
-            Add Salary Income
-          </h3>
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.75rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.5,
-            }}>
-            Track your employment income and annual growth rate.
-          </p>
+          <h3 className="form-header-title">Add Salary Income</h3>
+          <p className="form-header-desc">Track your employment income and annual growth rate.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Income Details
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Income Details</p>
 
             {/* Job Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Job Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Software Engineer" required />
+            <div className="form-field">
+              <label className="form-label">Job Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Software Engineer" required />
             </div>
 
             {/* Annual Income */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Annual Net Income</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <input value={netIncome} onChange={e => setNetIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="120,000" type="number" required />
+            <div className="form-field">
+              <label className="form-label">Annual Net Income</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={netIncome} onChange={(e) => setNetIncome(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="number" required />
               </div>
             </div>
 
             {/* Annual Growth */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Annual Growth Rate</label>
-              <div style={{ position: "relative" }}>
-                <input value={growth} onChange={e => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="3" type="number" step="0.1" />
-                <span
-                  style={{
-                    position: "absolute",
-                    right: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.68rem",
-                    color: "#5FA7AB99",
-                    pointerEvents: "none",
-                  }}>
-                  %
-                </span>
+            <div className="form-field">
+              <label className="form-label">Annual Growth Rate</label>
+              <div className="form-input-wrap">
+                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input--suffix" placeholder="3" type="number" step="0.1" />
+                <span className="form-input-suffix">%</span>
               </div>
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" required />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" required />
               </div>
             </div>
 
             {/* Link to 401k card */}
-            <div
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #5FA7AB33",
-                background: "#FAFCFC",
-                padding: "14px",
-              }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontSize: "0.65rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.12em",
-                  color: "var(--teal)",
-                }}>
+            <div className="link-card">
+              <label className="link-card__option" style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", color: "var(--teal)" }}>
                 Link to a 401(k) Account
               </label>
 
               {available401ks.length > 0 ? (
                 <>
-                  <select value={linked401kId} onChange={e => setLinked401kId(e.target.value)} style={formInputStyle}>
+                  <select value={linked401kId} onChange={(e) => setLinked401kId(e.target.value)} className="form-input">
                     <option value="">Select an account</option>
 
-                    {available401ks.map(account => (
+                    {available401ks.map((account) => (
                       <option key={account.id} value={account.id}>
                         {account.name}
                       </option>
@@ -2460,28 +1894,28 @@ export function SalaryForm({ dispatch, state }) {
 
                   {linked401kId && (
                     <div
+                      className="link-card__synced"
                       style={{
-                        fontSize: "0.68rem",
-                        color: "#5FA7AB",
                         marginTop: "8px",
                         display: "flex",
                         alignItems: "center",
                         gap: "5px",
-                      }}>
-                      🔗 Linked to {available401ks.find(a => a.id === linked401kId)?.name}
+                      }}
+                    >
+                      🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
                     </div>
                   )}
                 </>
               ) : (
                 <div
+                  className="preview-card__sub"
                   style={{
-                    fontSize: "0.72rem",
-                    color: "var(--text-secondary)",
                     padding: "10px 12px",
                     border: "1px dashed #5FA7AB44",
                     borderRadius: "6px",
                     background: "#fff",
-                  }}>
+                  }}
+                >
                   No 401(k) accounts available yet.
                 </div>
               )}
@@ -2490,16 +1924,8 @@ export function SalaryForm({ dispatch, state }) {
         </div>
 
         {/* Footer */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: "8px",
-            marginTop: "28px",
-            paddingTop: "18px",
-            borderTop: "1px solid #5FA7AB22",
-          }}>
-          <button type="submit" style={formSubmitButtonStyle}>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
             Add Salary
           </button>
         </div>
@@ -2547,99 +1973,99 @@ function HourlyWageForm({ dispatch, state }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>⏱️</div>
+      <div className="form-header">
+        <div className="form-header-icon">⏱️</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Hourly Wage Income</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track hourly income, weekly hours, and projected growth.</p>
+          <h3 className="form-header-title">Add Hourly Wage Income</h3>
+          <p className="form-header-desc">Track hourly income, weekly hours, and projected growth.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Income Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Income Details</p>
 
             {/* Job Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Job Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Barista" />
+            <div className="form-field">
+              <label className="form-label">Job Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Barista" />
             </div>
 
             {/* Hourly Rate */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Hourly Rate</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/hr</span>
-                <input value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="25" type="number" step="0.01" />
+            <div className="form-field">
+              <label className="form-label">Hourly Rate</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/hr</span>
+                <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="25" type="number" step="0.01" />
               </div>
             </div>
 
             {/* Hours Per Week */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Hours Per Week</label>
-              <div style={{ position: "relative" }}>
-                <input value={hoursPerWeek} onChange={e => setHoursPerWeek(e.target.value)} style={{ ...formInputStyle, paddingRight: "45px" }} placeholder="40" type="number" />
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>hrs/wk</span>
+            <div className="form-field">
+              <label className="form-label">Hours Per Week</label>
+              <div className="form-input-wrap">
+                <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} className="form-input form-input--suffix" placeholder="40" type="number" />
+                <span className="form-input-suffix">hrs/wk</span>
               </div>
             </div>
 
             {/* Growth Rate */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Annual Growth Rate</label>
-              <div style={{ position: "relative" }}>
-                <input value={growth} onChange={e => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="3" type="number" step="0.1" />
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>%</span>
+            <div className="form-field">
+              <label className="form-label">Annual Growth Rate</label>
+              <div className="form-input-wrap">
+                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input--suffix" placeholder="3" type="number" step="0.1" />
+                <span className="form-input-suffix">%</span>
               </div>
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
             {/* Link to 401k card */}
             {available401ks.length > 0 && (
-              <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB33", background: "#FAFCFC", padding: "14px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)" }}>Link 401(k) Account</label>
-                <select value={linked401kId} onChange={e => setLinked401kId(e.target.value)} style={formInputStyle}>
+              <div className="link-card">
+                <label className="form-label">Link 401(k) Account</label>
+                <select value={linked401kId} onChange={(e) => setLinked401kId(e.target.value)} className="form-input">
                   <option value="">None - No linking</option>
-                  {available401ks.map(account => (
+                  {available401ks.map((account) => (
                     <option key={account.id} value={account.id}>
                       {account.name}
                     </option>
                   ))}
                 </select>
-                {linked401kId && <div style={{ fontSize: "0.68rem", color: "#5FA7AB", marginTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>🔗 Linked to {available401ks.find(a => a.id === linked401kId)?.name}</div>}
+                {linked401kId && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
               </div>
             )}
 
             {/* Annual Income Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>💰</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Estimated Annual Income</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">💰</span>
+                <span className="preview-card__label">Estimated Annual Income</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div className="preview-card__amount">
                 ${annualIncome.toLocaleString()}
-                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span className="preview-card__unit">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__sub">
                 ${(Number(hourlyRate) || 0).toLocaleString()}/hr × {(Number(hoursPerWeek) || 0).toLocaleString()} hrs/week
               </div>
             </div>
@@ -2647,8 +2073,8 @@ function HourlyWageForm({ dispatch, state }) {
         </div>
 
         {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="submit" style={formSubmitButtonStyle}>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
             Add Hourly Income
           </button>
         </div>
@@ -2697,41 +2123,41 @@ function SideHustleForm({ dispatch }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🚀</div>
+      <div className="form-header">
+        <div className="form-header-icon">🚀</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Side Hustle Income</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track variable income with frequency and variability estimates.</p>
+          <h3 className="form-header-title">Add Side Hustle Income</h3>
+          <p className="form-header-desc">Track variable income with frequency and variability estimates.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Income Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Income Details</p>
 
             {/* Side Hustle Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Side Hustle Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Freelance Writing" />
+            <div className="form-field">
+              <label className="form-label">Side Hustle Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Freelance Writing" />
             </div>
 
             {/* Average Income Per Period */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Average Income Per Period</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={averageIncome} onChange={e => setAverageIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="500" type="number" step="0.01" />
+            <div className="form-field">
+              <label className="form-label">Average Income Per Period</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="500" type="number" step="0.01" />
               </div>
             </div>
 
             {/* Frequency */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Frequency</label>
-              <select value={frequency} onChange={e => setFrequency(e.target.value)} style={formInputStyle}>
+            <div className="form-field">
+              <label className="form-label">Frequency</label>
+              <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className="form-input">
                 <option value="weekly">Weekly</option>
                 <option value="biweekly">Bi-weekly</option>
                 <option value="monthly">Monthly</option>
@@ -2741,44 +2167,44 @@ function SideHustleForm({ dispatch }) {
             </div>
 
             {/* Variability Slider */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Income Variability</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>±{variabilityPercent.toFixed(1)}%</span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Income Variability</label>
+                <span className="form-slider-value">±{variabilityPercent.toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={50} step={0.1} value={variability} onChange={e => setVariability(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
-              <p style={{ margin: 0, fontSize: "0.65rem", color: "var(--text-secondary)" }}>
+              <input type="range" min={0} max={50} step={0.1} value={variability} onChange={(e) => setVariability(e.target.value)} className="form-slider" />
+              <p className="preview-card__sub">
                 Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </p>
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
             {/* Annual Income Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>💰</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Estimated Annual Income</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">💰</span>
+                <span className="preview-card__label">Estimated Annual Income</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div className="preview-card__amount">
                 ${annualIncome.toLocaleString()}
-                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span className="preview-card__unit">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__sub">
                 ${(Number(averageIncome) || 0).toLocaleString()} {frequency}
               </div>
             </div>
@@ -2786,8 +2212,8 @@ function SideHustleForm({ dispatch }) {
         </div>
 
         {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="submit" style={formSubmitButtonStyle}>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
             Add Side Hustle
           </button>
         </div>
@@ -2828,250 +2254,84 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
   };
 
   return (
-    <div
-      style={{
-        fontFamily: "'DM Mono', monospace",
-        margin: "25px",
-      }}>
+    <div className="form-panel">
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "14px",
-          paddingBottom: "20px",
-          marginBottom: "24px",
-          borderBottom: "1px solid #5FA7AB22",
-        }}>
-        <div
-          style={{
-            width: "42px",
-            height: "42px",
-            borderRadius: "10px",
-            background: "#5FA7AB18",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            flexShrink: 0,
-          }}>
-          💼
-        </div>
+      <div className="form-header">
+        <div className="form-header-icon">💼</div>
 
         <div>
-          <h3
-            style={{
-              margin: "0 0 3px 0",
-              fontSize: "1rem",
-              fontWeight: 700,
-              color: "var(--primary)",
-              letterSpacing: "-0.01em",
-            }}>
-            Edit Salary Income
-          </h3>
+          <h3 className="form-header-title">Edit Salary Income</h3>
 
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.75rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.5,
-            }}>
-            Update your employment income and growth details.
-          </p>
+          <p className="form-header-desc">Update your employment income and growth details.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "28px",
-          }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "18px",
-            }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Income Details
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Income Details</p>
 
             {/* Job Name */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
-              }}>
-              <label style={formLabelStyle}>Job Name</label>
+            <div className="form-field">
+              <label className="form-label">Job Name</label>
 
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Software Engineer" />
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Software Engineer" />
             </div>
 
             {/* Annual Income */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
-              }}>
-              <label style={formLabelStyle}>Annual Net Income</label>
+            <div className="form-field">
+              <label className="form-label">Annual Net Income</label>
 
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
 
-                <input
-                  value={netIncome}
-                  onChange={e => setNetIncome(e.target.value)}
-                  style={{
-                    ...formInputStyle,
-                    paddingLeft: "22px",
-                  }}
-                  placeholder="120,000"
-                  type="number"
-                />
+                <input value={netIncome} onChange={(e) => setNetIncome(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="number" />
               </div>
             </div>
 
             {/* Annual Growth */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
-              }}>
-              <label style={formLabelStyle}>Annual Growth Rate</label>
+            <div className="form-field">
+              <label className="form-label">Annual Growth Rate</label>
 
-              <div style={{ position: "relative" }}>
-                <input
-                  value={growth}
-                  onChange={e => setGrowth(e.target.value)}
-                  style={{
-                    ...formInputStyle,
-                    paddingRight: "28px",
-                  }}
-                  placeholder="3"
-                  type="number"
-                  step="0.1"
-                />
+              <div className="form-input-wrap">
+                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input--suffix" placeholder="3" type="number" step="0.1" />
 
-                <span
-                  style={{
-                    position: "absolute",
-                    right: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.68rem",
-                    color: "#5FA7AB99",
-                    pointerEvents: "none",
-                  }}>
-                  %
-                </span>
+                <span className="form-input-suffix">%</span>
               </div>
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "18px",
-            }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "10px",
-              }}>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "6px",
-                }}>
-                <label style={formLabelStyle}>Start yr</label>
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
 
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "6px",
-                }}>
-                <label style={formLabelStyle}>End yr</label>
+              <div className="form-field">
+                <label className="form-label">End yr</label>
 
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
             {/* Link to 401k card */}
-            <div
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #5FA7AB33",
-                background: "#FAFCFC",
-                padding: "14px",
-              }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontSize: "0.65rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.12em",
-                  color: "var(--teal)",
-                }}>
+            <div className="link-card">
+              <label className="link-card__option" style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", color: "var(--teal)" }}>
                 Link to a 401(k) Account
               </label>
 
               {available401ks.length > 0 ? (
                 <>
-                  <select value={linked401kId} onChange={e => setLinked401kId(e.target.value)} style={formInputStyle}>
+                  <select value={linked401kId} onChange={(e) => setLinked401kId(e.target.value)} className="form-input">
                     <option value="">Select an account</option>
 
-                    {available401ks.map(account => (
+                    {available401ks.map((account) => (
                       <option key={account.id} value={account.id}>
                         {account.name}
                       </option>
@@ -3080,28 +2340,28 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
 
                   {linked401kId && (
                     <div
+                      className="link-card__synced"
                       style={{
-                        fontSize: "0.68rem",
-                        color: "#5FA7AB",
                         marginTop: "8px",
                         display: "flex",
                         alignItems: "center",
                         gap: "5px",
-                      }}>
-                      🔗 Linked to {available401ks.find(a => a.id === linked401kId)?.name}
+                      }}
+                    >
+                      🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
                     </div>
                   )}
                 </>
               ) : (
                 <div
+                  className="preview-card__sub"
                   style={{
-                    fontSize: "0.72rem",
-                    color: "var(--text-secondary)",
                     padding: "10px 12px",
                     border: "1px dashed #5FA7AB44",
                     borderRadius: "6px",
                     background: "#fff",
-                  }}>
+                  }}
+                >
                   No 401(k) accounts available yet.
                 </div>
               )}
@@ -3110,29 +2370,12 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
         </div>
 
         {/* Footer */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: "8px",
-            marginTop: "28px",
-            paddingTop: "18px",
-            borderTop: "1px solid #5FA7AB22",
-          }}>
-          <button
-            type="button"
-            onClick={onClose}
-            style={{
-              ...formSubmitButtonStyle,
-              background: "transparent",
-              color: "var(--primary)",
-              border: "1px solid #5FA7AB44",
-              fontWeight: 500,
-            }}>
+        <div className="form-footer">
+          <button type="button" onClick={onClose} className="form-btn-cancel">
             Cancel
           </button>
 
-          <button type="submit" style={formSubmitButtonStyle}>
+          <button type="submit" className="form-btn-submit">
             Update Salary
           </button>
         </div>
@@ -3152,7 +2395,6 @@ function EditHourlyWageForm({ item, state, dispatch, onClose }) {
 
   const available401ks = state?.accounts?.employer_retirement || [];
   const annualIncome = (Number(hourlyRate) || 0) * (Number(hoursPerWeek) || 0) * 52;
-  const growthRate = Number(growth) || 0;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -3176,99 +2418,99 @@ function EditHourlyWageForm({ item, state, dispatch, onClose }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>⏱️</div>
+      <div className="form-header">
+        <div className="form-header-icon">⏱️</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Hourly Wage Income</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update hourly rate, weekly hours, and growth details.</p>
+          <h3 className="form-header-title">Edit Hourly Wage Income</h3>
+          <p className="form-header-desc">Update hourly rate, weekly hours, and growth details.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Income Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Income Details</p>
 
             {/* Job Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Job Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Barista" />
+            <div className="form-field">
+              <label className="form-label">Job Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Barista" />
             </div>
 
             {/* Hourly Rate */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Hourly Rate</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/hr</span>
-                <input value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="25" type="number" step="0.01" />
+            <div className="form-field">
+              <label className="form-label">Hourly Rate</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/hr</span>
+                <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="25" type="number" step="0.01" />
               </div>
             </div>
 
             {/* Hours Per Week */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Hours Per Week</label>
-              <div style={{ position: "relative" }}>
-                <input value={hoursPerWeek} onChange={e => setHoursPerWeek(e.target.value)} style={{ ...formInputStyle, paddingRight: "45px" }} placeholder="40" type="number" />
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>hrs/wk</span>
+            <div className="form-field">
+              <label className="form-label">Hours Per Week</label>
+              <div className="form-input-wrap">
+                <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} className="form-input form-input--suffix" placeholder="40" type="number" />
+                <span className="form-input-suffix">hrs/wk</span>
               </div>
             </div>
 
             {/* Growth Rate */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Annual Growth Rate</label>
-              <div style={{ position: "relative" }}>
-                <input value={growth} onChange={e => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="3" type="number" step="0.1" />
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>%</span>
+            <div className="form-field">
+              <label className="form-label">Annual Growth Rate</label>
+              <div className="form-input-wrap">
+                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input--suffix" placeholder="3" type="number" step="0.1" />
+                <span className="form-input-suffix">%</span>
               </div>
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
             {/* Link to 401k card */}
             {available401ks.length > 0 && (
-              <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB33", background: "#FAFCFC", padding: "14px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)" }}>Link 401(k) Account</label>
-                <select value={linked401kId} onChange={e => setLinked401kId(e.target.value)} style={formInputStyle}>
+              <div className="link-card">
+                <label className="form-label">Link 401(k) Account</label>
+                <select value={linked401kId} onChange={(e) => setLinked401kId(e.target.value)} className="form-input">
                   <option value="">None - No linking</option>
-                  {available401ks.map(account => (
+                  {available401ks.map((account) => (
                     <option key={account.id} value={account.id}>
                       {account.name}
                     </option>
                   ))}
                 </select>
-                {linked401kId && <div style={{ fontSize: "0.68rem", color: "#5FA7AB", marginTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>🔗 Linked to {available401ks.find(a => a.id === linked401kId)?.name}</div>}
+                {linked401kId && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
               </div>
             )}
 
             {/* Annual Income Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>💰</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Estimated Annual Income</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">💰</span>
+                <span className="preview-card__label">Estimated Annual Income</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div className="preview-card__amount">
                 ${annualIncome.toLocaleString()}
-                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span className="preview-card__unit">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__sub">
                 ${(Number(hourlyRate) || 0).toLocaleString()}/hr × {(Number(hoursPerWeek) || 0).toLocaleString()} hrs/week
               </div>
             </div>
@@ -3276,11 +2518,11 @@ function EditHourlyWageForm({ item, state, dispatch, onClose }) {
         </div>
 
         {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>
+        <div className="form-footer">
+          <button type="button" onClick={onClose} className="form-btn-cancel">
             Cancel
           </button>
-          <button type="submit" style={formSubmitButtonStyle}>
+          <button type="submit" className="form-btn-submit">
             Update Hourly Income
           </button>
         </div>
@@ -3322,41 +2564,41 @@ function EditSideHustleForm({ item, dispatch, onClose }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🚀</div>
+      <div className="form-header">
+        <div className="form-header-icon">🚀</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Side Hustle Income</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update frequency, variability, and income details.</p>
+          <h3 className="form-header-title">Edit Side Hustle Income</h3>
+          <p className="form-header-desc">Update frequency, variability, and income details.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Income Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Income Details</p>
 
             {/* Side Hustle Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Side Hustle Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Freelance Writing" />
+            <div className="form-field">
+              <label className="form-label">Side Hustle Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Freelance Writing" />
             </div>
 
             {/* Average Income Per Period */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Average Income Per Period</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={averageIncome} onChange={e => setAverageIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="500" type="number" step="0.01" />
+            <div className="form-field">
+              <label className="form-label">Average Income Per Period</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="500" type="number" step="0.01" />
               </div>
             </div>
 
             {/* Frequency */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Frequency</label>
-              <select value={frequency} onChange={e => setFrequency(e.target.value)} style={formInputStyle}>
+            <div className="form-field">
+              <label className="form-label">Frequency</label>
+              <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className="form-input">
                 <option value="weekly">Weekly</option>
                 <option value="biweekly">Bi-weekly</option>
                 <option value="monthly">Monthly</option>
@@ -3366,44 +2608,44 @@ function EditSideHustleForm({ item, dispatch, onClose }) {
             </div>
 
             {/* Variability Slider */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Income Variability</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>±{variabilityPercent.toFixed(1)}%</span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Income Variability</label>
+                <span className="form-slider-value">±{variabilityPercent.toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={50} step={0.1} value={variability} onChange={e => setVariability(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
-              <p style={{ margin: 0, fontSize: "0.65rem", color: "var(--text-secondary)" }}>
+              <input type="range" min={0} max={50} step={0.1} value={variability} onChange={(e) => setVariability(e.target.value)} className="form-slider" />
+              <p className="preview-card__sub">
                 Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </p>
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
             {/* Annual Income Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>💰</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Estimated Annual Income</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">💰</span>
+                <span className="preview-card__label">Estimated Annual Income</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div className="preview-card__amount">
                 ${annualIncome.toLocaleString()}
-                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span className="preview-card__unit">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__sub">
                 ${(Number(averageIncome) || 0).toLocaleString()} {frequency}
               </div>
             </div>
@@ -3411,11 +2653,11 @@ function EditSideHustleForm({ item, dispatch, onClose }) {
         </div>
 
         {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>
+        <div className="form-footer">
+          <button type="button" onClick={onClose} className="form-btn-cancel">
             Cancel
           </button>
-          <button type="submit" style={formSubmitButtonStyle}>
+          <button type="submit" className="form-btn-submit">
             Update Side Hustle
           </button>
         </div>
@@ -3457,86 +2699,92 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
   const appreciatedValue = Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏡</div>
+      <div className="form-header">
+        <div className="form-header-icon">🏡</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit House</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update property value, appreciation rate, and timeline.</p>
+          <h3 className="form-header-title">Edit House</h3>
+          <p className="form-header-desc">Update property value, appreciation rate, and timeline.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Property Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Property Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Property Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Primary Residence" />
+            <div className="form-field">
+              <label className="form-label">Property Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Primary Residence" />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>House Value</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={houseValue} onChange={e => setHouseValue(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="400,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">House Value</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={houseValue} onChange={(e) => setHouseValue(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="400,000" type="number" />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Down Payment <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={downPayment} onChange={e => setDownPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="80,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">
+                Down Payment <span className="form-label--muted">(optional)</span>
+              </label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="80,000" type="number" />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Annual Appreciation</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(appreciation).toFixed(1)}%</span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Appreciation</label>
+                <span className="form-slider-value">{Number(appreciation).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={appreciation} onChange={e => setAppreciation(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={15} step={0.1} value={appreciation} onChange={(e) => setAppreciation(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
+                </label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
             {/* Value Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>📈</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Value After Year 1</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">📈</span>
+                <span className="preview-card__label">Value After Year 1</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
-                ${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-              </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__amount">${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+              <div className="preview-card__sub">
                 +{Number(appreciation).toFixed(1)}% per year from ${(Number(houseValue) || 0).toLocaleString()}
               </div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>Cancel</button>
-          <button type="submit" style={formSubmitButtonStyle}>Save House</button>
+        <div className="form-footer">
+          <button type="button" onClick={onClose} className="form-btn-cancel">
+            Cancel
+          </button>
+          <button type="submit" className="form-btn-submit">
+            Save House
+          </button>
         </div>
       </form>
     </div>
@@ -3575,86 +2823,92 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
   const depreciatedValue = Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🚗</div>
+      <div className="form-header">
+        <div className="form-header-icon">🚗</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Car</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update vehicle value, depreciation rate, and timeline.</p>
+          <h3 className="form-header-title">Edit Car</h3>
+          <p className="form-header-desc">Update vehicle value, depreciation rate, and timeline.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Vehicle Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Vehicle Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Car Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Toyota Camry" />
+            <div className="form-field">
+              <label className="form-label">Car Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Toyota Camry" />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Car Value</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={carValue} onChange={e => setCarValue(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="30,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">Car Value</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={carValue} onChange={(e) => setCarValue(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="30,000" type="number" />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Down Payment <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={downPayment} onChange={e => setDownPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="5,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">
+                Down Payment <span className="form-label--muted">(optional)</span>
+              </label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="5,000" type="number" />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Annual Depreciation</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(depreciation).toFixed(1)}%</span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Depreciation</label>
+                <span className="form-slider-value">{Number(depreciation).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={30} step={0.5} value={depreciation} onChange={e => setDepreciation(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={30} step={0.5} value={depreciation} onChange={(e) => setDepreciation(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="10" type="number" />
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
+                </label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="10" type="number" />
               </div>
             </div>
 
             {/* Value Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>📉</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Value After Year 1</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">📉</span>
+                <span className="preview-card__label">Value After Year 1</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
-                ${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-              </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__amount">${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+              <div className="preview-card__sub">
                 −{Number(depreciation).toFixed(1)}% per year from ${(Number(carValue) || 0).toLocaleString()}
               </div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>Cancel</button>
-          <button type="submit" style={formSubmitButtonStyle}>Save Car</button>
+        <div className="form-footer">
+          <button type="button" onClick={onClose} className="form-btn-cancel">
+            Cancel
+          </button>
+          <button type="submit" className="form-btn-submit">
+            Save Car
+          </button>
         </div>
       </form>
     </div>
@@ -3692,80 +2946,84 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
   const annualExpense = Number(amount) * 12;
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏠</div>
+      <div className="form-header">
+        <div className="form-header-icon">🏠</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Living Expenses</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update monthly amount and growth rate for this expense.</p>
+          <h3 className="form-header-title">Edit Living Expenses</h3>
+          <p className="form-header-desc">Update monthly amount and growth rate for this expense.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Expense Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Expense Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Expense Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Groceries, Utilities, etc." />
+            <div className="form-field">
+              <label className="form-label">Expense Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Groceries, Utilities, etc." />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Monthly Amount</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
-                <input value={amount} onChange={e => setAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="3,000" />
+            <div className="form-field">
+              <label className="form-label">Monthly Amount</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/mo</span>
+                <input value={amount} onChange={(e) => setAmount(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="3,000" />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Annual Growth Rate</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(growth).toFixed(1)}%</span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Growth Rate</label>
+                <span className="form-slider-value">{Number(growth).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={e => setGrowth(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" />
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
+                </label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" />
               </div>
             </div>
 
             {/* Annual Cost Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>💸</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Cost</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">💸</span>
+                <span className="preview-card__label">Annual Cost</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div className="preview-card__amount">
                 ${annualExpense.toLocaleString()}
-                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span className="preview-card__unit">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
-                ${(Number(amount) || 0).toLocaleString()}/mo × 12
-              </div>
+              <div className="preview-card__sub">${(Number(amount) || 0).toLocaleString()}/mo × 12</div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>Cancel</button>
-          <button type="submit" style={formSubmitButtonStyle}>Save Living Expenses</button>
+        <div className="form-footer">
+          <button type="button" onClick={onClose} className="form-btn-cancel">
+            Cancel
+          </button>
+          <button type="submit" className="form-btn-submit">
+            Save Living Expenses
+          </button>
         </div>
       </form>
     </div>
@@ -3801,75 +3059,79 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
   const annualRent = Number(amount) * 12;
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏢</div>
+      <div className="form-header">
+        <div className="form-header-icon">🏢</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Rent</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update monthly rent and annual growth rate.</p>
+          <h3 className="form-header-title">Edit Rent</h3>
+          <p className="form-header-desc">Update monthly rent and annual growth rate.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Rent Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Rent Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Monthly Rent</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
-                <input value={amount} onChange={e => setAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="2,000" />
+            <div className="form-field">
+              <label className="form-label">Monthly Rent</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/mo</span>
+                <input value={amount} onChange={(e) => setAmount(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="2,000" />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Annual Rent Growth</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(growth).toFixed(1)}%</span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Rent Growth</label>
+                <span className="form-slider-value">{Number(growth).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={e => setGrowth(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="10" />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="10" />
               </div>
             </div>
 
             {/* Annual Cost Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>💸</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Rent Cost</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">💸</span>
+                <span className="preview-card__label">Annual Rent Cost</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div className="preview-card__amount">
                 ${annualRent.toLocaleString()}
-                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span className="preview-card__unit">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__sub">
                 ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
               </div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>Cancel</button>
-          <button type="submit" style={formSubmitButtonStyle}>Save Rent</button>
+        <div className="form-footer">
+          <button type="button" onClick={onClose} className="form-btn-cancel">
+            Cancel
+          </button>
+          <button type="submit" className="form-btn-submit">
+            Save Rent
+          </button>
         </div>
       </form>
     </div>
@@ -3907,79 +3169,83 @@ export function EditDebtExpenseForm({ item, dispatch, onClose }) {
   const annualPayment = Number(monthlyPayment) * 12;
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>💳</div>
+      <div className="form-header">
+        <div className="form-header-icon">💳</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Debt</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update loan balance, monthly payment, and interest rate.</p>
+          <h3 className="form-header-title">Edit Debt</h3>
+          <p className="form-header-desc">Update loan balance, monthly payment, and interest rate.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Debt Details</p>
+          <div className="form-col">
+            <p className="form-section-heading">Debt Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Debt Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Student Loan" />
+            <div className="form-field">
+              <label className="form-label">Debt Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Student Loan" />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Total Debt Amount</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={debtAmount} onChange={e => setDebtAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="25,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">Total Debt Amount</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={debtAmount} onChange={(e) => setDebtAmount(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="25,000" type="number" />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Monthly Payment</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
-                <input value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="400" type="number" />
+            <div className="form-field">
+              <label className="form-label">Monthly Payment</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/mo</span>
+                <input value={monthlyPayment} onChange={(e) => setMonthlyPayment(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="400" type="number" />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Interest Rate <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
-              <div style={{ position: "relative" }}>
-                <input value={interestRate} onChange={e => setInterestRate(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="6.5" type="number" />
-                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>%</span>
+            <div className="form-field">
+              <label className="form-label">
+                Interest Rate <span className="form-label--muted">(optional)</span>
+              </label>
+              <div className="form-input-wrap">
+                <input value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input form-input--suffix" placeholder="6.5" type="number" />
+                <span className="form-input-suffix">%</span>
               </div>
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="10" type="number" />
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
+                </label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="10" type="number" />
               </div>
             </div>
 
             {/* Annual Payment Preview */}
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>💸</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Payment</span>
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-icon">💸</span>
+                <span className="preview-card__label">Annual Payment</span>
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+              <div className="preview-card__amount">
                 ${annualPayment.toLocaleString()}
-                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+                <span className="preview-card__unit">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__sub">
                 ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
                 {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
               </div>
@@ -3987,9 +3253,13 @@ export function EditDebtExpenseForm({ item, dispatch, onClose }) {
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>Cancel</button>
-          <button type="submit" style={formSubmitButtonStyle}>Save Debt</button>
+        <div className="form-footer">
+          <button type="button" onClick={onClose} className="form-btn-cancel">
+            Cancel
+          </button>
+          <button type="submit" className="form-btn-submit">
+            Save Debt
+          </button>
         </div>
       </form>
     </div>
@@ -4046,122 +3316,61 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "14px",
-          paddingBottom: "20px",
-          marginBottom: "24px",
-          borderBottom: "1px solid #5FA7AB22",
-        }}>
-        <div
-          style={{
-            width: "42px",
-            height: "42px",
-            borderRadius: "10px",
-            background: "#5FA7AB18",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            flexShrink: 0,
-          }}>
-          💰
-        </div>
+      <div className="form-header">
+        <div className="form-header-icon">💰</div>
         <div>
-          <h3
-            style={{
-              margin: "0 0 3px 0",
-              fontSize: "1rem",
-              fontWeight: 700,
-              color: "var(--primary)",
-              letterSpacing: "-0.01em",
-            }}>
-            Edit Checking Account
-          </h3>
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.75rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.5,
-            }}>
-            Update your checking account balance and tiered interest rates.
-          </p>
+          <h3 className="form-header-title">Edit Checking Account</h3>
+          <p className="form-header-desc">Update your checking account balance and tiered interest rates.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Account Details
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Account Details</p>
 
             {/* Account Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Main Checking, Emergency Fund" />
+            <div className="form-field">
+              <label className="form-label">Account Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Main Checking, Emergency Fund" />
             </div>
 
             {/* Starting Balance */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Starting Balance</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="10,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">Starting Balance</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={balance} onChange={(e) => setBalance(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="10,000" type="number" />
               </div>
             </div>
 
             {/* Interest Tiers */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <div style={tierHeaderStyle}>
-                <label style={tierTitleStyle}>Interest Tiers</label>
-                <button type="button" style={addTierButtonStyle} onClick={addTier}>
+            <div className="tier-list">
+              <div className="tier-header">
+                <label className="tier-title">Interest Tiers</label>
+                <button type="button" className="tier-btn-add" onClick={addTier}>
                   + Add Tier
                 </button>
               </div>
 
               {tiers.map((tier, index) => (
                 <div key={index}>
-                  <div style={tierItemStyle}>
-                    <div style={{ ...tierInputStyle, flex: 0.6 }}>
-                      <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
-                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={e => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
+                  <div className="tier-item">
+                    <div className="tier-input-wrap--narrow">
+                      <label className="form-label">Threshold</label>
+                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} className="form-input" placeholder="e.g. 100000" type="text" inputMode="decimal" />
                     </div>
 
-                    <div style={{ ...tierInputStyle, flex: 0.6 }}>
-                      <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
-                      <input value={tier.annual_rate} onChange={e => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder="0.03" type="number" step="0.0001" />
+                    <div className="tier-input-wrap--narrow">
+                      <label className="form-label">APY (%)</label>
+                      <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} className="form-input" placeholder="0.03" type="number" step="0.0001" />
                     </div>
 
                     {tiers.length > 1 && (
-                      <button type="button" style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
+                      <button type="button" className="tier-btn-remove" onClick={() => removeTier(index)}>
                         Remove
                       </button>
                     )}
@@ -4172,36 +3381,24 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
-        <button type="submit" style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
+        <button type="submit" className="form-btn-submit form-btn-submit--mt">
           Save Checking Account
         </button>
       </form>
@@ -4219,7 +3416,7 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
   const [endYear, setEndYear] = useState(item.end_year.toString());
   const [dividendStrategy, setDividendStrategy] = useState(item.dividend_reinvestment || "drip");
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
     dispatch({
       type: "UPDATE_ACCOUNT",
@@ -4239,196 +3436,85 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "14px",
-          paddingBottom: "20px",
-          marginBottom: "24px",
-          borderBottom: "1px solid #5FA7AB22",
-        }}>
-        <div
-          style={{
-            width: "42px",
-            height: "42px",
-            borderRadius: "10px",
-            background: "#5FA7AB18",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            flexShrink: 0,
-          }}>
-          📈
-        </div>
+      <div className="form-header">
+        <div className="form-header-icon">📈</div>
         <div>
-          <h3
-            style={{
-              margin: "0 0 3px 0",
-              fontSize: "1rem",
-              fontWeight: 700,
-              color: "var(--primary)",
-              letterSpacing: "-0.01em",
-            }}>
-            Edit Taxable Investment Account
-          </h3>
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.75rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.5,
-            }}>
-            Update your brokerage account with returns and dividend strategies.
-          </p>
+          <h3 className="form-header-title">Edit Taxable Investment Account</h3>
+          <p className="form-header-desc">Update your brokerage account with returns and dividend strategies.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Account Details
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Account Details</p>
 
             {/* Account Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Fidelity Brokerage" />
+            <div className="form-field">
+              <label className="form-label">Account Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Fidelity Brokerage" />
             </div>
 
             {/* Starting Balance */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Starting Balance</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="50,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">Starting Balance</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={balance} onChange={(e) => setBalance(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="50,000" type="number" />
               </div>
             </div>
 
             {/* Monthly Contribution */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Monthly Contribution</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <span
-                  style={{
-                    position: "absolute",
-                    right: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.68rem",
-                    color: "#5FA7AB99",
-                    pointerEvents: "none",
-                  }}>
-                  /mo
-                </span>
-                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="1,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">Monthly Contribution</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/mo</span>
+                <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="1,000" type="number" />
               </div>
             </div>
 
             {/* Expected Return slider */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Expected Annual Return</label>
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    color: "var(--primary)",
-                    fontVariantNumeric: "tabular-nums",
-                  }}>
-                  {Number(expectedReturn).toFixed(1)}%
-                </span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Expected Annual Return</label>
+                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
             </div>
 
             {/* Dividend Yield slider */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Dividend Yield</label>
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    color: "var(--primary)",
-                    fontVariantNumeric: "tabular-nums",
-                  }}>
-                  {Number(dividendYield).toFixed(1)}%
-                </span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Dividend Yield</label>
+                <span className="form-slider-value">{Number(dividendYield).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={10} step={0.1} value={dividendYield} onChange={e => setDividendYield(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={10} step={0.1} value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
-        <button type="submit" style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
+        <button type="submit" className="form-btn-submit form-btn-submit--mt">
           Save Taxable Investment Account
         </button>
       </form>
@@ -4459,7 +3545,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
   const annualEmployer = (annualEmployee * matchPercent) / 100;
   const annualTotal = annualEmployee + annualEmployer;
 
-  const handleLinkToggle = enabled => {
+  const handleLinkToggle = (enabled) => {
     setLinkEnabled(enabled);
     if (enabled && hasIncomes && !linkedIncomeId) {
       // Auto-select first job and sync years
@@ -4470,16 +3556,16 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
     }
   };
 
-  const handleJobSelect = jobId => {
+  const handleJobSelect = (jobId) => {
     setLinkedIncomeId(jobId);
-    const job = allJobs.find(j => j.id === jobId);
+    const job = allJobs.find((j) => j.id === jobId);
     if (job) {
       setStartYear(job.start_year.toString());
       setEndYear(job.end_year.toString());
     }
   };
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
 
     const updatedAccount = {
@@ -4501,242 +3587,110 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
     onClose();
   };
 
-  const linkedJob = linkedIncomeId ? allJobs.find(job => job.id === linkedIncomeId) : null;
+  const linkedJob = linkedIncomeId ? allJobs.find((job) => job.id === linkedIncomeId) : null;
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+    <div className="form-panel">
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "14px",
-          paddingBottom: "20px",
-          marginBottom: "24px",
-          borderBottom: "1px solid #5FA7AB22",
-        }}>
-        <div
-          style={{
-            width: "42px",
-            height: "42px",
-            borderRadius: "10px",
-            background: "#5FA7AB18",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            flexShrink: 0,
-          }}>
-          🏢
-        </div>
+      <div className="form-header">
+        <div className="form-header-icon">🏢</div>
         <div>
-          <h3
-            style={{
-              margin: "0 0 3px 0",
-              fontSize: "1rem",
-              fontWeight: 700,
-              color: "var(--primary)",
-              letterSpacing: "-0.01em",
-            }}>
-            Edit Employer Retirement Account
-          </h3>
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.75rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.5,
-            }}>
-            Update your 401(k), 403(b), or pension details.
-          </p>
+          <h3 className="form-header-title">Edit Employer Retirement Account</h3>
+          <p className="form-header-desc">Update your 401(k), 403(b), or pension details.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+        <div className="form-two-col">
           {/* ── LEFT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Account Details
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Account Details</p>
 
             {/* Account Name */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Fidelity 401(k)" />
+            <div className="form-field">
+              <label className="form-label">Account Name</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Fidelity 401(k)" />
             </div>
 
             {/* Starting Balance */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Starting Balance</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="25,000" type="number" />
+            <div className="form-field">
+              <label className="form-label">Starting Balance</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input value={balance} onChange={(e) => setBalance(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="25,000" type="number" />
               </div>
             </div>
 
             {/* Monthly Contribution */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Monthly Contribution</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <span
-                  style={{
-                    position: "absolute",
-                    right: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.68rem",
-                    color: "#5FA7AB99",
-                    pointerEvents: "none",
-                  }}>
-                  /mo
-                </span>
-                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="500" type="number" />
+            <div className="form-field">
+              <label className="form-label">Monthly Contribution</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <span className="form-input-suffix">/mo</span>
+                <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="500" type="number" />
               </div>
             </div>
 
             {/* Expected Return slider */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Expected Annual Return</label>
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    color: "var(--primary)",
-                    fontVariantNumeric: "tabular-nums",
-                  }}>
-                  {Number(expectedReturn).toFixed(1)}%
-                </span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Expected Annual Return</label>
+                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
             </div>
 
             {/* Employer Match slider */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Employer Match</label>
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    color: "var(--primary)",
-                    fontVariantNumeric: "tabular-nums",
-                  }}>
-                  {Number(employerMatch).toFixed(1)}%
-                </span>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Employer Match</label>
+                <span className="form-slider-value">{Number(employerMatch).toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={10} step={0.1} value={employerMatch} onChange={e => setEmployerMatch(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={10} step={0.1} value={employerMatch} onChange={(e) => setEmployerMatch(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           {/* ── RIGHT ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}>
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={{ ...formInputStyle }} placeholder="1" type="number" />
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={{ ...formInputStyle }} placeholder="30" type="number" />
+              <div className="form-field">
+                <label className="form-label">End yr</label>
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
             {/* Link to job card */}
-            <div
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #5FA7AB33",
-                background: "#FAFCFC",
-                overflow: "hidden",
-              }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "12px 14px",
-                }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span style={{ fontSize: "15px" }}>💼</span>
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">💼</span>
                   <div>
-                    <div
-                      style={{
-                        fontSize: "0.78rem",
-                        fontWeight: 700,
-                        color: "var(--primary)",
-                        marginBottom: "1px",
-                      }}>
-                      Link to a job
-                    </div>
-                    <div style={{ fontSize: "0.68rem", color: "var(--text-secondary)" }}>Sync contribution years automatically</div>
+                    <div className="link-card__title">Link to a job</div>
+                    <div className="link-card__sub">Sync contribution years automatically</div>
                   </div>
                 </div>
                 {/* Toggle */}
                 <div
                   onClick={() => hasIncomes && handleLinkToggle(!linkEnabled)}
+                  className="toggle toggle--on"
                   style={{
-                    width: "36px",
-                    height: "20px",
                     borderRadius: "10px",
                     flexShrink: 0,
                     cursor: hasIncomes ? "pointer" : "not-allowed",
                     background: linkEnabled ? "#5FA7AB" : "#D1D5DB",
                     position: "relative",
                     transition: "background 0.2s",
-                  }}>
+                  }}
+                >
                   <div
+                    className="toggle__knob toggle__knob--on"
                     style={{
-                      position: "absolute",
-                      top: "3px",
                       left: linkEnabled ? "19px" : "3px",
                       width: "14px",
                       height: "14px",
@@ -4750,33 +3704,21 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
               </div>
 
               {linkEnabled && (
-                <div
-                  style={{
-                    padding: "0 14px 14px",
-                    borderTop: "1px solid #5FA7AB22",
-                    paddingTop: "12px",
-                  }}>
+                <div className="link-card__body">
                   {!hasIncomes ? (
-                    <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)" }}>No jobs yet — add a qualifying job first.</p>
+                    <p className="link-card__no-jobs">No jobs yet — add a qualifying job first.</p>
                   ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <select value={linkedIncomeId} onChange={e => handleJobSelect(e.target.value)} style={{ ...formInputStyle, background: "#fff" }}>
+                    <div className="form-field--gap8">
+                      <select value={linkedIncomeId} onChange={(e) => handleJobSelect(e.target.value)} className="form-input">
                         <option value="">Select a job</option>
-                        {allJobs.map(job => (
+                        {allJobs.map((job) => (
                           <option key={job.id} value={job.id}>
                             {job.name}
                           </option>
                         ))}
                       </select>
                       {linkedJob && (
-                        <div
-                          style={{
-                            fontSize: "0.68rem",
-                            color: "var(--text-secondary)",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "5px",
-                          }}>
+                        <div className="link-card__synced">
                           🔗 Synced years {linkedJob.start_year}–{linkedJob.end_year}
                         </div>
                       )}
@@ -4787,46 +3729,16 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
             </div>
 
             {/* Annual contribution preview */}
-            <div
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #5FA7AB22",
-                background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)",
-                padding: "16px",
-              }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
-                <span style={{ fontSize: "12px" }}>✨</span>
-                <span
-                  style={{
-                    fontSize: "0.62rem",
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.12em",
-                    color: "#5FA7AB",
-                  }}>
-                  Annual Contribution
-                </span>
+            <div className="preview-card">
+              <div className="preview-card__header preview-card__header--mb10">
+                <span className="preview-icon">✨</span>
+                <span className="preview-card__label">Annual Contribution</span>
               </div>
-              <div
-                style={{
-                  fontSize: "1.75rem",
-                  fontWeight: 700,
-                  color: "var(--primary)",
-                  fontVariantNumeric: "tabular-nums",
-                  lineHeight: 1,
-                }}>
+              <div className="preview-card__amount preview-card__amount--lg">
                 ${annualTotal.toLocaleString()}
-                <span
-                  style={{
-                    fontSize: "0.85rem",
-                    fontWeight: 400,
-                    color: "var(--text-secondary)",
-                    marginLeft: "4px",
-                  }}>
-                  /yr
-                </span>
+                <span className="preview-card__unit preview-card__unit--lg">/yr</span>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+              <div className="preview-card__sub">
                 ${annualEmployee.toLocaleString()} you + ${annualEmployer.toLocaleString()} employer match
               </div>
             </div>
@@ -4834,28 +3746,11 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
         </div>
 
         {/* Footer */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: "8px",
-            marginTop: "28px",
-            paddingTop: "18px",
-            borderTop: "1px solid #5FA7AB22",
-          }}>
-          <button
-            type="button"
-            onClick={onClose}
-            style={{
-              ...formSubmitButtonStyle,
-              background: "transparent",
-              color: "var(--primary)",
-              border: "1px solid #5FA7AB44",
-              fontWeight: 500,
-            }}>
+        <div className="form-footer">
+          <button type="button" onClick={onClose} className="form-btn-cancel">
             Cancel
           </button>
-          <button type="submit" style={formSubmitButtonStyle}>
+          <button type="submit" className="form-btn-submit">
             Update Account
           </button>
         </div>
@@ -4917,25 +3812,25 @@ function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
   }
 
   return (
-    <div style={feedbackOverlayStyle} onClick={onClose}>
-      <div style={feedbackModalStyle} onClick={event => event.stopPropagation()}>
-        <div style={feedbackHeaderStyle}>
+    <div className="feedback-overlay" onClick={onClose}>
+      <div className="feedback-modal" onClick={(event) => event.stopPropagation()}>
+        <div className="feedback-header">
           <div>
-            <h2 style={feedbackTitleStyle}>Leave Feedback</h2>
-            <p style={feedbackDescriptionStyle}>We’re a small team building quickly, and we’d genuinely appreciate any feedback that could help us improve.</p>
+            <h2 className="feedback-title">Leave Feedback</h2>
+            <p className="feedback-desc">We’re a small team building quickly, and we’d genuinely appreciate any feedback that could help us improve.</p>
           </div>
 
-          <button type="button" style={feedbackCloseStyle} onClick={onClose}>
+          <button type="button" className="feedback-close" onClick={onClose}>
             ×
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} style={feedbackFormStyle}>
-          <label style={feedbackLabelStyle}>
+        <form onSubmit={handleSubmit} className="feedback-form">
+          <label className="feedback-label">
             Satisfaction Rating
-            <select value={rating} onChange={event => setRating(event.target.value)} required style={feedbackInputStyle}>
+            <select value={rating} onChange={(event) => setRating(event.target.value)} required className="feedback-input">
               <option value="">Select a rating</option>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(number => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number) => (
                 <option key={number} value={number}>
                   {number}
                 </option>
@@ -4943,9 +3838,9 @@ function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
             </select>
           </label>
 
-          <label style={feedbackLabelStyle}>
+          <label className="feedback-label">
             Feedback Category
-            <select value={category} onChange={event => setCategory(event.target.value)} style={feedbackInputStyle}>
+            <select value={category} onChange={(event) => setCategory(event.target.value)} className="feedback-input">
               <option>Bug</option>
               <option>Feature Request</option>
               <option>UX Confusion</option>
@@ -4954,22 +3849,22 @@ function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
             </select>
           </label>
 
-          <label style={feedbackLabelStyle}>
+          <label className="feedback-label">
             Feedback / Questions
-            <textarea value={message} onChange={event => setMessage(event.target.value)} placeholder="Write your feedback or questions..." rows={5} required style={feedbackInputStyle} />
+            <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Write your feedback or questions..." rows={5} required className="feedback-input" />
           </label>
 
-          <label style={feedbackLabelStyle}>
+          <label className="feedback-label">
             Email Optional
-            <input type="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="Only if you want a follow-up" style={feedbackInputStyle} />
+            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Only if you want a follow-up" className="feedback-input" />
           </label>
 
-          <div style={feedbackActionsStyle}>
-            <button type="button" style={feedbackSecondaryStyle} onClick={onClose}>
+          <div className="feedback-actions">
+            <button type="button" className="feedback-btn-secondary" onClick={onClose}>
               Cancel
             </button>
 
-            <button type="submit" style={feedbackPrimaryStyle}>
+            <button type="submit" className="feedback-btn-primary">
               Submit Feedback
             </button>
           </div>
@@ -4979,196 +3874,11 @@ function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
   );
 }
 
-const feedbackOverlayStyle: CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(15, 12, 30, 0.45)",
-  backdropFilter: "blur(8px)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 9999,
-  padding: "24px",
-};
-
-const feedbackModalStyle: CSSProperties = {
-  width: "100%",
-  maxWidth: "560px",
-  maxHeight: "85vh",
-  overflowY: "auto",
-  background: "#ffffff",
-  border: "1px solid rgba(124, 58, 237, 0.14)",
-  borderRadius: "24px",
-  boxShadow: "0 24px 80px rgba(31, 18, 74, 0.24)",
-  padding: "28px",
-  position: "relative",
-
-  fontFamily: '"Inter", "Manrope", "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-};
-
-const feedbackHeaderStyle: CSSProperties = {
-  display: "flex",
-  alignItems: "flex-start",
-  justifyContent: "space-between",
-  gap: "20px",
-  marginBottom: "24px",
-};
-
-const feedbackTitleStyle: CSSProperties = {
-  margin: 0,
-  color: "#161225",
-  fontSize: "1.85rem",
-  fontWeight: 900,
-  letterSpacing: "-0.04em",
-  lineHeight: 1.05,
-};
-
-const feedbackDescriptionStyle: CSSProperties = {
-  margin: "10px 0 0",
-  color: "#6b647c",
-  fontSize: "0.95rem",
-  fontWeight: 500,
-  lineHeight: 1.55,
-};
-
-const feedbackCloseStyle: CSSProperties = {
-  border: "none",
-  background: "#f4efff",
-  color: "#6d28d9",
-  width: "36px",
-  height: "36px",
-  borderRadius: "999px",
-  fontSize: "24px",
-  cursor: "pointer",
-  lineHeight: 1,
-};
-
-const feedbackFormStyle: CSSProperties = {
-  display: "grid",
-  gap: "18px",
-};
-
-const feedbackLabelStyle: CSSProperties = {
-  display: "grid",
-  gap: "8px",
-  color: "#27213a",
-  fontSize: "0.9rem",
-  fontWeight: 800,
-  letterSpacing: "-0.01em",
-};
-
-const feedbackInputStyle: CSSProperties = {
-  width: "100%",
-  border: "1px solid #e4ddf5",
-  background: "#fbfaff",
-  borderRadius: "14px",
-  padding: "12px 14px",
-  color: "#161225",
-  font: "inherit",
-  outline: "none",
-  boxSizing: "border-box",
-};
-
-const feedbackActionsStyle: CSSProperties = {
-  display: "flex",
-  justifyContent: "flex-end",
-  gap: "12px",
-  marginTop: "8px",
-};
-
-const feedbackSecondaryStyle: CSSProperties = {
-  border: "none",
-  borderRadius: "14px",
-  padding: "12px 18px",
-  fontWeight: 800,
-  cursor: "pointer",
-  background: "#f5f2fb",
-  color: "#4b4263",
-  letterSpacing: "-0.02em",
-};
-
-const feedbackPrimaryStyle: CSSProperties = {
-  border: "none",
-  borderRadius: "14px",
-  padding: "12px 18px",
-  fontWeight: 900,
-  cursor: "pointer",
-  background: "linear-gradient(135deg, #7c3aed, #9f67ff)",
-  color: "white",
-  boxShadow: "0 10px 28px rgba(124, 58, 237, 0.28)",
-  letterSpacing: "-0.02em",
-};
-
-const feedbackNavButtonStyle: CSSProperties = {
-  border: "none",
-  background: "transparent",
-  width: "100%",
-  textAlign: "left",
-  cursor: "pointer",
-  fontFamily: "inherit",
-  marginTop: "512px",
-};
-
 /* -------------------- Modal -------------------- */
-
-const overlayStyle: CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0,0,0,0.4)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 1000,
-};
-
-const modalStyle: CSSProperties = {
-  background: "#fff",
-  borderRadius: "12px",
-  width: "90vw",
-  maxWidth: "700px", // or 800px for your 2-col form
-  maxHeight: "90vh",
-  overflow: "hidden", // Prevent body overflow
-  display: "flex",
-  flexDirection: "column",
-  boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
-  border: "1px solid #e5e7eb",
-};
-
-const closeBtn: CSSProperties = {
-  marginLeft: "auto",
-};
-
-const cellStyle: CSSProperties = {
-  flex: "1 1 160px",
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-  padding: "12px",
-  border: "1px solid #e5e5e5",
-  borderRadius: "10px",
-};
-
-const modalHeaderStyle: CSSProperties = {
-  borderBottom: "1px solid #e5e7eb",
-  paddingBottom: "16px",
-  marginBottom: "0",
-  display: "flex",
-  alignItems: "flex-start",
-  gap: "12px",
-  padding: "20px 24px",
-  justifyContent: "space-between",
-};
-
-const modalBodyStyle: CSSProperties = {
-  flex: 1,
-  overflowY: "auto",
-  padding: "24px",
-  margin: "25px",
-};
 
 export function FinancialEntityModalCell({ item, setSelectedVariant }) {
   return (
-    <div style={cellStyle} onClick={() => setSelectedVariant(item.id)}>
+    <div className="entity-cell" onClick={() => setSelectedVariant(item.id)}>
       <span>{item.emoji}</span>
       <span>{item.name}</span>
     </div>
@@ -5204,12 +3914,12 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
   }
 
   return (
-    <div style={overlayStyle}>
-      <div style={modalStyle}>
+    <div className="modal-overlay">
+      <div className="modal">
         {/* ENTITY PICKER HEADER */}
         {!selectedVariant && !variantBeingEdited && (
-          <div style={modalHeaderStyle}>
-            <button style={closeBtn} onClick={closeModal}>
+          <div className="modal-header">
+            <button className="modal-close" onClick={closeModal}>
               close
             </button>
           </div>
@@ -5217,10 +3927,10 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
 
         {/* ADD FORM HEADER */}
         {selectedVariant && !variantBeingEdited && (
-          <div style={modalHeaderStyle}>
+          <div className="modal-header">
             <button onClick={goBack}>← Back</button>
 
-            <button style={closeBtn} onClick={closeModal}>
+            <button className="modal-close" onClick={closeModal}>
               close
             </button>
           </div>
@@ -5228,10 +3938,10 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
 
         {/* EDIT FORM HEADER */}
         {variantBeingEdited && (
-          <div style={modalHeaderStyle}>
+          <div className="modal-header">
             {/* <div>icon + title + description</div> */}
 
-            <button style={closeBtn} onClick={closeModal}>
+            <button className="modal-close" onClick={closeModal}>
               close
             </button>
           </div>
@@ -5239,8 +3949,8 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
 
         {/* ENTITY SOURCE SELECTION MODAL */}
         {!selectedVariant && !variantBeingEdited && (
-          <div style={modalBodyStyle}>
-            {data.map(item => (
+          <div className="modal-body">
+            {data.map((item) => (
               <FinancialEntityModalCell key={item.id} item={item} setSelectedVariant={setSelectedVariant} />
             ))}
           </div>
@@ -5254,73 +3964,6 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
 }
 
 /* -------------------- Row Styles -------------------- */
-
-const rowStyle: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: "14px",
-  padding: "16px 20px",
-  borderBottom: "1px solid #5FA7AB18",
-};
-
-const rowMainStyle: CSSProperties = {
-  minWidth: 0,
-  flex: 1,
-};
-
-const rowNameStyle: CSSProperties = {
-  margin: 0,
-  fontSize: "0.82rem",
-  fontWeight: 700,
-  color: "var(--primary)",
-  marginBottom: "2px",
-};
-
-const rowMetaStyle: CSSProperties = {
-  margin: 0,
-  fontSize: "0.64rem",
-  letterSpacing: "0.05em",
-  color: "var(--teal)",
-  display: "flex",
-  gap: "12px",
-  alignItems: "center",
-};
-
-const rowActionsStyle: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: "6px",
-  flexShrink: 0,
-};
-
-const smallButtonStyle: CSSProperties = {
-  border: "1px solid #5FA7AB44",
-  background: "var(--white)",
-  color: "var(--primary)",
-  borderRadius: "3px",
-  padding: "5px 8px",
-  fontFamily: "'DM Mono', monospace",
-  fontSize: "0.58rem",
-  letterSpacing: "0.08em",
-  textTransform: "uppercase",
-  cursor: "pointer",
-  transition: "all 0.15s",
-};
-
-const smallDeleteButtonStyle: CSSProperties = {
-  border: "1px solid #B46D6D44",
-  background: "var(--white)",
-  color: "#B46D6D",
-  borderRadius: "3px",
-  padding: "5px 8px",
-  fontFamily: "'DM Mono', monospace",
-  fontSize: "0.58rem",
-  letterSpacing: "0.08em",
-  textTransform: "uppercase",
-  cursor: "pointer",
-  transition: "all 0.15s",
-};
 
 function EntityRow({ item, category, dispatch, onEdit }) {
   const handleDelete = () => {
@@ -5338,10 +3981,10 @@ function EntityRow({ item, category, dispatch, onEdit }) {
   };
 
   return (
-    <div style={rowStyle}>
-      <div style={rowMainStyle}>
-        <p style={rowNameStyle}>{item.name}</p>
-        <div style={rowMetaStyle}>
+    <div className="entity-row">
+      <div className="entity-row__main">
+        <p className="entity-row__name">{item.name}</p>
+        <div className="entity-row__meta">
           {item.balance != null && <span>${formatNumberWithCommas(item.balance.toString())}</span>}
           {item.net_income != null && <span>${formatNumberWithCommas(item.net_income.toString())}</span>}
           {item.monthly_expense != null && <span>${formatNumberWithCommas(item.monthly_expense.toString())}</span>}
@@ -5352,11 +3995,11 @@ function EntityRow({ item, category, dispatch, onEdit }) {
         </div>
       </div>
 
-      <div style={rowActionsStyle}>
-        <button style={smallButtonStyle} onClick={() => onEdit(item, item.variant)}>
+      <div className="entity-row__actions">
+        <button className="entity-row__btn-edit" onClick={() => onEdit(item, item.variant)}>
           Edit
         </button>
-        <button style={smallDeleteButtonStyle} onClick={handleDelete}>
+        <button className="entity-row__btn-delete" onClick={handleDelete}>
           ✕
         </button>
       </div>
@@ -5365,49 +4008,11 @@ function EntityRow({ item, category, dispatch, onEdit }) {
 }
 /* -------------------- Financial Entity Card -------------------- */
 
-const financialEntityContainer: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  padding: "10px 14px",
-  borderBottom: "1px solid #e5e7eb",
-};
-
-const titleStyle: CSSProperties = {
-  fontSize: "16px",
-  fontWeight: 600,
-  margin: 0,
-};
-
-const addButtonStyle: CSSProperties = {
-  width: "32px",
-  height: "32px",
-  borderRadius: "50%",
-  border: "none",
-  backgroundColor: "#3b82f6",
-  color: "#fff",
-  fontSize: "20px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-};
-
-const cardStyle: CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  background: "#fff",
-  borderRadius: "12px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-  border: "1px solid #e5e7eb",
-  minHeight: "80px",
-};
-
 export function FinancialEntity({ state, entityName, category, dispatch }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [variantBeingEdited, setVariantBeingEdited] = useState(null);
 
-  const handleEdit = item => {
+  const handleEdit = (item) => {
     setVariantBeingEdited(item);
     setIsModalOpen(true);
   };
@@ -5417,7 +4022,7 @@ export function FinancialEntity({ state, entityName, category, dispatch }) {
     setVariantBeingEdited(null);
   };
 
-  const data = Object.values(ENTITY_CONFIG[category]).map(v => ({
+  const data = Object.values(ENTITY_CONFIG[category]).map((v) => ({
     id: v.id,
     name: v.name,
     emoji: v.emoji,
@@ -5440,16 +4045,16 @@ export function FinancialEntity({ state, entityName, category, dispatch }) {
 
   return (
     <>
-      <div style={cardStyle}>
-        <div style={financialEntityContainer}>
-          <h1 style={titleStyle}>{entityName}</h1>
+      <div className="entity-card">
+        <div className="entity-card__header">
+          <h1 className="entity-card__title">{entityName}</h1>
 
-          <button style={addButtonStyle} onClick={() => setIsModalOpen(true)}>
+          <button className="entity-card__add-btn" onClick={() => setIsModalOpen(true)}>
             +
           </button>
         </div>
 
-        {getItems().map(item => (
+        {getItems().map((item) => (
           <EntityRow key={item.id} item={item} category={category} dispatch={dispatch} onEdit={handleEdit} />
         ))}
       </div>
@@ -5459,44 +4064,6 @@ export function FinancialEntity({ state, entityName, category, dispatch }) {
   );
 }
 /* -------------------- Financial Entities (Horizontal Container) -------------------- */
-
-const containerWrapper: CSSProperties = {
-  position: "relative",
-};
-
-const containerStyle: CSSProperties = {
-  display: "flex",
-  overflowX: "auto",
-  gap: "16px",
-  padding: "16px",
-  scrollBehavior: "smooth",
-
-  scrollbarWidth: "none",
-  msOverflowStyle: "none",
-};
-
-const itemStyle: CSSProperties = {
-  flex: "1 1 250px",
-  minWidth: "250px",
-  maxWidth: "350px",
-};
-
-const arrowStyle: CSSProperties = {
-  position: "absolute",
-  top: "50%",
-  transform: "translateY(-50%)",
-  width: "38px",
-  height: "38px",
-  borderRadius: "50%",
-  border: "1px solid rgba(0,0,0,0.1)",
-  background: "rgba(255,255,255,0.6)",
-  backdropFilter: "blur(6px)",
-  cursor: "pointer",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 10,
-};
 
 export function FinancialEntities({ state, dispatch }) {
   const ref = useRef(null);
@@ -5532,7 +4099,7 @@ export function FinancialEntities({ state, dispatch }) {
     updateScrollState();
   }, []);
 
-  const scrollByStep = direction => {
+  const scrollByStep = (direction) => {
     const el = ref.current;
     if (!el) return;
 
@@ -5547,41 +4114,33 @@ export function FinancialEntities({ state, dispatch }) {
   };
 
   return (
-    <div style={containerWrapper}>
-      <style>
-        {`
-          .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-          }
-        `}
-      </style>
-
+    <div className="entities-wrapper">
       {showArrows && canScrollLeft && (
-        <button style={{ ...arrowStyle, left: "6px" }} onClick={() => scrollByStep("left")}>
+        <button className="entities-arrow entities-arrow--left" onClick={() => scrollByStep("left")}>
           ◀
         </button>
       )}
 
       {showArrows && canScrollRight && (
-        <button style={{ ...arrowStyle, right: "6px" }} onClick={() => scrollByStep("right")}>
+        <button className="entities-arrow entities-arrow--right" onClick={() => scrollByStep("right")}>
           ▶
         </button>
       )}
 
-      <div ref={ref} style={containerStyle} className="hide-scrollbar" onScroll={updateScrollState}>
-        <div style={itemStyle}>
+      <div ref={ref} className="entities-scroll hide-scrollbar" onScroll={updateScrollState}>
+        <div className="entities-item">
           <FinancialEntity state={state} entityName="Accounts" category="account" dispatch={dispatch} />
         </div>
 
-        <div style={itemStyle}>
+        <div className="entities-item">
           <FinancialEntity state={state} entityName="Incomes" category="income" dispatch={dispatch} />
         </div>
 
-        <div style={itemStyle}>
+        <div className="entities-item">
           <FinancialEntity state={state} entityName="Expenses" category="expense" dispatch={dispatch} />
         </div>
 
-        <div style={itemStyle}>
+        <div className="entities-item">
           <FinancialEntity state={state} entityName="Assets" category="asset" dispatch={dispatch} />
         </div>
       </div>
@@ -5592,7 +4151,7 @@ export function FinancialEntities({ state, dispatch }) {
 import { BarChart, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer, Bar } from "recharts";
 
 function transformData(simResult: SimYearResult[]) {
-  return simResult.map(year => {
+  return simResult.map((year) => {
     const totalAssets = year.sources.reduce((sum, src) => {
       if (src.source_type === "rental" || src.source_type === "stock") {
         return sum + (src.asset_value || 0);
@@ -5612,13 +4171,13 @@ function transformData(simResult: SimYearResult[]) {
 export function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
 
-  const cash = payload.find(p => p.dataKey === "cash")?.value || 0;
-  const assets = payload.find(p => p.dataKey === "assets")?.value || 0;
+  const cash = payload.find((p) => p.dataKey === "cash")?.value || 0;
+  const assets = payload.find((p) => p.dataKey === "assets")?.value || 0;
 
   const netWorth = cash + assets;
 
   return (
-    <div style={{ background: "#fff", padding: "10px", border: "1px solid #ddd", color: "#000" }}>
+    <div className="chart-tooltip">
       <p>
         <strong>Year {label}</strong>
       </p>
@@ -5635,7 +4194,7 @@ export function NetWorthStackedChart({ simResult }) {
   if (!simResult.length)
     return (
       <>
-        <div style={{ width: "100%", height: 400 }}>
+        <div className="chart-wrap">
           <h3>Net Worth Over Time</h3>
           <h5>Not Ready</h5>
         </div>
@@ -5645,7 +4204,7 @@ export function NetWorthStackedChart({ simResult }) {
   const data = transformData(simResult);
 
   return (
-    <div style={{ width: "100%", height: 400 }}>
+    <div className="chart-wrap">
       <h3>Net Worth Over Time</h3>
 
       <ResponsiveContainer>
@@ -5733,13 +4292,13 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
   const [openYears, setOpenYears] = useState<number[]>([]);
 
   const toggleYear = (year: number) => {
-    setOpenYears(previousState => {
+    setOpenYears((previousState) => {
       console.log("Previous state from React:", previousState);
 
       const isOpen = previousState.includes(year);
 
       if (isOpen) {
-        const nextState = previousState.filter(y => y !== year);
+        const nextState = previousState.filter((y) => y !== year);
         console.log("Closing year → new state:", nextState);
         return nextState;
       }
@@ -5754,11 +4313,11 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
 
   return (
     <div className="section">
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+      <div className="section-header">
         <h2>Simulation Results</h2>
 
         {/* to generate fake data use mockResults instead of simResult */}
-        <button onClick={() => setOpenYears(simResult.map(y => y.year))}>Expand All</button>
+        <button onClick={() => setOpenYears(simResult.map((y) => y.year))}>Expand All</button>
         <button onClick={() => setOpenYears([])}>Collapse All</button>
       </div>
 
@@ -5777,7 +4336,7 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
 
         <tbody>
           {/* to generate fake data use mockResults instead of simResult */}
-          {simResult.map(yearData => (
+          {simResult.map((yearData) => (
             <React.Fragment key={yearData.year}>
               {/* YEAR SUMMARY ROW */}
               <tr className="year-row" onClick={() => toggleYear(yearData.year)}>
@@ -5789,7 +4348,7 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
 
               {/* SOURCE ROWS */}
               {openYears.includes(yearData.year) &&
-                yearData.sources.map(src => (
+                yearData.sources.map((src) => (
                   <tr key={src.id} className="source-row">
                     <td></td>
                     <td>{src.name}</td>
@@ -5828,7 +4387,7 @@ export default function Dashboard() {
             TESTING VISUALS
           </a>
         </nav>
-        <button type="button" className="dash-nav-item" style={feedbackNavButtonStyle} onClick={() => setIsFeedbackOpen(true)}>
+        <button type="button" className="dash-nav-item feedback-nav-btn" onClick={() => setIsFeedbackOpen(true)}>
           LEAVE FEEDBACK
         </button>
       </aside>

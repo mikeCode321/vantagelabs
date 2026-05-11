@@ -10,7 +10,7 @@ body, html {
 
 .dash-root {
   display: flex;
-  height: 100dvh; /* instead of min-height */
+  height: 100dvh;
   overflow: hidden;
   background: var(--off-white);
   font-family: 'DM Mono', monospace;
@@ -18,7 +18,7 @@ body, html {
 
 .dash-sidebar {
   width: 200px;
-  height: 100dvh; /* instead of min-height */
+  height: 100dvh;
   overflow-y: auto;
   background: var(--primary);
   display: flex;
@@ -107,8 +107,7 @@ body, html {
   display: flex;
   flex-direction: column;
   min-width: 0;
-
-  overflow-y: auto; /* THIS makes main scroll */
+  overflow-y: auto;
   height: 100dvh;
 }
 
@@ -190,12 +189,9 @@ body, html {
     height: auto;
     min-height: auto;
     overflow: visible;
-
     flex-direction: row;
     align-items: center;
-
     padding: 12px 16px;
-
     position: static;
   }
 
@@ -212,12 +208,12 @@ body, html {
   .dash-sidebar-footer {
     display: none;
   }
-
 }
 
 
-/* ========================= */
-/* TESTING */
+/* ═════════════════════════════════════════
+   Tables
+═════════════════════════════════════════ */
 
 h2 {
   margin-bottom: 1rem;
@@ -232,7 +228,6 @@ h4 {
   margin-bottom: 0.5rem;
 }
 
-/* Tables */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -252,12 +247,10 @@ td {
   border-bottom: 1px solid #eee;
 }
 
-/* Zebra striping */
 tbody tr:nth-child(even) {
   background-color: #f9fafb;
 }
 
-/* Hover effect */
 tbody tr:hover {
   background-color: #f1f5f9;
 }
@@ -280,23 +273,893 @@ tbody tr:hover {
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* Year summary row */
 .year-row {
   background: #e0f2fe;
   font-weight: bold;
 }
 
-/* Source rows */
 .source-row td {
   background: #fafafa;
 }
 
-/* Indent source rows visually */
 .source-row td:first-child {
   width: 60px;
 }
 
-/* Hover */
 .source-row:hover {
   background: #f1f5f9;
+}
+
+
+/* ═════════════════════════════════════════
+   Form — shared primitives
+═════════════════════════════════════════ */
+
+/* Outer wrapper for every form panel */
+.form-panel {
+  font-family: 'DM Mono', monospace;
+  margin: 25px;
+}
+
+/* Form header row (icon + title + description) */
+.form-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #5FA7AB22;
+}
+
+.form-header-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #5FA7AB18;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.form-header-title {
+  margin: 0 0 3px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+
+.form-header-desc {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Two-column form body */
+.form-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+/* Left / right column inside .form-two-col */
+.form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Section heading inside a column (e.g. "Account Details") */
+.form-section-heading {
+  margin: 0;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  padding-bottom: 8px;
+  border-bottom: 1px solid #5FA7AB22;
+}
+
+/* Individual field wrapper */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field--gap8 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Label */
+.form-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.form-label--muted {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Input / select / textarea */
+.form-input {
+  width: 100%;
+  border: 1px solid #5FA7AB33;
+  background: var(--white);
+  color: var(--primary);
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  outline: none;
+  transition: all 0.15s;
+  box-sizing: border-box;
+}
+
+/* Input with leading "$" prefix */
+.form-input--prefix-dollar {
+  padding-left: 22px;
+}
+
+/* Input with trailing "/mo" or "%" suffix */
+.form-input--suffix {
+  padding-right: 38px;
+}
+
+/* Input with both prefix and suffix */
+.form-input--prefix-dollar.form-input--suffix {
+  padding-left: 22px;
+  padding-right: 38px;
+}
+
+/* Wrapper for inputs with absolute-positioned prefix/suffix glyphs */
+.form-input-wrap {
+  position: relative;
+}
+
+.form-input-prefix {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.72rem;
+  color: #5FA7AB;
+  pointer-events: none;
+}
+
+.form-input-suffix {
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.68rem;
+  color: #5FA7AB99;
+  pointer-events: none;
+}
+
+/* Year grid (Start yr / End yr side by side) */
+.form-year-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Slider row — label + live value on one line, input below */
+.form-slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-slider-value {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.form-slider {
+  width: 100%;
+  accent-color: #5FA7AB;
+  height: 4px;
+  cursor: pointer;
+}
+
+/* Footer row with action buttons */
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #5FA7AB22;
+}
+
+/* Primary submit button */
+.form-btn-submit {
+  background: var(--teal);
+  color: var(--white);
+  border: 1px solid var(--teal);
+  border-radius: 3px;
+  padding: 10px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+/* Secondary / cancel button */
+.form-btn-cancel {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid #5FA7AB44;
+  border-radius: 3px;
+  padding: 10px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+/* Submit with top margin (standalone submit, not in a footer row) */
+.form-btn-submit--mt {
+  margin-top: 28px;
+}
+
+
+/* ═════════════════════════════════════════
+   Interest Tier builder
+═════════════════════════════════════════ */
+
+.tier-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tier-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.tier-title {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.tier-btn-add {
+  background: var(--white);
+  color: var(--teal);
+  border: 1px solid var(--teal);
+  border-radius: 3px;
+  padding: 5px 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tier-item {
+  background: #FAFCFC;
+  border: 1px solid #5FA7AB22;
+  border-radius: 3px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.tier-input-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.tier-input-wrap--narrow {
+  flex: 0.6;
+  min-width: 0;
+}
+
+.tier-btn-remove {
+  background: var(--white);
+  color: #B46D6D;
+  border: 1px solid #B46D6D44;
+  border-radius: 3px;
+  padding: 8px 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+
+/* ═════════════════════════════════════════
+   Preview card (annual cost / value preview)
+═════════════════════════════════════════ */
+
+.preview-card {
+  border-radius: 8px;
+  border: 1px solid #5FA7AB22;
+  background: linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%);
+  padding: 16px;
+}
+
+.preview-card__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.preview-card__header--mb10 {
+  margin-bottom: 10px;
+}
+
+.preview-card__label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #5FA7AB;
+}
+
+.preview-card__amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.preview-card__amount--lg {
+  font-size: 1.75rem;
+}
+
+.preview-card__unit {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-left: 4px;
+}
+
+.preview-card__unit--lg {
+  font-size: 0.85rem;
+}
+
+.preview-card__sub {
+  margin-top: 6px;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+
+/* ═════════════════════════════════════════
+   Link-to-job card (employer retirement form)
+═════════════════════════════════════════ */
+
+.link-card {
+  border-radius: 8px;
+  border: 1px solid #5FA7AB33;
+  background: #FAFCFC;
+  overflow: hidden;
+}
+
+.link-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+}
+
+.link-card__info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.link-card__title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1px;
+}
+
+.link-card__sub {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+/* Toggle pill */
+.toggle {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.2s;
+  background: #D1D5DB;
+}
+
+.toggle--on {
+  background: #5FA7AB;
+}
+
+.toggle--disabled {
+  cursor: not-allowed;
+}
+
+.toggle--enabled {
+  cursor: pointer;
+}
+
+.toggle__knob {
+  position: absolute;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle__knob--off {
+  left: 3px;
+}
+
+.toggle__knob--on {
+  left: 19px;
+}
+
+.link-card__body {
+  padding: 12px 14px 14px;
+  border-top: 1px solid #5FA7AB22;
+}
+
+.link-card__no-jobs {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.link-card__select-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.link-card__synced {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+
+/* ═════════════════════════════════════════
+   SimResultViewer section header
+═════════════════════════════════════════ */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+
+/* ═════════════════════════════════════════
+   Chart container
+═════════════════════════════════════════ */
+
+.chart-wrap {
+  width: 100%;
+  height: 400px;
+}
+
+
+/* ═════════════════════════════════════════
+   Tooltip (CustomTooltip)
+═════════════════════════════════════════ */
+
+.chart-tooltip {
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ddd;
+  color: #000;
+}
+
+
+/* ═════════════════════════════════════════
+   Modal overlay + shell
+═════════════════════════════════════════ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 90vw;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+  border: 1px solid #e5e7eb;
+}
+
+.modal-header {
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 24px;
+  justify-content: space-between;
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  margin: 25px;
+}
+
+.modal-close {
+  margin-left: auto;
+}
+
+
+/* ═════════════════════════════════════════
+   Entity picker cell (inside modal)
+═════════════════════════════════════════ */
+
+.entity-cell {
+  flex: 1 1 160px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+
+/* ═════════════════════════════════════════
+   Financial entity card
+═════════════════════════════════════════ */
+
+.entity-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #e5e7eb;
+  min-height: 80px;
+}
+
+.entity-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.entity-card__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.entity-card__add-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background-color: #3b82f6;
+  color: #fff;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+
+/* ═════════════════════════════════════════
+   Entity row (inside card)
+═════════════════════════════════════════ */
+
+.entity-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #5FA7AB18;
+}
+
+.entity-row__main {
+  min-width: 0;
+  flex: 1;
+}
+
+.entity-row__name {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 2px;
+}
+
+.entity-row__meta {
+  margin: 0;
+  font-size: 0.64rem;
+  letter-spacing: 0.05em;
+  color: var(--teal);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.entity-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.entity-row__btn-edit {
+  border: 1px solid #5FA7AB44;
+  background: var(--white);
+  color: var(--primary);
+  border-radius: 3px;
+  padding: 5px 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.entity-row__btn-delete {
+  border: 1px solid #B46D6D44;
+  background: var(--white);
+  color: #B46D6D;
+  border-radius: 3px;
+  padding: 5px 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+
+/* ═════════════════════════════════════════
+   Financial entities horizontal scroller
+═════════════════════════════════════════ */
+
+.entities-wrapper {
+  position: relative;
+}
+
+.entities-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 16px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.entities-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.entities-item {
+  flex: 1 1 250px;
+  min-width: 250px;
+  max-width: 350px;
+}
+
+.entities-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.entities-arrow--left {
+  left: 6px;
+}
+
+.entities-arrow--right {
+  right: 6px;
+}
+
+
+/* ═════════════════════════════════════════
+   Feedback modal
+═════════════════════════════════════════ */
+
+.feedback-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 12, 30, 0.45);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 24px;
+}
+
+.feedback-modal {
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid rgba(124, 58, 237, 0.14);
+  border-radius: 24px;
+  box-shadow: 0 24px 80px rgba(31, 18, 74, 0.24);
+  padding: 28px;
+  position: relative;
+  font-family: "Inter", "Manrope", "Plus Jakarta Sans", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.feedback-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.feedback-title {
+  margin: 0;
+  color: #161225;
+  font-size: 1.85rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.feedback-desc {
+  margin: 10px 0 0;
+  color: #6b647c;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.feedback-close {
+  border: none;
+  background: #f4efff;
+  color: #6d28d9;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.feedback-form {
+  display: grid;
+  gap: 18px;
+}
+
+.feedback-label {
+  display: grid;
+  gap: 8px;
+  color: #27213a;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.feedback-input {
+  width: 100%;
+  border: 1px solid #e4ddf5;
+  background: #fbfaff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: #161225;
+  font: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.feedback-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.feedback-btn-secondary {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-weight: 800;
+  cursor: pointer;
+  background: #f5f2fb;
+  color: #4b4263;
+  letter-spacing: -0.02em;
+}
+
+.feedback-btn-primary {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7c3aed, #9f67ff);
+  color: white;
+  box-shadow: 0 10px 28px rgba(124, 58, 237, 0.28);
+  letter-spacing: -0.02em;
+}
+
+/* Feedback trigger in the sidebar nav */
+.feedback-nav-btn {
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 512px;
 }

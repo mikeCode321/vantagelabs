@@ -169,10 +169,67 @@ type DebtExpense = {
   interest_rate?: number | null;
 };
 
-type ExpenseSource = LivingExpense | RentExpense | DebtExpense;
+// ─────────────────────────────────────────────
+// MORTGAGE
+// ─────────────────────────────────────────────
+
+type HouseLoanExpense = {
+  source_type: "expense";
+  variant: "house_loan";
+
+  id: ID;
+  name: string;
+
+  start_year: number;
+  end_year?: number | null;
+
+  // Links this mortgage to a specific house asset
+  linked_asset_id: ID;
+
+  monthly_expense: number;
+
+  // Needed to track mortgage balance over time
+  original_principal: number; //  house asset_value - down_payment
+  interest_rate: number; // example: 0.0675 = 6.75%
+  loan_term_years: number; // example: 30
+
+  
+};
+
 
 // ─────────────────────────────────────────────
-// ] ASSET
+// CAR LOAN
+// ─────────────────────────────────────────────
+
+
+
+type CarLoanExpense = {
+  source_type: "expense";
+  variant: "car_loan";
+
+  id: ID;
+  name: string;
+
+  start_year: number;
+  end_year?: number | null;
+
+  linked_asset_id: ID; // points to the CarAsset
+
+  monthly_expense: number;
+
+  // Needed to track balance over time
+  original_principal: number; //  car asset_value - down_payment
+  interest_rate: number; // example: 0.072 = 7.2%
+  loan_term_years: number; // example: 5
+
+
+};
+
+
+type ExpenseSource = LivingExpense | RentExpense | DebtExpense | CarLoanExpense | HouseLoanExpense;
+
+// ─────────────────────────────────────────────
+// ASSET
 // ─────────────────────────────────────────────
 
 type HouseAsset = {
@@ -223,13 +280,15 @@ type SimRequest = {
     side: SideHustleIncome[];
   };
   expenses: {
-    living: ExpenseSource[]; // TODO: expenses will need to be updated
-    rent: ExpenseSource[];
-    debt: ExpenseSource[];
+    living: LivingExpense[]; // TODO: expenses will need to be updated
+    rent: RentExpense[];
+    car_loan : CarLoanExpense[];
+    house_loan: HouseLoanExpense[];
+    debt: DebtExpense[];
   };
   assets: {
-    house: any[]; // TODO: Replace with HouseAsset[] when implemented
-    car: any[]; // TODO: Replace with CarAsset[] when implemented
+    house: HouseAsset[]; // TODO: Replace with HouseAsset[] when implemented
+    car: CarAsset[]; // TODO: Replace with CarAsset[] when implemented
   };
 };
 
@@ -360,7 +419,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
 
     case "UPDATE_EXPENSE": {
       const expense = action.payload;
-      const variant: "living" | "rent" | "debt" = expense.variant;
+      const variant: "living" | "rent" | "debt" | "house_loan" | "car_loan" = expense.variant;
       return {
         ...state,
         expenses: {
@@ -439,6 +498,8 @@ const INITIAL_STATE: SimRequest = {
   expenses: {
     living: [],
     rent: [],
+    house_loan: [],
+    car_loan: [],
     debt: [],
   },
   assets: {
@@ -517,6 +578,21 @@ const ENTITY_CONFIG = {
       emoji: "💳",
       formComponent: DebtExpenseForm,
       editFormComponent: EditDebtExpenseForm,
+    },
+    house_loan: {
+      id: "home_loan",
+      name: "Home Loan",
+      emoji: "🏡",
+      //formComponent: HouseLoanExpenseForm,
+      //editFormComponent: EditHouseLoanExpenseForm,
+    },
+  
+    car_loan: {
+      id: "car_loan",
+      name: "Car Loan",
+      emoji: "🚗",
+      //formComponent: CarLoanExpenseForm,
+      //editFormComponent: EditCarLoanExpenseForm,
     },
   },
   asset: {

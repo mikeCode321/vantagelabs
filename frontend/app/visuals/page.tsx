@@ -407,7 +407,7 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
     // EXPENSE  ==================
     case "ADD_EXPENSE": {
       const expense = action.payload;
-      const variant: "living" | "rent" | "debt" = expense.variant;
+      const variant: "living" | "rent" | "debt" | "house_loan" | "car_loan" = expense.variant;
       return {
         ...state,
         expenses: {

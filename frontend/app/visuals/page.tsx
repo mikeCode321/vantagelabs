@@ -1585,7 +1585,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
 function CarAssetForm({ dispatch }) {
   const [name, setName] = useState("");
   const [carValue, setCarValue] = useState("");
-  const [depreciation, setDepreciation] = useState("");
+  const [depreciation, setDepreciation] = useState("12");
   const [downPayment, setDownPayment] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
@@ -1610,37 +1610,105 @@ function CarAssetForm({ dispatch }) {
 
     setName("");
     setCarValue("");
-    setDepreciation("");
+    setDepreciation("12");
     setDownPayment("");
     setStartYear("");
     setEndYear("");
   };
 
+  const annualCost = (Number(downPayment) || 0);
+  const depreciatedValue = Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
+
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Add Car</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🚗</div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Car</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track a vehicle asset with depreciation and optional down payment.</p>
+        </div>
+      </div>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder="Car Name" />
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Vehicle Details</p>
 
-      <input value={carValue} onChange={e => setCarValue(e.target.value)} placeholder="Car Value" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Car Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Toyota Camry, Tesla Model 3" />
+            </div>
 
-      <input value={depreciation} onChange={e => setDepreciation(e.target.value)} placeholder="Annual Depreciation %" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Car Value</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={carValue} onChange={e => setCarValue(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="30,000" type="number" required />
+              </div>
+            </div>
 
-      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Down Payment <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={downPayment} onChange={e => setDownPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="5,000" type="number" />
+              </div>
+            </div>
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Annual Depreciation</label>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(depreciation).toFixed(1)}%</span>
+              </div>
+              <input type="range" min={0} max={30} step={0.5} value={depreciation} onChange={e => setDepreciation(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
-      <button type="submit">Add Car</button>
-    </form>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="10" type="number" />
+              </div>
+            </div>
+
+            {/* Value Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>📉</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Value After Year 1</span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                −{Number(depreciation).toFixed(1)}% per year from ${(Number(carValue) || 0).toLocaleString()}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="submit" style={formSubmitButtonStyle}>Add Car</button>
+        </div>
+      </form>
+    </div>
   );
 }
 
 function HouseAssetForm({ dispatch }) {
   const [name, setName] = useState("");
   const [houseValue, setHouseValue] = useState("");
-  const [appreciation, setAppreciation] = useState("");
+  const [appreciation, setAppreciation] = useState("3");
   const [downPayment, setDownPayment] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
@@ -1671,31 +1739,99 @@ function HouseAssetForm({ dispatch }) {
     setEndYear("");
   };
 
+  const appreciatedValue = Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
+
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Add House</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏡</div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add House</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track a property asset with appreciation and optional down payment.</p>
+        </div>
+      </div>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder="House Name" />
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Property Details</p>
 
-      <input value={houseValue} onChange={e => setHouseValue(e.target.value)} placeholder="House Value" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Property Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Primary Residence, Rental Property" />
+            </div>
 
-      <input value={appreciation} onChange={e => setAppreciation(e.target.value)} placeholder="Annual Appreciation %" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>House Value</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={houseValue} onChange={e => setHouseValue(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="400,000" type="number" required />
+              </div>
+            </div>
 
-      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Down Payment <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={downPayment} onChange={e => setDownPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="80,000" type="number" />
+              </div>
+            </div>
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Annual Appreciation</label>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(appreciation).toFixed(1)}%</span>
+              </div>
+              <input type="range" min={0} max={15} step={0.1} value={appreciation} onChange={e => setAppreciation(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
-      <button type="submit">Add House</button>
-    </form>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              </div>
+            </div>
+
+            {/* Value Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>📈</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Value After Year 1</span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                +{Number(appreciation).toFixed(1)}% per year from ${(Number(houseValue) || 0).toLocaleString()}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="submit" style={formSubmitButtonStyle}>Add House</button>
+        </div>
+      </form>
+    </div>
   );
 }
+
 // EXPENSE FORMS
 function LivingExpensesForm({ dispatch }) {
   const [name, setName] = useState("Living Expenses");
   const [amount, setAmount] = useState("");
-  const [growth, setGrowth] = useState("");
+  const [growth, setGrowth] = useState("3");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
@@ -1712,31 +1848,96 @@ function LivingExpensesForm({ dispatch }) {
         start_year: Number(startYear),
         end_year: Number(endYear),
         monthly_expense: Number(amount),
-        expense_growth: Number(growth),
+        expense_growth: Number(growth) / 100,
       },
     });
 
     setName("Living Expense");
     setAmount("");
-    setGrowth("");
+    setGrowth("3");
     setStartYear("");
     setEndYear("");
   };
 
+  const annualExpense = Number(amount) * 12;
+
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Living Expenses</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏠</div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Living Expenses</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track recurring monthly costs like groceries, utilities, and subscriptions.</p>
+        </div>
+      </div>
 
-      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monthly Living Cost" />
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Expense Details</p>
 
-      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder="Growth %" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Expense Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Groceries, Utilities, etc." />
+            </div>
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Monthly Amount</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
+                <input value={amount} onChange={e => setAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="3,000" type="number" required />
+              </div>
+            </div>
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Annual Growth Rate</label>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(growth).toFixed(1)}%</span>
+              </div>
+              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={e => setGrowth(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
 
-      <button type="submit">Add Living Expenses</button>
-    </form>
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" />
+              </div>
+            </div>
+
+            {/* Annual Cost Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>💸</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Cost</span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${annualExpense.toLocaleString()}
+                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${(Number(amount) || 0).toLocaleString()}/mo × 12
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="submit" style={formSubmitButtonStyle}>Add Living Expenses</button>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -1774,28 +1975,100 @@ function DebtExpenseForm({ dispatch }) {
     setEndYear("");
   };
 
+  const annualPayment = Number(monthlyPayment) * 12;
+
   return (
-    <form onSubmit={onSubmit} className="space-y-3">
-      <input type="text" placeholder="Debt name" value={name} onChange={e => setName(e.target.value)} />
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>💳</div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Debt</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track loans, credit cards, or any outstanding debt with monthly payments.</p>
+        </div>
+      </div>
 
-      <input type="number" placeholder="Debt amount" value={debtAmount} onChange={e => setDebtAmount(e.target.value)} required />
+      <form onSubmit={onSubmit} className="space-y-3">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Debt Details</p>
 
-      <input type="number" placeholder="Monthly payment" value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} required />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Debt Name</label>
+              <input type="text" placeholder="Student Loan, Car Loan, Credit Card" value={name} onChange={e => setName(e.target.value)} style={formInputStyle} />
+            </div>
 
-      <input type="number" placeholder="Interest rate % (optional)" value={interestRate} onChange={e => setInterestRate(e.target.value)} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Total Debt Amount</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input type="number" placeholder="25,000" value={debtAmount} onChange={e => setDebtAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} required />
+              </div>
+            </div>
 
-      <input type="number" placeholder="Start year" value={startYear} onChange={e => setStartYear(e.target.value)} required />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Monthly Payment</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
+                <input type="number" placeholder="400" value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} required />
+              </div>
+            </div>
 
-      <input type="number" placeholder="End year (optional)" value={endYear} onChange={e => setEndYear(e.target.value)} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Interest Rate <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
+              <div style={{ position: "relative" }}>
+                <input type="number" placeholder="6.5" value={interestRate} onChange={e => setInterestRate(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} />
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>%</span>
+              </div>
+            </div>
+          </div>
 
-      <button type="submit">Add Debt</button>
-    </form>
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input type="number" placeholder="1" value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} required />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
+                <input type="number" placeholder="10" value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} />
+              </div>
+            </div>
+
+            {/* Annual Payment Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>💸</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Payment</span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${annualPayment.toLocaleString()}
+                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
+                {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="submit" style={formSubmitButtonStyle}>Add Debt</button>
+        </div>
+      </form>
+    </div>
   );
 }
 
 function RentExpenseForm({ dispatch }) {
   const [amount, setAmount] = useState("");
-  const [growth, setGrowth] = useState("");
+  const [growth, setGrowth] = useState("3");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
@@ -1822,20 +2095,80 @@ function RentExpenseForm({ dispatch }) {
     setEndYear("");
   };
 
+  const annualRent = Number(amount) * 12;
+
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Rent</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏢</div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Rent</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track monthly rent payments with expected annual rent growth.</p>
+        </div>
+      </div>
 
-      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monthly Rent" />
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Rent Details</p>
 
-      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder="Annual Rent Growth %" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Monthly Rent</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
+                <input value={amount} onChange={e => setAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="2,000" type="number" required />
+              </div>
+            </div>
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Annual Rent Growth</label>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(growth).toFixed(1)}%</span>
+              </div>
+              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={e => setGrowth(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year" />
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
-      <button type="submit">Add Rent</button>
-    </form>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="10" type="number" />
+              </div>
+            </div>
+
+            {/* Annual Cost Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>💸</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Rent Cost</span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${annualRent.toLocaleString()}
+                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="submit" style={formSubmitButtonStyle}>Add Rent</button>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -3045,24 +3378,92 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
     onClose();
   };
 
+  const appreciatedValue = Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
+
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit House</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏡</div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit House</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update property value, appreciation rate, and timeline.</p>
+        </div>
+      </div>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder="House Name" />
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Property Details</p>
 
-      <input value={houseValue} onChange={e => setHouseValue(e.target.value)} placeholder="House Value" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Property Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Primary Residence" />
+            </div>
 
-      <input value={appreciation} onChange={e => setAppreciation(e.target.value)} placeholder="Annual Appreciation %" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>House Value</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={houseValue} onChange={e => setHouseValue(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="400,000" type="number" />
+              </div>
+            </div>
 
-      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Down Payment <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={downPayment} onChange={e => setDownPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="80,000" type="number" />
+              </div>
+            </div>
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Annual Appreciation</label>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(appreciation).toFixed(1)}%</span>
+              </div>
+              <input type="range" min={0} max={15} step={0.1} value={appreciation} onChange={e => setAppreciation(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
-      <button type="submit">Save House</button>
-    </form>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+              </div>
+            </div>
+
+            {/* Value Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>📈</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Value After Year 1</span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                +{Number(appreciation).toFixed(1)}% per year from ${(Number(houseValue) || 0).toLocaleString()}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>Cancel</button>
+          <button type="submit" style={formSubmitButtonStyle}>Save House</button>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -3095,26 +3496,95 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
     onClose();
   };
 
+  const depreciatedValue = Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
+
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Car</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🚗</div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Car</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update vehicle value, depreciation rate, and timeline.</p>
+        </div>
+      </div>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder="Car Name" />
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Vehicle Details</p>
 
-      <input value={carValue} onChange={e => setCarValue(e.target.value)} placeholder="Car Value" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Car Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Toyota Camry" />
+            </div>
 
-      <input value={depreciation} onChange={e => setDepreciation(e.target.value)} placeholder="Annual Depreciation %" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Car Value</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={carValue} onChange={e => setCarValue(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="30,000" type="number" />
+              </div>
+            </div>
 
-      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Down Payment <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={downPayment} onChange={e => setDownPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="5,000" type="number" />
+              </div>
+            </div>
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Annual Depreciation</label>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(depreciation).toFixed(1)}%</span>
+              </div>
+              <input type="range" min={0} max={30} step={0.5} value={depreciation} onChange={e => setDepreciation(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
-      <button type="submit">Save Car</button>
-    </form>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="10" type="number" />
+              </div>
+            </div>
+
+            {/* Value Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>📉</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Value After Year 1</span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                −{Number(depreciation).toFixed(1)}% per year from ${(Number(carValue) || 0).toLocaleString()}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>Cancel</button>
+          <button type="submit" style={formSubmitButtonStyle}>Save Car</button>
+        </div>
+      </form>
+    </div>
   );
 }
+
 /* -------------------- EDIT EXPENSE FORMS -------------------- */
 
 export function EditLivingExpensesForm({ item, dispatch, onClose }) {
@@ -3143,22 +3613,86 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
     onClose();
   };
 
+  const annualExpense = Number(amount) * 12;
+
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Living Expenses</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏠</div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Living Expenses</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update monthly amount and growth rate for this expense.</p>
+        </div>
+      </div>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder="Expense Name" />
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Expense Details</p>
 
-      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monthly Living Expense" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Expense Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Groceries, Utilities, etc." />
+            </div>
 
-      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder="Annual Growth %" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Monthly Amount</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
+                <input value={amount} onChange={e => setAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="3,000" />
+              </div>
+            </div>
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Annual Growth Rate</label>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(growth).toFixed(1)}%</span>
+              </div>
+              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={e => setGrowth(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" />
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
-      <button type="submit">Save Living Expenses</button>
-    </form>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" />
+              </div>
+            </div>
+
+            {/* Annual Cost Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>💸</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Cost</span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${annualExpense.toLocaleString()}
+                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${(Number(amount) || 0).toLocaleString()}/mo × 12
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>Cancel</button>
+          <button type="submit" style={formSubmitButtonStyle}>Save Living Expenses</button>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -3167,6 +3701,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
   const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [name, setName] = useState(item.name || "Rent");
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -3176,7 +3711,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
       payload: {
         ...item,
         variant: "rent",
-        name: "Rent",
+        name: name || "Rent",
         start_year: Number(startYear),
         end_year: Number(endYear),
         monthly_expense: Number(amount),
@@ -3187,20 +3722,81 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
     onClose();
   };
 
+  const annualRent = Number(amount) * 12;
+
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Rent</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏢</div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Rent</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update monthly rent and annual growth rate.</p>
+        </div>
+      </div>
 
-      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="Montly Rent" />
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Rent Details</p>
 
-      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder="Rent Growth %" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Monthly Rent</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
+                <input value={amount} onChange={e => setAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="2,000" />
+              </div>
+            </div>
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={formLabelStyle}>Annual Rent Growth</label>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>{Number(growth).toFixed(1)}%</span>
+              </div>
+              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={e => setGrowth(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+            </div>
+          </div>
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year" />
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
-      <button type="submit">Save Rent</button>
-    </form>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr</label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="10" />
+              </div>
+            </div>
+
+            {/* Annual Cost Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>💸</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Rent Cost</span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${annualRent.toLocaleString()}
+                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>Cancel</button>
+          <button type="submit" style={formSubmitButtonStyle}>Save Rent</button>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -3232,26 +3828,98 @@ export function EditDebtExpenseForm({ item, dispatch, onClose }) {
     onClose();
   };
 
+  const annualPayment = Number(monthlyPayment) * 12;
+
   return (
-    <form onSubmit={onSubmit}>
-      <h3>Edit Debt</h3>
+    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>💳</div>
+        <div>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Debt</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update loan balance, monthly payment, and interest rate.</p>
+        </div>
+      </div>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder="Debt Name" />
+      <form onSubmit={onSubmit}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+          {/* ── LEFT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Debt Details</p>
 
-      <input value={debtAmount} onChange={e => setDebtAmount(e.target.value)} placeholder="Debt Amount" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Debt Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Student Loan" />
+            </div>
 
-      <input value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} placeholder="Monthly Payment" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Total Debt Amount</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <input value={debtAmount} onChange={e => setDebtAmount(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="25,000" type="number" />
+              </div>
+            </div>
 
-      <input value={interestRate} onChange={e => setInterestRate(e.target.value)} placeholder="Interest Rate % optional" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Monthly Payment</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/mo</span>
+                <input value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="400" type="number" />
+              </div>
+            </div>
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={formLabelStyle}>Interest Rate <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span></label>
+              <div style={{ position: "relative" }}>
+                <input value={interestRate} onChange={e => setInterestRate(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="6.5" type="number" />
+                <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>%</span>
+              </div>
+            </div>
+          </div>
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
+          {/* ── RIGHT ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
-      <button type="submit">Save Debt</button>
-    </form>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>Start yr</label>
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={formLabelStyle}>End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span></label>
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="10" type="number" />
+              </div>
+            </div>
+
+            {/* Annual Payment Preview */}
+            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "12px" }}>💸</span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Annual Payment</span>
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+                ${annualPayment.toLocaleString()}
+                <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "4px" }}>/yr</span>
+              </div>
+              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
+                {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>Cancel</button>
+          <button type="submit" style={formSubmitButtonStyle}>Save Debt</button>
+        </div>
+      </form>
+    </div>
   );
 }
+
 /* -------------------- EDIT ACCOUNT FORMS -------------------- */
 
 export function EditCheckingAccountForm({ item, dispatch, onClose }) {

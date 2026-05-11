@@ -1174,6 +1174,9 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
   const [linkedIncomeId, setLinkedIncomeId] = useState("");
 
   const salaries = state.incomes.salary;
+  const hourlyIncomes = state.incomes.hourly;
+  const allJobs = [...salaries, ...hourlyIncomes];
+  const hasIncomes = allJobs.length > 0;
 
   // Calculate annual contribution preview
   const monthlyNum = Number(monthlyContribution) || 0;
@@ -1184,9 +1187,9 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
 
   const handleLinkToggle = enabled => {
     setLinkEnabled(enabled);
-    if (enabled && salaries.length > 0 && !linkedIncomeId) {
+    if (enabled && hasIncomes && !linkedIncomeId) {
       // Auto-select first job and sync years
-      const firstJob = salaries[0];
+      const firstJob = allJobs[0]; 
       setLinkedIncomeId(firstJob.id);
       setStartYear(firstJob.start_year.toString());
       setEndYear(firstJob.end_year.toString());
@@ -1195,7 +1198,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
 
   const handleJobSelect = jobId => {
     setLinkedIncomeId(jobId);
-    const job = salaries.find(s => s.id === jobId);
+    const job = allJobs.find(j => j.id === jobId);
     if (job) {
       setStartYear(job.start_year.toString());
       setEndYear(job.end_year.toString());
@@ -1225,12 +1228,12 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
 
     // Update linked salary
     if (linkEnabled && linkedIncomeId) {
-      const linkedSalary = salaries.find(s => s.id === linkedIncomeId);
-      if (linkedSalary) {
+      const linkedJob = allJobs.find(j => j.id === linkedIncomeId);
+      if (linkedJob) {
         dispatch({
           type: "UPDATE_INCOME",
           payload: {
-            ...linkedSalary,
+            ...linkedJob,
             linked_401k_id: newAccountId,
           },
         });
@@ -1249,7 +1252,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
     setLinkedIncomeId("");
   };
 
-  const linkedSalary = linkedIncomeId ? salaries.find(s => s.id === linkedIncomeId) : null;
+  const linkedJob = linkedIncomeId ? allJobs.find(job => job.id === linkedIncomeId) : null;
 
   return (
     <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
@@ -1469,7 +1472,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
                   </div>
                 </div>
                 {/* Toggle */}
-                <div onClick={() => salaries.length > 0 && handleLinkToggle(!linkEnabled)} style={{ width: "36px", height: "20px", borderRadius: "10px", flexShrink: 0, cursor: salaries.length === 0 ? "not-allowed" : "pointer", background: linkEnabled ? "#5FA7AB" : "#D1D5DB", position: "relative", transition: "background 0.2s" }}>
+                <div onClick={() => hasIncomes && handleLinkToggle(!linkEnabled)} style={{ width: "36px", height: "20px", borderRadius: "10px", flexShrink: 0, cursor: hasIncomes ? "pointer" : "not-allowed", background: linkEnabled ? "#5FA7AB" : "#D1D5DB", position: "relative", transition: "background 0.2s" }}>
                   <div style={{ position: "absolute", top: "3px", left: linkEnabled ? "19px" : "3px", width: "14px", height: "14px", borderRadius: "50%", background: "#fff", transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
                 </div>
               </div>
@@ -1481,19 +1484,19 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
                     borderTop: "1px solid #5FA7AB22",
                     paddingTop: "12px",
                   }}>
-                  {salaries.length === 0 ? (
-                    <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)" }}>No jobs yet — add a salary first.</p>
+                  {!hasIncomes ? (
+                    <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)" }}>No jobs yet — add a qualifying job first.</p>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                       <select value={linkedIncomeId} onChange={e => handleJobSelect(e.target.value)} style={{ ...formInputStyle, background: "#fff" }}>
                         <option value=''>Select a job</option>
-                        {salaries.map(s => (
-                          <option key={s.id} value={s.id}>
-                            {s.name}
+                        {allJobs.map(job => (
+                          <option key={job.id} value={job.id}>
+                            {job.name}
                           </option>
                         ))}
                       </select>
-                      {linkedSalary && (
+                      {linkedJob && (
                         <div
                           style={{
                             fontSize: "0.68rem",
@@ -1502,7 +1505,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
                             alignItems: "center",
                             gap: "5px",
                           }}>
-                          🔗 Synced years {linkedSalary.start_year}–{linkedSalary.end_year}
+                          🔗 Synced years {linkedJob.start_year}–{linkedJob.end_year}
                         </div>
                       )}
                     </div>
@@ -2360,7 +2363,7 @@ function SideHustleForm({ dispatch }) {
               </select>
             </div>
 
-                      {/* Variability Slider */}
+            {/* Variability Slider */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <label style={formLabelStyle}>Income Variability</label>
@@ -3786,6 +3789,9 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
   const [linkedIncomeId, setLinkedIncomeId] = useState(item.linked_income_id || "");
 
   const salaries = state.incomes.salary;
+  const hourlyIncomes = state.incomes.hourly;
+  const allJobs = [...salaries, ...hourlyIncomes];
+  const hasIncomes = allJobs.length > 0;
 
   // Calculate annual contribution preview
   const monthlyNum = Number(monthlyContribution) || 0;
@@ -3796,9 +3802,9 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
 
   const handleLinkToggle = enabled => {
     setLinkEnabled(enabled);
-    if (enabled && salaries.length > 0 && !linkedIncomeId) {
+    if (enabled && hasIncomes && !linkedIncomeId) {
       // Auto-select first job and sync years
-      const firstJob = salaries[0];
+      const firstJob = allJobs[0];
       setLinkedIncomeId(firstJob.id);
       setStartYear(firstJob.start_year.toString());
       setEndYear(firstJob.end_year.toString());
@@ -3807,7 +3813,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
 
   const handleJobSelect = jobId => {
     setLinkedIncomeId(jobId);
-    const job = salaries.find(s => s.id === jobId);
+    const job = allJobs.find(j => j.id === jobId);
     if (job) {
       setStartYear(job.start_year.toString());
       setEndYear(job.end_year.toString());
@@ -3836,8 +3842,8 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
     onClose();
   };
 
-  const linkedSalary = linkedIncomeId ? salaries.find(s => s.id === linkedIncomeId) : null;
-
+  const linkedJob = linkedIncomeId ? allJobs.find(job => job.id === linkedIncomeId) : null;
+  
   return (
     <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
       {/* Header */}
@@ -4057,13 +4063,13 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
                 </div>
                 {/* Toggle */}
                 <div
-                  onClick={() => salaries.length > 0 && handleLinkToggle(!linkEnabled)}
+                  onClick={() => hasIncomes && handleLinkToggle(!linkEnabled)}
                   style={{
                     width: "36px",
                     height: "20px",
                     borderRadius: "10px",
                     flexShrink: 0,
-                    cursor: salaries.length === 0 ? "not-allowed" : "pointer",
+                    cursor: hasIncomes ? "pointer" : "not-allowed",
                     background: linkEnabled ? "#5FA7AB" : "#D1D5DB",
                     position: "relative",
                     transition: "background 0.2s",
@@ -4091,19 +4097,19 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
                     borderTop: "1px solid #5FA7AB22",
                     paddingTop: "12px",
                   }}>
-                  {salaries.length === 0 ? (
-                    <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)" }}>No jobs yet — add a salary first.</p>
+                  {!hasIncomes ? (
+                    <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)" }}>No jobs yet — add a qualifying job first.</p>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                       <select value={linkedIncomeId} onChange={e => handleJobSelect(e.target.value)} style={{ ...formInputStyle, background: "#fff" }}>
                         <option value=''>Select a job</option>
-                        {salaries.map(s => (
-                          <option key={s.id} value={s.id}>
-                            {s.name}
+                        {allJobs.map(job => (
+                          <option key={job.id} value={job.id}>
+                            {job.name}
                           </option>
                         ))}
                       </select>
-                      {linkedSalary && (
+                      {linkedJob && (
                         <div
                           style={{
                             fontSize: "0.68rem",
@@ -4112,7 +4118,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
                             alignItems: "center",
                             gap: "5px",
                           }}>
-                          🔗 Synced years {linkedSalary.start_year}–{linkedSalary.end_year}
+                          🔗 Synced years {linkedJob.start_year}–{linkedJob.end_year}
                         </div>
                       )}
                     </div>
@@ -4349,15 +4355,6 @@ const feedbackHeaderStyle: CSSProperties = {
   marginBottom: "24px",
 };
 
-const feedbackEyebrowStyle: CSSProperties = {
-  margin: "0 0 6px",
-  color: "#7c3aed",
-  fontSize: "0.75rem",
-  fontWeight: 700,
-  letterSpacing: "0.12em",
-  textTransform: "uppercase",
-};
-
 const feedbackTitleStyle: CSSProperties = {
   margin: 0,
   color: "#161225",
@@ -4535,12 +4532,15 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
     } else if (variantBeingEdited) {
       // i'm not sure how passing state for one edit form doesn't affect others check on this, but it works for now
       renderedForm = <FormComponent item={variantBeingEdited} state={state} dispatch={dispatch} onClose={closeModal} />;
-    } else if (selectedVariant === "employer_retirement") {
+    } 
+    // else if (selectedVariant === "employer_retirement") {
+    //   renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
+    // } 
+    // else if (selectedVariant === "salary") {
+    //   renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
+    // } 
+    else {
       renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
-    } else if (selectedVariant === "salary") {
-      renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
-    } else {
-      renderedForm = <FormComponent dispatch={dispatch} onClose={closeModal} />;
     }
   }
 

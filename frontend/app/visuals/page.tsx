@@ -822,7 +822,7 @@ function CheckingAccountForm({ dispatch }) {
             {/* Account Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Main Checking, Emergency Fund' required />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Main Checking, Emergency Fund" required />
             </div>
 
             {/* Starting Balance */}
@@ -841,7 +841,7 @@ function CheckingAccountForm({ dispatch }) {
                   }}>
                   $
                 </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='10,000' type='number' required />
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="10,000" type="number" required />
               </div>
             </div>
 
@@ -849,7 +849,7 @@ function CheckingAccountForm({ dispatch }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <div style={tierHeaderStyle}>
                 <label style={tierTitleStyle}>Interest Tiers</label>
-                <button type='button' style={addTierButtonStyle} onClick={addTier}>
+                <button type="button" style={addTierButtonStyle} onClick={addTier}>
                   + Add Tier
                 </button>
               </div>
@@ -859,16 +859,16 @@ function CheckingAccountForm({ dispatch }) {
                   <div style={tierItemStyle}>
                     <div style={{ ...tierInputStyle, flex: 0.6 }}>
                       <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
-                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={e => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder='e.g. 100000' type='text' inputMode='decimal' />
+                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={e => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
                     </div>
 
                     <div style={{ ...tierInputStyle, flex: 0.6 }}>
                       <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
-                      <input value={tier.annual_rate} onChange={e => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder='0.03' type='number' step='0.0001' />
+                      <input value={tier.annual_rate} onChange={e => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder="0.03" type="number" step="0.0001" />
                     </div>
 
                     {tiers.length > 1 && (
-                      <button type='button' style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
+                      <button type="button" style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
                         Remove
                       </button>
                     )}
@@ -897,18 +897,18 @@ function CheckingAccountForm({ dispatch }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' required />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='40' type='number' required />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" required />
               </div>
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
-        <button type='submit' style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
+        <button type="submit" style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
           Add Checking Account
         </button>
       </form>
@@ -1034,7 +1034,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
             {/* Account Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Fidelity Brokerage' required />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Fidelity Brokerage" required />
             </div>
 
             {/* Starting Balance */}
@@ -1053,7 +1053,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
                   }}>
                   $
                 </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='50,000' type='number' />
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="50,000" type="number" />
               </div>
             </div>
 
@@ -1085,7 +1085,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
                   }}>
                   /mo
                 </span>
-                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder='1,000' type='number' />
+                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="1,000" type="number" />
               </div>
             </div>
 
@@ -1103,7 +1103,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
                   {Number(expectedReturn).toFixed(1)}%
                 </span>
               </div>
-              <input type='range' min={0} max={20} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
             </div>
 
             {/* Dividend Yield slider */}
@@ -1120,7 +1120,7 @@ function TaxableInvestmentAccountForm({ dispatch }) {
                   {Number(dividendYield).toFixed(1)}%
                 </span>
               </div>
-              <input type='range' min={0} max={10} step={0.1} value={dividendYield} onChange={e => setDividendYield(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={10} step={0.1} value={dividendYield} onChange={e => setDividendYield(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
             </div>
           </div>
 
@@ -1143,18 +1143,18 @@ function TaxableInvestmentAccountForm({ dispatch }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' required />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='40' type='number' required />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" required />
               </div>
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
-        <button type='submit' style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
+        <button type="submit" style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
           Add Taxable Investment Account
         </button>
       </form>
@@ -1189,7 +1189,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
     setLinkEnabled(enabled);
     if (enabled && hasIncomes && !linkedIncomeId) {
       // Auto-select first job and sync years
-      const firstJob = allJobs[0]; 
+      const firstJob = allJobs[0];
       setLinkedIncomeId(firstJob.id);
       setStartYear(firstJob.start_year.toString());
       setEndYear(firstJob.end_year.toString());
@@ -1324,7 +1324,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
             {/* Account Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Fidelity 401(k)' required />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Fidelity 401(k)" required />
             </div>
 
             {/* Starting Balance */}
@@ -1343,7 +1343,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
                   }}>
                   $
                 </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='25,000' type='number' />
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="25,000" type="number" />
               </div>
             </div>
 
@@ -1375,7 +1375,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
                   }}>
                   /mo
                 </span>
-                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder='500' type='number' />
+                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="500" type="number" />
               </div>
             </div>
 
@@ -1393,7 +1393,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
                   {Number(expectedReturn).toFixed(1)}%
                 </span>
               </div>
-              <input type='range' min={0} max={15} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
             </div>
 
             {/* Employer Match slider */}
@@ -1410,7 +1410,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
                   {Number(employerMatch).toFixed(1)}%
                 </span>
               </div>
-              <input type='range' min={0} max={10} step={0.1} value={employerMatch} onChange={e => setEmployerMatch(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={10} step={0.1} value={employerMatch} onChange={e => setEmployerMatch(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
             </div>
           </div>
 
@@ -1433,11 +1433,11 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={{ ...formInputStyle }} placeholder='1' type='number' required />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={{ ...formInputStyle }} placeholder="1" type="number" required />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={{ ...formInputStyle }} placeholder='40' type='number' required />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={{ ...formInputStyle }} placeholder="40" type="number" required />
               </div>
             </div>
 
@@ -1489,7 +1489,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                       <select value={linkedIncomeId} onChange={e => handleJobSelect(e.target.value)} style={{ ...formInputStyle, background: "#fff" }}>
-                        <option value=''>Select a job</option>
+                        <option value="">Select a job</option>
                         {allJobs.map(job => (
                           <option key={job.id} value={job.id}>
                             {job.name}
@@ -1571,7 +1571,7 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
             paddingTop: "18px",
             borderTop: "1px solid #5FA7AB22",
           }}>
-          <button type='submit' style={formSubmitButtonStyle}>
+          <button type="submit" style={formSubmitButtonStyle}>
             Save Account
           </button>
         </div>
@@ -1620,19 +1620,19 @@ function CarAssetForm({ dispatch }) {
     <form onSubmit={onSubmit}>
       <h3>Add Car</h3>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder='Car Name' />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder="Car Name" />
 
-      <input value={carValue} onChange={e => setCarValue(e.target.value)} placeholder='Car Value' type='number' />
+      <input value={carValue} onChange={e => setCarValue(e.target.value)} placeholder="Car Value" type="number" />
 
-      <input value={depreciation} onChange={e => setDepreciation(e.target.value)} placeholder='Annual Depreciation %' type='number' />
+      <input value={depreciation} onChange={e => setDepreciation(e.target.value)} placeholder="Annual Depreciation %" type="number" />
 
-      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder='Down Payment optional' type='number' />
+      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' type='number' />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' type='number' />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
 
-      <button type='submit'>Add Car</button>
+      <button type="submit">Add Car</button>
     </form>
   );
 }
@@ -1675,19 +1675,19 @@ function HouseAssetForm({ dispatch }) {
     <form onSubmit={onSubmit}>
       <h3>Add House</h3>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder='House Name' />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder="House Name" />
 
-      <input value={houseValue} onChange={e => setHouseValue(e.target.value)} placeholder='House Value' type='number' />
+      <input value={houseValue} onChange={e => setHouseValue(e.target.value)} placeholder="House Value" type="number" />
 
-      <input value={appreciation} onChange={e => setAppreciation(e.target.value)} placeholder='Annual Appreciation %' type='number' />
+      <input value={appreciation} onChange={e => setAppreciation(e.target.value)} placeholder="Annual Appreciation %" type="number" />
 
-      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder='Down Payment optional' type='number' />
+      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' type='number' />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' type='number' />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
 
-      <button type='submit'>Add House</button>
+      <button type="submit">Add House</button>
     </form>
   );
 }
@@ -1727,15 +1727,15 @@ function LivingExpensesForm({ dispatch }) {
     <form onSubmit={onSubmit}>
       <h3>Living Expenses</h3>
 
-      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder='Monthly Living Cost' />
+      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monthly Living Cost" />
 
-      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder='Growth %' />
+      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder="Growth %" />
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" />
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year' />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year" />
 
-      <button type='submit'>Add Living Expenses</button>
+      <button type="submit">Add Living Expenses</button>
     </form>
   );
 }
@@ -1775,20 +1775,20 @@ function DebtExpenseForm({ dispatch }) {
   };
 
   return (
-    <form onSubmit={onSubmit} className='space-y-3'>
-      <input type='text' placeholder='Debt name' value={name} onChange={e => setName(e.target.value)} />
+    <form onSubmit={onSubmit} className="space-y-3">
+      <input type="text" placeholder="Debt name" value={name} onChange={e => setName(e.target.value)} />
 
-      <input type='number' placeholder='Debt amount' value={debtAmount} onChange={e => setDebtAmount(e.target.value)} required />
+      <input type="number" placeholder="Debt amount" value={debtAmount} onChange={e => setDebtAmount(e.target.value)} required />
 
-      <input type='number' placeholder='Monthly payment' value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} required />
+      <input type="number" placeholder="Monthly payment" value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} required />
 
-      <input type='number' placeholder='Interest rate % (optional)' value={interestRate} onChange={e => setInterestRate(e.target.value)} />
+      <input type="number" placeholder="Interest rate % (optional)" value={interestRate} onChange={e => setInterestRate(e.target.value)} />
 
-      <input type='number' placeholder='Start year' value={startYear} onChange={e => setStartYear(e.target.value)} required />
+      <input type="number" placeholder="Start year" value={startYear} onChange={e => setStartYear(e.target.value)} required />
 
-      <input type='number' placeholder='End year (optional)' value={endYear} onChange={e => setEndYear(e.target.value)} />
+      <input type="number" placeholder="End year (optional)" value={endYear} onChange={e => setEndYear(e.target.value)} />
 
-      <button type='submit'>Add Debt</button>
+      <button type="submit">Add Debt</button>
     </form>
   );
 }
@@ -1826,15 +1826,15 @@ function RentExpenseForm({ dispatch }) {
     <form onSubmit={onSubmit}>
       <h3>Rent</h3>
 
-      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder='Monthly Rent' />
+      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monthly Rent" />
 
-      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder='Annual Rent Growth %' />
+      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder="Annual Rent Growth %" />
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" />
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year' />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year" />
 
-      <button type='submit'>Add Rent</button>
+      <button type="submit">Add Rent</button>
     </form>
   );
 }
@@ -1946,7 +1946,7 @@ export function SalaryForm({ dispatch, state }) {
             {/* Job Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Job Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Software Engineer' required />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Software Engineer" required />
             </div>
 
             {/* Annual Income */}
@@ -1965,7 +1965,7 @@ export function SalaryForm({ dispatch, state }) {
                   }}>
                   $
                 </span>
-                <input value={netIncome} onChange={e => setNetIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='120,000' type='number' required />
+                <input value={netIncome} onChange={e => setNetIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="120,000" type="number" required />
               </div>
             </div>
 
@@ -1973,7 +1973,7 @@ export function SalaryForm({ dispatch, state }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Annual Growth Rate</label>
               <div style={{ position: "relative" }}>
-                <input value={growth} onChange={e => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder='3' type='number' step='0.1' />
+                <input value={growth} onChange={e => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="3" type="number" step="0.1" />
                 <span
                   style={{
                     position: "absolute",
@@ -2009,11 +2009,11 @@ export function SalaryForm({ dispatch, state }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' required />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" required />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='30' type='number' required />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" required />
               </div>
             </div>
 
@@ -2040,7 +2040,7 @@ export function SalaryForm({ dispatch, state }) {
               {available401ks.length > 0 ? (
                 <>
                   <select value={linked401kId} onChange={e => setLinked401kId(e.target.value)} style={formInputStyle}>
-                    <option value=''>Select an account</option>
+                    <option value="">Select an account</option>
 
                     {available401ks.map(account => (
                       <option key={account.id} value={account.id}>
@@ -2090,7 +2090,7 @@ export function SalaryForm({ dispatch, state }) {
             paddingTop: "18px",
             borderTop: "1px solid #5FA7AB22",
           }}>
-          <button type='submit' style={formSubmitButtonStyle}>
+          <button type="submit" style={formSubmitButtonStyle}>
             Add Salary
           </button>
         </div>
@@ -2141,32 +2141,23 @@ function HourlyWageForm({ dispatch, state }) {
     <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
-          ⏱️
-        </div>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>⏱️</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
-            Add Hourly Wage Income
-          </h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-            Track hourly income, weekly hours, and projected growth.
-          </p>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Hourly Wage Income</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track hourly income, weekly hours, and projected growth.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
-
           {/* ── LEFT ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Income Details
-            </p>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Income Details</p>
 
             {/* Job Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Job Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="Barista" />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Barista" />
             </div>
 
             {/* Hourly Rate */}
@@ -2175,7 +2166,7 @@ function HourlyWageForm({ dispatch, state }) {
               <div style={{ position: "relative" }}>
                 <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
                 <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/hr</span>
-                <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="25" type="number" step="0.01" />
+                <input value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="25" type="number" step="0.01" />
               </div>
             </div>
 
@@ -2183,7 +2174,7 @@ function HourlyWageForm({ dispatch, state }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Hours Per Week</label>
               <div style={{ position: "relative" }}>
-                <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} style={{ ...formInputStyle, paddingRight: "45px" }} placeholder="40" type="number" />
+                <input value={hoursPerWeek} onChange={e => setHoursPerWeek(e.target.value)} style={{ ...formInputStyle, paddingRight: "45px" }} placeholder="40" type="number" />
                 <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>hrs/wk</span>
               </div>
             </div>
@@ -2192,7 +2183,7 @@ function HourlyWageForm({ dispatch, state }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Annual Growth Rate</label>
               <div style={{ position: "relative" }}>
-                <input value={growth} onChange={(e) => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="3" type="number" step="0.1" />
+                <input value={growth} onChange={e => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="3" type="number" step="0.1" />
                 <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>%</span>
               </div>
             </div>
@@ -2200,44 +2191,32 @@ function HourlyWageForm({ dispatch, state }) {
 
           {/* ── RIGHT ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Timeline
-            </p>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
               </div>
             </div>
 
             {/* Link to 401k card */}
             {available401ks.length > 0 && (
               <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB33", background: "#FAFCFC", padding: "14px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)" }}>
-                  Link 401(k) Account
-                </label>
-                <select
-                  value={linked401kId}
-                  onChange={(e) => setLinked401kId(e.target.value)}
-                  style={formInputStyle}
-                >
+                <label style={{ display: "block", marginBottom: "8px", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)" }}>Link 401(k) Account</label>
+                <select value={linked401kId} onChange={e => setLinked401kId(e.target.value)} style={formInputStyle}>
                   <option value="">None - No linking</option>
-                  {available401ks.map((account) => (
+                  {available401ks.map(account => (
                     <option key={account.id} value={account.id}>
                       {account.name}
                     </option>
                   ))}
                 </select>
-                {linked401kId && (
-                  <div style={{ fontSize: "0.68rem", color: "#5FA7AB", marginTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>
-                    🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
-                  </div>
-                )}
+                {linked401kId && <div style={{ fontSize: "0.68rem", color: "#5FA7AB", marginTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>🔗 Linked to {available401ks.find(a => a.id === linked401kId)?.name}</div>}
               </div>
             )}
 
@@ -2245,9 +2224,7 @@ function HourlyWageForm({ dispatch, state }) {
             <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
                 <span style={{ fontSize: "12px" }}>💰</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
-                  Estimated Annual Income
-                </span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Estimated Annual Income</span>
               </div>
               <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
                 ${annualIncome.toLocaleString()}
@@ -2314,32 +2291,23 @@ function SideHustleForm({ dispatch }) {
     <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
-          🚀
-        </div>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🚀</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
-            Add Side Hustle Income
-          </h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-            Track variable income with frequency and variability estimates.
-          </p>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add Side Hustle Income</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Track variable income with frequency and variability estimates.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
-
           {/* ── LEFT ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Income Details
-            </p>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Income Details</p>
 
             {/* Side Hustle Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Side Hustle Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="Freelance Writing" />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Freelance Writing" />
             </div>
 
             {/* Average Income Per Period */}
@@ -2347,14 +2315,14 @@ function SideHustleForm({ dispatch }) {
               <label style={formLabelStyle}>Average Income Per Period</label>
               <div style={{ position: "relative" }}>
                 <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="500" type="number" step="0.01" />
+                <input value={averageIncome} onChange={e => setAverageIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="500" type="number" step="0.01" />
               </div>
             </div>
 
             {/* Frequency */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Frequency</label>
-              <select value={frequency} onChange={(e) => setFrequency(e.target.value)} style={formInputStyle}>
+              <select value={frequency} onChange={e => setFrequency(e.target.value)} style={formInputStyle}>
                 <option value="weekly">Weekly</option>
                 <option value="biweekly">Bi-weekly</option>
                 <option value="monthly">Monthly</option>
@@ -2367,35 +2335,27 @@ function SideHustleForm({ dispatch }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <label style={formLabelStyle}>Income Variability</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>
-                  ±{variabilityPercent.toFixed(1)}%
-                </span>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>±{variabilityPercent.toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={50} step={0.1} value={variability}
-                onChange={(e) => setVariability(e.target.value)}
-                style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }}
-              />
+              <input type="range" min={0} max={50} step={0.1} value={variability} onChange={e => setVariability(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
               <p style={{ margin: 0, fontSize: "0.65rem", color: "var(--text-secondary)" }}>
                 Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </p>
             </div>
-
           </div>
 
           {/* ── RIGHT ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Timeline
-            </p>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
               </div>
             </div>
 
@@ -2403,9 +2363,7 @@ function SideHustleForm({ dispatch }) {
             <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
                 <span style={{ fontSize: "12px" }}>💰</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
-                  Estimated Annual Income
-                </span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Estimated Annual Income</span>
               </div>
               <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
                 ${annualIncome.toLocaleString()}
@@ -2552,7 +2510,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
               }}>
               <label style={formLabelStyle}>Job Name</label>
 
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Software Engineer' />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Software Engineer" />
             </div>
 
             {/* Annual Income */}
@@ -2585,8 +2543,8 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
                     ...formInputStyle,
                     paddingLeft: "22px",
                   }}
-                  placeholder='120,000'
-                  type='number'
+                  placeholder="120,000"
+                  type="number"
                 />
               </div>
             </div>
@@ -2608,9 +2566,9 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
                     ...formInputStyle,
                     paddingRight: "28px",
                   }}
-                  placeholder='3'
-                  type='number'
-                  step='0.1'
+                  placeholder="3"
+                  type="number"
+                  step="0.1"
                 />
 
                 <span
@@ -2664,7 +2622,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
                 }}>
                 <label style={formLabelStyle}>Start yr</label>
 
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
               </div>
 
               <div
@@ -2675,7 +2633,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
                 }}>
                 <label style={formLabelStyle}>End yr</label>
 
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='30' type='number' />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
               </div>
             </div>
 
@@ -2702,7 +2660,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
               {available401ks.length > 0 ? (
                 <>
                   <select value={linked401kId} onChange={e => setLinked401kId(e.target.value)} style={formInputStyle}>
-                    <option value=''>Select an account</option>
+                    <option value="">Select an account</option>
 
                     {available401ks.map(account => (
                       <option key={account.id} value={account.id}>
@@ -2753,7 +2711,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
             borderTop: "1px solid #5FA7AB22",
           }}>
           <button
-            type='button'
+            type="button"
             onClick={onClose}
             style={{
               ...formSubmitButtonStyle,
@@ -2765,7 +2723,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
             Cancel
           </button>
 
-          <button type='submit' style={formSubmitButtonStyle}>
+          <button type="submit" style={formSubmitButtonStyle}>
             Update Salary
           </button>
         </div>
@@ -2812,32 +2770,23 @@ function EditHourlyWageForm({ item, state, dispatch, onClose }) {
     <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
-          ⏱️
-        </div>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>⏱️</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
-            Edit Hourly Wage Income
-          </h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-            Update hourly rate, weekly hours, and growth details.
-          </p>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Hourly Wage Income</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update hourly rate, weekly hours, and growth details.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
-
           {/* ── LEFT ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Income Details
-            </p>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Income Details</p>
 
             {/* Job Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Job Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="Barista" />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Barista" />
             </div>
 
             {/* Hourly Rate */}
@@ -2846,7 +2795,7 @@ function EditHourlyWageForm({ item, state, dispatch, onClose }) {
               <div style={{ position: "relative" }}>
                 <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
                 <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>/hr</span>
-                <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="25" type="number" step="0.01" />
+                <input value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="25" type="number" step="0.01" />
               </div>
             </div>
 
@@ -2854,7 +2803,7 @@ function EditHourlyWageForm({ item, state, dispatch, onClose }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Hours Per Week</label>
               <div style={{ position: "relative" }}>
-                <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} style={{ ...formInputStyle, paddingRight: "45px" }} placeholder="40" type="number" />
+                <input value={hoursPerWeek} onChange={e => setHoursPerWeek(e.target.value)} style={{ ...formInputStyle, paddingRight: "45px" }} placeholder="40" type="number" />
                 <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>hrs/wk</span>
               </div>
             </div>
@@ -2863,7 +2812,7 @@ function EditHourlyWageForm({ item, state, dispatch, onClose }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Annual Growth Rate</label>
               <div style={{ position: "relative" }}>
-                <input value={growth} onChange={(e) => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="3" type="number" step="0.1" />
+                <input value={growth} onChange={e => setGrowth(e.target.value)} style={{ ...formInputStyle, paddingRight: "28px" }} placeholder="3" type="number" step="0.1" />
                 <span style={{ position: "absolute", right: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.68rem", color: "#5FA7AB99", pointerEvents: "none" }}>%</span>
               </div>
             </div>
@@ -2871,44 +2820,32 @@ function EditHourlyWageForm({ item, state, dispatch, onClose }) {
 
           {/* ── RIGHT ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Timeline
-            </p>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
               </div>
             </div>
 
             {/* Link to 401k card */}
             {available401ks.length > 0 && (
               <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB33", background: "#FAFCFC", padding: "14px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)" }}>
-                  Link 401(k) Account
-                </label>
-                <select
-                  value={linked401kId}
-                  onChange={(e) => setLinked401kId(e.target.value)}
-                  style={formInputStyle}
-                >
+                <label style={{ display: "block", marginBottom: "8px", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)" }}>Link 401(k) Account</label>
+                <select value={linked401kId} onChange={e => setLinked401kId(e.target.value)} style={formInputStyle}>
                   <option value="">None - No linking</option>
-                  {available401ks.map((account) => (
+                  {available401ks.map(account => (
                     <option key={account.id} value={account.id}>
                       {account.name}
                     </option>
                   ))}
                 </select>
-                {linked401kId && (
-                  <div style={{ fontSize: "0.68rem", color: "#5FA7AB", marginTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>
-                    🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
-                  </div>
-                )}
+                {linked401kId && <div style={{ fontSize: "0.68rem", color: "#5FA7AB", marginTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>🔗 Linked to {available401ks.find(a => a.id === linked401kId)?.name}</div>}
               </div>
             )}
 
@@ -2916,9 +2853,7 @@ function EditHourlyWageForm({ item, state, dispatch, onClose }) {
             <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
                 <span style={{ fontSize: "12px" }}>💰</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
-                  Estimated Annual Income
-                </span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Estimated Annual Income</span>
               </div>
               <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
                 ${annualIncome.toLocaleString()}
@@ -2933,8 +2868,7 @@ function EditHourlyWageForm({ item, state, dispatch, onClose }) {
 
         {/* Footer */}
         <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="button" onClick={onClose}
-            style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>
+          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>
             Cancel
           </button>
           <button type="submit" style={formSubmitButtonStyle}>
@@ -2982,32 +2916,23 @@ function EditSideHustleForm({ item, dispatch, onClose }) {
     <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
-          🚀
-        </div>
+        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🚀</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
-            Edit Side Hustle Income
-          </h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-            Update frequency, variability, and income details.
-          </p>
+          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Edit Side Hustle Income</h3>
+          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Update frequency, variability, and income details.</p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
-
           {/* ── LEFT ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Income Details
-            </p>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Income Details</p>
 
             {/* Side Hustle Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Side Hustle Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} style={formInputStyle} placeholder="Freelance Writing" />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Freelance Writing" />
             </div>
 
             {/* Average Income Per Period */}
@@ -3015,14 +2940,14 @@ function EditSideHustleForm({ item, dispatch, onClose }) {
               <label style={formLabelStyle}>Average Income Per Period</label>
               <div style={{ position: "relative" }}>
                 <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
-                <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="500" type="number" step="0.01" />
+                <input value={averageIncome} onChange={e => setAverageIncome(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="500" type="number" step="0.01" />
               </div>
             </div>
 
             {/* Frequency */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Frequency</label>
-              <select value={frequency} onChange={(e) => setFrequency(e.target.value)} style={formInputStyle}>
+              <select value={frequency} onChange={e => setFrequency(e.target.value)} style={formInputStyle}>
                 <option value="weekly">Weekly</option>
                 <option value="biweekly">Bi-weekly</option>
                 <option value="monthly">Monthly</option>
@@ -3035,14 +2960,9 @@ function EditSideHustleForm({ item, dispatch, onClose }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <label style={formLabelStyle}>Income Variability</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>
-                  ±{variabilityPercent.toFixed(1)}%
-                </span>
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>±{variabilityPercent.toFixed(1)}%</span>
               </div>
-              <input type="range" min={0} max={50} step={0.1} value={variability}
-                onChange={(e) => setVariability(e.target.value)}
-                style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }}
-              />
+              <input type="range" min={0} max={50} step={0.1} value={variability} onChange={e => setVariability(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
               <p style={{ margin: 0, fontSize: "0.65rem", color: "var(--text-secondary)" }}>
                 Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </p>
@@ -3051,18 +2971,16 @@ function EditSideHustleForm({ item, dispatch, onClose }) {
 
           {/* ── RIGHT ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Timeline
-            </p>
+            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>Timeline</p>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="30" type="number" />
               </div>
             </div>
 
@@ -3070,9 +2988,7 @@ function EditSideHustleForm({ item, dispatch, onClose }) {
             <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
                 <span style={{ fontSize: "12px" }}>💰</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
-                  Estimated Annual Income
-                </span>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>Estimated Annual Income</span>
               </div>
               <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
                 ${annualIncome.toLocaleString()}
@@ -3087,8 +3003,7 @@ function EditSideHustleForm({ item, dispatch, onClose }) {
 
         {/* Footer */}
         <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="button" onClick={onClose}
-            style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>
+          <button type="button" onClick={onClose} style={{ ...formSubmitButtonStyle, background: "transparent", color: "var(--primary)", border: "1px solid #5FA7AB44", fontWeight: 500 }}>
             Cancel
           </button>
           <button type="submit" style={formSubmitButtonStyle}>
@@ -3134,19 +3049,19 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit House</h3>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder='House Name' />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder="House Name" />
 
-      <input value={houseValue} onChange={e => setHouseValue(e.target.value)} placeholder='House Value' type='number' />
+      <input value={houseValue} onChange={e => setHouseValue(e.target.value)} placeholder="House Value" type="number" />
 
-      <input value={appreciation} onChange={e => setAppreciation(e.target.value)} placeholder='Annual Appreciation %' type='number' />
+      <input value={appreciation} onChange={e => setAppreciation(e.target.value)} placeholder="Annual Appreciation %" type="number" />
 
-      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder='Down Payment optional' type='number' />
+      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' type='number' />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' type='number' />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
 
-      <button type='submit'>Save House</button>
+      <button type="submit">Save House</button>
     </form>
   );
 }
@@ -3184,19 +3099,19 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit Car</h3>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder='Car Name' />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder="Car Name" />
 
-      <input value={carValue} onChange={e => setCarValue(e.target.value)} placeholder='Car Value' type='number' />
+      <input value={carValue} onChange={e => setCarValue(e.target.value)} placeholder="Car Value" type="number" />
 
-      <input value={depreciation} onChange={e => setDepreciation(e.target.value)} placeholder='Annual Depreciation %' type='number' />
+      <input value={depreciation} onChange={e => setDepreciation(e.target.value)} placeholder="Annual Depreciation %" type="number" />
 
-      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder='Down Payment optional' type='number' />
+      <input value={downPayment} onChange={e => setDownPayment(e.target.value)} placeholder="Down Payment optional" type="number" />
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' type='number' />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' type='number' />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
 
-      <button type='submit'>Save Car</button>
+      <button type="submit">Save Car</button>
     </form>
   );
 }
@@ -3232,17 +3147,17 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit Living Expenses</h3>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder='Expense Name' />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder="Expense Name" />
 
-      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder='Monthly Living Expense' />
+      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="Monthly Living Expense" />
 
-      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder='Annual Growth %' />
+      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder="Annual Growth %" />
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" />
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" />
 
-      <button type='submit'>Save Living Expenses</button>
+      <button type="submit">Save Living Expenses</button>
     </form>
   );
 }
@@ -3276,15 +3191,15 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit Rent</h3>
 
-      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder='Montly Rent' />
+      <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="Montly Rent" />
 
-      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder='Rent Growth %' />
+      <input value={growth} onChange={e => setGrowth(e.target.value)} placeholder="Rent Growth %" />
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" />
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year' />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year" />
 
-      <button type='submit'>Save Rent</button>
+      <button type="submit">Save Rent</button>
     </form>
   );
 }
@@ -3321,19 +3236,19 @@ export function EditDebtExpenseForm({ item, dispatch, onClose }) {
     <form onSubmit={onSubmit}>
       <h3>Edit Debt</h3>
 
-      <input value={name} onChange={e => setName(e.target.value)} placeholder='Debt Name' />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder="Debt Name" />
 
-      <input value={debtAmount} onChange={e => setDebtAmount(e.target.value)} placeholder='Debt Amount' type='number' />
+      <input value={debtAmount} onChange={e => setDebtAmount(e.target.value)} placeholder="Debt Amount" type="number" />
 
-      <input value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} placeholder='Monthly Payment' type='number' />
+      <input value={monthlyPayment} onChange={e => setMonthlyPayment(e.target.value)} placeholder="Monthly Payment" type="number" />
 
-      <input value={interestRate} onChange={e => setInterestRate(e.target.value)} placeholder='Interest Rate % optional' type='number' />
+      <input value={interestRate} onChange={e => setInterestRate(e.target.value)} placeholder="Interest Rate % optional" type="number" />
 
-      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder='Start Year' type='number' />
+      <input value={startYear} onChange={e => setStartYear(e.target.value)} placeholder="Start Year" type="number" />
 
-      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder='End Year optional' type='number' />
+      <input value={endYear} onChange={e => setEndYear(e.target.value)} placeholder="End Year optional" type="number" />
 
-      <button type='submit'>Save Debt</button>
+      <button type="submit">Save Debt</button>
     </form>
   );
 }
@@ -3456,7 +3371,7 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
             {/* Account Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Main Checking, Emergency Fund' />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Main Checking, Emergency Fund" />
             </div>
 
             {/* Starting Balance */}
@@ -3475,7 +3390,7 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
                   }}>
                   $
                 </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='10,000' type='number' />
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="10,000" type="number" />
               </div>
             </div>
 
@@ -3483,7 +3398,7 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <div style={tierHeaderStyle}>
                 <label style={tierTitleStyle}>Interest Tiers</label>
-                <button type='button' style={addTierButtonStyle} onClick={addTier}>
+                <button type="button" style={addTierButtonStyle} onClick={addTier}>
                   + Add Tier
                 </button>
               </div>
@@ -3493,16 +3408,16 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
                   <div style={tierItemStyle}>
                     <div style={{ ...tierInputStyle, flex: 0.6 }}>
                       <label style={{ ...formLabelStyle, marginBottom: "6px" }}>Threshold</label>
-                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={e => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder='e.g. 100000' type='text' inputMode='decimal' />
+                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={e => handleTierThresholdInput(e, index, tiers, setTiers)} style={formInputStyle} placeholder="e.g. 100000" type="text" inputMode="decimal" />
                     </div>
 
                     <div style={{ ...tierInputStyle, flex: 0.6 }}>
                       <label style={{ ...formLabelStyle, marginBottom: "6px" }}>APY (%)</label>
-                      <input value={tier.annual_rate} onChange={e => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder='0.03' type='number' step='0.0001' />
+                      <input value={tier.annual_rate} onChange={e => updateTier(index, "annual_rate", e.target.value)} style={formInputStyle} placeholder="0.03" type="number" step="0.0001" />
                     </div>
 
                     {tiers.length > 1 && (
-                      <button type='button' style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
+                      <button type="button" style={tierDeleteButtonStyle} onClick={() => removeTier(index)}>
                         Remove
                       </button>
                     )}
@@ -3531,18 +3446,18 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='40' type='number' />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
-        <button type='submit' style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
+        <button type="submit" style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
           Save Checking Account
         </button>
       </form>
@@ -3649,7 +3564,7 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
             {/* Account Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Fidelity Brokerage' />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Fidelity Brokerage" />
             </div>
 
             {/* Starting Balance */}
@@ -3668,7 +3583,7 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
                   }}>
                   $
                 </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='50,000' type='number' />
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="50,000" type="number" />
               </div>
             </div>
 
@@ -3700,7 +3615,7 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
                   }}>
                   /mo
                 </span>
-                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder='1,000' type='number' />
+                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="1,000" type="number" />
               </div>
             </div>
 
@@ -3718,7 +3633,7 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
                   {Number(expectedReturn).toFixed(1)}%
                 </span>
               </div>
-              <input type='range' min={0} max={20} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
             </div>
 
             {/* Dividend Yield slider */}
@@ -3735,7 +3650,7 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
                   {Number(dividendYield).toFixed(1)}%
                 </span>
               </div>
-              <input type='range' min={0} max={10} step={0.1} value={dividendYield} onChange={e => setDividendYield(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={10} step={0.1} value={dividendYield} onChange={e => setDividendYield(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
             </div>
           </div>
 
@@ -3758,18 +3673,18 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder='1' type='number' />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={formInputStyle} placeholder="1" type="number" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder='40' type='number' />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={formInputStyle} placeholder="40" type="number" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
-        <button type='submit' style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
+        <button type="submit" style={{ ...formSubmitButtonStyle, marginTop: "28px" }}>
           Save Taxable Investment Account
         </button>
       </form>
@@ -3843,7 +3758,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
   };
 
   const linkedJob = linkedIncomeId ? allJobs.find(job => job.id === linkedIncomeId) : null;
-  
+
   return (
     <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
       {/* Header */}
@@ -3914,7 +3829,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
             {/* Account Name */}
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={formLabelStyle}>Account Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder='Fidelity 401(k)' />
+              <input value={name} onChange={e => setName(e.target.value)} style={formInputStyle} placeholder="Fidelity 401(k)" />
             </div>
 
             {/* Starting Balance */}
@@ -3933,7 +3848,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
                   }}>
                   $
                 </span>
-                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder='25,000' type='number' />
+                <input value={balance} onChange={e => setBalance(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px" }} placeholder="25,000" type="number" />
               </div>
             </div>
 
@@ -3965,7 +3880,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
                   }}>
                   /mo
                 </span>
-                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder='500' type='number' />
+                <input value={monthlyContribution} onChange={e => setMonthlyContribution(e.target.value)} style={{ ...formInputStyle, paddingLeft: "22px", paddingRight: "38px" }} placeholder="500" type="number" />
               </div>
             </div>
 
@@ -3983,7 +3898,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
                   {Number(expectedReturn).toFixed(1)}%
                 </span>
               </div>
-              <input type='range' min={0} max={15} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
             </div>
 
             {/* Employer Match slider */}
@@ -4000,7 +3915,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
                   {Number(employerMatch).toFixed(1)}%
                 </span>
               </div>
-              <input type='range' min={0} max={10} step={0.1} value={employerMatch} onChange={e => setEmployerMatch(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
+              <input type="range" min={0} max={10} step={0.1} value={employerMatch} onChange={e => setEmployerMatch(e.target.value)} style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }} />
             </div>
           </div>
 
@@ -4023,11 +3938,11 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>Start yr</label>
-                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={{ ...formInputStyle }} placeholder='1' type='number' />
+                <input value={startYear} onChange={e => setStartYear(e.target.value)} style={{ ...formInputStyle }} placeholder="1" type="number" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={formLabelStyle}>End yr</label>
-                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={{ ...formInputStyle }} placeholder='30' type='number' />
+                <input value={endYear} onChange={e => setEndYear(e.target.value)} style={{ ...formInputStyle }} placeholder="30" type="number" />
               </div>
             </div>
 
@@ -4102,7 +4017,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                       <select value={linkedIncomeId} onChange={e => handleJobSelect(e.target.value)} style={{ ...formInputStyle, background: "#fff" }}>
-                        <option value=''>Select a job</option>
+                        <option value="">Select a job</option>
                         {allJobs.map(job => (
                           <option key={job.id} value={job.id}>
                             {job.name}
@@ -4185,7 +4100,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
             borderTop: "1px solid #5FA7AB22",
           }}>
           <button
-            type='button'
+            type="button"
             onClick={onClose}
             style={{
               ...formSubmitButtonStyle,
@@ -4196,7 +4111,7 @@ function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
             }}>
             Cancel
           </button>
-          <button type='submit' style={formSubmitButtonStyle}>
+          <button type="submit" style={formSubmitButtonStyle}>
             Update Account
           </button>
         </div>
@@ -4266,7 +4181,7 @@ function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
             <p style={feedbackDescriptionStyle}>We’re a small team building quickly, and we’d genuinely appreciate any feedback that could help us improve.</p>
           </div>
 
-          <button type='button' style={feedbackCloseStyle} onClick={onClose}>
+          <button type="button" style={feedbackCloseStyle} onClick={onClose}>
             ×
           </button>
         </div>
@@ -4275,7 +4190,7 @@ function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
           <label style={feedbackLabelStyle}>
             Satisfaction Rating
             <select value={rating} onChange={event => setRating(event.target.value)} required style={feedbackInputStyle}>
-              <option value=''>Select a rating</option>
+              <option value="">Select a rating</option>
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(number => (
                 <option key={number} value={number}>
                   {number}
@@ -4297,20 +4212,20 @@ function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
 
           <label style={feedbackLabelStyle}>
             Feedback / Questions
-            <textarea value={message} onChange={event => setMessage(event.target.value)} placeholder='Write your feedback or questions...' rows={5} required style={feedbackInputStyle} />
+            <textarea value={message} onChange={event => setMessage(event.target.value)} placeholder="Write your feedback or questions..." rows={5} required style={feedbackInputStyle} />
           </label>
 
           <label style={feedbackLabelStyle}>
             Email Optional
-            <input type='email' value={email} onChange={event => setEmail(event.target.value)} placeholder='Only if you want a follow-up' style={feedbackInputStyle} />
+            <input type="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="Only if you want a follow-up" style={feedbackInputStyle} />
           </label>
 
           <div style={feedbackActionsStyle}>
-            <button type='button' style={feedbackSecondaryStyle} onClick={onClose}>
+            <button type="button" style={feedbackSecondaryStyle} onClick={onClose}>
               Cancel
             </button>
 
-            <button type='submit' style={feedbackPrimaryStyle}>
+            <button type="submit" style={feedbackPrimaryStyle}>
               Submit Feedback
             </button>
           </div>
@@ -4532,13 +4447,13 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
     } else if (variantBeingEdited) {
       // i'm not sure how passing state for one edit form doesn't affect others check on this, but it works for now
       renderedForm = <FormComponent item={variantBeingEdited} state={state} dispatch={dispatch} onClose={closeModal} />;
-    } 
+    }
     // else if (selectedVariant === "employer_retirement") {
     //   renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
-    // } 
+    // }
     // else if (selectedVariant === "salary") {
     //   renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
-    // } 
+    // }
     else {
       renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
     }
@@ -4909,21 +4824,21 @@ export function FinancialEntities({ state, dispatch }) {
         </button>
       )}
 
-      <div ref={ref} style={containerStyle} className='hide-scrollbar' onScroll={updateScrollState}>
+      <div ref={ref} style={containerStyle} className="hide-scrollbar" onScroll={updateScrollState}>
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName='Accounts' category='account' dispatch={dispatch} />
+          <FinancialEntity state={state} entityName="Accounts" category="account" dispatch={dispatch} />
         </div>
 
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName='Incomes' category='income' dispatch={dispatch} />
+          <FinancialEntity state={state} entityName="Incomes" category="income" dispatch={dispatch} />
         </div>
 
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName='Expenses' category='expense' dispatch={dispatch} />
+          <FinancialEntity state={state} entityName="Expenses" category="expense" dispatch={dispatch} />
         </div>
 
         <div style={itemStyle}>
-          <FinancialEntity state={state} entityName='Assets' category='asset' dispatch={dispatch} />
+          <FinancialEntity state={state} entityName="Assets" category="asset" dispatch={dispatch} />
         </div>
       </div>
     </div>
@@ -4991,17 +4906,17 @@ export function NetWorthStackedChart({ simResult }) {
 
       <ResponsiveContainer>
         <BarChart data={data}>
-          <CartesianGrid strokeDasharray='3 3' />
-          <XAxis dataKey='year' />
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="year" />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
 
           {/* bottom layer */}
-          <Bar dataKey='cash' stackId='1' fill='#82ca9d' />
+          <Bar dataKey="cash" stackId="1" fill="#82ca9d" />
 
           {/* top layer */}
-          <Bar dataKey='assets' stackId='1' fill='#8884d8' />
+          <Bar dataKey="assets" stackId="1" fill="#8884d8" />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -5094,7 +5009,7 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
   const mockResults = generateMockResults();
 
   return (
-    <div className='section'>
+    <div className="section">
       <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         <h2>Simulation Results</h2>
 
@@ -5103,7 +5018,7 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
         <button onClick={() => setOpenYears([])}>Collapse All</button>
       </div>
 
-      <table className='mega-table'>
+      <table className="mega-table">
         <thead>
           <tr>
             <th>Year</th>
@@ -5121,7 +5036,7 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
           {simResult.map(yearData => (
             <React.Fragment key={yearData.year}>
               {/* YEAR SUMMARY ROW */}
-              <tr className='year-row' onClick={() => toggleYear(yearData.year)}>
+              <tr className="year-row" onClick={() => toggleYear(yearData.year)}>
                 <td>{yearData.year}</td>
                 <td colSpan={6}>
                   Net Worth: ${yearData.net_worth} | Cash: ${yearData.total_cash} | Income: ${yearData.total_income} | Expenses: ${yearData.total_expenses}
@@ -5131,7 +5046,7 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
               {/* SOURCE ROWS */}
               {openYears.includes(yearData.year) &&
                 yearData.sources.map(src => (
-                  <tr key={src.id} className='source-row'>
+                  <tr key={src.id} className="source-row">
                     <td></td>
                     <td>{src.name}</td>
                     <td>{src.source_type}</td>
@@ -5155,35 +5070,35 @@ export default function Dashboard() {
   const [simResult, setSimResult] = useState<SimYearResult[]>([]);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   return (
-    <div className='dash-root'>
-      <aside className='dash-sidebar'>
-        <div className='dash-logo'>
-          <span className='dash-logo-mark'>VL</span>
-          <span className='dash-logo-text'>VantageLabs</span>
+    <div className="dash-root">
+      <aside className="dash-sidebar">
+        <div className="dash-logo">
+          <span className="dash-logo-mark">VL</span>
+          <span className="dash-logo-text">VantageLabs</span>
         </div>
-        <nav className='dash-nav'>
-          <a href='/testing' className='dash-nav-item dash-nav-active'>
+        <nav className="dash-nav">
+          <a href="/testing" className="dash-nav-item dash-nav-active">
             TESTING GROUNDS
           </a>
-          <a href='#' className='dash-nav-item dash-nav-active'>
+          <a href="#" className="dash-nav-item dash-nav-active">
             TESTING VISUALS
           </a>
         </nav>
-        <button type='button' className='dash-nav-item' style={feedbackNavButtonStyle} onClick={() => setIsFeedbackOpen(true)}>
+        <button type="button" className="dash-nav-item" style={feedbackNavButtonStyle} onClick={() => setIsFeedbackOpen(true)}>
           LEAVE FEEDBACK
         </button>
       </aside>
 
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
-      <main className='dash-main'>
-        <header className='dash-topbar'>
+      <main className="dash-main">
+        <header className="dash-topbar">
           <div>
-            <h1 className='dash-page-title'>Financial Overview</h1>
-            <p className='dash-page-sub'>Stepwise simulation · Annual variables</p>
+            <h1 className="dash-page-title">Financial Overview</h1>
+            <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
           </div>
-          <div className='dash-topbar-right'>
-            <span className='dash-sim-badge'>Sim: {SIM_MAX}yr</span>
+          <div className="dash-topbar-right">
+            <span className="dash-sim-badge">Sim: {SIM_MAX}yr</span>
           </div>
         </header>
 

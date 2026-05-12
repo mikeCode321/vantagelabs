@@ -1169,7 +1169,6 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
 }
 
 // ASSET FORMS
-
 function CarAssetForm({ dispatch }) {
   const [name, setName] = useState("");
   const [carValue, setCarValue] = useState("");
@@ -1179,24 +1178,20 @@ function CarAssetForm({ dispatch }) {
   const [endYear, setEndYear] = useState("");
 
   const [showLoanForm, setShowLoanForm] = useState(false);
-  const [savedCarAsset, setSavedCarAsset] = useState<CarAsset | null>(null);
+  const [savedCarAsset, setSavedCarAsset] = useState(null);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const carAsset = {
-      source_type: "asset",
-      variant: "car",
-
+      source_type: "asset" as const,
+      variant: "car" as const,
       id: crypto.randomUUID(),
       name: name || "Car",
-
       start_year: Number(startYear),
       end_year: endYear === "" ? null : Number(endYear),
-
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
-
       down_payment: downPayment === "" ? null : Number(downPayment),
     };
 
@@ -1233,115 +1228,41 @@ function CarAssetForm({ dispatch }) {
   }
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "14px",
-          paddingBottom: "20px",
-          marginBottom: "24px",
-          borderBottom: "1px solid #5FA7AB22",
-        }}
-      >
-        <div
-          style={{
-            width: "42px",
-            height: "42px",
-            borderRadius: "10px",
-            background: "#5FA7AB18",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            flexShrink: 0,
-          }}
-        >
-          🚗
-        </div>
-
+    <div className="form-panel">
+      <div className="form-header">
+        <div className="form-header-icon">🚗</div>
         <div>
-          <h3
-            style={{
-              margin: "0 0 3px 0",
-              fontSize: "1rem",
-              fontWeight: 700,
-              color: "var(--primary)",
-              letterSpacing: "-0.01em",
-            }}
-          >
-            Add Car
-          </h3>
-
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.75rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.5,
-            }}
-          >
+          <h3 className="form-header-title">Add Car</h3>
+          <p className="form-header-desc">
             Track a vehicle asset with depreciation and optional down payment.
           </p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "28px",
-          }}
-        >
+        <div className="form-two-col">
           {/* LEFT */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}
-            >
-              Vehicle Details
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Vehicle Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Car Name</label>
+            <div className="form-field">
+              <label className="form-label">Car Name</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                style={formInputStyle}
+                className="form-input"
                 placeholder="Mazda 3, Tesla Model 3"
               />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Car Value</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}
-                >
-                  $
-                </span>
-
+            <div className="form-field">
+              <label className="form-label">Car Value</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
                 <input
                   value={carValue}
                   onChange={(e) => setCarValue(e.target.value)}
-                  style={{ ...formInputStyle, paddingLeft: "22px" }}
+                  className="form-input form-input--prefix-dollar"
                   placeholder="30,000"
                   type="number"
                   required
@@ -1349,60 +1270,30 @@ function CarAssetForm({ dispatch }) {
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>
+            <div className="form-field">
+              <label className="form-label">
                 Down Payment{" "}
-                <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>
-                  (optional)
-                </span>
+                <span className="form-label--muted">(optional)</span>
               </label>
-
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "11px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: "0.72rem",
-                    color: "#5FA7AB",
-                    pointerEvents: "none",
-                  }}
-                >
-                  $
-                </span>
-
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
                 <input
                   value={downPayment}
                   onChange={(e) => setDownPayment(e.target.value)}
-                  style={{ ...formInputStyle, paddingLeft: "22px" }}
+                  className="form-input form-input--prefix-dollar"
                   placeholder="5,000"
                   type="number"
                 />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <label style={formLabelStyle}>Annual Depreciation</label>
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    color: "var(--primary)",
-                    fontVariantNumeric: "tabular-nums",
-                  }}
-                >
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Depreciation</label>
+                <span className="form-slider-value">
                   {Number(depreciation).toFixed(1)}%
                 </span>
               </div>
-
               <input
                 type="range"
                 min={0}
@@ -1410,136 +1301,66 @@ function CarAssetForm({ dispatch }) {
                 step={0.1}
                 value={depreciation}
                 onChange={(e) => setDepreciation(e.target.value)}
-                style={{
-                  width: "100%",
-                  accentColor: "#5FA7AB",
-                  height: "4px",
-                  cursor: "pointer",
-                }}
+                className="form-slider"
               />
             </div>
           </div>
 
           {/* RIGHT */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--teal)",
-                paddingBottom: "8px",
-                borderBottom: "1px solid #5FA7AB22",
-              }}
-            >
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "10px",
-              }}
-            >
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
                 <input
                   value={startYear}
                   onChange={(e) => setStartYear(e.target.value)}
-                  style={formInputStyle}
+                  className="form-input"
                   placeholder="1"
                   type="number"
                   required
                 />
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>
-                  End yr{" "}
-                  <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>
-                    (opt)
-                  </span>
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
                 </label>
                 <input
                   value={endYear}
                   onChange={(e) => setEndYear(e.target.value)}
-                  style={formInputStyle}
+                  className="form-input"
                   placeholder="5"
                   type="number"
                 />
               </div>
             </div>
 
-            <div
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #5FA7AB22",
-                background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)",
-                padding: "16px",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  marginBottom: "8px",
-                }}
-              >
-                <span style={{ fontSize: "12px" }}>📉</span>
-                <span
-                  style={{
-                    fontSize: "0.62rem",
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.12em",
-                    color: "#5FA7AB",
-                  }}
-                >
-                  Value After Year 1
-                </span>
+            <div className="preview-card">
+              <div className="preview-card__header preview-card__header--mb10">
+                <span className="preview-icon">📉</span>
+                <span className="preview-card__label">Value After Year 1</span>
               </div>
 
-              <div
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  color: "var(--primary)",
-                  fontVariantNumeric: "tabular-nums",
-                  lineHeight: 1,
-                }}
-              >
-                ${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              <div className="preview-card__amount preview-card__amount--lg">
+                $
+                {depreciatedValue.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
               </div>
 
-              <div
-                style={{
-                  marginTop: "6px",
-                  fontSize: "0.7rem",
-                  color: "var(--text-secondary)",
-                }}
-              >
-                -{Number(depreciation).toFixed(1)}% per year from $
+              <div className="preview-card__sub">
+                -{Number(depreciation).toFixed(1)}% depreciation from $
                 {(Number(carValue) || 0).toLocaleString()}
               </div>
             </div>
+            
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: "8px",
-            marginTop: "28px",
-            paddingTop: "18px",
-            borderTop: "1px solid #5FA7AB22",
-          }}
-        >
-          <button type="submit" style={formSubmitButtonStyle}>
+        <div className="form-actions">
+          <button type="submit" className="form-btn-primary">
             Save & Continue
           </button>
         </div>
@@ -1547,7 +1368,8 @@ function CarAssetForm({ dispatch }) {
     </div>
   );
 }
-function HouseAssetForm({ dispatch }) {
+
+function HouseAssetForm({ dispatch, onClose }) {
   const [name, setName] = useState("");
   const [houseValue, setHouseValue] = useState("");
   const [appreciation, setAppreciation] = useState("3");
@@ -1555,7 +1377,7 @@ function HouseAssetForm({ dispatch }) {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
-  const [savedHouse, setSavedHouse] = useState<any>(null);
+  const [savedHouse, setSavedHouse] = useState(null);
   const [showLoanForm, setShowLoanForm] = useState(false);
 
   const onSubmit = (e: React.FormEvent) => {
@@ -1591,47 +1413,46 @@ function HouseAssetForm({ dispatch }) {
         dispatch={dispatch}
         houseAsset={savedHouse}
         onBack={() => setShowLoanForm(false)}
+        onClose={onClose}
       />
     );
   }
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>🏡</div>
+    <div className="form-panel">
+      <div className="form-header">
+        <div className="form-header-icon">🏡</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>Add House</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+          <h3 className="form-header-title">Add House</h3>
+          <p className="form-header-desc">
             Track a property asset with appreciation and optional down payment.
           </p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Property Details
-            </p>
+        <div className="form-two-col">
+          <div className="form-col">
+            <p className="form-section-heading">Property Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Property Name</label>
+            <div className="form-field">
+              <label className="form-label">Property Name</label>
               <input
                 value={name}
                 onChange={e => setName(e.target.value)}
-                style={formInputStyle}
+                className="form-input"
                 placeholder="Primary Residence, Rental Property"
               />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>House Value</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+            <div className="form-field">
+              <label className="form-label">House Value</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
                 <input
                   value={houseValue}
                   onChange={e => setHouseValue(e.target.value)}
-                  style={{ ...formInputStyle, paddingLeft: "22px" }}
+                  className="form-input form-input--prefix-dollar"
                   placeholder="400,000"
                   type="number"
                   required
@@ -1639,26 +1460,26 @@ function HouseAssetForm({ dispatch }) {
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>
-                Down Payment <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span>
+            <div className="form-field">
+              <label className="form-label">
+                Down Payment <span className="form-label--muted">(optional)</span>
               </label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
                 <input
                   value={downPayment}
                   onChange={e => setDownPayment(e.target.value)}
-                  style={{ ...formInputStyle, paddingLeft: "22px" }}
+                  className="form-input form-input--prefix-dollar"
                   placeholder="80,000"
                   type="number"
                 />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Annual Appreciation</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Appreciation</label>
+                <span className="form-slider-value">
                   {Number(appreciation).toFixed(1)}%
                 </span>
               </div>
@@ -1669,64 +1490,66 @@ function HouseAssetForm({ dispatch }) {
                 step={0.1}
                 value={appreciation}
                 onChange={e => setAppreciation(e.target.value)}
-                style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }}
+                className="form-slider"
               />
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
                 <input
                   value={startYear}
                   onChange={e => setStartYear(e.target.value)}
-                  style={formInputStyle}
+                  className="form-input"
                   placeholder="1"
                   type="number"
                   required
                 />
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>
-                  End yr <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(opt)</span>
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
                 </label>
                 <input
                   value={endYear}
                   onChange={e => setEndYear(e.target.value)}
-                  style={formInputStyle}
+                  className="form-input"
                   placeholder="30"
                   type="number"
                 />
               </div>
             </div>
 
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>📈</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
-                  Value After Year 1
-                </span>
+            <div className="preview-card">
+              <div className="preview-card__header preview-card__header--mb10">
+                <span className="preview-icon">📈</span>
+                <span className="preview-card__label">Value After Year 1</span>
               </div>
 
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
-                ${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              <div className="preview-card__amount preview-card__amount--lg">
+                $
+                {appreciatedValue.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
               </div>
 
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
-                +{Number(appreciation).toFixed(1)}% per year from ${(Number(houseValue) || 0).toLocaleString()}
+              <div className="preview-card__sub">
+                +{Number(appreciation).toFixed(1)}% appreciation from $
+                {(Number(houseValue) || 0).toLocaleString()}
               </div>
             </div>
+
+
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button type="submit" style={formSubmitButtonStyle}>
+        <div className="form-actions">
+          <button type="submit" className="form-btn-primary">
             Save & Continue
           </button>
         </div>
@@ -1781,22 +1604,16 @@ function HouseLoanExpenseForm({ dispatch, houseAsset, onBack, onClose }) {
       payload: {
         source_type: "expense",
         variant: "house_loan",
-
         id: crypto.randomUUID(),
         name: `${houseAsset.name} Loan`,
-
         start_year: houseAsset.start_year,
         end_year: houseAsset.start_year + Number(loanTermYears),
-
         monthly_expense: monthlyExpense,
-
         original_principal: originalPrincipal,
         interest_rate: Number(interestRate) / 100,
         loan_term_years: Number(loanTermYears),
-
         extra_monthly_payment:
           extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
-
       },
     });
 
@@ -1804,49 +1621,36 @@ function HouseLoanExpenseForm({ dispatch, houseAsset, onBack, onClose }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
-          🏦
-        </div>
-
+    <div className="form-panel">
+      <div className="form-header">
+        <div className="form-header-icon">🏦</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
-            Add Home Loan
-          </h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+          <h3 className="form-header-title">Add Home Loan</h3>
+          <p className="form-header-desc">
             Add loan details for <strong>{houseAsset.name}</strong>.
           </p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Loan Details
-            </p>
+        <div className="form-two-col">
+          <div className="form-col">
+            <p className="form-section-heading">Loan Details</p>
 
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "#5FA7AB0D", padding: "14px" }}>
-              <div style={{ fontSize: "0.65rem", color: "var(--text-secondary)", marginBottom: "5px" }}>
-                Original Principal
-              </div>
-
-              <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--primary)" }}>
+            <div className="form-info-card">
+              <div className="form-info-label">Original Principal</div>
+              <div className="form-info-value">
                 ${originalPrincipal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </div>
-
-              <div style={{ marginTop: "5px", fontSize: "0.68rem", color: "var(--text-secondary)" }}>
-                Home value minus down payment
-              </div>
+              <div className="form-info-desc">Home value minus down payment</div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Interest Rate %</label>
+            <div className="form-field">
+              <label className="form-label">Interest Rate %</label>
               <input
                 value={interestRate}
                 onChange={e => setInterestRate(e.target.value)}
-                style={formInputStyle}
+                className="form-input"
                 placeholder="6.75"
                 type="number"
                 step="0.01"
@@ -1854,28 +1658,28 @@ function HouseLoanExpenseForm({ dispatch, houseAsset, onBack, onClose }) {
               />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Loan Term Years</label>
+            <div className="form-field">
+              <label className="form-label">Loan Term Years</label>
               <input
                 value={loanTermYears}
                 onChange={e => setLoanTermYears(e.target.value)}
-                style={formInputStyle}
+                className="form-input"
                 placeholder="30"
                 type="number"
                 required
               />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>
-                Extra Monthly Payment <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span>
+            <div className="form-field">
+              <label className="form-label">
+                Extra Monthly Payment <span className="form-label--muted">(optional)</span>
               </label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>$</span>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
                 <input
                   value={extraMonthlyPayment}
                   onChange={e => setExtraMonthlyPayment(e.target.value)}
-                  style={{ ...formInputStyle, paddingLeft: "22px" }}
+                  className="form-input form-input--prefix-dollar"
                   placeholder="0"
                   type="number"
                 />
@@ -1883,61 +1687,34 @@ function HouseLoanExpenseForm({ dispatch, houseAsset, onBack, onClose }) {
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading"></p>
 
-
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB", marginBottom: "8px" }}>
-                Estimated Payment
-              </div>
-
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+            <div className="form-preview-card">
+              <div className="form-preview-label">Estimated Payment</div>
+              <div className="form-preview-value">
                 ${monthlyExpense.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo
               </div>
-
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
-                Principal + interest only
-              </div>
+              <div className="form-preview-desc">Principal + interest only</div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+        <div className="form-actions">
+
           {onBack && (
-            <button
-              type="button"
-              onClick={onBack}
-              style={{
-                ...formSubmitButtonStyle,
-                background: "transparent",
-                color: "var(--primary)",
-                border: "1px solid #5FA7AB44",
-                fontWeight: 500,
-              }}
-            >
+            <button type="button" onClick={onBack} className="form-btn-secondary">
               Back
             </button>
           )}
 
           {onClose && (
-            <button
-              type="button"
-              onClick={onClose}
-              style={{
-                ...formSubmitButtonStyle,
-                background: "transparent",
-                color: "var(--primary)",
-                border: "1px solid #5FA7AB44",
-                fontWeight: 500,
-              }}
-            >
+            <button type="button" onClick={onClose} className="form-btn-secondary">
               Skip Loan
             </button>
           )}
 
-          <button type="submit" style={formSubmitButtonStyle}>
+          <button type="submit" className="form-btn-primary">
             Add Home Loan
           </button>
         </div>
@@ -1970,20 +1747,14 @@ function CarLoanExpenseForm({ dispatch, carAsset, onBack, onClose }) {
       payload: {
         source_type: "expense",
         variant: "car_loan",
-
         id: crypto.randomUUID(),
         name: `${carAsset.name} Loan`,
-
         start_year: carAsset.start_year,
         end_year: carAsset.start_year + Number(loanTermYears),
-
         monthly_expense: monthlyExpense,
-
         original_principal: originalPrincipal,
         interest_rate: Number(interestRate) / 100,
         loan_term_years: Number(loanTermYears),
-
-        
       },
     });
 
@@ -1991,49 +1762,36 @@ function CarLoanExpenseForm({ dispatch, carAsset, onBack, onClose }) {
   };
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
-          🚗
-        </div>
-
+    <div className="form-panel">
+      <div className="form-header">
+        <div className="form-header-icon">🚗</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
-            Add Car Loan
-          </h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+          <h3 className="form-header-title">Add Car Loan</h3>
+          <p className="form-header-desc">
             Add loan details for <strong>{carAsset.name}</strong>.
           </p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Loan Details
-            </p>
+        <div className="form-two-col">
+          <div className="form-col">
+            <p className="form-section-heading">Loan Details</p>
 
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "#5FA7AB0D", padding: "14px" }}>
-              <div style={{ fontSize: "0.65rem", color: "var(--text-secondary)", marginBottom: "5px" }}>
-                Original Principal
-              </div>
-
-              <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--primary)" }}>
+            <div className="form-info-card">
+              <div className="form-info-label">Original Principal</div>
+              <div className="form-info-value">
                 ${originalPrincipal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </div>
-
-              <div style={{ marginTop: "5px", fontSize: "0.68rem", color: "var(--text-secondary)" }}>
-                Car value minus down payment
-              </div>
+              <div className="form-info-desc">Car value minus down payment</div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Interest Rate %</label>
+            <div className="form-field">
+              <label className="form-label">Interest Rate %</label>
               <input
                 value={interestRate}
                 onChange={(e) => setInterestRate(e.target.value)}
-                style={formInputStyle}
+                className="form-input"
                 placeholder="7.5"
                 type="number"
                 step="0.01"
@@ -2041,88 +1799,44 @@ function CarLoanExpenseForm({ dispatch, carAsset, onBack, onClose }) {
               />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Loan Term Years</label>
+            <div className="form-field">
+              <label className="form-label">Loan Term Years</label>
               <input
                 value={loanTermYears}
                 onChange={(e) => setLoanTermYears(e.target.value)}
-                style={formInputStyle}
+                className="form-input"
                 placeholder="5"
                 type="number"
                 required
               />
             </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>
-                Extra Monthly Payment{" "}
-                <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>
-                  (optional)
-                </span>
-              </label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>
-                  $
-                </span>
-              </div>
-            </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Payment Preview
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Payment Preview</p>
 
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB", marginBottom: "8px" }}>
-                Estimated Payment
-              </div>
-
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
+            <div className="form-preview-card">
+              <div className="form-preview-label">Estimated Payment</div>
+              <div className="form-preview-value">
                 ${monthlyExpense.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo
               </div>
-
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
-                Principal + interest only
-              </div>
+              <div className="form-preview-desc">Principal + interest only</div>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
+        <div className="form-actions">
           {onBack && (
-            <button
-              type="button"
-              onClick={onBack}
-              style={{
-                ...formSubmitButtonStyle,
-                background: "transparent",
-                color: "var(--primary)",
-                border: "1px solid #5FA7AB44",
-                fontWeight: 500,
-              }}
-            >
+            <button type="button" onClick={onBack} className="form-btn-secondary">
               Back
             </button>
           )}
-
           {onClose && (
-            <button
-              type="button"
-              onClick={onClose}
-              style={{
-                ...formSubmitButtonStyle,
-                background: "transparent",
-                color: "var(--primary)",
-                border: "1px solid #5FA7AB44",
-                fontWeight: 500,
-              }}
-            >
+            <button type="button" onClick={onClose} className="form-btn-secondary">
               Skip Loan
             </button>
           )}
-
-          <button type="submit" style={formSubmitButtonStyle}>
+          <button type="submit" className="form-btn-primary">
             Add Car Loan
           </button>
         </div>
@@ -3428,79 +3142,66 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
   }
 
   return (
-    <div style={{ fontFamily: "'DM Mono', monospace", margin: "25px" }}>
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", paddingBottom: "20px", marginBottom: "24px", borderBottom: "1px solid #5FA7AB22" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "#5FA7AB18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
-          🏡
-        </div>
+    <div className="form-panel">
+      <div className="form-header">
+        <div className="form-header-icon">🏡</div>
         <div>
-          <h3 style={{ margin: "0 0 3px 0", fontSize: "1rem", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.01em" }}>
-            Edit House
-          </h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+          <h3 className="form-header-title">Edit House</h3>
+          <p className="form-header-desc">
             Update property value, appreciation rate, and timeline.
           </p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Property Details
-            </p>
+        <div className="form-two-col">
+          <div className="form-col">
+            <p className="form-section-heading">Property Details</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>Property Name</label>
+            <div className="form-field">
+              <label className="form-label">Property Name</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                style={formInputStyle}
+                className="form-input"
                 placeholder="Primary Residence"
               />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>House Value</label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>
-                  $
-                </span>
+            <div className="form-field">
+              <label className="form-label">House Value</label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
                 <input
                   value={houseValue}
                   onChange={(e) => setHouseValue(e.target.value)}
-                  style={{ ...formInputStyle, paddingLeft: "22px" }}
+                  className="form-input form-input--prefix-dollar"
                   placeholder="400,000"
                   type="number"
                 />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={formLabelStyle}>
-                Down Payment{" "}
-                <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>
-                  (optional)
-                </span>
+            <div className="form-field">
+              <label className="form-label">
+                Down Payment <span className="form-label--muted">(optional)</span>
               </label>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", fontSize: "0.72rem", color: "#5FA7AB", pointerEvents: "none" }}>
-                  $
-                </span>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
                 <input
                   value={downPayment}
                   onChange={(e) => setDownPayment(e.target.value)}
-                  style={{ ...formInputStyle, paddingLeft: "22px" }}
+                  className="form-input form-input--prefix-dollar"
                   placeholder="80,000"
                   type="number"
                 />
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={formLabelStyle}>Annual Appreciation</label>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums" }}>
+            <div className="form-field--gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Annual Appreciation</label>
+                <span className="form-slider-value">
                   {Number(appreciation).toFixed(1)}%
                 </span>
               </div>
@@ -3511,81 +3212,68 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
                 step={0.1}
                 value={appreciation}
                 onChange={(e) => setAppreciation(e.target.value)}
-                style={{ width: "100%", accentColor: "#5FA7AB", height: "4px", cursor: "pointer" }}
+                className="form-slider"
               />
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <p style={{ margin: 0, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--teal)", paddingBottom: "8px", borderBottom: "1px solid #5FA7AB22" }}>
-              Timeline
-            </p>
+          <div className="form-col">
+            <p className="form-section-heading">Timeline</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>Start yr</label>
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
                 <input
                   value={startYear}
                   onChange={(e) => setStartYear(e.target.value)}
-                  style={formInputStyle}
+                  className="form-input"
                   placeholder="1"
                   type="number"
                 />
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={formLabelStyle}>
-                  End yr{" "}
-                  <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>
-                    (opt)
-                  </span>
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(opt)</span>
                 </label>
                 <input
                   value={endYear}
                   onChange={(e) => setEndYear(e.target.value)}
-                  style={formInputStyle}
+                  className="form-input"
                   placeholder="30"
                   type="number"
                 />
               </div>
             </div>
 
-            <div style={{ borderRadius: "8px", border: "1px solid #5FA7AB22", background: "linear-gradient(135deg, #5FA7AB0D 0%, #fff 100%)", padding: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px" }}>📈</span>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#5FA7AB" }}>
-                  Value After Year 1
-                </span>
+            <div className="preview-card">
+              <div className="preview-card__header preview-card__header--mb10">
+                <span className="preview-icon">📈</span>
+                <span className="preview-card__label">Value After Year 1</span>
               </div>
 
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--primary)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>
-                ${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              <div className="preview-card__amount preview-card__amount--lg">
+                $
+                {appreciatedValue.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
               </div>
 
-              <div style={{ marginTop: "6px", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
-                +{Number(appreciation).toFixed(1)}% per year from $
+              <div className="preview-card__sub">
+                +{Number(appreciation).toFixed(1)}% appreciation from $
                 {(Number(houseValue) || 0).toLocaleString()}
               </div>
             </div>
+
+            
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "28px", paddingTop: "18px", borderTop: "1px solid #5FA7AB22" }}>
-          <button
-            type="button"
-            onClick={onClose}
-            style={{
-              ...formSubmitButtonStyle,
-              background: "transparent",
-              color: "var(--primary)",
-              border: "1px solid #5FA7AB44",
-              fontWeight: 500,
-            }}
-          >
+        <div className="form-actions">
+          <button type="button" onClick={onClose} className="form-btn-secondary">
             Cancel
           </button>
-
-          <button type="submit" style={formSubmitButtonStyle}>
+          <button type="submit" className="form-btn-primary">
             Save & Continue
           </button>
         </div>
@@ -3713,15 +3401,24 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
 
             {/* Value Preview */}
             <div className="preview-card">
-              <div className="preview-card__header">
+              <div className="preview-card__header preview-card__header--mb10">
                 <span className="preview-icon">📉</span>
                 <span className="preview-card__label">Value After Year 1</span>
               </div>
-              <div className="preview-card__amount">${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+
+              <div className="preview-card__amount preview-card__amount--lg">
+                $
+                {depreciatedValue.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
+              </div>
+
               <div className="preview-card__sub">
-                −{Number(depreciation).toFixed(1)}% per year from ${(Number(carValue) || 0).toLocaleString()}
+                -{Number(depreciation).toFixed(1)}% depreciation from $
+                {(Number(carValue) || 0).toLocaleString()}
               </div>
             </div>
+
           </div>
         </div>
 
@@ -4725,12 +4422,6 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
       // i'm not sure how passing state for one edit form doesn't affect others check on this, but it works for now
       renderedForm = <FormComponent item={variantBeingEdited} state={state} dispatch={dispatch} onClose={closeModal} />;
     }
-    // else if (selectedVariant === "employer_retirement") {
-    //   renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
-    // }
-    // else if (selectedVariant === "salary") {
-    //   renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
-    // }
     else {
       renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
     }

@@ -32,6 +32,8 @@ export type HourlyWageIncome = {
 
   net_income: number;
   income_growth: number;
+
+  linked_401k_id?: string;
 };
 
 export type SideHustleIncome = {
@@ -503,6 +505,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
   const [growth, setGrowth] = useState(item.income_growth.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
+  const previousLinked401kId = item.linked_401k_id;
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
 
   const available401ks = state?.accounts?.employer_retirement || [];
@@ -510,6 +513,66 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // ----------------------------
+    // 1. REMOVE OLD LINK from previous 401k (if this income was previously linked)
+    // ----------------------------
+    if (previousLinked401kId && previousLinked401kId !== linked401kId) {
+      const oldAccount = available401ks.find((acc) => acc.id === previousLinked401kId);
+
+      if (oldAccount) {
+        dispatch({
+          type: "UPDATE_ACCOUNT",
+          payload: {
+            ...oldAccount,
+            linked_income_id: undefined,
+          },
+        });
+      }
+    }
+
+    // ----------------------------
+    // 2. BREAK EXISTING PAIRING on new 401k (if it's already linked to another income)
+    // ----------------------------
+    if (linked401kId) {
+      const newAccount = available401ks.find((acc) => acc.id === linked401kId);
+
+      if (newAccount && newAccount.linked_income_id && newAccount.linked_income_id !== item.id) {
+        // This 401k is linked to a different income - find and clear that income's link
+        const allIncomes = [
+          ...(state?.incomes?.salary || []),
+          ...(state?.incomes?.hourly || []),
+        ];
+        
+        const otherIncome = allIncomes.find((inc) => inc.id === newAccount.linked_income_id);
+
+        if (otherIncome) {
+          dispatch({
+            type: "UPDATE_INCOME",
+            payload: {
+              ...otherIncome,
+              linked_401k_id: undefined,
+            },
+          });
+        }
+      }
+
+      // ----------------------------
+      // 3. UPDATE NEW 401k account
+      // ----------------------------
+      if (newAccount) {
+        dispatch({
+          type: "UPDATE_ACCOUNT",
+          payload: {
+            ...newAccount,
+            linked_income_id: item.id,
+          },
+        });
+      }
+    }
+
+    // ----------------------------
+    // 4. UPDATE THIS INCOME
+    // ----------------------------
     dispatch({
       type: "UPDATE_INCOME",
       payload: {
@@ -664,14 +727,75 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
   const [hourlyRate, setHourlyRate] = useState(item.hourly_rate?.toString() || "");
   const [hoursPerWeek, setHoursPerWeek] = useState(item.hours_per_week?.toString() || "");
   const [growth, setGrowth] = useState(item.income_growth.toString());
+  const previousLinked401kId = item.linked_401k_id;
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
 
   const available401ks = state?.accounts?.employer_retirement || [];
   const annualIncome = (Number(hourlyRate) || 0) * (Number(hoursPerWeek) || 0) * 52;
 
-  const onSubmit = (e: React.FormEvent) => {
+    const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // ----------------------------
+    // 1. REMOVE OLD LINK from previous 401k (if this income was previously linked)
+    // ----------------------------
+    if (previousLinked401kId && previousLinked401kId !== linked401kId) {
+      const oldAccount = available401ks.find((acc) => acc.id === previousLinked401kId);
+
+      if (oldAccount) {
+        dispatch({
+          type: "UPDATE_ACCOUNT",
+          payload: {
+            ...oldAccount,
+            linked_income_id: undefined,
+          },
+        });
+      }
+    }
+
+    // ----------------------------
+    // 2. BREAK EXISTING PAIRING on new 401k (if it's already linked to another income)
+    // ----------------------------
+    if (linked401kId) {
+      const newAccount = available401ks.find((acc) => acc.id === linked401kId);
+
+      if (newAccount && newAccount.linked_income_id && newAccount.linked_income_id !== item.id) {
+        // This 401k is linked to a different income - find and clear that income's link
+        const allIncomes = [
+          ...(state?.incomes?.salary || []),
+          ...(state?.incomes?.hourly || []),
+        ];
+        
+        const otherIncome = allIncomes.find((inc) => inc.id === newAccount.linked_income_id);
+
+        if (otherIncome) {
+          dispatch({
+            type: "UPDATE_INCOME",
+            payload: {
+              ...otherIncome,
+              linked_401k_id: undefined,
+            },
+          });
+        }
+      }
+
+      // ----------------------------
+      // 3. UPDATE NEW 401k account
+      // ----------------------------
+      if (newAccount) {
+        dispatch({
+          type: "UPDATE_ACCOUNT",
+          payload: {
+            ...newAccount,
+            linked_income_id: item.id,
+          },
+        });
+      }
+    }
+
+    // ----------------------------
+    // 4. UPDATE THIS INCOME
+    // ----------------------------
     dispatch({
       type: "UPDATE_INCOME",
       payload: {

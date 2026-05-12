@@ -509,7 +509,7 @@ export function Entity({ state, entityName, category, dispatch }) {
       case "income":
         return [...state.incomes.salary, ...state.incomes.hourly, ...state.incomes.side];
       case "expense":
-        return [...state.expenses.living, ...state.expenses.rent, ...state.expenses.debt];
+        return [...state.expenses.living, ...state.expenses.rent, ...state.expenses.debt, ...state.expenses.house_loan , ...state.expenses.car_loan];
       case "asset":
         return [...state.assets.house, ...state.assets.car];
       default:

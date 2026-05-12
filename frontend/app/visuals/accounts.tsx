@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
 // ─────────────────────────────────────────────
 // CORE
 // ─────────────────────────────────────────────

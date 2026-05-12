@@ -1,9 +1,11 @@
+
+
 /* -------------------- Number Formatting Utilities -------------------- */
 
 /**
  * Format a number string with commas every 3 digits (display only)
  */
-function formatNumberWithCommas(value: string): string {
+export function formatNumberWithCommas(value: string): string {
   if (!value) return "";
 
   const isNegative = value.startsWith("-");
@@ -19,7 +21,7 @@ function formatNumberWithCommas(value: string): string {
 /**
  * Handle number input - keeps raw value in state, displays formatted
  */
-function handleNumberInput(e, setState) {
+export function handleNumberInput(e, setState) {
   let value = e.target.value;
 
   value = value.replace(/,/g, "");
@@ -32,7 +34,7 @@ function handleNumberInput(e, setState) {
   setState(value);
 }
 
-function handleTierThresholdInput(e, index, tiers, setTiers) {
+export function handleTierThresholdInput(e, index, tiers, setTiers) {
   let value = e.target.value;
   value = value.replace(/,/g, "");
   value = value.replace(/[^\d.\-]/g, "");

@@ -3,15 +3,28 @@ import "./dashboard.css";
 import { SIM_MAX } from "@/app/testing/constants";
 import { useState, useReducer, useEffect, useRef } from "react";
 
-import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/accounts";
+import { 
+  CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, 
+  CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, 
+  EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/accounts";
 
-import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/incomes";
+import { 
+  SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, 
+  SalaryForm, HourlyWageForm, SideHustleForm, 
+  EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/incomes";
 
-import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/expenses";
+import { 
+  LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource,
+  LivingExpensesForm, RentExpenseForm, DebtExpenseForm, 
+  EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/expenses";
 
-import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
+import { 
+  HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
 
-import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult } from "@/app/visuals/misc";
+import { 
+  FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult } from "@/app/visuals/misc";
+  
+import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 type SimRequest = {
   start_year: number;

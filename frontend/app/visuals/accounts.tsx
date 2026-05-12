@@ -398,7 +398,7 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
       monthly_contribution: Number(monthlyContribution),
       expected_return: Number(expectedReturn) / 100,
       employer_match: Number(employerMatch) / 100,
-      linked_income_id: linkEnabled && linkedIncomeId ? linkedIncomeId : null,
+      linked_income_id: (linkEnabled && linkedIncomeId) ? linkedIncomeId : null,
     };
 
     dispatch({ type: "ADD_ACCOUNT", payload: newAccount });
@@ -845,6 +845,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
   const [linkEnabled, setLinkEnabled] = useState(!!item.linked_income_id);
+  const previousLinkedIncomeId = item.linked_income_id;
   const [linkedIncomeId, setLinkedIncomeId] = useState(item.linked_income_id || "");
 
   const salaries = state.incomes.salary;
@@ -862,7 +863,6 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   const handleLinkToggle = (enabled) => {
     setLinkEnabled(enabled);
     if (enabled && hasIncomes && !linkedIncomeId) {
-      // Auto-select first job and sync years
       const firstJob = allJobs[0];
       setLinkedIncomeId(firstJob.id);
       setStartYear(firstJob.start_year.toString());
@@ -879,27 +879,87 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
     }
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const newLinkedIncomeId = linkEnabled ? linkedIncomeId : "";
+
     const updatedAccount = {
-      source_type: "liquid",
-      variant: "employer_retirement",
-      id: item.id,
+      ...item,
       name,
-      start_year: Number(startYear),
-      end_year: Number(endYear),
       starting_balance: Number(balance),
       monthly_contribution: Number(monthlyContribution),
       expected_return: Number(expectedReturn) / 100,
       employer_match: Number(employerMatch) / 100,
-      linked_income_id: linkEnabled && linkedIncomeId ? linkedIncomeId : null,
+      start_year: Number(startYear),
+      end_year: Number(endYear),
+      linked_income_id: newLinkedIncomeId || undefined,
     };
 
-    dispatch({ type: "UPDATE_ACCOUNT", payload: updatedAccount });
+    // ----------------------------
+    // 1. REMOVE OLD LINK from previous income (if this account was previously linked)
+    // ----------------------------
+    if (previousLinkedIncomeId && previousLinkedIncomeId !== newLinkedIncomeId) {
+      const oldJob = allJobs.find((j) => j.id === previousLinkedIncomeId);
+
+      if (oldJob) {
+        dispatch({
+          type: "UPDATE_INCOME",
+          payload: {
+            ...oldJob,
+            linked_401k_id: undefined,
+          },
+        });
+      }
+    }
+
+    // ----------------------------
+    // 2. BREAK EXISTING PAIRING on new income (if it's already linked to another 401k)
+    // ----------------------------
+    if (newLinkedIncomeId) {
+      const newJob = allJobs.find((j) => j.id === newLinkedIncomeId);
+
+      if (newJob && newJob.linked_401k_id && newJob.linked_401k_id !== item.id) {
+        // This income is linked to a different 401k - find and clear that account's link
+        const allAccounts = state?.accounts?.employer_retirement || [];
+        const otherAccount = allAccounts.find((acc) => acc.id === newJob.linked_401k_id);
+
+        if (otherAccount) {
+          dispatch({
+            type: "UPDATE_ACCOUNT",
+            payload: {
+              ...otherAccount,
+              linked_income_id: undefined,
+            },
+          });
+        }
+      }
+
+      // ----------------------------
+      // 3. UPDATE NEW income
+      // ----------------------------
+      if (newJob) {
+        dispatch({
+          type: "UPDATE_INCOME",
+          payload: {
+            ...newJob,
+            linked_401k_id: item.id,
+          },
+        });
+      }
+    }
+
+    // ----------------------------
+    // 4. UPDATE THIS ACCOUNT
+    // ----------------------------
+    dispatch({
+      type: "UPDATE_ACCOUNT",
+      payload: updatedAccount,
+    });
 
     onClose();
   };
+
 
   const linkedJob = linkedIncomeId ? allJobs.find((job) => job.id === linkedIncomeId) : null;
 

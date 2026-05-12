@@ -1,0 +1,337 @@
+import { useState } from "react";
+import { BarChart, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer, Bar } from "recharts";
+
+import React from "react";
+
+/* -------------------- Feedback Model -------------------- */
+function getAnonymousId() {
+  const storageKey = "vantage_anonymous_id";
+
+  let anonymousId = localStorage.getItem(storageKey);
+
+  if (!anonymousId) {
+    anonymousId = crypto.randomUUID();
+    localStorage.setItem(storageKey, anonymousId);
+  }
+
+  return anonymousId;
+}
+
+export function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [rating, setRating] = useState("");
+  const [category, setCategory] = useState("General");
+  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState("");
+
+  if (!isOpen) return null;
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const feedbackPayload = {
+      userProvided: {
+        satisfaction: Number(rating),
+        category,
+        message,
+        email: email || null,
+      },
+      metaData: {
+        anonymousId: getAnonymousId(),
+        pageUrl: window.location.href,
+        path: window.location.pathname,
+        timestamp: new Date().toISOString(),
+        browserAndOS: navigator.userAgent,
+        referralSource: document.referrer || null,
+        utmParams: Object.fromEntries(new URLSearchParams(window.location.search).entries()),
+      },
+    };
+
+    console.log("User Feedback Submitted:", feedbackPayload);
+
+    setRating("");
+    setCategory("General");
+    setMessage("");
+    setEmail("");
+
+    onClose();
+  }
+
+  return (
+    <div className="feedback-overlay" onClick={onClose}>
+      <div className="feedback-modal" onClick={(event) => event.stopPropagation()}>
+        <div className="feedback-header">
+          <div>
+            <h2 className="feedback-title">Leave Feedback</h2>
+            <p className="feedback-desc">We’re a small team building quickly, and we’d genuinely appreciate any feedback that could help us improve.</p>
+          </div>
+
+          <button type="button" className="feedback-close" onClick={onClose}>
+            ×
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="feedback-form">
+          <label className="feedback-label">
+            Satisfaction Rating
+            <select value={rating} onChange={(event) => setRating(event.target.value)} required className="feedback-input">
+              <option value="">Select a rating</option>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number) => (
+                <option key={number} value={number}>
+                  {number}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="feedback-label">
+            Feedback Category
+            <select value={category} onChange={(event) => setCategory(event.target.value)} className="feedback-input">
+              <option>Bug</option>
+              <option>Feature Request</option>
+              <option>UX Confusion</option>
+              <option>Questions</option>
+              <option>General</option>
+            </select>
+          </label>
+
+          <label className="feedback-label">
+            Feedback / Questions
+            <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Write your feedback or questions..." rows={5} required className="feedback-input" />
+          </label>
+
+          <label className="feedback-label">
+            Email Optional
+            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Only if you want a follow-up" className="feedback-input" />
+          </label>
+
+          <div className="feedback-actions">
+            <button type="button" className="feedback-btn-secondary" onClick={onClose}>
+              Cancel
+            </button>
+
+            <button type="submit" className="feedback-btn-primary">
+              Submit Feedback
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+ }
+
+export type SourceSnapshot = {
+  id: string;
+  name: string;
+  source_type: string;
+  asset_value: number;
+  annual_cashflow: number;
+  // start/end values for display — populated for income + expense sources
+  start_value?: number; // what the source was worth at year start
+  end_value?: number; // after growth applied
+};
+
+export type SimYearResult = {
+  year: number;
+  net_worth: number; // total_cash + all asset values
+  total_cash: number; // sum across all liquid accounts
+  total_income: number; // sum of all income source cashflows
+  total_expenses: number; // sum of all expense source cashflows
+  // WIP: return interest earned on cash/liquid accounts separately in the future
+  // WIP: return appreciation/asset growth separately in the future
+  sources: SourceSnapshot[];
+};
+
+function transformData(simResult: SimYearResult[]) {
+  return simResult.map((year) => {
+    const totalAssets = year.sources.reduce((sum, src) => {
+      if (src.source_type === "rental" || src.source_type === "stock") {
+        return sum + (src.asset_value || 0);
+      }
+      return sum;
+    }, 0);
+
+    return {
+      year: year.year,
+      cash: year.total_cash,
+      assets: totalAssets,
+      netWorth: year.net_worth,
+    };
+  });
+}
+
+export function NetWorthStackedChart({ simResult }) {
+  if (!simResult.length)
+    return (
+      <>
+        <div className="chart-wrap">
+          <h3>Net Worth Over Time</h3>
+          <h5>Not Ready</h5>
+        </div>
+      </>
+    );
+
+  const data = transformData(simResult);
+
+  return (
+    <div className="chart-wrap">
+      <h3>Net Worth Over Time</h3>
+
+      <ResponsiveContainer>
+        <BarChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="year" />
+          <YAxis />
+          <Tooltip formatter={(value) => `$${Number(value).toLocaleString()}`} />
+          <Legend />
+
+          {/* bottom layer */}
+          <Bar dataKey="cash" stackId="1" fill="#82ca9d" />
+
+          {/* top layer */}
+          <Bar dataKey="assets" stackId="1" fill="#8884d8" />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+export function SimulationControls({ state, setSimResult }) {
+  const [hasResults, setHasResults] = useState(false);
+
+  async function runSimulation() {
+    try {
+      const API = "http://localhost:8000/api/finance/simulate";
+
+      const response = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(state),
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+      setSimResult(data);
+      setHasResults(true);
+    } catch (err) {
+      console.error("Simulation error:", err);
+    }
+  }
+
+  const clearSimulation = () => {
+    setSimResult([]);
+    setHasResults(false);
+  };
+
+  return (
+    <div>
+      <button onClick={runSimulation}>Run Simulation</button>
+      <button onClick={clearSimulation} disabled={!hasResults}>
+        Clear Simulation Result
+      </button>
+    </div>
+  );
+}
+
+// function generateMockResults(years = 20, sourcesPerYear = 2): SimYearResult[] {
+//   return Array.from({ length: years }, (_, i) => {
+//     const year = 1 + i;
+
+//     return {
+//       year,
+//       net_worth: 500000 + i * 25000,
+//       total_cash: 50000 + i * 5000,
+//       total_income: 120000 + i * 3000,
+//       total_expenses: 80000 + i * 2000,
+
+//       sources: Array.from({ length: sourcesPerYear }, (_, j) => ({
+//         id: `${year}-${j}`,
+//         name: `Asset ${j + 1}`,
+//         source_type: j % 2 === 0 ? "investment" : "property",
+//         asset_value: 100000 + j * 10000,
+//         annual_cashflow: 5000 + j * 500,
+//         start_value: 80000 + j * 8000,
+//         end_value: 120000 + j * 12000,
+//       })),
+//     };
+//   });
+// }
+
+export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
+  const [openYears, setOpenYears] = useState<number[]>([]);
+
+  const toggleYear = (year: number) => {
+    setOpenYears((previousState) => {
+      console.log("Previous state from React:", previousState);
+
+      const isOpen = previousState.includes(year);
+
+      if (isOpen) {
+        const nextState = previousState.filter((y) => y !== year);
+        console.log("Closing year → new state:", nextState);
+        return nextState;
+      }
+
+      const nextState = [...previousState, year];
+      console.log("Opening year → new state:", nextState);
+      return nextState;
+    });
+  };
+
+//   const mockResults = generateMockResults();
+
+  return (
+    <div className="section">
+      <div className="section-header">
+        <h2>Simulation Results</h2>
+
+        {/* to generate fake data use mockResults instead of simResult */}
+        <button onClick={() => setOpenYears(simResult.map((y) => y.year))}>Expand All</button>
+        <button onClick={() => setOpenYears([])}>Collapse All</button>
+      </div>
+
+      <table className="mega-table">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Asset Value</th>
+            <th>Cashflow</th>
+            <th>Start</th>
+            <th>End</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {/* to generate fake data use mockResults instead of simResult */}
+          {simResult.map((yearData) => (
+            <React.Fragment key={yearData.year}>
+              {/* YEAR SUMMARY ROW */}
+              <tr className="year-row" onClick={() => toggleYear(yearData.year)}>
+                <td>{yearData.year}</td>
+                <td colSpan={6}>
+                  Net Worth: ${yearData.net_worth} | Cash: ${yearData.total_cash} | Income: ${yearData.total_income} | Expenses: ${yearData.total_expenses}
+                </td>
+              </tr>
+
+              {/* SOURCE ROWS */}
+              {openYears.includes(yearData.year) &&
+                yearData.sources.map((src) => (
+                  <tr key={src.id} className="source-row">
+                    <td></td>
+                    <td>{src.name}</td>
+                    <td>{src.source_type}</td>
+                    <td>${src.asset_value}</td>
+                    <td>${src.annual_cashflow}</td>
+                    <td>{src.start_value ?? "-"}</td>
+                    <td>{src.end_value ?? "-"}</td>
+                  </tr>
+                ))}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

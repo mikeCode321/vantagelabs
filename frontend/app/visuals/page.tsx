@@ -1169,7 +1169,6 @@ function EmployerRetirementAccountForm({ dispatch, state }) {
 }
 
 // ASSET FORMS
-
 function CarAssetForm({ dispatch }) {
   const [name, setName] = useState("");
   const [carValue, setCarValue] = useState("");
@@ -1178,118 +1177,191 @@ function CarAssetForm({ dispatch }) {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
+  const [showLoanForm, setShowLoanForm] = useState(false);
+  const [savedCarAsset, setSavedCarAsset] = useState(null);
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const carAsset = {
+      source_type: "asset" as const,
+      variant: "car" as const,
+      id: crypto.randomUUID(),
+      name: name || "Car",
+      start_year: Number(startYear),
+      end_year: endYear === "" ? null : Number(endYear),
+      asset_value: Number(carValue),
+      annual_depreciation: Number(depreciation) / 100,
+      down_payment: downPayment === "" ? null : Number(downPayment),
+    };
+
     dispatch({
       type: "ADD_ASSET",
-      payload: {
-        source_type: "asset",
-        variant: "car",
-        id: crypto.randomUUID(),
-        name: name || "Car",
-        start_year: Number(startYear),
-        end_year: endYear === "" ? null : Number(endYear),
-        asset_value: Number(carValue),
-        annual_depreciation: Number(depreciation) / 100,
-        down_payment: downPayment === "" ? null : Number(downPayment),
-      },
+      payload: carAsset,
     });
 
-    setName("");
-    setCarValue("");
-    setDepreciation("12");
-    setDownPayment("");
-    setStartYear("");
-    setEndYear("");
+    setSavedCarAsset(carAsset);
+    setShowLoanForm(true);
   };
 
-  const annualCost = Number(downPayment) || 0;
-  const depreciatedValue = Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
+  const depreciatedValue =
+    Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
+
+  if (showLoanForm && savedCarAsset) {
+    return (
+      <CarLoanExpenseForm
+        dispatch={dispatch}
+        carAsset={savedCarAsset}
+        onBack={() => setShowLoanForm(false)}
+        onClose={() => {
+          setName("");
+          setCarValue("");
+          setDepreciation("12");
+          setDownPayment("");
+          setStartYear("");
+          setEndYear("");
+          setSavedCarAsset(null);
+          setShowLoanForm(false);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="form-panel">
-      {/* Header */}
       <div className="form-header">
         <div className="form-header-icon">🚗</div>
         <div>
           <h3 className="form-header-title">Add Car</h3>
-          <p className="form-header-desc">Track a vehicle asset with depreciation and optional down payment.</p>
+          <p className="form-header-desc">
+            Track a vehicle asset with depreciation and optional down payment.
+          </p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
+          {/* LEFT */}
           <div className="form-col">
             <p className="form-section-heading">Vehicle Details</p>
 
             <div className="form-field">
               <label className="form-label">Car Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Toyota Camry, Tesla Model 3" />
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="form-input"
+                placeholder="Mazda 3, Tesla Model 3"
+              />
             </div>
 
             <div className="form-field">
               <label className="form-label">Car Value</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={carValue} onChange={(e) => setCarValue(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="30,000" type="number" required />
+                <input
+                  value={carValue}
+                  onChange={(e) => setCarValue(e.target.value)}
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="30,000"
+                  type="number"
+                  required
+                />
               </div>
             </div>
 
             <div className="form-field">
               <label className="form-label">
-                Down Payment <span className="form-label--muted">(optional)</span>
+                Down Payment{" "}
+                <span className="form-label--muted">(optional)</span>
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="5,000" type="number" />
+                <input
+                  value={downPayment}
+                  onChange={(e) => setDownPayment(e.target.value)}
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="5,000"
+                  type="number"
+                />
               </div>
             </div>
 
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Annual Depreciation</label>
-                <span className="form-slider-value">{Number(depreciation).toFixed(1)}%</span>
+                <span className="form-slider-value">
+                  {Number(depreciation).toFixed(1)}%
+                </span>
               </div>
-              <input type="range" min={0} max={30} step={0.5} value={depreciation} onChange={(e) => setDepreciation(e.target.value)} className="form-slider" />
+              <input
+                type="range"
+                min={0}
+                max={40}
+                step={0.1}
+                value={depreciation}
+                onChange={(e) => setDepreciation(e.target.value)}
+                className="form-slider"
+              />
             </div>
           </div>
 
-          {/* ── RIGHT ── */}
+          {/* RIGHT */}
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
             <div className="form-year-grid">
               <div className="form-field">
                 <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <input
+                  value={startYear}
+                  onChange={(e) => setStartYear(e.target.value)}
+                  className="form-input"
+                  placeholder="1"
+                  type="number"
+                  required
+                />
               </div>
+
               <div className="form-field">
                 <label className="form-label">
                   End yr <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="10" type="number" />
+                <input
+                  value={endYear}
+                  onChange={(e) => setEndYear(e.target.value)}
+                  className="form-input"
+                  placeholder="5"
+                  type="number"
+                />
               </div>
             </div>
 
-            {/* Value Preview */}
             <div className="preview-card">
-              <div className="preview-card__header">
+              <div className="preview-card__header preview-card__header--mb10">
                 <span className="preview-icon">📉</span>
                 <span className="preview-card__label">Value After Year 1</span>
               </div>
-              <div className="preview-card__amount">${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+
+              <div className="preview-card__amount preview-card__amount--lg">
+                $
+                {depreciatedValue.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
+              </div>
+
               <div className="preview-card__sub">
-                −{Number(depreciation).toFixed(1)}% per year from ${(Number(carValue) || 0).toLocaleString()}
+                -{Number(depreciation).toFixed(1)}% depreciation from $
+                {(Number(carValue) || 0).toLocaleString()}
               </div>
             </div>
+            
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Car
+        <div className="form-actions">
+          <button type="submit" className="form-btn-primary">
+            Save & Continue
           </button>
         </div>
       </form>
@@ -1297,7 +1369,7 @@ function CarAssetForm({ dispatch }) {
   );
 }
 
-function HouseAssetForm({ dispatch }) {
+function HouseAssetForm({ dispatch, onClose }) {
   const [name, setName] = useState("");
   const [houseValue, setHouseValue] = useState("");
   const [appreciation, setAppreciation] = useState("3");
@@ -1305,61 +1377,86 @@ function HouseAssetForm({ dispatch }) {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
+  const [savedHouse, setSavedHouse] = useState(null);
+  const [showLoanForm, setShowLoanForm] = useState(false);
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const houseAsset = {
+      source_type: "asset",
+      variant: "house",
+      id: crypto.randomUUID(),
+      name: name || "House",
+      start_year: Number(startYear),
+      end_year: endYear === "" ? null : Number(endYear),
+      asset_value: Number(houseValue),
+      annual_appreciation: Number(appreciation) / 100,
+      down_payment: downPayment === "" ? null : Number(downPayment),
+    };
+
     dispatch({
       type: "ADD_ASSET",
-      payload: {
-        source_type: "asset",
-        variant: "house",
-        id: crypto.randomUUID(),
-        name: name || "House",
-        start_year: Number(startYear),
-        end_year: endYear === "" ? null : Number(endYear),
-        asset_value: Number(houseValue),
-        annual_appreciation: Number(appreciation) / 100,
-        down_payment: downPayment === "" ? null : Number(downPayment),
-      },
+      payload: houseAsset,
     });
 
-    setName("");
-    setHouseValue("");
-    setAppreciation("");
-    setDownPayment("");
-    setStartYear("");
-    setEndYear("");
+    setSavedHouse(houseAsset);
+    setShowLoanForm(true);
   };
 
-  const appreciatedValue = Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
+  const appreciatedValue =
+    Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
+
+  if (showLoanForm && savedHouse) {
+    return (
+      <HouseLoanExpenseForm
+        dispatch={dispatch}
+        houseAsset={savedHouse}
+        onBack={() => setShowLoanForm(false)}
+        onClose={onClose}
+      />
+    );
+  }
 
   return (
     <div className="form-panel">
-      {/* Header */}
       <div className="form-header">
         <div className="form-header-icon">🏡</div>
         <div>
           <h3 className="form-header-title">Add House</h3>
-          <p className="form-header-desc">Track a property asset with appreciation and optional down payment.</p>
+          <p className="form-header-desc">
+            Track a property asset with appreciation and optional down payment.
+          </p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Property Details</p>
 
             <div className="form-field">
               <label className="form-label">Property Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Primary Residence, Rental Property" />
+              <input
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="form-input"
+                placeholder="Primary Residence, Rental Property"
+              />
             </div>
 
             <div className="form-field">
               <label className="form-label">House Value</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={houseValue} onChange={(e) => setHouseValue(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="400,000" type="number" required />
+                <input
+                  value={houseValue}
+                  onChange={e => setHouseValue(e.target.value)}
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="400,000"
+                  type="number"
+                  required
+                />
               </div>
             </div>
 
@@ -1369,53 +1466,91 @@ function HouseAssetForm({ dispatch }) {
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="80,000" type="number" />
+                <input
+                  value={downPayment}
+                  onChange={e => setDownPayment(e.target.value)}
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="80,000"
+                  type="number"
+                />
               </div>
             </div>
 
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Annual Appreciation</label>
-                <span className="form-slider-value">{Number(appreciation).toFixed(1)}%</span>
+                <span className="form-slider-value">
+                  {Number(appreciation).toFixed(1)}%
+                </span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={appreciation} onChange={(e) => setAppreciation(e.target.value)} className="form-slider" />
+              <input
+                type="range"
+                min={0}
+                max={15}
+                step={0.1}
+                value={appreciation}
+                onChange={e => setAppreciation(e.target.value)}
+                className="form-slider"
+              />
             </div>
           </div>
 
-          {/* ── RIGHT ── */}
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
             <div className="form-year-grid">
               <div className="form-field">
                 <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <input
+                  value={startYear}
+                  onChange={e => setStartYear(e.target.value)}
+                  className="form-input"
+                  placeholder="1"
+                  type="number"
+                  required
+                />
               </div>
+
               <div className="form-field">
                 <label className="form-label">
                   End yr <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <input
+                  value={endYear}
+                  onChange={e => setEndYear(e.target.value)}
+                  className="form-input"
+                  placeholder="30"
+                  type="number"
+                />
               </div>
             </div>
 
-            {/* Value Preview */}
             <div className="preview-card">
-              <div className="preview-card__header">
+              <div className="preview-card__header preview-card__header--mb10">
                 <span className="preview-icon">📈</span>
                 <span className="preview-card__label">Value After Year 1</span>
               </div>
-              <div className="preview-card__amount">${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+
+              <div className="preview-card__amount preview-card__amount--lg">
+                $
+                {appreciatedValue.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
+              </div>
+
               <div className="preview-card__sub">
-                +{Number(appreciation).toFixed(1)}% per year from ${(Number(houseValue) || 0).toLocaleString()}
+                +{Number(appreciation).toFixed(1)}% appreciation from $
+                {(Number(houseValue) || 0).toLocaleString()}
               </div>
             </div>
+
+
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add House
+        <div className="form-actions">
+          <button type="submit" className="form-btn-primary">
+            Save & Continue
           </button>
         </div>
       </form>
@@ -1424,6 +1559,292 @@ function HouseAssetForm({ dispatch }) {
 }
 
 // EXPENSE FORMS
+
+function calculateMonthlyLoanPayment(
+  principal: number,
+  annualInterestRate: number,
+  loanTermYears: number
+) {
+  const monthlyRate = annualInterestRate / 12;
+  const numberOfPayments = loanTermYears * 12;
+
+  if (monthlyRate === 0) {
+    return principal / numberOfPayments;
+  }
+
+  return (
+    principal *
+    (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
+    (Math.pow(1 + monthlyRate, numberOfPayments) - 1)
+  );
+}
+
+function HouseLoanExpenseForm({ dispatch, houseAsset, onBack, onClose }) {
+  const [interestRate, setInterestRate] = useState("6.75");
+  const [loanTermYears, setLoanTermYears] = useState("30");
+  const [extraMonthlyPayment, setExtraMonthlyPayment] = useState("");
+
+  const originalPrincipal =
+    Number(houseAsset.asset_value || 0) - Number(houseAsset.down_payment || 0);
+
+  const monthlyExpense =
+    originalPrincipal > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0
+      ? calculateMonthlyLoanPayment(
+          originalPrincipal,
+          Number(interestRate) / 100,
+          Number(loanTermYears)
+        )
+      : 0;
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "ADD_EXPENSE",
+      payload: {
+        source_type: "expense",
+        variant: "house_loan",
+        id: crypto.randomUUID(),
+        name: `${houseAsset.name} Loan`,
+        start_year: houseAsset.start_year,
+        end_year: houseAsset.start_year + Number(loanTermYears),
+        monthly_expense: monthlyExpense,
+        original_principal: originalPrincipal,
+        interest_rate: Number(interestRate) / 100,
+        loan_term_years: Number(loanTermYears),
+        extra_monthly_payment:
+          extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
+      },
+    });
+
+    if (onClose) onClose();
+  };
+
+  return (
+    <div className="form-panel">
+      <div className="form-header">
+        <div className="form-header-icon">🏦</div>
+        <div>
+          <h3 className="form-header-title">Add Home Loan</h3>
+          <p className="form-header-desc">
+            Add loan details for <strong>{houseAsset.name}</strong>.
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={onSubmit}>
+        <div className="form-two-col">
+          <div className="form-col">
+            <p className="form-section-heading">Loan Details</p>
+
+            <div className="form-info-card">
+              <div className="form-info-label">Original Principal</div>
+              <div className="form-info-value">
+                ${originalPrincipal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </div>
+              <div className="form-info-desc">Home value minus down payment</div>
+            </div>
+
+            <div className="form-field">
+              <label className="form-label">Interest Rate %</label>
+              <input
+                value={interestRate}
+                onChange={e => setInterestRate(e.target.value)}
+                className="form-input"
+                placeholder="6.75"
+                type="number"
+                step="0.01"
+                required
+              />
+            </div>
+
+            <div className="form-field">
+              <label className="form-label">Loan Term Years</label>
+              <input
+                value={loanTermYears}
+                onChange={e => setLoanTermYears(e.target.value)}
+                className="form-input"
+                placeholder="30"
+                type="number"
+                required
+              />
+            </div>
+
+            <div className="form-field">
+              <label className="form-label">
+                Extra Monthly Payment <span className="form-label--muted">(optional)</span>
+              </label>
+              <div className="form-input-wrap">
+                <span className="form-input-prefix">$</span>
+                <input
+                  value={extraMonthlyPayment}
+                  onChange={e => setExtraMonthlyPayment(e.target.value)}
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="0"
+                  type="number"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="form-col">
+            <p className="form-section-heading"></p>
+
+            <div className="form-preview-card">
+              <div className="form-preview-label">Estimated Payment</div>
+              <div className="form-preview-value">
+                ${monthlyExpense.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo
+              </div>
+              <div className="form-preview-desc">Principal + interest only</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="form-actions">
+
+          {onBack && (
+            <button type="button" onClick={onBack} className="form-btn-secondary">
+              Back
+            </button>
+          )}
+
+          {onClose && (
+            <button type="button" onClick={onClose} className="form-btn-secondary">
+              Skip Loan
+            </button>
+          )}
+
+          <button type="submit" className="form-btn-primary">
+            Add Home Loan
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function CarLoanExpenseForm({ dispatch, carAsset, onBack, onClose }) {
+  const [interestRate, setInterestRate] = useState("7.5");
+  const [loanTermYears, setLoanTermYears] = useState("5");
+
+  const originalPrincipal =
+    Number(carAsset.asset_value || 0) - Number(carAsset.down_payment || 0);
+
+  const monthlyExpense =
+    originalPrincipal > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0
+      ? calculateMonthlyLoanPayment(
+          originalPrincipal,
+          Number(interestRate) / 100,
+          Number(loanTermYears)
+        )
+      : 0;
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    dispatch({
+      type: "ADD_EXPENSE",
+      payload: {
+        source_type: "expense",
+        variant: "car_loan",
+        id: crypto.randomUUID(),
+        name: `${carAsset.name} Loan`,
+        start_year: carAsset.start_year,
+        end_year: carAsset.start_year + Number(loanTermYears),
+        monthly_expense: monthlyExpense,
+        original_principal: originalPrincipal,
+        interest_rate: Number(interestRate) / 100,
+        loan_term_years: Number(loanTermYears),
+      },
+    });
+
+    if (onClose) onClose();
+  };
+
+  return (
+    <div className="form-panel">
+      <div className="form-header">
+        <div className="form-header-icon">🚗</div>
+        <div>
+          <h3 className="form-header-title">Add Car Loan</h3>
+          <p className="form-header-desc">
+            Add loan details for <strong>{carAsset.name}</strong>.
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={onSubmit}>
+        <div className="form-two-col">
+          <div className="form-col">
+            <p className="form-section-heading">Loan Details</p>
+
+            <div className="form-info-card">
+              <div className="form-info-label">Original Principal</div>
+              <div className="form-info-value">
+                ${originalPrincipal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </div>
+              <div className="form-info-desc">Car value minus down payment</div>
+            </div>
+
+            <div className="form-field">
+              <label className="form-label">Interest Rate %</label>
+              <input
+                value={interestRate}
+                onChange={(e) => setInterestRate(e.target.value)}
+                className="form-input"
+                placeholder="7.5"
+                type="number"
+                step="0.01"
+                required
+              />
+            </div>
+
+            <div className="form-field">
+              <label className="form-label">Loan Term Years</label>
+              <input
+                value={loanTermYears}
+                onChange={(e) => setLoanTermYears(e.target.value)}
+                className="form-input"
+                placeholder="5"
+                type="number"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-col">
+            <p className="form-section-heading">Payment Preview</p>
+
+            <div className="form-preview-card">
+              <div className="form-preview-label">Estimated Payment</div>
+              <div className="form-preview-value">
+                ${monthlyExpense.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo
+              </div>
+              <div className="form-preview-desc">Principal + interest only</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="form-actions">
+          {onBack && (
+            <button type="button" onClick={onBack} className="form-btn-secondary">
+              Back
+            </button>
+          )}
+          {onClose && (
+            <button type="button" onClick={onClose} className="form-btn-secondary">
+              Skip Loan
+            </button>
+          )}
+          <button type="submit" className="form-btn-primary">
+            Add Car Loan
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 function LivingExpensesForm({ dispatch }) {
   const [name, setName] = useState("Living Expenses");
   const [amount, setAmount] = useState("");
@@ -2670,61 +3091,94 @@ function EditSideHustleForm({ item, dispatch, onClose }) {
 export function EditHouseAssetForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [houseValue, setHouseValue] = useState(item.asset_value.toString());
-  const [appreciation, setAppreciation] = useState((item.annual_appreciation * 100).toString());
-  const [downPayment, setDownPayment] = useState(item.down_payment == null ? "" : item.down_payment.toString());
+  const [appreciation, setAppreciation] = useState(
+    (item.annual_appreciation * 100).toString()
+  );
+  const [downPayment, setDownPayment] = useState(
+    item.down_payment == null ? "" : item.down_payment.toString()
+  );
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
+
+  const [showLoanForm, setShowLoanForm] = useState(false);
+  const [savedHouseAsset, setSavedHouseAsset] = useState(null);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const updatedHouseAsset = {
+      ...item,
+      source_type: "asset",
+      variant: "house",
+      name: name || "House",
+      start_year: Number(startYear),
+      end_year: endYear === "" ? null : Number(endYear),
+      asset_value: Number(houseValue),
+      annual_appreciation: Number(appreciation) / 100,
+      down_payment: downPayment === "" ? null : Number(downPayment),
+    };
+
     dispatch({
       type: "UPDATE_ASSET",
-      payload: {
-        ...item,
-        source_type: "asset",
-        variant: "house",
-        name: name || "House",
-        start_year: Number(startYear),
-        end_year: endYear === "" ? null : Number(endYear),
-        asset_value: Number(houseValue),
-        annual_appreciation: Number(appreciation) / 100,
-        down_payment: downPayment === "" ? null : Number(downPayment),
-      },
+      payload: updatedHouseAsset,
     });
 
-    onClose();
+    setSavedHouseAsset(updatedHouseAsset);
+    setShowLoanForm(true);
   };
 
-  const appreciatedValue = Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
+  const appreciatedValue =
+    Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
+
+  if (showLoanForm && savedHouseAsset) {
+    return (
+      <HouseLoanExpenseForm
+        dispatch={dispatch}
+        houseAsset={savedHouseAsset}
+        onBack={() => setShowLoanForm(false)}
+        onClose={onClose}
+      />
+    );
+  }
 
   return (
     <div className="form-panel">
-      {/* Header */}
       <div className="form-header">
         <div className="form-header-icon">🏡</div>
         <div>
           <h3 className="form-header-title">Edit House</h3>
-          <p className="form-header-desc">Update property value, appreciation rate, and timeline.</p>
+          <p className="form-header-desc">
+            Update property value, appreciation rate, and timeline.
+          </p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Property Details</p>
 
             <div className="form-field">
               <label className="form-label">Property Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Primary Residence" />
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="form-input"
+                placeholder="Primary Residence"
+              />
             </div>
 
             <div className="form-field">
               <label className="form-label">House Value</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={houseValue} onChange={(e) => setHouseValue(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="400,000" type="number" />
+                <input
+                  value={houseValue}
+                  onChange={(e) => setHouseValue(e.target.value)}
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="400,000"
+                  type="number"
+                />
               </div>
             </div>
 
@@ -2734,56 +3188,93 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="80,000" type="number" />
+                <input
+                  value={downPayment}
+                  onChange={(e) => setDownPayment(e.target.value)}
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="80,000"
+                  type="number"
+                />
               </div>
             </div>
 
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Annual Appreciation</label>
-                <span className="form-slider-value">{Number(appreciation).toFixed(1)}%</span>
+                <span className="form-slider-value">
+                  {Number(appreciation).toFixed(1)}%
+                </span>
               </div>
-              <input type="range" min={0} max={15} step={0.1} value={appreciation} onChange={(e) => setAppreciation(e.target.value)} className="form-slider" />
+              <input
+                type="range"
+                min={0}
+                max={15}
+                step={0.1}
+                value={appreciation}
+                onChange={(e) => setAppreciation(e.target.value)}
+                className="form-slider"
+              />
             </div>
           </div>
 
-          {/* ── RIGHT ── */}
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
             <div className="form-year-grid">
               <div className="form-field">
                 <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <input
+                  value={startYear}
+                  onChange={(e) => setStartYear(e.target.value)}
+                  className="form-input"
+                  placeholder="1"
+                  type="number"
+                />
               </div>
+
               <div className="form-field">
                 <label className="form-label">
                   End yr <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <input
+                  value={endYear}
+                  onChange={(e) => setEndYear(e.target.value)}
+                  className="form-input"
+                  placeholder="30"
+                  type="number"
+                />
               </div>
             </div>
 
-            {/* Value Preview */}
             <div className="preview-card">
-              <div className="preview-card__header">
+              <div className="preview-card__header preview-card__header--mb10">
                 <span className="preview-icon">📈</span>
                 <span className="preview-card__label">Value After Year 1</span>
               </div>
-              <div className="preview-card__amount">${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+
+              <div className="preview-card__amount preview-card__amount--lg">
+                $
+                {appreciatedValue.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
+              </div>
+
               <div className="preview-card__sub">
-                +{Number(appreciation).toFixed(1)}% per year from ${(Number(houseValue) || 0).toLocaleString()}
+                +{Number(appreciation).toFixed(1)}% appreciation from $
+                {(Number(houseValue) || 0).toLocaleString()}
               </div>
             </div>
+
+            
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
+        <div className="form-actions">
+          <button type="button" onClick={onClose} className="form-btn-secondary">
             Cancel
           </button>
-          <button type="submit" className="form-btn-submit">
-            Save House
+          <button type="submit" className="form-btn-primary">
+            Save & Continue
           </button>
         </div>
       </form>
@@ -2799,23 +3290,43 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
 
+  const [showLoanForm, setShowLoanForm] = useState(false);
+  const [savedCarAsset, setSavedCarAsset] = useState(null);
+
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    const updatedCarAsset = {
+      ...item,
+      source_type: "asset",
+      variant: "car",
+      name: name || "Car",
+      start_year: Number(startYear),
+      end_year: endYear === "" ? null : Number(endYear),
+      asset_value: Number(carValue),
+      annual_depreciation: Number(depreciation) / 100,
+      down_payment: downPayment === "" ? null : Number(downPayment),
+    };
+  
     dispatch({
       type: "UPDATE_ASSET",
-      payload: {
-        ...item,
-        source_type: "asset",
-        variant: "car",
-        name: name || "Car",
-        start_year: Number(startYear),
-        end_year: endYear === "" ? null : Number(endYear),
-        asset_value: Number(carValue),
-        annual_depreciation: Number(depreciation) / 100,
-        down_payment: downPayment === "" ? null : Number(downPayment),
-      },
+      payload: updatedCarAsset,
     });
+  
+    setSavedCarAsset(updatedCarAsset);
+    setShowLoanForm(true);
+  };
+  
+  if (showLoanForm && savedCarAsset) {
+    return (
+      <CarLoanExpenseForm
+        dispatch={dispatch}
+        carAsset={savedCarAsset}
+        onBack={() => setShowLoanForm(false)}
+        onClose={onClose}
+      />
+    );
 
     onClose();
   };
@@ -2890,15 +3401,24 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
 
             {/* Value Preview */}
             <div className="preview-card">
-              <div className="preview-card__header">
+              <div className="preview-card__header preview-card__header--mb10">
                 <span className="preview-icon">📉</span>
                 <span className="preview-card__label">Value After Year 1</span>
               </div>
-              <div className="preview-card__amount">${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+
+              <div className="preview-card__amount preview-card__amount--lg">
+                $
+                {depreciatedValue.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
+              </div>
+
               <div className="preview-card__sub">
-                −{Number(depreciation).toFixed(1)}% per year from ${(Number(carValue) || 0).toLocaleString()}
+                -{Number(depreciation).toFixed(1)}% depreciation from $
+                {(Number(carValue) || 0).toLocaleString()}
               </div>
             </div>
+
           </div>
         </div>
 
@@ -3902,12 +4422,6 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
       // i'm not sure how passing state for one edit form doesn't affect others check on this, but it works for now
       renderedForm = <FormComponent item={variantBeingEdited} state={state} dispatch={dispatch} onClose={closeModal} />;
     }
-    // else if (selectedVariant === "employer_retirement") {
-    //   renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
-    // }
-    // else if (selectedVariant === "salary") {
-    //   renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
-    // }
     else {
       renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
     }

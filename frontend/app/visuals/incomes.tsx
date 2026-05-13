@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/accounts";
 
 // ─────────────────────────────────────────────
@@ -165,7 +166,7 @@ export function SalaryForm({ dispatch, state }) {
               <label className="form-label">Annual Net Income</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={netIncome} onChange={(e) => setNetIncome(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="number" required />
+                <input value={formatNumberWithCommas(netIncome)} onChange={(e) => handleNumberInput(e, setNetIncome)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="text" required />
               </div>
             </div>
 
@@ -253,6 +254,7 @@ export function SalaryForm({ dispatch, state }) {
     </div>
   );
 }
+
 export function HourlyWageForm({ dispatch, state }) {
   const [name, setName] = useState("");
   const [startYear, setStartYear] = useState("");
@@ -369,7 +371,7 @@ export function HourlyWageForm({ dispatch, state }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <span className="form-input-suffix">/hr</span>
-                <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="25" type="number" step="0.01" />
+                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="25" type="text" step="0.01" />
               </div>
             </div>
 
@@ -377,7 +379,7 @@ export function HourlyWageForm({ dispatch, state }) {
             <div className="form-field">
               <label className="form-label">Hours Per Week</label>
               <div className="form-input-wrap">
-                <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} className="form-input form-input--suffix" placeholder="40" type="number" />
+                <input value={formatNumberWithCommas(hoursPerWeek)} onChange={(e) => handleNumberInput(e, setHoursPerWeek)} className="form-input form-input--suffix" placeholder="40" type="text" />
                 <span className="form-input-suffix">hrs/wk</span>
               </div>
             </div>
@@ -386,7 +388,7 @@ export function HourlyWageForm({ dispatch, state }) {
             <div className="form-field">
               <label className="form-label">Annual Growth Rate</label>
               <div className="form-input-wrap">
-                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input--suffix" placeholder="3" type="number" step="0.1" />
+                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input--suffix" placeholder="3" type="text" step="0.1" />
                 <span className="form-input-suffix">%</span>
               </div>
             </div>
@@ -518,7 +520,7 @@ export function SideHustleForm({ dispatch }) {
               <label className="form-label">Average Income Per Period</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="500" type="number" step="0.01" />
+                <input value={formatNumberWithCommas(averageIncome)} onChange={(e) => handleNumberInput(e, setAverageIncome)} className="form-input form-input--prefix-dollar" placeholder="500" type="text" step="0.01" />
               </div>
             </div>
 
@@ -716,7 +718,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
 
-                <input value={netIncome} onChange={(e) => setNetIncome(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="number" />
+                <input value={formatNumberWithCommas(netIncome)} onChange={(e) => handleNumberInput(e, setNetIncome)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="text" />
               </div>
             </div>
 
@@ -725,7 +727,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
               <label className="form-label">Annual Growth Rate</label>
 
               <div className="form-input-wrap">
-                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input--suffix" placeholder="3" type="number" step="0.1" />
+                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input--suffix" placeholder="3" type="text" step="0.1" />
 
                 <span className="form-input-suffix">%</span>
               </div>
@@ -937,7 +939,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <span className="form-input-suffix">/hr</span>
-                <input value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="25" type="number" step="0.01" />
+                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="25" type="text" step="0.01" />
               </div>
             </div>
 
@@ -945,7 +947,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
             <div className="form-field">
               <label className="form-label">Hours Per Week</label>
               <div className="form-input-wrap">
-                <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} className="form-input form-input--suffix" placeholder="40" type="number" />
+                <input value={formatNumberWithCommas(hoursPerWeek)} onChange={(e) => handleNumberInput(e, setHoursPerWeek)} className="form-input form-input--suffix" placeholder="40" type="text" />
                 <span className="form-input-suffix">hrs/wk</span>
               </div>
             </div>
@@ -954,7 +956,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
             <div className="form-field">
               <label className="form-label">Annual Growth Rate</label>
               <div className="form-input-wrap">
-                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input--suffix" placeholder="3" type="number" step="0.1" />
+                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input--suffix" placeholder="3" type="text" step="0.1" />
                 <span className="form-input-suffix">%</span>
               </div>
             </div>
@@ -1082,7 +1084,7 @@ export function EditSideHustleForm({ item, dispatch, onClose }) {
               <label className="form-label">Average Income Per Period</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={averageIncome} onChange={(e) => setAverageIncome(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="500" type="number" step="0.01" />
+                <input value={formatNumberWithCommas(averageIncome)} onChange={(e) => handleNumberInput(e, setAverageIncome)} className="form-input form-input--prefix-dollar" placeholder="500" type="text" step="0.01" />
               </div>
             </div>
 

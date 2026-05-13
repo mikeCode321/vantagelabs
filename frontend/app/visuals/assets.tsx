@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { HouseLoanExpenseForm, CarLoanExpenseForm } from "@/app/visuals/expenses";
+import { ID } from "@/app/visuals/accounts";
+
 // ─────────────────────────────────────────────
 // ASSET
 // ─────────────────────────────────────────────
@@ -39,7 +42,6 @@ export type CarAsset = {
 export type AssetSource = HouseAsset | CarAsset;
 
 // ASSET FORMS
-
 export function HouseAssetForm({ dispatch, onClose }) {
   const [name, setName] = useState("");
   const [houseValue, setHouseValue] = useState("");
@@ -122,11 +124,12 @@ export function HouseAssetForm({ dispatch, onClose }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <input
-                  value={houseValue}
-                  onChange={e => setHouseValue(e.target.value)}
+                  value={formatNumberWithCommas(houseValue)}
+                  onChange={e => handleNumberInput(e, setHouseValue)}
                   className="form-input form-input--prefix-dollar"
                   placeholder="400,000"
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   required
                 />
               </div>
@@ -139,11 +142,12 @@ export function HouseAssetForm({ dispatch, onClose }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <input
-                  value={downPayment}
-                  onChange={e => setDownPayment(e.target.value)}
+                  value={formatNumberWithCommas(downPayment)}
+                  onChange={e => handleNumberInput(e, setDownPayment)}
                   className="form-input form-input--prefix-dollar"
                   placeholder="80,000"
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                 />
               </div>
             </div>
@@ -321,11 +325,12 @@ export function CarAssetForm({ dispatch }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <input
-                  value={carValue}
-                  onChange={(e) => setCarValue(e.target.value)}
+                  value={formatNumberWithCommas(carValue)}
+                  onChange={(e) => handleNumberInput(e, setCarValue)}
                   className="form-input form-input--prefix-dollar"
                   placeholder="30,000"
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   required
                 />
               </div>
@@ -339,11 +344,12 @@ export function CarAssetForm({ dispatch }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <input
-                  value={downPayment}
-                  onChange={(e) => setDownPayment(e.target.value)}
+                  value={formatNumberWithCommas(downPayment)}
+                  onChange={(e) => handleNumberInput(e, setDownPayment)}
                   className="form-input form-input--prefix-dollar"
                   placeholder="5,000"
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                 />
               </div>
             </div>
@@ -516,11 +522,12 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <input
-                  value={houseValue}
-                  onChange={(e) => setHouseValue(e.target.value)}
+                  value={formatNumberWithCommas(houseValue)}
+                  onChange={(e) => handleNumberInput(e, setHouseValue)}
                   className="form-input form-input--prefix-dollar"
                   placeholder="400,000"
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                 />
               </div>
             </div>
@@ -532,11 +539,12 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <input
-                  value={downPayment}
-                  onChange={(e) => setDownPayment(e.target.value)}
+                  value={formatNumberWithCommas(downPayment)}
+                  onChange={(e) => handleNumberInput(e, setDownPayment)}
                   className="form-input form-input--prefix-dollar"
                   placeholder="80,000"
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                 />
               </div>
             </div>
@@ -702,7 +710,10 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
               <label className="form-label">Car Value</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={carValue} onChange={(e) => setCarValue(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="30,000" type="number" />
+                <input 
+                value={formatNumberWithCommas(carValue)} 
+                onChange={(e) => handleNumberInput(e, setCarValue)} 
+                className="form-input form-input--prefix-dollar" placeholder="30,000" type="text" inputMode="decimal" />
               </div>
             </div>
 
@@ -712,7 +723,10 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="5,000" type="number" />
+                <input 
+                value={formatNumberWithCommas(downPayment)} 
+                onChange={(e) => handleNumberInput(e, setDownPayment)} 
+                className="form-input form-input--prefix-dollar" placeholder="5,000" type="text" inputMode="decimal" />
               </div>
             </div>
 
@@ -777,4 +791,3 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
     </div>
   );
 }
-

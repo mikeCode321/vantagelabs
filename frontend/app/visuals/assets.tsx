@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
-import { HouseLoanExpenseForm, CarLoanExpenseForm, calculateMonthlyLoanPayment } from "@/app/visuals/expenses";
+import { HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, calculateMonthlyLoanPayment } from "@/app/visuals/expenses";
 import { ID } from "@/app/visuals/accounts";
 
 // ─────────────────────────────────────────────
@@ -447,7 +447,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
   const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
 
   const [showLoanForm, setShowLoanForm] = useState(false);
-  const [savedHouseAsset, setSavedHouseAsset] = useState(null);
+  const [savedHouseAsset, setSavedHouseAsset] = useState<HouseAsset | null>(null);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -462,6 +462,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
       asset_value: Number(houseValue),
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
+      linked_loan_id: item.linked_loan_id ?? null,
     };
 
     dispatch({
@@ -500,10 +501,24 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
     setShowLoanForm(true);
   };
 
-  const appreciatedValue =
-    Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
 
   if (showLoanForm && savedHouseAsset) {
+    if (savedHouseAsset.linked_loan_id){
+      const linkedLoan = state.expenses.house_loan.find(
+        (loan) => loan.id === savedHouseAsset.linked_loan_id
+      );
+  
+      if (linkedLoan) {
+        return (
+          <EditHouseLoanExpenseForm
+            item={linkedLoan}
+            dispatch={dispatch}
+            onClose={onClose}
+          />
+        );
+      }
+
+    }
     return (
       <HouseLoanExpenseForm
         dispatch={dispatch}
@@ -513,6 +528,9 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
       />
     );
   }
+
+  const appreciatedValue =
+    Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
 
   return (
     <div className="form-panel">
@@ -666,7 +684,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
   const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
 
   const [showLoanForm, setShowLoanForm] = useState(false);
-  const [savedCarAsset, setSavedCarAsset] = useState(null);
+  const [savedCarAsset, setSavedCarAsset] =  useState<CarAsset | null>(null);
 
 
   const onSubmit = (e: React.FormEvent) => {
@@ -682,6 +700,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
+      linked_loan_id: item.linked_loan_id ?? null,
     };
   
     dispatch({
@@ -721,6 +740,22 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
   };
   
   if (showLoanForm && savedCarAsset) {
+    if (savedCarAsset.linked_loan_id) {
+      const linkedLoan = state.expenses.car_loan.find(
+        (loan) => loan.id === savedCarAsset.linked_loan_id
+      );
+  
+      if (linkedLoan) {
+        return (
+          <EditCarLoanExpenseForm
+            item={linkedLoan}
+            dispatch={dispatch}
+            onClose={onClose}
+          />
+        );
+      }
+    }
+  
     return (
       <CarLoanExpenseForm
         dispatch={dispatch}
@@ -729,11 +764,10 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
         onClose={onClose}
       />
     );
+  }
 
-    onClose();
-  };
-
-  const depreciatedValue = Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
+  const depreciatedValue = 
+    Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
 
   return (
     <div className="form-panel">

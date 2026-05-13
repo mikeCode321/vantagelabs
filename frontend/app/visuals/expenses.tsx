@@ -93,7 +93,7 @@ export type CarLoanExpense = {
 
 export type ExpenseSource = LivingExpense | RentExpense | DebtExpense | CarLoanExpense | HouseLoanExpense;
 
-function calculateMonthlyLoanPayment(principal: number, annualInterestRate: number, loanTermYears: number) {
+export function calculateMonthlyLoanPayment(principal: number, annualInterestRate: number, loanTermYears: number) {
   const monthlyRate = annualInterestRate / 12;
   const numberOfPayments = loanTermYears * 12;
 

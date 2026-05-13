@@ -115,24 +115,38 @@ export function HouseLoanExpenseForm({ dispatch, houseAsset, onBack, onClose }) 
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    const loanId = crypto.randomUUID();
+  
+    const houseLoanExpense = {
+      source_type: "expense",
+      variant: "house_loan",
+      id: loanId,
+      name: `${houseAsset.name} Loan`,
+      start_year: houseAsset.start_year,
+      end_year: houseAsset.start_year + Number(loanTermYears),
+      linked_asset_id: houseAsset.id,
+      monthly_expense: monthlyExpense,
+      original_principal: originalPrincipal,
+      interest_rate: Number(interestRate) / 100,
+      loan_term_years: Number(loanTermYears),
+      extra_monthly_payment:
+        extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
+    };
+  
     dispatch({
       type: "ADD_EXPENSE",
+      payload: houseLoanExpense,
+    });
+  
+    dispatch({
+      type: "UPDATE_ASSET",
       payload: {
-        source_type: "expense",
-        variant: "house_loan",
-        id: crypto.randomUUID(),
-        name: `${houseAsset.name} Loan`,
-        start_year: houseAsset.start_year,
-        end_year: houseAsset.start_year + Number(loanTermYears),
-        monthly_expense: monthlyExpense,
-        original_principal: originalPrincipal,
-        interest_rate: Number(interestRate) / 100,
-        loan_term_years: Number(loanTermYears),
-        extra_monthly_payment: extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
+        ...houseAsset,
+        linked_loan_id: loanId,
       },
     });
-
+  
     if (onClose) onClose();
   };
 
@@ -223,23 +237,36 @@ export function CarLoanExpenseForm({ dispatch, carAsset, onBack, onClose }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    const loanId = crypto.randomUUID();
+  
+    const carLoanExpense = {
+      source_type: "expense",
+      variant: "car_loan",
+      id: loanId,
+      name: `${carAsset.name} Loan`,
+      start_year: carAsset.start_year,
+      end_year: carAsset.start_year + Number(loanTermYears),
+      linked_asset_id: carAsset.id,
+      monthly_expense: monthlyExpense,
+      original_principal: originalPrincipal,
+      interest_rate: Number(interestRate) / 100,
+      loan_term_years: Number(loanTermYears),
+    };
+  
     dispatch({
       type: "ADD_EXPENSE",
+      payload: carLoanExpense,
+    });
+  
+    dispatch({
+      type: "UPDATE_ASSET",
       payload: {
-        source_type: "expense",
-        variant: "car_loan",
-        id: crypto.randomUUID(),
-        name: `${carAsset.name} Loan`,
-        start_year: carAsset.start_year,
-        end_year: carAsset.start_year + Number(loanTermYears),
-        monthly_expense: monthlyExpense,
-        original_principal: originalPrincipal,
-        interest_rate: Number(interestRate) / 100,
-        loan_term_years: Number(loanTermYears),
+        ...carAsset,
+        linked_loan_id: loanId,
       },
     });
-
+  
     if (onClose) onClose();
   };
 

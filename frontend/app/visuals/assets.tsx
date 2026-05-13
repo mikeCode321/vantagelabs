@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
-import { HouseLoanExpenseForm, CarLoanExpenseForm } from "@/app/visuals/expenses";
+import { HouseLoanExpenseForm, CarLoanExpenseForm, calculateMonthlyLoanPayment } from "@/app/visuals/expenses";
 import { ID } from "@/app/visuals/accounts";
 
 // ─────────────────────────────────────────────
@@ -434,7 +434,7 @@ export function CarAssetForm({ dispatch, onClose }) {
 }
 
 /* -------------------- EDIT ASSET FORMS -------------------- */
-export function EditHouseAssetForm({ item, dispatch, onClose }) {
+export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [houseValue, setHouseValue] = useState(item.asset_value.toString());
   const [appreciation, setAppreciation] = useState(
@@ -468,6 +468,33 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
       type: "UPDATE_ASSET",
       payload: updatedHouseAsset,
     });
+
+    if (updatedHouseAsset.linked_loan_id) {
+      const linkedLoan = state.expenses.house_loan.find(
+        (loan) => loan.id === updatedHouseAsset.linked_loan_id
+      );
+  
+      if (linkedLoan) {
+        const newPrincipal =
+          Number(updatedHouseAsset.asset_value || 0) -
+          Number(updatedHouseAsset.down_payment || 0);
+  
+        const newMonthlyExpense = calculateMonthlyLoanPayment(
+          newPrincipal,
+          linkedLoan.interest_rate,
+          linkedLoan.loan_term_years
+        );
+  
+        dispatch({
+          type: "UPDATE_EXPENSE",
+          payload: {
+            ...linkedLoan,
+            original_principal: newPrincipal,
+            monthly_expense: newMonthlyExpense,
+          },
+        });
+      }
+    }
 
     setSavedHouseAsset(updatedHouseAsset);
     setShowLoanForm(true);
@@ -630,7 +657,7 @@ export function EditHouseAssetForm({ item, dispatch, onClose }) {
   );
 }
 
-export function EditCarAssetForm({ item, dispatch, onClose }) {
+export function EditCarAssetForm({ state, item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [carValue, setCarValue] = useState(item.asset_value.toString());
   const [depreciation, setDepreciation] = useState((item.annual_depreciation * 100).toString());
@@ -661,6 +688,33 @@ export function EditCarAssetForm({ item, dispatch, onClose }) {
       type: "UPDATE_ASSET",
       payload: updatedCarAsset,
     });
+
+    if (updatedCarAsset.linked_loan_id) {
+      const linkedLoan = state.expenses.car_loan.find(
+        (loan) => loan.id === updatedCarAsset.linked_loan_id
+      );
+  
+      if (linkedLoan) {
+        const newPrincipal =
+          Number(updatedCarAsset.asset_value || 0) -
+          Number(updatedCarAsset.down_payment || 0);
+  
+        const newMonthlyExpense = calculateMonthlyLoanPayment(
+          newPrincipal,
+          linkedLoan.interest_rate,
+          linkedLoan.loan_term_years
+        );
+  
+        dispatch({
+          type: "UPDATE_EXPENSE",
+          payload: {
+            ...linkedLoan,
+            original_principal: newPrincipal,
+            monthly_expense: newMonthlyExpense,
+          },
+        });
+      }
+    }
   
     setSavedCarAsset(updatedCarAsset);
     setShowLoanForm(true);

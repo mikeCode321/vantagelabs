@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
+
 // ─────────────────────────────────────────────
 // CORE
 // ─────────────────────────────────────────────
@@ -141,7 +142,11 @@ export function CheckingAccountForm({ dispatch }) {
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input--prefix-dollar" placeholder="10,000" type="text" inputMode="decimal" required />
+                <input 
+                  value={formatNumberWithCommas(balance)} 
+                  onChange={(e) => handleNumberInput(e, setBalance)} 
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="10,000" type="text" inputMode="decimal" required />
               </div>
             </div>
 
@@ -159,12 +164,18 @@ export function CheckingAccountForm({ dispatch }) {
                   <div className="tier-item">
                     <div className="tier-input-wrap--narrow">
                       <label className="form-label">Threshold</label>
-                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} className="form-input" placeholder="e.g. 100000" type="text" inputMode="decimal" />
+                      <input 
+                      value={formatNumberWithCommas(tier.threshold.toString())} 
+                      onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} 
+                      className="form-input" placeholder="e.g. 100000" type="text" inputMode="decimal" />
                     </div>
 
                     <div className="tier-input-wrap--narrow">
                       <label className="form-label">APY (%)</label>
-                      <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} className="form-input" placeholder="0.03" type="number" step="0.0001" />
+                      <input 
+                        value={tier.annual_rate} 
+                        onChange={(e) => updateTier(index, "annual_rate", e.target.value)} 
+                        className="form-input" placeholder="0.03" type="number" step="0.0001" />
                     </div>
 
                     {tiers.length > 1 && (
@@ -280,7 +291,10 @@ export function TaxableInvestmentAccountForm({ dispatch }) {
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={balance} onChange={(e) => setBalance(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="50,000" type="number" />
+                <input 
+                value={formatNumberWithCommas(balance)} 
+                onChange={(e) => handleNumberInput(e, setBalance)} 
+                className="form-input form-input--prefix-dollar" placeholder="50,000" type="text" />
               </div>
             </div>
 
@@ -290,7 +304,10 @@ export function TaxableInvestmentAccountForm({ dispatch }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <span className="form-input-suffix">/mo</span>
-                <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="1,000" type="number" />
+                <input 
+                  value={formatNumberWithCommas(monthlyContribution)} 
+                  onChange={(e) => handleNumberInput(e, setMonthlyContribution)} 
+                  className="form-input form-input--prefix-dollar form-input--suffix" placeholder="1,000" type="text" />
               </div>
             </div>
 
@@ -459,7 +476,10 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={balance} onChange={(e) => setBalance(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="25,000" type="number" />
+                <input 
+                value={formatNumberWithCommas(balance)}
+                onChange={(e) => handleNumberInput(e, setBalance)} 
+                className="form-input form-input--prefix-dollar" placeholder="25,000" type="text" />
               </div>
             </div>
 
@@ -469,7 +489,13 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <span className="form-input-suffix">/mo</span>
-                <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="500" type="number" />
+                <input 
+                  value={formatNumberWithCommas(monthlyContribution)}
+                  onChange={(e) => handleNumberInput(e, setMonthlyContribution)}
+                  className="form-input form-input--prefix-dollar form-input--suffix"
+                  placeholder="500"
+                  type="text"
+                />
               </div>
             </div>
 
@@ -576,10 +602,6 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
   );
 }
 
-// ////////////////////////////////////////////////////////////
-// EDIT FORMS BELOW 
-// ////////////////////////////////////////////////////////////
-
 /* -------------------- EDIT ACCOUNT FORMS -------------------- */
 
 export function EditCheckingAccountForm({ item, dispatch, onClose }) {
@@ -657,7 +679,10 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={balance} onChange={(e) => setBalance(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="10,000" type="number" />
+                <input 
+                value={formatNumberWithCommas(balance)} 
+                onChange={(e) => handleNumberInput(e, setBalance)} 
+                className="form-input form-input--prefix-dollar" placeholder="10,000" type="text" />
               </div>
             </div>
 
@@ -675,7 +700,10 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
                   <div className="tier-item">
                     <div className="tier-input-wrap--narrow">
                       <label className="form-label">Threshold</label>
-                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} className="form-input" placeholder="e.g. 100000" type="text" inputMode="decimal" />
+                      <input 
+                      value={formatNumberWithCommas(tier.threshold.toString())} 
+                      onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} 
+                      className="form-input" placeholder="e.g. 100000" type="text" inputMode="decimal" />
                     </div>
 
                     <div className="tier-input-wrap--narrow">
@@ -777,7 +805,10 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={balance} onChange={(e) => setBalance(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="50,000" type="number" />
+                <input 
+                value={formatNumberWithCommas(balance)} 
+                onChange={(e) => handleNumberInput(e, setBalance)} 
+                className="form-input form-input--prefix-dollar" placeholder="50,000" type="text" />
               </div>
             </div>
 
@@ -787,7 +818,10 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <span className="form-input-suffix">/mo</span>
-                <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="1,000" type="number" />
+                <input 
+                value={formatNumberWithCommas(monthlyContribution)} 
+                onChange={(e) => handleNumberInput(e, setMonthlyContribution)} 
+                className="form-input form-input--prefix-dollar form-input--suffix" placeholder="1,000" type="text" />
               </div>
             </div>
 
@@ -991,7 +1025,10 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={balance} onChange={(e) => setBalance(e.target.value)} className="form-input form-input--prefix-dollar" placeholder="25,000" type="number" />
+                <input 
+                  value={formatNumberWithCommas(balance)} 
+                  onChange={(e) => handleNumberInput(e, setBalance)}
+                  className="form-input form-input--prefix-dollar" placeholder="25,000" type="text" />
               </div>
             </div>
 
@@ -1001,7 +1038,10 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <span className="form-input-suffix">/mo</span>
-                <input value={monthlyContribution} onChange={(e) => setMonthlyContribution(e.target.value)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="500" type="number" />
+                <input 
+                value={formatNumberWithCommas(monthlyContribution)} 
+                onChange={(e) => handleNumberInput(e, setMonthlyContribution)} 
+                className="form-input form-input--prefix-dollar form-input--suffix" placeholder="500" type="text" />
               </div>
             </div>
 

@@ -21,6 +21,8 @@ export type HouseAsset = {
   annual_appreciation: number; // example: 0.03 = 3% yearly growth
 
   down_payment?: number | null; // optional; deducted from cash if start_year > 0
+
+  linked_loan_id?: ID | null;
 };
 
 export type CarAsset = {
@@ -37,6 +39,8 @@ export type CarAsset = {
   annual_depreciation: number; // example: 0.12 = loses 12% per year
 
   down_payment?: number | null; // optional; deducted from cash if start_year > 0
+
+  linked_loan_id?: ID | null;
 };
 
 export type AssetSource = HouseAsset | CarAsset;
@@ -50,7 +54,7 @@ export function HouseAssetForm({ dispatch, onClose }) {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
-  const [savedHouse, setSavedHouse] = useState<HouseAsset | null>(null);
+  const [savedHouseAsset, setSavedHouseAsset] = useState<HouseAsset | null>(null);
   const [showLoanForm, setShowLoanForm] = useState(false);
 
   const onSubmit = (e: React.FormEvent) => {
@@ -59,21 +63,22 @@ export function HouseAssetForm({ dispatch, onClose }) {
     const houseAsset: HouseAsset = {
       source_type: "asset",
       variant: "house",
-      id: savedHouse?.id || crypto.randomUUID(),
+      id: savedHouseAsset?.id || crypto.randomUUID(),
       name: name || "House",
       start_year: Number(startYear),
       end_year: endYear === "" ? null : Number(endYear),
       asset_value: Number(houseValue),
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
+      linked_loan_id: savedHouseAsset?.linked_loan_id || null,
     };
   
     dispatch({
-      type: savedHouse ? "UPDATE_ASSET" : "ADD_ASSET",
+      type: savedHouseAsset ? "UPDATE_ASSET" : "ADD_ASSET",
       payload: houseAsset,
     });
   
-    setSavedHouse(houseAsset);
+    setSavedHouseAsset(houseAsset);
     setShowLoanForm(true);
   };
 
@@ -81,11 +86,11 @@ export function HouseAssetForm({ dispatch, onClose }) {
   const appreciatedValue =
     Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
 
-  if (showLoanForm && savedHouse) {
+  if (showLoanForm && savedHouseAsset) {
     return (
       <HouseLoanExpenseForm
         dispatch={dispatch}
-        houseAsset={savedHouse}
+        houseAsset={savedHouseAsset}
         onBack={() => setShowLoanForm(false)}
         onClose={onClose}
       />
@@ -234,7 +239,7 @@ export function HouseAssetForm({ dispatch, onClose }) {
   );
 }
 
-export function CarAssetForm({ dispatch }) {
+export function CarAssetForm({ dispatch, onClose }) {
   const [name, setName] = useState("");
   const [carValue, setCarValue] = useState("");
   const [depreciation, setDepreciation] = useState("12");
@@ -258,6 +263,7 @@ export function CarAssetForm({ dispatch }) {
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
+      linked_loan_id: savedCarAsset?.linked_loan_id || null,
     };
   
     dispatch({
@@ -275,19 +281,10 @@ export function CarAssetForm({ dispatch }) {
   if (showLoanForm && savedCarAsset) {
     return (
       <CarLoanExpenseForm
-        dispatch={dispatch}
-        carAsset={savedCarAsset}
-        onBack={() => setShowLoanForm(false)}
-        onClose={() => {
-          setName("");
-          setCarValue("");
-          setDepreciation("12");
-          setDownPayment("");
-          setStartYear("");
-          setEndYear("");
-          setSavedCarAsset(null);
-          setShowLoanForm(false);
-        }}
+      dispatch={dispatch}
+      carAsset={savedCarAsset}
+      onBack={() => setShowLoanForm(false)}
+      onClose={onClose}
       />
     );
   }

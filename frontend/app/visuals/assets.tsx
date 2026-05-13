@@ -53,11 +53,11 @@ export function HouseAssetForm({ dispatch, onClose }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const houseAsset = {
+  
+    const houseAsset: HouseAsset = {
       source_type: "asset",
       variant: "house",
-      id: crypto.randomUUID(),
+      id: savedHouse?.id || crypto.randomUUID(),
       name: name || "House",
       start_year: Number(startYear),
       end_year: endYear === "" ? null : Number(endYear),
@@ -65,16 +65,17 @@ export function HouseAssetForm({ dispatch, onClose }) {
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
     };
-
+  
     dispatch({
-      type: "ADD_ASSET",
+      type: savedHouse ? "UPDATE_ASSET" : "ADD_ASSET",
       payload: houseAsset,
     });
-
+  
     setSavedHouse(houseAsset);
     setShowLoanForm(true);
   };
 
+  
   const appreciatedValue =
     Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
 
@@ -242,11 +243,11 @@ export function CarAssetForm({ dispatch }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const carAsset = {
-      source_type: "asset" as const,
-      variant: "car" as const,
-      id: crypto.randomUUID(),
+  
+    const carAsset: CarAsset = {
+      source_type: "asset",
+      variant: "car",
+      id: savedCarAsset?.id || crypto.randomUUID(),
       name: name || "Car",
       start_year: Number(startYear),
       end_year: endYear === "" ? null : Number(endYear),
@@ -254,12 +255,12 @@ export function CarAssetForm({ dispatch }) {
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
     };
-
+  
     dispatch({
-      type: "ADD_ASSET",
+      type: savedCarAsset ? "UPDATE_ASSET" : "ADD_ASSET",
       payload: carAsset,
     });
-
+  
     setSavedCarAsset(carAsset);
     setShowLoanForm(true);
   };

@@ -63,43 +63,43 @@ export function SalaryForm({ dispatch, state }) {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
   const [linked401kId, setLinked401kId] = useState("");
+  const [linkError, setLinkError] = useState("");
 
   const available401ks = state?.accounts?.employer_retirement || [];
+
+  const handle401kSelect = (accountId: string) => {
+    setLinkError("");
+
+    if (!accountId) {
+      setLinked401kId("");
+      return;
+    }
+
+    const selectedAccount = available401ks.find((acc) => acc.id === accountId);
+
+    // Check if this 401k is already linked to another job
+    if (selectedAccount?.linked_income_id) {
+      setLinkError("This 401(k) is already linked to another job.");
+      setLinked401kId("");
+      return;
+    }
+
+    setLinked401kId(accountId);
+  };
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (linkError) {
+      return;
+    }
+
     const newIncomeId = crypto.randomUUID();
 
-    // ----------------------------
-    // 1. BREAK EXISTING PAIRING on 401k (if it's already linked to another income)
-    // ----------------------------
+    // If a 401k is selected, update it with the link
     if (linked401kId) {
       const selectedAccount = available401ks.find((acc) => acc.id === linked401kId);
 
-      if (selectedAccount && selectedAccount.linked_income_id) {
-        // This 401k is linked to another income - clear that income's link
-        const allIncomes = [
-          ...(state?.incomes?.salary || []),
-          ...(state?.incomes?.hourly || []),
-        ];
-        
-        const otherIncome = allIncomes.find((inc) => inc.id === selectedAccount.linked_income_id);
-
-        if (otherIncome) {
-          dispatch({
-            type: "UPDATE_INCOME",
-            payload: {
-              ...otherIncome,
-              linked_401k_id: undefined,
-            },
-          });
-        }
-      }
-
-      // ----------------------------
-      // 2. UPDATE the 401k account with new link
-      // ----------------------------
       if (selectedAccount) {
         dispatch({
           type: "UPDATE_ACCOUNT",
@@ -111,9 +111,6 @@ export function SalaryForm({ dispatch, state }) {
       }
     }
 
-    // ----------------------------
-    // 3. ADD the new income
-    // ----------------------------
     dispatch({
       type: "ADD_INCOME",
       payload: {
@@ -136,7 +133,6 @@ export function SalaryForm({ dispatch, state }) {
     setEndYear("");
     setLinked401kId("");
   };
-
 
   return (
     <div className="form-panel">
@@ -197,49 +193,53 @@ export function SalaryForm({ dispatch, state }) {
 
             {/* Link to 401k card */}
             <div className="link-card">
-              <label className="link-card__option" style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", color: "var(--teal)" }}>
-                Link to a 401(k) Account
-              </label>
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🏦</span>
 
-              {available401ks.length > 0 ? (
-                <>
-                  <select value={linked401kId} onChange={(e) => setLinked401kId(e.target.value)} className="form-input">
-                    <option value="">Select an account</option>
+                  <div>
+                    <div className="link-card__title">Link to a 401(k) Account</div>
 
-                    {available401ks.map((account) => (
-                      <option key={account.id} value={account.id}>
-                        {account.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  {linked401kId && (
-                    <div
-                      className="link-card__synced"
-                      style={{
-                        marginTop: "8px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "5px",
-                      }}
-                    >
-                      🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div
-                  className="preview-card__sub"
-                  style={{
-                    padding: "10px 12px",
-                    border: "1px dashed #5FA7AB44",
-                    borderRadius: "6px",
-                    background: "#fff",
-                  }}
-                >
-                  No 401(k) accounts available yet.
+                    <div className="link-card__sub">Sync this item with a retirement account</div>
+                  </div>
                 </div>
-              )}
+              </div>
+
+              <div className="link-card__body">
+                {available401ks.length === 0 ? (
+                  <p className="link-card__no-accounts">No 401(k) accounts available.</p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
+                      <option value="">Select an account</option>
+
+                      {available401ks.map((account) => {
+                        const isLinked = account.linked_income_id;
+
+                        return (
+                          <option key={account.id} value={account.id} disabled={isLinked}>
+                            {account.name} {isLinked ? "(already linked)" : ""}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
+                    {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -263,44 +263,42 @@ export function HourlyWageForm({ dispatch, state }) {
   const [hoursPerWeek, setHoursPerWeek] = useState("");
   const [growth, setGrowth] = useState("");
   const [linked401kId, setLinked401kId] = useState("");
+  const [linkError, setLinkError] = useState("");
 
   const available401ks = state?.accounts?.employer_retirement || [];
   const annualIncome = (Number(hourlyRate) || 0) * (Number(hoursPerWeek) || 0) * 52;
 
-   const onSubmit = (e: React.FormEvent) => {
+  const handle401kSelect = (accountId: string) => {
+    setLinkError("");
+
+    if (!accountId) {
+      setLinked401kId("");
+      return;
+    }
+
+    const selectedAccount = available401ks.find((acc) => acc.id === accountId);
+
+    if (selectedAccount?.linked_income_id) {
+      setLinkError("This 401(k) is already linked to another job.");
+      setLinked401kId("");
+      return;
+    }
+
+    setLinked401kId(accountId);
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (linkError) {
+      return;
+    }
 
     const newIncomeId = crypto.randomUUID();
 
-    // ----------------------------
-    // 1. BREAK EXISTING PAIRING on 401k (if it's already linked to another income)
-    // ----------------------------
     if (linked401kId) {
       const selectedAccount = available401ks.find((acc) => acc.id === linked401kId);
 
-      if (selectedAccount && selectedAccount.linked_income_id) {
-        // This 401k is linked to another income - clear that income's link
-        const allIncomes = [
-          ...(state?.incomes?.salary || []),
-          ...(state?.incomes?.hourly || []),
-        ];
-        
-        const otherIncome = allIncomes.find((inc) => inc.id === selectedAccount.linked_income_id);
-
-        if (otherIncome) {
-          dispatch({
-            type: "UPDATE_INCOME",
-            payload: {
-              ...otherIncome,
-              linked_401k_id: undefined,
-            },
-          });
-        }
-      }
-
-      // ----------------------------
-      // 2. UPDATE the 401k account with new link
-      // ----------------------------
       if (selectedAccount) {
         dispatch({
           type: "UPDATE_ACCOUNT",
@@ -312,22 +310,17 @@ export function HourlyWageForm({ dispatch, state }) {
       }
     }
 
-    // ----------------------------
-    // 3. ADD the new income
-    // ----------------------------
     dispatch({
       type: "ADD_INCOME",
       payload: {
         source_type: "income",
-        variant: "hourly",
+        variant: "salary",
         id: newIncomeId,
         name,
         start_year: Number(startYear),
         end_year: Number(endYear),
-        net_income: annualIncome,
+        net_income: Number(annualIncome),
         income_growth: Number(growth),
-        hourly_rate: Number(hourlyRate),
-        hours_per_week: Number(hoursPerWeek),
         linked_401k_id: linked401kId || undefined,
       },
     });
@@ -340,7 +333,6 @@ export function HourlyWageForm({ dispatch, state }) {
     setGrowth("");
     setLinked401kId("");
   };
-
 
   return (
     <div className="form-panel">
@@ -410,20 +402,55 @@ export function HourlyWageForm({ dispatch, state }) {
             </div>
 
             {/* Link to 401k card */}
-            {available401ks.length > 0 && (
-              <div className="link-card">
-                <label className="form-label">Link 401(k) Account</label>
-                <select value={linked401kId} onChange={(e) => setLinked401kId(e.target.value)} className="form-input">
-                  <option value="">None - No linking</option>
-                  {available401ks.map((account) => (
-                    <option key={account.id} value={account.id}>
-                      {account.name}
-                    </option>
-                  ))}
-                </select>
-                {linked401kId && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🏦</span>
+
+                  <div>
+                    <div className="link-card__title">Link to a 401(k) Account</div>
+
+                    <div className="link-card__sub">Sync retirement account with a linked job</div>
+                  </div>
+                </div>
               </div>
-            )}
+
+              <div className="link-card__body">
+                {available401ks.length === 0 ? (
+                  <p className="link-card__no-jobs">No 401(k) accounts available.</p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
+                      <option value="">Select an account</option>
+
+                      {available401ks.map((account) => {
+                        const isLinked = account.linked_income_id;
+
+                        return (
+                          <option key={account.id} value={account.id} disabled={isLinked}>
+                            {account.name} {isLinked ? "(already linked)" : ""}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
+                    {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Annual Income Preview */}
             <div className="preview-card">
@@ -592,7 +619,6 @@ export function SideHustleForm({ dispatch }) {
   );
 }
 
-
 /* -------------------- EDIT INCOME FORMS -------------------- */
 
 export function EditSalaryForm({ item, state, dispatch, onClose }) {
@@ -601,85 +627,67 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
   const [growth, setGrowth] = useState(item.income_growth.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
-  const previousLinked401kId = item.linked_401k_id;
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
+  const [linkError, setLinkError] = useState("");
 
   const available401ks = state?.accounts?.employer_retirement || [];
+  const isAlreadyLinked = !!item.linked_401k_id;
+
+  const handle401kSelect = (accountId: string) => {
+    setLinkError("");
+
+    if (!accountId) {
+      setLinked401kId("");
+      return;
+    }
+
+    const selectedAccount = available401ks.find((acc) => acc.id === accountId);
+
+    if (selectedAccount?.linked_income_id) {
+      setLinkError("This 401(k) is already linked to another job.");
+      setLinked401kId("");
+      return;
+    }
+
+    setLinked401kId(accountId);
+  };
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ----------------------------
-    // 1. REMOVE OLD LINK from previous 401k (if this income was previously linked)
-    // ----------------------------
-    if (previousLinked401kId && previousLinked401kId !== linked401kId) {
-      const oldAccount = available401ks.find((acc) => acc.id === previousLinked401kId);
-
-      if (oldAccount) {
-        dispatch({
-          type: "UPDATE_ACCOUNT",
-          payload: {
-            ...oldAccount,
-            linked_income_id: undefined,
-          },
-        });
-      }
+    if (linkError) {
+      return;
     }
 
-    // ----------------------------
-    // 2. BREAK EXISTING PAIRING on new 401k (if it's already linked to another income)
-    // ----------------------------
-    if (linked401kId) {
-      const newAccount = available401ks.find((acc) => acc.id === linked401kId);
+    const updatedIncome = {
+      ...item,
+      name,
+      start_year: Number(startYear),
+      end_year: Number(endYear),
+      net_income: Number(netIncome),
+      income_growth: Number(growth),
+      linked_401k_id: linked401kId || undefined,
+    };
 
-      if (newAccount && newAccount.linked_income_id && newAccount.linked_income_id !== item.id) {
-        // This 401k is linked to a different income - find and clear that income's link
-        const allIncomes = [
-          ...(state?.incomes?.salary || []),
-          ...(state?.incomes?.hourly || []),
-        ];
-        
-        const otherIncome = allIncomes.find((inc) => inc.id === newAccount.linked_income_id);
+    // Only handle linking if this job wasn't previously linked
+    // (If it was linked, user must delete and recreate to change the link)
+    if (!isAlreadyLinked && linked401kId) {
+      const selectedAccount = available401ks.find((acc) => acc.id === linked401kId);
 
-        if (otherIncome) {
-          dispatch({
-            type: "UPDATE_INCOME",
-            payload: {
-              ...otherIncome,
-              linked_401k_id: undefined,
-            },
-          });
-        }
-      }
-
-      // ----------------------------
-      // 3. UPDATE NEW 401k account
-      // ----------------------------
-      if (newAccount) {
+      if (selectedAccount) {
         dispatch({
           type: "UPDATE_ACCOUNT",
           payload: {
-            ...newAccount,
+            ...selectedAccount,
             linked_income_id: item.id,
           },
         });
       }
     }
 
-    // ----------------------------
-    // 4. UPDATE THIS INCOME
-    // ----------------------------
     dispatch({
       type: "UPDATE_INCOME",
-      payload: {
-        ...item,
-        name,
-        net_income: Number(netIncome),
-        income_growth: Number(growth),
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-        linked_401k_id: linked401kId || undefined,
-      },
+      payload: updatedIncome,
     });
 
     onClose();
@@ -754,49 +762,53 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
 
             {/* Link to 401k card */}
             <div className="link-card">
-              <label className="link-card__option" style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", color: "var(--teal)" }}>
-                Link to a 401(k) Account
-              </label>
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🏦</span>
 
-              {available401ks.length > 0 ? (
-                <>
-                  <select value={linked401kId} onChange={(e) => setLinked401kId(e.target.value)} className="form-input">
-                    <option value="">Select an account</option>
+                  <div>
+                    <div className="link-card__title">Link to a 401(k) Account</div>
 
-                    {available401ks.map((account) => (
-                      <option key={account.id} value={account.id}>
-                        {account.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  {linked401kId && (
-                    <div
-                      className="link-card__synced"
-                      style={{
-                        marginTop: "8px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "5px",
-                      }}
-                    >
-                      🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div
-                  className="preview-card__sub"
-                  style={{
-                    padding: "10px 12px",
-                    border: "1px dashed #5FA7AB44",
-                    borderRadius: "6px",
-                    background: "#fff",
-                  }}
-                >
-                  No 401(k) accounts available yet.
+                    <div className="link-card__sub">Sync account connections automatically</div>
+                  </div>
                 </div>
-              )}
+              </div>
+
+              <div className="link-card__body">
+                {available401ks.length === 0 ? (
+                  <p className="link-card__no-accounts">No 401(k) accounts available.</p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
+                      <option value="">Select an account</option>
+
+                      {available401ks.map((account) => {
+                        const isLinked = account.linked_income_id;
+
+                        return (
+                          <option key={account.id} value={account.id} disabled={isLinked}>
+                            {account.name} {isLinked ? "(already linked)" : ""}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
+                    {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -823,88 +835,69 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
   const [hourlyRate, setHourlyRate] = useState(item.hourly_rate?.toString() || "");
   const [hoursPerWeek, setHoursPerWeek] = useState(item.hours_per_week?.toString() || "");
   const [growth, setGrowth] = useState(item.income_growth.toString());
-  const previousLinked401kId = item.linked_401k_id;
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
+  const [linkError, setLinkError] = useState("");
 
   const available401ks = state?.accounts?.employer_retirement || [];
   const annualIncome = (Number(hourlyRate) || 0) * (Number(hoursPerWeek) || 0) * 52;
 
-    const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const isAlreadyLinked = !!item.linked_401k_id;
 
-    // ----------------------------
-    // 1. REMOVE OLD LINK from previous 401k (if this income was previously linked)
-    // ----------------------------
-    if (previousLinked401kId && previousLinked401kId !== linked401kId) {
-      const oldAccount = available401ks.find((acc) => acc.id === previousLinked401kId);
+  const handle401kSelect = (accountId: string) => {
+    setLinkError("");
 
-      if (oldAccount) {
-        dispatch({
-          type: "UPDATE_ACCOUNT",
-          payload: {
-            ...oldAccount,
-            linked_income_id: undefined,
-          },
-        });
-      }
+    if (!accountId) {
+      setLinked401kId("");
+      return;
     }
 
-    // ----------------------------
-    // 2. BREAK EXISTING PAIRING on new 401k (if it's already linked to another income)
-    // ----------------------------
-    if (linked401kId) {
-      const newAccount = available401ks.find((acc) => acc.id === linked401kId);
+    const selectedAccount = available401ks.find((acc) => acc.id === accountId);
 
-      if (newAccount && newAccount.linked_income_id && newAccount.linked_income_id !== item.id) {
-        // This 401k is linked to a different income - find and clear that income's link
-        const allIncomes = [
-          ...(state?.incomes?.salary || []),
-          ...(state?.incomes?.hourly || []),
-        ];
-        
-        const otherIncome = allIncomes.find((inc) => inc.id === newAccount.linked_income_id);
+    if (selectedAccount?.linked_income_id) {
+      setLinkError("This 401(k) is already linked to another job.");
+      setLinked401kId("");
+      return;
+    }
 
-        if (otherIncome) {
-          dispatch({
-            type: "UPDATE_INCOME",
-            payload: {
-              ...otherIncome,
-              linked_401k_id: undefined,
-            },
-          });
-        }
-      }
+    setLinked401kId(accountId);
+  };
 
-      // ----------------------------
-      // 3. UPDATE NEW 401k account
-      // ----------------------------
-      if (newAccount) {
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (linkError) {
+      return;
+    }
+
+    const updatedIncome = {
+      ...item,
+      name,
+      start_year: Number(startYear),
+      end_year: Number(endYear),
+      net_income: Number(annualIncome),
+      income_growth: Number(growth),
+      linked_401k_id: linked401kId || undefined,
+    };
+
+    // Only handle linking if this job wasn't previously linked
+    // (If it was linked, user must delete and recreate to change the link)
+    if (!isAlreadyLinked && linked401kId) {
+      const selectedAccount = available401ks.find((acc) => acc.id === linked401kId);
+
+      if (selectedAccount) {
         dispatch({
           type: "UPDATE_ACCOUNT",
           payload: {
-            ...newAccount,
+            ...selectedAccount,
             linked_income_id: item.id,
           },
         });
       }
     }
 
-    // ----------------------------
-    // 4. UPDATE THIS INCOME
-    // ----------------------------
     dispatch({
       type: "UPDATE_INCOME",
-      payload: {
-        ...item,
-        name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
-        hourly_rate: Number(hourlyRate),
-        hours_per_week: Number(hoursPerWeek),
-        net_income: annualIncome,
-        income_growth: Number(growth),
-        linked_401k_id: linked401kId || undefined,
-      },
+      payload: updatedIncome,
     });
 
     onClose();
@@ -978,20 +971,105 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
             </div>
 
             {/* Link to 401k card */}
-            {available401ks.length > 0 && (
-              <div className="link-card">
-                <label className="form-label">Link 401(k) Account</label>
-                <select value={linked401kId} onChange={(e) => setLinked401kId(e.target.value)} className="form-input">
-                  <option value="">None - No linking</option>
-                  {available401ks.map((account) => (
-                    <option key={account.id} value={account.id}>
-                      {account.name}
-                    </option>
-                  ))}
-                </select>
-                {linked401kId && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🏦</span>
+
+                  <div>
+                    <div className="link-card__title">
+                      Link 401(k) Account
+                    </div>
+
+                    <div className="link-card__sub">
+                      Connect this job to a retirement account
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
+
+              <div className="link-card__body">
+                {available401ks.length === 0 ? (
+                  <p className="link-card__no-accounts">
+                    No 401(k) accounts available.
+                  </p>
+                ) : isAlreadyLinked ? (
+                  <div className="link-card__synced">
+                    🔗 Linked to{" "}
+                    {
+                      available401ks.find(
+                        (a) => a.id === linked401kId
+                      )?.name
+                    }
+
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#6B7280",
+                        marginTop: "0.5rem",
+                      }}
+                    >
+                      Delete the linked account to reassign
+                    </div>
+                  </div>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select
+                      value={linked401kId}
+                      onChange={(e) =>
+                        handle401kSelect(e.target.value)
+                      }
+                      className="form-input"
+                    >
+                      <option value="">
+                        None - No linking
+                      </option>
+
+                      {available401ks.map((account) => {
+                        const isLinked =
+                          account.linked_income_id;
+
+                        return (
+                          <option
+                            key={account.id}
+                            value={account.id}
+                            disabled={isLinked}
+                          >
+                            {account.name}{" "}
+                            {isLinked
+                              ? "(already linked)"
+                              : ""}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
+                    {linked401kId && !linkError && (
+                      <div className="link-card__synced">
+                        🔗 Linked to{" "}
+                        {
+                          available401ks.find(
+                            (a) => a.id === linked401kId
+                          )?.name
+                        }
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Annual Income Preview */}
             <div className="preview-card">

@@ -15,7 +15,7 @@ export type SalaryIncome = {
   start_year: number;
   end_year: number;
 
-  net_income: number;
+  gross_income: number;
   income_growth: number;
 
   linked_401k_id?: string;
@@ -31,7 +31,9 @@ export type HourlyWageIncome = {
   start_year: number;
   end_year: number;
 
-  net_income: number;
+  hourly_rate: number;          
+  hours_per_week: number;       
+  gross_income: number;      
   income_growth: number;
 
   linked_401k_id?: string;
@@ -47,7 +49,7 @@ export type SideHustleIncome = {
   start_year: number;
   end_year: number;
 
-  net_income: number;
+  gross_income: number;
   variability: number;
   frequency: string;
   average_income_per_period: number;
@@ -58,7 +60,7 @@ export type IncomeSource = SalaryIncome | HourlyWageIncome | SideHustleIncome;
 // INCOME FORMS
 export function SalaryForm({ dispatch, state }) {
   const [name, setName] = useState("");
-  const [netIncome, setNetIncome] = useState("");
+  const [grossIncome, setGrossIncome] = useState("");
   const [growth, setGrowth] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
@@ -120,14 +122,14 @@ export function SalaryForm({ dispatch, state }) {
         name,
         start_year: Number(startYear),
         end_year: Number(endYear),
-        net_income: Number(netIncome),
+        gross_income: Number(grossIncome),
         income_growth: Number(growth),
         linked_401k_id: linked401kId || undefined,
       },
     });
 
     setName("");
-    setNetIncome("");
+    setGrossIncome("");
     setGrowth("");
     setStartYear("");
     setEndYear("");
@@ -159,10 +161,10 @@ export function SalaryForm({ dispatch, state }) {
 
             {/* Annual Income */}
             <div className="form-field">
-              <label className="form-label">Annual Net Income</label>
+              <label className="form-label">Annual Gross Income</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(netIncome)} onChange={(e) => handleNumberInput(e, setNetIncome)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="text" required />
+                <input value={formatNumberWithCommas(grossIncome)} onChange={(e) => handleNumberInput(e, setGrossIncome)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="text" required />
               </div>
             </div>
 
@@ -314,12 +316,14 @@ export function HourlyWageForm({ dispatch, state }) {
       type: "ADD_INCOME",
       payload: {
         source_type: "income",
-        variant: "salary",
+        variant: "hourly",
         id: newIncomeId,
         name,
         start_year: Number(startYear),
         end_year: Number(endYear),
-        net_income: Number(annualIncome),
+        hourly_rate: Number(hourlyRate),       
+        hours_per_week: Number(hoursPerWeek),  
+        gross_income: Number(annualIncome),
         income_growth: Number(growth),
         linked_401k_id: linked401kId || undefined,
       },
@@ -504,7 +508,7 @@ export function SideHustleForm({ dispatch }) {
         name: name || "Side Hustle",
         start_year: Number(startYear),
         end_year: Number(endYear),
-        net_income: annualIncome,
+        gross_income: annualIncome,
         variability: Number(variability) / 100,
         frequency: frequency,
         average_income_per_period: Number(averageIncome),
@@ -623,7 +627,7 @@ export function SideHustleForm({ dispatch }) {
 
 export function EditSalaryForm({ item, state, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
-  const [netIncome, setNetIncome] = useState(item.net_income.toString());
+  const [grossIncome, setGrossIncome] = useState(item.gross_income.toString());
   const [growth, setGrowth] = useState(item.income_growth.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
@@ -664,7 +668,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
       name,
       start_year: Number(startYear),
       end_year: Number(endYear),
-      net_income: Number(netIncome),
+      gross_income: Number(grossIncome),
       income_growth: Number(growth),
       linked_401k_id: linked401kId || undefined,
     };
@@ -721,12 +725,12 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
 
             {/* Annual Income */}
             <div className="form-field">
-              <label className="form-label">Annual Net Income</label>
+              <label className="form-label">Annual Gross Income</label>
 
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
 
-                <input value={formatNumberWithCommas(netIncome)} onChange={(e) => handleNumberInput(e, setNetIncome)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="text" />
+                <input value={formatNumberWithCommas(grossIncome)} onChange={(e) => handleNumberInput(e, setGrossIncome)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="text" />
               </div>
             </div>
 
@@ -874,7 +878,9 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
       name,
       start_year: Number(startYear),
       end_year: Number(endYear),
-      net_income: Number(annualIncome),
+      hourly_rate: Number(hourlyRate),          
+      hours_per_week: Number(hoursPerWeek),     
+      gross_income: Number(annualIncome),
       income_growth: Number(growth),
       linked_401k_id: linked401kId || undefined,
     };
@@ -977,31 +983,19 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
                   <span className="preview-icon">🏦</span>
 
                   <div>
-                    <div className="link-card__title">
-                      Link 401(k) Account
-                    </div>
+                    <div className="link-card__title">Link 401(k) Account</div>
 
-                    <div className="link-card__sub">
-                      Connect this job to a retirement account
-                    </div>
+                    <div className="link-card__sub">Connect this job to a retirement account</div>
                   </div>
                 </div>
               </div>
 
               <div className="link-card__body">
                 {available401ks.length === 0 ? (
-                  <p className="link-card__no-accounts">
-                    No 401(k) accounts available.
-                  </p>
+                  <p className="link-card__no-accounts">No 401(k) accounts available.</p>
                 ) : isAlreadyLinked ? (
                   <div className="link-card__synced">
-                    🔗 Linked to{" "}
-                    {
-                      available401ks.find(
-                        (a) => a.id === linked401kId
-                      )?.name
-                    }
-
+                    🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
                     <div
                       style={{
                         fontSize: "0.8rem",
@@ -1014,31 +1008,15 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
                   </div>
                 ) : (
                   <div className="form-field--gap8">
-                    <select
-                      value={linked401kId}
-                      onChange={(e) =>
-                        handle401kSelect(e.target.value)
-                      }
-                      className="form-input"
-                    >
-                      <option value="">
-                        None - No linking
-                      </option>
+                    <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
+                      <option value="">None - No linking</option>
 
                       {available401ks.map((account) => {
-                        const isLinked =
-                          account.linked_income_id;
+                        const isLinked = account.linked_income_id;
 
                         return (
-                          <option
-                            key={account.id}
-                            value={account.id}
-                            disabled={isLinked}
-                          >
-                            {account.name}{" "}
-                            {isLinked
-                              ? "(already linked)"
-                              : ""}
+                          <option key={account.id} value={account.id} disabled={isLinked}>
+                            {account.name} {isLinked ? "(already linked)" : ""}
                           </option>
                         );
                       })}
@@ -1056,16 +1034,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
                       </div>
                     )}
 
-                    {linked401kId && !linkError && (
-                      <div className="link-card__synced">
-                        🔗 Linked to{" "}
-                        {
-                          available401ks.find(
-                            (a) => a.id === linked401kId
-                          )?.name
-                        }
-                      </div>
-                    )}
+                    {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
                 )}
               </div>
@@ -1124,7 +1093,7 @@ export function EditSideHustleForm({ item, dispatch, onClose }) {
         name,
         start_year: Number(startYear),
         end_year: Number(endYear),
-        net_income: annualIncome,
+        gross_income: annualIncome,
         variability: Number(variability) / 100,
         frequency: frequency,
         average_income_per_period: Number(averageIncome),

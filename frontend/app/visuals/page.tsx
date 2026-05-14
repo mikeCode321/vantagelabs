@@ -506,8 +506,8 @@ function EntityRow({ item, category, dispatch, onEdit, state }) {
       <div className="entity-row__main">
         <p className="entity-row__name">{item.name}</p>
         <div className="entity-row__meta">
-          {item.balance != null && <span>${formatNumberWithCommas(item.balance.toString())}</span>}
-          {item.net_income != null && <span>${formatNumberWithCommas(item.net_income.toString())}</span>}
+          {item.starting_balance != null && <span>${formatNumberWithCommas(item.starting_balance.toString())}</span>}
+          {item.gross_income != null && <span>${formatNumberWithCommas(item.gross_income.toString())}</span>}
           {item.monthly_expense != null && <span>${formatNumberWithCommas(item.monthly_expense.toString())}</span>}
           {item.asset_value != null && <span>${formatNumberWithCommas(item.asset_value.toString())}</span>}
           <span>

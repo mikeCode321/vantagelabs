@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
+import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/accounts";
 
 // ─────────────────────────────────────────────
@@ -107,6 +107,7 @@ export function calculateMonthlyLoanPayment(principal: number, annualInterestRat
 export function HouseLoanExpenseForm({ dispatch, houseAsset, onBack, onClose }) {
   const [interestRate, setInterestRate] = useState("6.75");
   const [loanTermYears, setLoanTermYears] = useState("30");
+  const [startYear, setStartYear] = useState(houseAsset.start_year.toString());
   const [extraMonthlyPayment, setExtraMonthlyPayment] = useState("");
 
   const originalPrincipal = Number(houseAsset.asset_value || 0) - Number(houseAsset.down_payment || 0);
@@ -123,15 +124,14 @@ export function HouseLoanExpenseForm({ dispatch, houseAsset, onBack, onClose }) 
       variant: "house_loan",
       id: loanId,
       name: `${houseAsset.name} Loan`,
-      start_year: houseAsset.start_year,
-      end_year: houseAsset.start_year + Number(loanTermYears),
+      start_year: Number(startYear),
+      end_year: Number(startYear) + Number(loanTermYears),
       linked_asset_id: houseAsset.id,
       monthly_expense: monthlyExpense,
       original_principal: originalPrincipal,
       interest_rate: Number(interestRate) / 100,
       loan_term_years: Number(loanTermYears),
-      extra_monthly_payment:
-        extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
+      extra_monthly_payment: extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
     };
   
     dispatch({
@@ -195,11 +195,36 @@ export function HouseLoanExpenseForm({ dispatch, houseAsset, onBack, onClose }) 
           </div>
 
           <div className="form-col">
-            <p className="form-section-heading"></p>
+            <p className="form-section-heading">Timeline</p>
+
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input 
+                  value={startYear}
+                  onChange={(e) => setStartYear(e.target.value)}
+                  className="form-input"
+                  type="number"
+                  required
+                />
+              </div>
+
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(auto)</span>
+                </label>
+                <input 
+                  value={Number(startYear) + Number(loanTermYears)} 
+                  className="form-input" 
+                  disabled 
+                  style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }}
+                />
+              </div>
+            </div>
 
             <div className="form-preview-card">
               <div className="form-preview-label">Estimated Payment</div>
-              <div className="form-preview-value">${monthlyExpense.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
+              <div className="form-preview-value">${monthlyExpense.toLocaleString(undefined, { maximumFractionDigits:0 })}/mo</div>
               <div className="form-preview-desc">Principal + interest only</div>
             </div>
           </div>
@@ -230,6 +255,7 @@ export function HouseLoanExpenseForm({ dispatch, houseAsset, onBack, onClose }) 
 export function CarLoanExpenseForm({ dispatch, carAsset, onBack, onClose }) {
   const [interestRate, setInterestRate] = useState("7.5");
   const [loanTermYears, setLoanTermYears] = useState("5");
+  const [startYear, setStartYear] = useState(carAsset.start_year.toString());
 
   const originalPrincipal = Number(carAsset.asset_value || 0) - Number(carAsset.down_payment || 0);
 
@@ -245,8 +271,8 @@ export function CarLoanExpenseForm({ dispatch, carAsset, onBack, onClose }) {
       variant: "car_loan",
       id: loanId,
       name: `${carAsset.name} Loan`,
-      start_year: carAsset.start_year,
-      end_year: carAsset.start_year + Number(loanTermYears),
+      start_year: Number(startYear),
+      end_year: Number(startYear) + Number(loanTermYears),
       linked_asset_id: carAsset.id,
       monthly_expense: monthlyExpense,
       original_principal: originalPrincipal,
@@ -305,7 +331,32 @@ export function CarLoanExpenseForm({ dispatch, carAsset, onBack, onClose }) {
           </div>
 
           <div className="form-col">
-            <p className="form-section-heading">Payment Preview</p>
+            <p className="form-section-heading">Timeline</p>
+
+            <div className="form-year-grid">
+              <div className="form-field">
+                <label className="form-label">Start yr</label>
+                <input 
+                  value={startYear}
+                  onChange={(e) => setStartYear(e.target.value)}
+                  className="form-input"
+                  type="number"
+                  required
+                />
+              </div>
+
+              <div className="form-field">
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(auto)</span>
+                </label>
+                <input 
+                  value={Number(startYear) + Number(loanTermYears)} 
+                  className="form-input" 
+                  disabled 
+                  style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }}
+                />
+              </div>
+            </div>
 
             <div className="form-preview-card">
               <div className="form-preview-label">Estimated Payment</div>
@@ -695,19 +746,14 @@ export function RentExpenseForm({ dispatch }) {
 
 export function EditCarLoanExpenseForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name || "Car Loan");
-
   const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "");
-
   const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
-
   const [loanTermYears, setLoanTermYears] = useState(item.loan_term_years?.toString() || "5");
-
   const [startYear, setStartYear] = useState(item.start_year?.toString() || "");
-
   const [endYear, setEndYear] = useState(item.end_year == null ? "" : item.end_year.toString());
-
   const monthlyExpense = Number(originalPrincipal) > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0 ? calculateMonthlyLoanPayment(Number(originalPrincipal), Number(interestRate) / 100, Number(loanTermYears)) : 0;
-
+  const calculatedEndYear = Number(startYear) + Number(loanTermYears);
+  
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -719,7 +765,7 @@ export function EditCarLoanExpenseForm({ item, dispatch, onClose }) {
         variant: "car_loan",
         name: name || "Car Loan",
         start_year: Number(startYear),
-        end_year: endYear === "" ? Number(startYear) + Number(loanTermYears) : Number(endYear),
+        end_year: calculatedEndYear,
         monthly_expense: monthlyExpense,
         original_principal: Number(originalPrincipal),
         interest_rate: Number(interestRate) / 100,
@@ -785,8 +831,9 @@ export function EditCarLoanExpenseForm({ item, dispatch, onClose }) {
                 <label className="form-label">
                   End yr <span className="form-label--muted">(auto)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder={startYear && loanTermYears ? String(Number(startYear) + Number(loanTermYears)) : "6"} type="number" />
+                <input  value={calculatedEndYear || ''}  className="form-input"  disabled  style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }} />
               </div>
+
             </div>
 
             <div className="form-preview-card">
@@ -819,20 +866,15 @@ export function EditCarLoanExpenseForm({ item, dispatch, onClose }) {
 
 export function EditHouseLoanExpenseForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
-
   const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "");
-
   const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
-
   const [loanTermYears, setLoanTermYears] = useState(item.loan_term_years?.toString() || "30");
-
   const [extraMonthlyPayment, setExtraMonthlyPayment] = useState(item.extra_monthly_payment == null ? "" : item.extra_monthly_payment.toString());
-
   const [startYear, setStartYear] = useState(item.start_year?.toString() || "");
 
-  const [endYear, setEndYear] = useState(item.end_year == null ? "" : item.end_year.toString());
-
   const monthlyExpense = Number(originalPrincipal) > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0 ? calculateMonthlyLoanPayment(Number(originalPrincipal), Number(interestRate) / 100, Number(loanTermYears)) : 0;
+  
+  const calculatedEndYear = Number(startYear) + Number(loanTermYears);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -845,7 +887,7 @@ export function EditHouseLoanExpenseForm({ item, dispatch, onClose }) {
         variant: "house_loan",
         name: name || "Home Loan",
         start_year: Number(startYear),
-        end_year: endYear === "" ? Number(startYear) + Number(loanTermYears) : Number(endYear),
+        end_year: calculatedEndYear,
         monthly_expense: monthlyExpense,
         original_principal: Number(originalPrincipal),
         interest_rate: Number(interestRate) / 100,
@@ -922,8 +964,9 @@ export function EditHouseLoanExpenseForm({ item, dispatch, onClose }) {
                 <label className="form-label">
                   End yr <span className="form-label--muted">(auto)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder={startYear && loanTermYears ? String(Number(startYear) + Number(loanTermYears)) : "31"} type="number" />
+                <input  value={calculatedEndYear || ''}  className="form-input"  disabled  style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }} />
               </div>
+
             </div>
 
             <div className="form-preview-card">

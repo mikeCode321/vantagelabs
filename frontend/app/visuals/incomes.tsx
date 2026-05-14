@@ -189,7 +189,7 @@ export function SalaryForm({ dispatch, state }) {
               </div>
               <div className="form-field">
                 <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" required />
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 

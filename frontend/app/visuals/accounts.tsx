@@ -188,7 +188,7 @@ export function CheckingAccountForm({ dispatch }) {
               </div>
               <div className="form-field">
                 <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" required />
+                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" />
               </div>
             </div>
           </div>

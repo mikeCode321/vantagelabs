@@ -23,7 +23,7 @@ export type CheckingAccount = {
   name: string;
   start_year: number;
   end_year: number;
-  balance: number;
+  starting_balance: number;
   interest_tiers: Tier[];
 };
 
@@ -78,7 +78,7 @@ export function CheckingAccountForm({ dispatch }) {
         name,
         start_year: Number(startYear),
         end_year: Number(endYear),
-        balance: Number(balance),
+        starting_balance: Number(balance),
         interest_tiers: tiers,
       },
     });
@@ -599,7 +599,7 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
         name,
         start_year: Number(startYear),
         end_year: Number(endYear),
-        balance: Number(balance),
+        starting_balance: Number(balance),
         interest_tiers: tiers,
       },
     });

@@ -435,8 +435,59 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
 
 /* -------------------- Row Styles -------------------- */
 
-function EntityRow({ item, category, dispatch, onEdit }) {
+
+function EntityRow({ item, category, dispatch, onEdit, state }) {
+
+  const handleDelete401k = (account, state, dispatch) => {
+    const allJobs = [...state.incomes.salary, ...state.incomes.hourly, ...state.incomes.side];
+    // If linked, unlink the job first
+    if (account.linked_income_id) {
+      const linkedJob = allJobs.find((job) => job.id === account.linked_income_id);
+      if (linkedJob) {
+        dispatch({
+          type: "UPDATE_INCOME",
+          payload: {
+            ...linkedJob,
+            linked_401k_id: undefined,
+          },
+        });
+      }
+    }
+    
+    dispatch({
+      type: "DELETE_ACCOUNT",
+      payload: account,
+    });
+  };
+  
+  const handleDeleteJob = (job, state, dispatch) => {
+    const available401ks = [...state.accounts.employer_retirement];
+    // If linked, delete the 401k first
+    if (job.linked_401k_id) {
+      const linked401k = available401ks.find((acc) => acc.id === job.linked_401k_id);
+      if (linked401k) {
+        dispatch({
+          type: "DELETE_ACCOUNT",
+          payload: linked401k,
+        });
+      }
+    }
+    
+    dispatch({
+      type: "DELETE_INCOME",
+      payload: job,
+    });
+  };
+
   const handleDelete = () => {
+    if (item.variant === 'employer_retirement') {
+      return handleDelete401k(item, state, dispatch);
+    }
+    
+    if (item.variant === 'salary' || item.variant === 'hourly') {
+      return handleDeleteJob(item, state, dispatch);
+    }
+    
     const deleteType = {
       account: "DELETE_ACCOUNT",
       income: "DELETE_INCOME",
@@ -529,7 +580,7 @@ export function Entity({ state, entityName, category, dispatch }) {
         </div>
 
         {getItems().map((item) => (
-          <EntityRow key={item.id} item={item} category={category} dispatch={dispatch} onEdit={handleEdit} />
+          <EntityRow key={item.id} item={item} category={category} dispatch={dispatch} onEdit={handleEdit} state={state} />
         ))}
       </div>
 

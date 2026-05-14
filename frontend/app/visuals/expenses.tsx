@@ -359,7 +359,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose }) {
                       <option value="">None - No linking</option>
 
                       {availableHouses.map((house) => {
-                        const isLinked = house.linked_loan_id;
+                        const isLinked = Boolean(house.linked_loan_id);
 
                         return (
                           <option
@@ -1274,33 +1274,59 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose }) {
   );
 }
 
-export function EditHouseLoanExpenseForm({ item,state, dispatch, onClose }) {
-  const [name, setName] = useState(item.name);
-  const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "");
-  const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
-  const [loanTermYears, setLoanTermYears] = useState(item.loan_term_years?.toString() || "30");
-  const [extraMonthlyPayment, setExtraMonthlyPayment] = useState(item.extra_monthly_payment == null ? "" : item.extra_monthly_payment.toString());
-  const [startYear, setStartYear] = useState(item.start_year?.toString() || "");
+export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose }) {
+  const [name, setName] = useState(item.name || "Home Loan");
+  const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "" );
+  const [interestRate, setInterestRate] = useState(
+    item.interest_rate == null ? "" : (item.interest_rate * 100).toString()
+  );
+  const [loanTermYears, setLoanTermYears] = useState(
+    item.loan_term_years?.toString() || "30"
+  );
+  const [extraMonthlyPayment, setExtraMonthlyPayment] = useState(
+    item.extra_monthly_payment == null
+      ? ""
+      : item.extra_monthly_payment.toString()
+  );
+  const [startYear, setStartYear] = useState(
+    item.start_year?.toString() || ""
+  );
 
-  const monthlyExpense = Number(originalPrincipal) > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0 ? calculateMonthlyLoanPayment(Number(originalPrincipal), Number(interestRate) / 100, Number(loanTermYears)) : 0;
-  
-  const calculatedEndYear = Number(startYear) + Number(loanTermYears);
-
-  const [linkedAssetId, setLinkedAssetId] = useState(item.linked_asset_id || "");
+  const [linkedAssetId, setLinkedAssetId] = useState(
+    item.linked_asset_id || ""
+  );
   const [linkError, setLinkError] = useState("");
 
   const availableHouses = state?.assets?.house || [];
 
+  const monthlyExpense =
+    Number(originalPrincipal) > 0 &&
+    Number(interestRate) >= 0 &&
+    Number(loanTermYears) > 0
+      ? calculateMonthlyLoanPayment(
+          Number(originalPrincipal),
+          Number(interestRate) / 100,
+          Number(loanTermYears)
+        )
+      : 0;
+
+  const calculatedEndYear =
+    startYear && loanTermYears
+      ? Number(startYear) + Number(loanTermYears)
+      : "";
+
   const handleHouseSelect = (assetId: string) => {
     setLinkError("");
-  
+
     if (!assetId) {
       setLinkedAssetId("");
       return;
     }
-  
-    const selectedHouse = availableHouses.find((house) => house.id === assetId);
-  
+
+    const selectedHouse = availableHouses.find(
+      (house) => house.id === assetId
+    );
+
     if (
       selectedHouse?.linked_loan_id &&
       selectedHouse.linked_loan_id !== item.id
@@ -1309,41 +1335,61 @@ export function EditHouseLoanExpenseForm({ item,state, dispatch, onClose }) {
       setLinkedAssetId("");
       return;
     }
-  
+
     setLinkedAssetId(assetId);
-  
+
     if (selectedHouse) {
       setName(`${selectedHouse.name} Loan`);
       setStartYear(selectedHouse.start_year.toString());
-  
+
       const principal =
         Number(selectedHouse.asset_value || 0) -
         Number(selectedHouse.down_payment || 0);
-  
+
       setOriginalPrincipal(principal.toString());
     }
   };
 
-  if (item.linked_asset_id && item.linked_asset_id !== linkedAssetId) {
-    const oldHouse = availableHouses.find(
-      (house) => house.id === item.linked_asset_id
-    );
-  
-    if (oldHouse) {
-      dispatch({
-        type: "UPDATE_ASSET",
-        payload: {
-          ...oldHouse,
-          linked_loan_id: null,
-        },
-      });
-    }
-  }
-  
-
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (linkError) return;
+
+    //  If this loan used to be linked to a different house, clear old house
+    if (item.linked_asset_id && item.linked_asset_id !== linkedAssetId) {
+      const oldHouse = availableHouses.find(
+        (house) => house.id === item.linked_asset_id
+      );
+
+      if (oldHouse) {
+        dispatch({
+          type: "UPDATE_ASSET",
+          payload: {
+            ...oldHouse,
+            linked_loan_id: null,
+          },
+        });
+      }
+    }
+
+    // If this loan is now linked to a new house, update that house
+    if (linkedAssetId && linkedAssetId !== item.linked_asset_id) {
+      const selectedHouse = availableHouses.find(
+        (house) => house.id === linkedAssetId
+      );
+
+      if (selectedHouse) {
+        dispatch({
+          type: "UPDATE_ASSET",
+          payload: {
+            ...selectedHouse,
+            linked_loan_id: item.id,
+          },
+        });
+      }
+    }
+
+    //  Update the loan itself
     dispatch({
       type: "UPDATE_EXPENSE",
       payload: {
@@ -1372,7 +1418,9 @@ export function EditHouseLoanExpenseForm({ item,state, dispatch, onClose }) {
         <div className="form-header-icon">🏦</div>
         <div>
           <h3 className="form-header-title">Edit Home Loan</h3>
-          <p className="form-header-desc">Update mortgage details, payment assumptions, and timeline.</p>
+          <p className="form-header-desc">
+            Update mortgage details, payment assumptions, and timeline.
+          </p>
         </div>
       </div>
 
@@ -1383,37 +1431,77 @@ export function EditHouseLoanExpenseForm({ item,state, dispatch, onClose }) {
 
             <div className="form-field">
               <label className="form-label">Loan Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Primary Residence Loan" />
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="form-input"
+                placeholder="Primary Residence Loan"
+              />
             </div>
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(originalPrincipal)} onChange={(e) => handleNumberInput(e, setOriginalPrincipal)} className="form-input form-input--prefix-dollar" placeholder="320,000" type="text" inputMode="decimal" required />
+                <input
+                  value={formatNumberWithCommas(originalPrincipal)}
+                  onChange={(e) =>
+                    handleNumberInput(e, setOriginalPrincipal)
+                  }
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="320,000"
+                  type="text"
+                  inputMode="decimal"
+                  required
+                />
               </div>
             </div>
 
             <div className="form-field">
               <label className="form-label">Interest Rate</label>
               <div className="form-input-wrap">
-                <input value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input form-input--suffix" placeholder="6.75" type="number" step="0.01" required />
+                <input
+                  value={interestRate}
+                  onChange={(e) => setInterestRate(e.target.value)}
+                  className="form-input form-input--suffix"
+                  placeholder="6.75"
+                  type="number"
+                  step="0.01"
+                  required
+                />
                 <span className="form-input-suffix">%</span>
               </div>
             </div>
 
             <div className="form-field">
               <label className="form-label">Loan Term Years</label>
-              <input value={loanTermYears} onChange={(e) => setLoanTermYears(e.target.value)} className="form-input" placeholder="30" type="number" required />
+              <input
+                value={loanTermYears}
+                onChange={(e) => setLoanTermYears(e.target.value)}
+                className="form-input"
+                placeholder="30"
+                type="number"
+                required
+              />
             </div>
 
             <div className="form-field">
               <label className="form-label">
-                Extra Monthly Payment <span className="form-label--muted">(optional)</span>
+                Extra Monthly Payment{" "}
+                <span className="form-label--muted">(optional)</span>
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(extraMonthlyPayment)} onChange={(e) => handleNumberInput(e, setExtraMonthlyPayment)} className="form-input form-input--prefix-dollar" placeholder="0" type="text" />
+                <input
+                  value={formatNumberWithCommas(extraMonthlyPayment)}
+                  onChange={(e) =>
+                    handleNumberInput(e, setExtraMonthlyPayment)
+                  }
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="0"
+                  type="text"
+                  inputMode="decimal"
+                />
               </div>
             </div>
           </div>
@@ -1424,11 +1512,29 @@ export function EditHouseLoanExpenseForm({ item,state, dispatch, onClose }) {
             <div className="form-year-grid">
               <div className="form-field">
                 <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <input
+                  value={startYear}
+                  onChange={(e) => setStartYear(e.target.value)}
+                  className="form-input"
+                  placeholder="1"
+                  type="number"
+                  required
+                />
               </div>
+
               <div className="form-field">
-                <label className="form-label">End yr <span className="form-label--muted">(auto)</span></label>
-                <input value={calculatedEndYear || ''} className="form-input" disabled style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }} />
+                <label className="form-label">
+                  End yr <span className="form-label--muted">(auto)</span>
+                </label>
+                <input
+                  value={calculatedEndYear}
+                  className="form-input"
+                  disabled
+                  style={{
+                    backgroundColor: "#f3f4f6",
+                    cursor: "not-allowed",
+                  }}
+                />
               </div>
             </div>
 
@@ -1437,34 +1543,77 @@ export function EditHouseLoanExpenseForm({ item,state, dispatch, onClose }) {
                 <div className="link-card__info">
                   <span className="preview-icon">🏡</span>
                   <div>
-                    <div className="link-card__title">Link to a House Asset</div>
-                    <div className="link-card__sub">Sync this loan with an existing house</div>
+                    <div className="link-card__title">
+                      Link to a House Asset
+                    </div>
+                    <div className="link-card__sub">
+                      Sync this loan with an existing house
+                    </div>
                   </div>
                 </div>
               </div>
+
               <div className="link-card__body">
                 {availableHouses.length === 0 ? (
-                  <p className="link-card__no-accounts">No house assets available.</p>
+                  <p className="link-card__no-accounts">
+                    No house assets available.
+                  </p>
                 ) : (
                   <div className="form-field--gap8">
-                    <select value={linkedAssetId} onChange={(e) => handleHouseSelect(e.target.value)} className="form-input">
+                    <select
+                      value={linkedAssetId}
+                      onChange={(e) => handleHouseSelect(e.target.value)}
+                      className="form-input"
+                    >
                       <option value="">None - No linking</option>
-                      {availableHouses.map((house) => (
-                        <option key={house.id} value={house.id} disabled={house.linked_loan_id && house.linked_loan_id !== item.id}>
-                          {house.name} {house.linked_loan_id && house.linked_loan_id !== item.id ? "(already linked)" : ""}
-                        </option>
-                      ))}
+
+                      {availableHouses.map((house) => {
+                        const isLinkedToAnotherLoan =
+                          house.linked_loan_id &&
+                          house.linked_loan_id !== item.id;
+
+                        return (
+                          <option
+                            key={house.id}
+                            value={house.id}
+                            disabled={Boolean(isLinkedToAnotherLoan)}
+                          >
+                            {house.name}{" "}
+                            {isLinkedToAnotherLoan
+                              ? "(already linked)"
+                              : ""}
+                          </option>
+                        );
+                      })}
                     </select>
-                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Linked to {availableHouses.find((house) => house.id === linkedAssetId)?.name}
+                        🔗 Linked to{" "}
+                        {
+                          availableHouses.find(
+                            (house) => house.id === linkedAssetId
+                          )?.name
+                        }
                       </div>
                     )}
                   </div>
                 )}
               </div>
             </div>
+
             <div className="form-preview-card">
               <div className="form-preview-label">Estimated Payment</div>
               <div className="form-preview-value">
@@ -1476,23 +1625,17 @@ export function EditHouseLoanExpenseForm({ item,state, dispatch, onClose }) {
               </div>
               <div className="form-preview-desc">
                 Principal + interest only
-                {extraMonthlyPayment !== "" && (
-                  <span>
-                    {" "}
-                    · +$
-                    {Number(extraMonthlyPayment).toLocaleString(undefined, {
-                      maximumFractionDigits: 0,
-                    })}
-                    /mo extra
-                  </span>
-                )}
               </div>
             </div>
           </div>
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
+          <button
+            type="button"
+            onClick={onClose}
+            className="form-btn-cancel"
+          >
             Cancel
           </button>
 

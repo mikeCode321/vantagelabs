@@ -64,7 +64,7 @@ type Action =
   | { type: "DELETE_INCOME"; payload: { id: string; variant: "salary" | "hourly" | "side" } }
   | { type: "ADD_EXPENSE"; payload: ExpenseSource }
   | { type: "UPDATE_EXPENSE"; payload: ExpenseSource }
-  | { type: "DELETE_EXPENSE"; payload: { id: string; variant: "living" | "rent" | "debt" } }
+  | { type: "DELETE_EXPENSE"; payload: { id: string; variant: "living" | "rent" | "debt" | "house_loan" | "car_loan" } }
   | { type: "ADD_ASSET"; payload: AssetSource }
   | { type: "UPDATE_ASSET"; payload: AssetSource }
   | { type: "DELETE_ASSET"; payload: { id: string; variant: "house" | "car" } };
@@ -169,11 +169,43 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
 
     case "DELETE_EXPENSE": {
       const { id, variant } = action.payload;
+    
+      const linkedAssetId =
+        variant === "house_loan" || variant === "car_loan"
+          ? (state.expenses[variant].find((e) => e.id === id) as
+              | HouseLoanExpense
+              | CarLoanExpense
+              | undefined)?.linked_asset_id
+          : null;
+    
       return {
         ...state,
+    
         expenses: {
           ...state.expenses,
           [variant]: state.expenses[variant].filter((e) => e.id !== id),
+        },
+    
+        assets: {
+          ...state.assets,
+    
+          house:
+            variant === "house_loan" && linkedAssetId
+              ? state.assets.house.map((asset) =>
+                  asset.id === linkedAssetId
+                    ? { ...asset, linked_loan_id: null }
+                    : asset
+                )
+              : state.assets.house,
+    
+          car:
+            variant === "car_loan" && linkedAssetId
+              ? state.assets.car.map((asset) =>
+                  asset.id === linkedAssetId
+                    ? { ...asset, linked_loan_id: null }
+                    : asset
+                )
+              : state.assets.car,
         },
       };
     }
@@ -205,17 +237,34 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
 
     case "DELETE_ASSET": {
       const { id, variant } = action.payload;
+    
+      const assetToDelete = state.assets[variant].find((a) => a.id === id);
+    
+      const linkedLoanId = assetToDelete?.linked_loan_id;
+    
       return {
         ...state,
+    
         assets: {
           ...state.assets,
           [variant]: state.assets[variant].filter((a) => a.id !== id),
         },
+    
+        expenses: {
+          ...state.expenses,
+    
+          house_loan:
+            variant === "house" && linkedLoanId
+              ? state.expenses.house_loan.filter((loan) => loan.id !== linkedLoanId)
+              : state.expenses.house_loan,
+    
+          car_loan:
+            variant === "car" && linkedLoanId
+              ? state.expenses.car_loan.filter((loan) => loan.id !== linkedLoanId)
+              : state.expenses.car_loan,
+        },
       };
     }
-
-    default:
-      return state;
   }
 }
 

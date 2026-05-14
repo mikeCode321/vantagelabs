@@ -61,7 +61,7 @@ export type HouseLoanExpense = {
   end_year?: number | null;
 
   // Links this mortgage to a specific house asset
-  linked_asset_id: ID;
+  linked_asset_id?: ID;
 
   monthly_expense: number;
 
@@ -81,7 +81,7 @@ export type CarLoanExpense = {
   start_year: number;
   end_year?: number | null;
 
-  linked_asset_id: ID; // points to the CarAsset
+  linked_asset_id?: ID; // points to the CarAsset
 
   monthly_expense: number;
 
@@ -104,13 +104,48 @@ export function calculateMonthlyLoanPayment(principal: number, annualInterestRat
   return (principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments))) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
 }
 
-export function HouseLoanExpenseForm({ dispatch, onClose }) {
+export function HouseLoanExpenseForm({ dispatch, state, onClose }) {
   const [name, setName] = useState("House Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState("");
   const [interestRate, setInterestRate] = useState("6.75");
   const [loanTermYears, setLoanTermYears] = useState("30");
   const [startYear, setStartYear] = useState("");
   const [extraMonthlyPayment, setExtraMonthlyPayment] = useState("");
+
+  const [linkedAssetId, setLinkedAssetId] = useState("");
+  const [linkError, setLinkError] = useState("");
+
+  const availableHouses = state?.assets?.house || [];
+
+  const handleHouseSelect = (assetId: string) => {
+    setLinkError("");
+
+    if (!assetId) {
+      setLinkedAssetId("");
+      return;
+    }
+
+    const selectedHouse = availableHouses.find((house) => house.id === assetId);
+
+    if (selectedHouse?.linked_loan_id) {
+      setLinkError("This house is already linked to another loan.");
+      setLinkedAssetId("");
+      return;
+    }
+
+    setLinkedAssetId(assetId);
+
+    if (selectedHouse) {
+      setName(`${selectedHouse.name} Loan`);
+      setStartYear(selectedHouse.start_year.toString());
+
+      const principal =
+        Number(selectedHouse.asset_value || 0) -
+        Number(selectedHouse.down_payment || 0);
+
+      setOriginalPrincipal(principal.toString());
+    }
+  };
 
   const monthlyExpense =
     Number(originalPrincipal) > 0 &&
@@ -131,13 +166,18 @@ export function HouseLoanExpenseForm({ dispatch, onClose }) {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (linkError) return;
+
+    const loanId = crypto.randomUUID();
+
     const houseLoanExpense = {
       source_type: "expense",
       variant: "house_loan",
-      id: crypto.randomUUID(),
+      id: loanId,
       name: name || "House Loan",
       start_year: Number(startYear),
       end_year: Number(startYear) + Number(loanTermYears),
+      linked_asset_id: linkedAssetId || null,
       monthly_expense: monthlyExpense,
       original_principal: Number(originalPrincipal),
       interest_rate: Number(interestRate) / 100,
@@ -145,6 +185,23 @@ export function HouseLoanExpenseForm({ dispatch, onClose }) {
       extra_monthly_payment:
         extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
     };
+
+    if (linkedAssetId) {
+      const selectedHouse = availableHouses.find(
+        (house) => house.id === linkedAssetId
+      );
+
+      if (selectedHouse) {
+        dispatch({
+          type: "UPDATE_ASSET",
+          payload: {
+            ...selectedHouse,
+            linked_loan_id: loanId,
+          },
+        });
+      }
+    }
+
     dispatch({
       type: "ADD_EXPENSE",
       payload: houseLoanExpense,
@@ -153,7 +210,6 @@ export function HouseLoanExpenseForm({ dispatch, onClose }) {
     if (onClose) onClose();
   };
 
-
   return (
     <div className="form-panel">
       <div className="form-header">
@@ -161,7 +217,7 @@ export function HouseLoanExpenseForm({ dispatch, onClose }) {
         <div>
           <h3 className="form-header-title">Add Home Loan</h3>
           <p className="form-header-desc">
-            Add mortgage details as a standalone expense.
+            Add mortgage details and optionally link it to a house asset.
           </p>
         </div>
       </div>
@@ -275,6 +331,75 @@ export function HouseLoanExpenseForm({ dispatch, onClose }) {
               </div>
             </div>
 
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🏡</span>
+                  <div>
+                    <div className="link-card__title">Link to a House Asset</div>
+                    <div className="link-card__sub">
+                      Sync this loan with an existing house
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="link-card__body">
+                {availableHouses.length === 0 ? (
+                  <p className="link-card__no-accounts">
+                    No house assets available.
+                  </p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select
+                      value={linkedAssetId}
+                      onChange={(e) => handleHouseSelect(e.target.value)}
+                      className="form-input"
+                    >
+                      <option value="">None - No linking</option>
+
+                      {availableHouses.map((house) => {
+                        const isLinked = house.linked_loan_id;
+
+                        return (
+                          <option
+                            key={house.id}
+                            value={house.id}
+                            disabled={isLinked}
+                          >
+                            {house.name} {isLinked ? "(already linked)" : ""}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
+                    {linkedAssetId && !linkError && (
+                      <div className="link-card__synced">
+                        🔗 Linked to{" "}
+                        {
+                          availableHouses.find(
+                            (house) => house.id === linkedAssetId
+                          )?.name
+                        }
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="form-preview-card">
               <div className="form-preview-label">Estimated Payment</div>
               <div className="form-preview-value">
@@ -284,26 +409,18 @@ export function HouseLoanExpenseForm({ dispatch, onClose }) {
                 })}
                 /mo
               </div>
-              <div className="form-preview-desc">
-                Principal + interest only
-                {extraMonthlyPayment !== "" && (
-                  <span>
-                    {" "}
-                    · +$
-                    {Number(extraMonthlyPayment).toLocaleString(undefined, {
-                      maximumFractionDigits: 0,
-                    })}
-                    /mo extra
-                  </span>
-                )}
-              </div>
+              <div className="form-preview-desc">Principal + interest only</div>
             </div>
           </div>
         </div>
 
         <div className="form-actions">
           {onClose && (
-            <button type="button" onClick={onClose} className="form-btn-secondary">
+            <button
+              type="button"
+              onClick={onClose}
+              className="form-btn-secondary"
+            >
               Cancel
             </button>
           )}
@@ -317,12 +434,48 @@ export function HouseLoanExpenseForm({ dispatch, onClose }) {
   );
 }
 
-export function CarLoanExpenseForm({ dispatch, onClose }) {
+
+export function CarLoanExpenseForm({ dispatch, state, onClose }) {
   const [name, setName] = useState("Car Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState("");
   const [interestRate, setInterestRate] = useState("7.5");
   const [loanTermYears, setLoanTermYears] = useState("5");
   const [startYear, setStartYear] = useState("");
+
+  const [linkedAssetId, setLinkedAssetId] = useState("");
+  const [linkError, setLinkError] = useState("");
+
+  const availableCars = state?.assets?.car || [];
+
+  const handleCarSelect = (assetId: string) => {
+    setLinkError("");
+
+    if (!assetId) {
+      setLinkedAssetId("");
+      return;
+    }
+
+    const selectedCar = availableCars.find((car) => car.id === assetId);
+
+    if (selectedCar?.linked_loan_id) {
+      setLinkError("This car is already linked to another loan.");
+      setLinkedAssetId("");
+      return;
+    }
+
+    setLinkedAssetId(assetId);
+
+    if (selectedCar) {
+      setName(`${selectedCar.name} Loan`);
+      setStartYear(selectedCar.start_year.toString());
+
+      const principal =
+        Number(selectedCar.asset_value || 0) -
+        Number(selectedCar.down_payment || 0);
+
+      setOriginalPrincipal(principal.toString());
+    }
+  };
 
   const monthlyExpense =
     Number(originalPrincipal) > 0 &&
@@ -343,18 +496,37 @@ export function CarLoanExpenseForm({ dispatch, onClose }) {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (linkError) return;
+
+    const loanId = crypto.randomUUID();
+
     const carLoanExpense = {
       source_type: "expense",
       variant: "car_loan",
-      id: crypto.randomUUID(),
+      id: loanId,
       name: name || "Car Loan",
       start_year: Number(startYear),
       end_year: Number(startYear) + Number(loanTermYears),
+      linked_asset_id: linkedAssetId || null,
       monthly_expense: monthlyExpense,
       original_principal: Number(originalPrincipal),
       interest_rate: Number(interestRate) / 100,
       loan_term_years: Number(loanTermYears),
     };
+
+    if (linkedAssetId) {
+      const selectedCar = availableCars.find((car) => car.id === linkedAssetId);
+
+      if (selectedCar) {
+        dispatch({
+          type: "UPDATE_ASSET",
+          payload: {
+            ...selectedCar,
+            linked_loan_id: loanId,
+          },
+        });
+      }
+    }
 
     dispatch({
       type: "ADD_EXPENSE",
@@ -371,7 +543,7 @@ export function CarLoanExpenseForm({ dispatch, onClose }) {
         <div>
           <h3 className="form-header-title">Add Car Loan</h3>
           <p className="form-header-desc">
-            Add vehicle loan details as a standalone expense.
+            Add vehicle loan details and optionally link it to a car asset.
           </p>
         </div>
       </div>
@@ -465,6 +637,75 @@ export function CarLoanExpenseForm({ dispatch, onClose }) {
               </div>
             </div>
 
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🚗</span>
+                  <div>
+                    <div className="link-card__title">Link to a Car Asset</div>
+                    <div className="link-card__sub">
+                      Sync this loan with an existing vehicle
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="link-card__body">
+                {availableCars.length === 0 ? (
+                  <p className="link-card__no-accounts">
+                    No car assets available.
+                  </p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select
+                      value={linkedAssetId}
+                      onChange={(e) => handleCarSelect(e.target.value)}
+                      className="form-input"
+                    >
+                      <option value="">None - No linking</option>
+
+                      {availableCars.map((car) => {
+                        const isLinked = car.linked_loan_id;
+
+                        return (
+                          <option
+                            key={car.id}
+                            value={car.id}
+                            disabled={isLinked}
+                          >
+                            {car.name} {isLinked ? "(already linked)" : ""}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
+                    {linkedAssetId && !linkError && (
+                      <div className="link-card__synced">
+                        🔗 Linked to{" "}
+                        {
+                          availableCars.find(
+                            (car) => car.id === linkedAssetId
+                          )?.name
+                        }
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="form-preview-card">
               <div className="form-preview-label">Estimated Payment</div>
               <div className="form-preview-value">
@@ -474,9 +715,7 @@ export function CarLoanExpenseForm({ dispatch, onClose }) {
                 })}
                 /mo
               </div>
-              <div className="form-preview-desc">
-                Principal + interest only
-              </div>
+              <div className="form-preview-desc">Principal + interest only</div>
             </div>
           </div>
         </div>
@@ -500,7 +739,6 @@ export function CarLoanExpenseForm({ dispatch, onClose }) {
     </div>
   );
 }
-
 export function LivingExpensesForm({ dispatch }) {
   const [name, setName] = useState("Living Expenses");
   const [amount, setAmount] = useState("");
@@ -859,18 +1097,55 @@ export function RentExpenseForm({ dispatch }) {
 
 /* -------------------- EDIT EXPENSE FORMS -------------------- */
 
-export function EditCarLoanExpenseForm({ item, dispatch, onClose }) {
+export function EditCarLoanExpenseForm({ item, state, dispatch, onClose }) {
   const [name, setName] = useState(item.name || "Car Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "");
   const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
   const [loanTermYears, setLoanTermYears] = useState(item.loan_term_years?.toString() || "5");
   const [startYear, setStartYear] = useState(item.start_year?.toString() || "");
-  const [endYear, setEndYear] = useState(item.end_year == null ? "" : item.end_year.toString());
-  const monthlyExpense = Number(originalPrincipal) > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0 ? calculateMonthlyLoanPayment(Number(originalPrincipal), Number(interestRate) / 100, Number(loanTermYears)) : 0;
+  const [linkedAssetId, setLinkedAssetId] = useState(item.linked_asset_id || "");
+  const [linkError, setLinkError] = useState("");
+
+  const availableCars = state?.assets?.car || [];
+
+  const monthlyExpense = Number(originalPrincipal) > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0
+    ? calculateMonthlyLoanPayment(Number(originalPrincipal), Number(interestRate) / 100, Number(loanTermYears))
+    : 0;
   const calculatedEndYear = Number(startYear) + Number(loanTermYears);
-  
+
+  const handleCarSelect = (assetId: string) => {
+    setLinkError("");
+    if (!assetId) { setLinkedAssetId(""); return; }
+
+    const selectedCar = availableCars.find((car) => car.id === assetId);
+    if (selectedCar?.linked_loan_id && selectedCar.linked_loan_id !== item.id) {
+      setLinkError("This car is already linked to another loan.");
+      setLinkedAssetId("");
+      return;
+    }
+
+    setLinkedAssetId(assetId);
+    if (selectedCar) {
+      setName(`${selectedCar.name} Loan`);
+      setStartYear(selectedCar.start_year.toString());
+      const principal = Number(selectedCar.asset_value || 0) - Number(selectedCar.down_payment || 0);
+      setOriginalPrincipal(principal.toString());
+    }
+  };
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (linkError) return;
+
+    if (item.linked_asset_id && item.linked_asset_id !== linkedAssetId) {
+      const oldCar = availableCars.find((car) => car.id === item.linked_asset_id);
+      if (oldCar) dispatch({ type: "UPDATE_ASSET", payload: { ...oldCar, linked_loan_id: null } });
+    }
+
+    if (linkedAssetId && linkedAssetId !== item.linked_asset_id) {
+      const selectedCar = availableCars.find((car) => car.id === linkedAssetId);
+      if (selectedCar) dispatch({ type: "UPDATE_ASSET", payload: { ...selectedCar, linked_loan_id: item.id } });
+    }
 
     dispatch({
       type: "UPDATE_EXPENSE",
@@ -881,6 +1156,7 @@ export function EditCarLoanExpenseForm({ item, dispatch, onClose }) {
         name: name || "Car Loan",
         start_year: Number(startYear),
         end_year: calculatedEndYear,
+        linked_asset_id: linkedAssetId || null,
         monthly_expense: monthlyExpense,
         original_principal: Number(originalPrincipal),
         interest_rate: Number(interestRate) / 100,
@@ -941,45 +1217,64 @@ export function EditCarLoanExpenseForm({ item, dispatch, onClose }) {
                 <label className="form-label">Start yr</label>
                 <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
-
               <div className="form-field">
-                <label className="form-label">
-                  End yr <span className="form-label--muted">(auto)</span>
-                </label>
-                <input  value={calculatedEndYear || ''}  className="form-input"  disabled  style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }} />
+                <label className="form-label">End yr <span className="form-label--muted">(auto)</span></label>
+                <input value={calculatedEndYear || ''} className="form-input" disabled style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }} />
               </div>
+            </div>
 
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🚗</span>
+                  <div>
+                    <div className="link-card__title">Link to a Car Asset</div>
+                    <div className="link-card__sub">Sync this loan with an existing vehicle</div>
+                  </div>
+                </div>
+              </div>
+              <div className="link-card__body">
+                {availableCars.length === 0 ? (
+                  <p className="link-card__no-accounts">No car assets available.</p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select value={linkedAssetId} onChange={(e) => handleCarSelect(e.target.value)} className="form-input">
+                      <option value="">None - No linking</option>
+                      {availableCars.map((car) => (
+                        <option key={car.id} value={car.id} disabled={car.linked_loan_id && car.linked_loan_id !== item.id}>
+                          {car.name} {car.linked_loan_id && car.linked_loan_id !== item.id ? "(already linked)" : ""}
+                        </option>
+                      ))}
+                    </select>
+                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
+                    {linkedAssetId && !linkError && (
+                      <div className="link-card__synced">
+                        🔗 Linked to {availableCars.find((car) => car.id === linkedAssetId)?.name}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="form-preview-card">
               <div className="form-preview-label">Estimated Payment</div>
-              <div className="form-preview-value">
-                $
-                {monthlyExpense.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-                /mo
-              </div>
+              <div className="form-preview-value">${monthlyExpense.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
               <div className="form-preview-desc">Principal + interest only</div>
             </div>
           </div>
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
-            Cancel
-          </button>
-
-          <button type="submit" className="form-btn-submit">
-            Save Car Loan
-          </button>
+          <button type="button" onClick={onClose} className="form-btn-cancel">Cancel</button>
+          <button type="submit" className="form-btn-submit">Save Car Loan</button>
         </div>
       </form>
     </div>
   );
 }
 
-export function EditHouseLoanExpenseForm({ item, dispatch, onClose }) {
+export function EditHouseLoanExpenseForm({ item,state, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "");
   const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
@@ -990,6 +1285,61 @@ export function EditHouseLoanExpenseForm({ item, dispatch, onClose }) {
   const monthlyExpense = Number(originalPrincipal) > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0 ? calculateMonthlyLoanPayment(Number(originalPrincipal), Number(interestRate) / 100, Number(loanTermYears)) : 0;
   
   const calculatedEndYear = Number(startYear) + Number(loanTermYears);
+
+  const [linkedAssetId, setLinkedAssetId] = useState(item.linked_asset_id || "");
+  const [linkError, setLinkError] = useState("");
+
+  const availableHouses = state?.assets?.house || [];
+
+  const handleHouseSelect = (assetId: string) => {
+    setLinkError("");
+  
+    if (!assetId) {
+      setLinkedAssetId("");
+      return;
+    }
+  
+    const selectedHouse = availableHouses.find((house) => house.id === assetId);
+  
+    if (
+      selectedHouse?.linked_loan_id &&
+      selectedHouse.linked_loan_id !== item.id
+    ) {
+      setLinkError("This house is already linked to another loan.");
+      setLinkedAssetId("");
+      return;
+    }
+  
+    setLinkedAssetId(assetId);
+  
+    if (selectedHouse) {
+      setName(`${selectedHouse.name} Loan`);
+      setStartYear(selectedHouse.start_year.toString());
+  
+      const principal =
+        Number(selectedHouse.asset_value || 0) -
+        Number(selectedHouse.down_payment || 0);
+  
+      setOriginalPrincipal(principal.toString());
+    }
+  };
+
+  if (item.linked_asset_id && item.linked_asset_id !== linkedAssetId) {
+    const oldHouse = availableHouses.find(
+      (house) => house.id === item.linked_asset_id
+    );
+  
+    if (oldHouse) {
+      dispatch({
+        type: "UPDATE_ASSET",
+        payload: {
+          ...oldHouse,
+          linked_loan_id: null,
+        },
+      });
+    }
+  }
+  
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1002,12 +1352,14 @@ export function EditHouseLoanExpenseForm({ item, dispatch, onClose }) {
         variant: "house_loan",
         name: name || "Home Loan",
         start_year: Number(startYear),
-        end_year: calculatedEndYear,
+        end_year: Number(startYear) + Number(loanTermYears),
+        linked_asset_id: linkedAssetId || null,
         monthly_expense: monthlyExpense,
         original_principal: Number(originalPrincipal),
         interest_rate: Number(interestRate) / 100,
         loan_term_years: Number(loanTermYears),
-        extra_monthly_payment: extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
+        extra_monthly_payment:
+          extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
       },
     });
 
@@ -1074,16 +1426,45 @@ export function EditHouseLoanExpenseForm({ item, dispatch, onClose }) {
                 <label className="form-label">Start yr</label>
                 <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
-
               <div className="form-field">
-                <label className="form-label">
-                  End yr <span className="form-label--muted">(auto)</span>
-                </label>
-                <input  value={calculatedEndYear || ''}  className="form-input"  disabled  style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }} />
+                <label className="form-label">End yr <span className="form-label--muted">(auto)</span></label>
+                <input value={calculatedEndYear || ''} className="form-input" disabled style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }} />
               </div>
-
             </div>
 
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🏡</span>
+                  <div>
+                    <div className="link-card__title">Link to a House Asset</div>
+                    <div className="link-card__sub">Sync this loan with an existing house</div>
+                  </div>
+                </div>
+              </div>
+              <div className="link-card__body">
+                {availableHouses.length === 0 ? (
+                  <p className="link-card__no-accounts">No house assets available.</p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select value={linkedAssetId} onChange={(e) => handleHouseSelect(e.target.value)} className="form-input">
+                      <option value="">None - No linking</option>
+                      {availableHouses.map((house) => (
+                        <option key={house.id} value={house.id} disabled={house.linked_loan_id && house.linked_loan_id !== item.id}>
+                          {house.name} {house.linked_loan_id && house.linked_loan_id !== item.id ? "(already linked)" : ""}
+                        </option>
+                      ))}
+                    </select>
+                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
+                    {linkedAssetId && !linkError && (
+                      <div className="link-card__synced">
+                        🔗 Linked to {availableHouses.find((house) => house.id === linkedAssetId)?.name}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
             <div className="form-preview-card">
               <div className="form-preview-label">Estimated Payment</div>
               <div className="form-preview-value">

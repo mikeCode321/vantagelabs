@@ -77,7 +77,7 @@ export function HouseAssetForm({ dispatch, onClose }) {
     if (onClose) onClose();
   };
   const appreciatedValue =
-    Number(houseValue) * (1 - (Number(appreciation) || 0) / 100);
+    Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
   return (
     <div className="form-panel">
       <div className="form-header">

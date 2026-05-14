@@ -15,7 +15,7 @@ import {
 
 import { 
   LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource,
-  LivingExpensesForm, RentExpenseForm, DebtExpenseForm, 
+  LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm,CarLoanExpenseForm,
   EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/expenses";
 
 import { 
@@ -321,7 +321,7 @@ const ENTITY_CONFIG = {
       id: "house_loan",
       name: "Home Loan",
       emoji: "🏡",
-      //formComponent: HouseLoanExpenseForm,
+      formComponent: HouseLoanExpenseForm,
       editFormComponent: EditHouseLoanExpenseForm,
     },
 
@@ -329,7 +329,7 @@ const ENTITY_CONFIG = {
       id: "car_loan",
       name: "Car Loan",
       emoji: "🚗",
-      //formComponent: CarLoanExpenseForm,
+      formComponent: CarLoanExpenseForm,
       editFormComponent: EditCarLoanExpenseForm,
     },
   },

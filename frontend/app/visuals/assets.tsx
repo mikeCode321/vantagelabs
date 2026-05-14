@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
-import { HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, calculateMonthlyLoanPayment } from "@/app/visuals/expenses";
 import { ID } from "@/app/visuals/accounts";
 
 // ─────────────────────────────────────────────
@@ -54,8 +53,6 @@ export function HouseAssetForm({ dispatch, onClose }) {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
-  const [savedHouseAsset, setSavedHouseAsset] = useState<HouseAsset | null>(null);
-  const [showLoanForm, setShowLoanForm] = useState(false);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,40 +60,24 @@ export function HouseAssetForm({ dispatch, onClose }) {
     const houseAsset: HouseAsset = {
       source_type: "asset",
       variant: "house",
-      id: savedHouseAsset?.id || crypto.randomUUID(),
+      id: crypto.randomUUID(),
       name: name || "House",
       start_year: Number(startYear),
       end_year: endYear === "" ? null : Number(endYear),
       asset_value: Number(houseValue),
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
-      linked_loan_id: savedHouseAsset?.linked_loan_id || null,
     };
   
     dispatch({
-      type: savedHouseAsset ? "UPDATE_ASSET" : "ADD_ASSET",
+      type: "ADD_ASSET",
       payload: houseAsset,
     });
   
-    setSavedHouseAsset(houseAsset);
-    setShowLoanForm(true);
+    if (onClose) onClose();
   };
-
-  
   const appreciatedValue =
-    Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
-
-  if (showLoanForm && savedHouseAsset) {
-    return (
-      <HouseLoanExpenseForm
-        dispatch={dispatch}
-        houseAsset={savedHouseAsset}
-        onBack={() => setShowLoanForm(false)}
-        onClose={onClose}
-      />
-    );
-  }
-
+    Number(houseValue) * (1 - (Number(appreciation) || 0) / 100);
   return (
     <div className="form-panel">
       <div className="form-header">
@@ -239,6 +220,7 @@ export function HouseAssetForm({ dispatch, onClose }) {
   );
 }
 
+
 export function CarAssetForm({ dispatch, onClose }) {
   const [name, setName] = useState("");
   const [carValue, setCarValue] = useState("");
@@ -247,8 +229,6 @@ export function CarAssetForm({ dispatch, onClose }) {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
-  const [showLoanForm, setShowLoanForm] = useState(false);
-  const [savedCarAsset, setSavedCarAsset] = useState<CarAsset | null>(null);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -256,39 +236,26 @@ export function CarAssetForm({ dispatch, onClose }) {
     const carAsset: CarAsset = {
       source_type: "asset",
       variant: "car",
-      id: savedCarAsset?.id || crypto.randomUUID(),
+      id: crypto.randomUUID(),
       name: name || "Car",
       start_year: Number(startYear),
       end_year: endYear === "" ? null : Number(endYear),
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
-      linked_loan_id: savedCarAsset?.linked_loan_id || null,
     };
   
     dispatch({
-      type: savedCarAsset ? "UPDATE_ASSET" : "ADD_ASSET",
+      type: "ADD_ASSET",
       payload: carAsset,
     });
   
-    setSavedCarAsset(carAsset);
-    setShowLoanForm(true);
+    if (onClose) onClose();
   };
+  
 
   const depreciatedValue =
     Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
-
-  if (showLoanForm && savedCarAsset) {
-    return (
-      <CarLoanExpenseForm
-      dispatch={dispatch}
-      carAsset={savedCarAsset}
-      onBack={() => setShowLoanForm(false)}
-      onClose={onClose}
-      />
-    );
-  }
-
   return (
     <div className="form-panel">
       <div className="form-header">
@@ -446,8 +413,6 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
 
-  const [showLoanForm, setShowLoanForm] = useState(false);
-  const [savedHouseAsset, setSavedHouseAsset] = useState<HouseAsset | null>(null);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -462,7 +427,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
       asset_value: Number(houseValue),
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
-      linked_loan_id: item.linked_loan_id ?? null,
+      //linked_loan_id: item.linked_loan_id ?? null,
     };
 
     dispatch({
@@ -470,64 +435,8 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
       payload: updatedHouseAsset,
     });
 
-    if (updatedHouseAsset.linked_loan_id) {
-      const linkedLoan = state.expenses.house_loan.find(
-        (loan) => loan.id === updatedHouseAsset.linked_loan_id
-      );
-  
-      if (linkedLoan) {
-        const newPrincipal =
-          Number(updatedHouseAsset.asset_value || 0) -
-          Number(updatedHouseAsset.down_payment || 0);
-  
-        const newMonthlyExpense = calculateMonthlyLoanPayment(
-          newPrincipal,
-          linkedLoan.interest_rate,
-          linkedLoan.loan_term_years
-        );
-  
-        dispatch({
-          type: "UPDATE_EXPENSE",
-          payload: {
-            ...linkedLoan,
-            original_principal: newPrincipal,
-            monthly_expense: newMonthlyExpense,
-          },
-        });
-      }
-    }
-
-    setSavedHouseAsset(updatedHouseAsset);
-    setShowLoanForm(true);
   };
 
-
-  if (showLoanForm && savedHouseAsset) {
-    if (savedHouseAsset.linked_loan_id){
-      const linkedLoan = state.expenses.house_loan.find(
-        (loan) => loan.id === savedHouseAsset.linked_loan_id
-      );
-  
-      if (linkedLoan) {
-        return (
-          <EditHouseLoanExpenseForm
-            item={linkedLoan}
-            dispatch={dispatch}
-            onClose={onClose}
-          />
-        );
-      }
-
-    }
-    return (
-      <HouseLoanExpenseForm
-        dispatch={dispatch}
-        houseAsset={savedHouseAsset}
-        onBack={() => setShowLoanForm(false)}
-        onClose={onClose}
-      />
-    );
-  }
 
   const appreciatedValue =
     Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
@@ -683,9 +592,6 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
 
-  const [showLoanForm, setShowLoanForm] = useState(false);
-  const [savedCarAsset, setSavedCarAsset] =  useState<CarAsset | null>(null);
-
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -700,71 +606,15 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
-      linked_loan_id: item.linked_loan_id ?? null,
+      //linked_loan_id: item.linked_loan_id ?? null,
     };
   
     dispatch({
       type: "UPDATE_ASSET",
       payload: updatedCarAsset,
     });
-
-    if (updatedCarAsset.linked_loan_id) {
-      const linkedLoan = state.expenses.car_loan.find(
-        (loan) => loan.id === updatedCarAsset.linked_loan_id
-      );
+}
   
-      if (linkedLoan) {
-        const newPrincipal =
-          Number(updatedCarAsset.asset_value || 0) -
-          Number(updatedCarAsset.down_payment || 0);
-  
-        const newMonthlyExpense = calculateMonthlyLoanPayment(
-          newPrincipal,
-          linkedLoan.interest_rate,
-          linkedLoan.loan_term_years
-        );
-  
-        dispatch({
-          type: "UPDATE_EXPENSE",
-          payload: {
-            ...linkedLoan,
-            original_principal: newPrincipal,
-            monthly_expense: newMonthlyExpense,
-          },
-        });
-      }
-    }
-  
-    setSavedCarAsset(updatedCarAsset);
-    setShowLoanForm(true);
-  };
-  
-  if (showLoanForm && savedCarAsset) {
-    if (savedCarAsset.linked_loan_id) {
-      const linkedLoan = state.expenses.car_loan.find(
-        (loan) => loan.id === savedCarAsset.linked_loan_id
-      );
-  
-      if (linkedLoan) {
-        return (
-          <EditCarLoanExpenseForm
-            item={linkedLoan}
-            dispatch={dispatch}
-            onClose={onClose}
-          />
-        );
-      }
-    }
-  
-    return (
-      <CarLoanExpenseForm
-        dispatch={dispatch}
-        carAsset={savedCarAsset}
-        onBack={() => setShowLoanForm(false)}
-        onClose={onClose}
-      />
-    );
-  }
 
   const depreciatedValue = 
     Number(carValue) * (1 - (Number(depreciation) || 0) / 100);

@@ -1236,6 +1236,13 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose }) {
               <div className="link-card__body">
                 {availableCars.length === 0 ? (
                   <p className="link-card__no-accounts">No car assets available.</p>
+                ) : item.linked_asset_id ? (
+                  <div className="link-card__synced">
+                    🔗 Linked to {availableCars.find((car) => car.id === item.linked_asset_id)?.name || "Car"}
+                    <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "0.5rem" }}>
+                      Delete the linked car to reassign
+                    </div>
+                  </div>
                 ) : (
                   <div className="form-field--gap8">
                     <select value={linkedAssetId} onChange={(e) => handleCarSelect(e.target.value)} className="form-input">

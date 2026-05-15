@@ -57,6 +57,21 @@ export function HouseAssetForm({ dispatch, state, onClose }) {
   const [linkError, setLinkError] = useState("");
   
   const availableHouseLoans = state?.expenses?.house_loan || [];
+
+  const availableHouses = state?.assets?.house || [];
+
+  const getHouseLinkedToLoan = (loanId: string) => {
+    return availableHouses.find((house) => house.linked_loan_id === loanId);
+  };
+
+  const isLoanLinkedToAnotherHouse = (loan) => {
+    const houseLinkedFromAssetSide = getHouseLinkedToLoan(loan.id);
+
+    return Boolean(
+      (loan.linked_asset_id && loan.linked_asset_id !== item.id) ||
+        (houseLinkedFromAssetSide && houseLinkedFromAssetSide.id !== item.id)
+    );
+  };
   
   const linkedLoan = linkedLoanId
     ? availableHouseLoans.find((loan) => loan.id === linkedLoanId)
@@ -72,7 +87,7 @@ export function HouseAssetForm({ dispatch, state, onClose }) {
   
     const selectedLoan = availableHouseLoans.find((loan) => loan.id === loanId);
   
-    if (selectedLoan?.linked_asset_id) {
+    if (selectedLoan && isLoanLinkedToAnotherHouse(selectedLoan)) {
       setLinkError("This home loan is already linked to another house.");
       setLinkedLoanId("");
       return;
@@ -279,7 +294,7 @@ export function HouseAssetForm({ dispatch, state, onClose }) {
                       <option value="">None - No linking</option>
 
                       {availableHouseLoans.map((loan) => {
-                        const isLinked = Boolean(loan.linked_asset_id);
+                        const isLinked = isLoanLinkedToAnotherHouse(loan);
 
                         return (
                           <option
@@ -702,6 +717,8 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (linkError) return;
+
     const updatedHouseAsset = {
       ...item,
       source_type: "asset",
@@ -981,6 +998,21 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
 
   const availableCarLoans = state?.expenses?.car_loan || [];
 
+  const availableCars = state?.assets?.car || [];
+
+  const getCarLinkedToLoan = (loanId: string) => {
+    return availableCars.find((car) => car.linked_loan_id === loanId);
+  };
+
+  const isLoanLinkedToAnotherCar = (loan) => {
+    const carLinkedFromAssetSide = getCarLinkedToLoan(loan.id);
+
+    return Boolean(
+      (loan.linked_asset_id && loan.linked_asset_id !== item.id) ||
+        (carLinkedFromAssetSide && carLinkedFromAssetSide.id !== item.id)
+    );
+  };
+
   const linkedLoan = linkedLoanId
     ? availableCarLoans.find((loan) => loan.id === linkedLoanId)
     : null;
@@ -999,7 +1031,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
       (loan) => loan.id === loanId
     );
 
-    if (selectedLoan?.linked_asset_id) {
+    if (selectedLoan && isLoanLinkedToAnotherCar(selectedLoan)) {
       setLinkError("This car loan is already linked to another car.");
       setLinkedLoanId("");
       return;
@@ -1179,25 +1211,16 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
               </div>
 
               <div className="link-card__body">
-                {availableCarLoans.length === 0 ? (
-                  <p className="link-card__no-accounts">
-                    No car loans available.
-                  </p>
-                ) : isAlreadyLinked ? (
-                  <div className="link-card__synced">
-                    🔗 Linked to {linkedLoan?.name || "Car loan"}
-
-                    <div
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#6B7280",
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      Delete the linked loan to reassign
-                    </div>
+              {availableCarLoans.length === 0 ? (
+                <p className="link-card__no-accounts">No car loans available.</p>
+              ) : isAlreadyLinked ? (
+                <div className="link-card__synced">
+                  🔗 Linked to {linkedLoan?.name || "Car loan"}
+                  <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "0.5rem" }}>
+                    Delete the linked loan to reassign
                   </div>
-                ) : (
+                </div>
+              ) : (
                   <div className="form-field--gap8">
                     <select
                       value={linkedLoanId}
@@ -1207,18 +1230,18 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
                       <option value="">None - No linking</option>
 
                       {availableCarLoans.map((loan) => {
-                        const isLinked = Boolean(loan.linked_asset_id);
+                      const isLinked = isLoanLinkedToAnotherCar(loan);
 
-                        return (
-                          <option
-                            key={loan.id}
-                            value={loan.id}
-                            disabled={isLinked}
-                          >
-                            {loan.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
+                      return (
+                        <option
+                          key={loan.id}
+                          value={loan.id}
+                          disabled={isLinked}
+                        >
+                          {loan.name} {isLinked ? "(already linked)" : ""}
+                        </option>
+                      );
+                    })}
                     </select>
 
                     {linkError && (

@@ -11,7 +11,7 @@ import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpen
 
 import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
 
-import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner } from "@/app/visuals/misc";
+import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
@@ -827,7 +827,12 @@ export default function Dashboard() {
           </div>
         </header>
 
-        <pre>{JSON.stringify(state, null, 2)}</pre>
+        <div style={{ display: "flex", justifyContent: "space-between"}}>
+          <pre>{JSON.stringify(state, null, 2)}</pre>
+          <UserAgeForm state={state} dispatch={dispatch} />
+        </div>
+        
+
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
 
         <SimulationControls state={state} setSimResult={setSimResult} />
@@ -837,61 +842,6 @@ export default function Dashboard() {
         <ToastBanner toasts={toasts} setToasts={setToasts} />
         {/* {sim.error && <div className="dash-error">{sim.error}</div>} */}
 
-        {/* SIMULATION SETUP */}
-        <div className="setup-section">
-          <div className="setup-header">
-            <h2>Simulation Setup</h2>
-            <p>Define your planning timeline</p>
-          </div>
-
-          <div className="setup-grid">
-            <div className="setup-field">
-              <label className="setup-label">Your Current Age</label>
-              <input
-                type="number"
-                min="0"
-                max="120"
-                value={state.user_start_age}
-                onChange={(e) => {
-                  const newAge = Number(e.target.value);
-                  if (newAge < state.user_end_age) {
-                    dispatch({
-                      type: "UPDATE_SIMULATION_BOUNDS",
-                      payload: { user_start_age: newAge, user_end_age: state.user_end_age },
-                    });
-                  }
-                }}
-                className="setup-input"
-              />
-            </div>
-
-            <div className="setup-field">
-              <label className="setup-label">Plan Until Age</label>
-              <input
-                type="number"
-                min={state.user_start_age}
-                max="150"
-                value={state.user_end_age}
-                onChange={(e) => {
-                  const newAge = Number(e.target.value);
-                  if (newAge > state.user_start_age) {
-                    dispatch({
-                      type: "UPDATE_SIMULATION_BOUNDS",
-                      payload: { user_start_age: state.user_start_age, user_end_age: newAge },
-                    });
-                  }
-                }}
-                className="setup-input"
-              />
-            </div>
-          </div>
-
-          <div className="setup-summary">
-            <span className="setup-summary-text">
-              Timeline: <strong>{state.user_end_age - state.user_start_age} years</strong>
-            </span>
-          </div>
-        </div>
       </main>
     </div>
   );

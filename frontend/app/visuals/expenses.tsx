@@ -1292,12 +1292,18 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose }) {
     item.start_year?.toString() || ""
   );
 
-  const [linkedAssetId, setLinkedAssetId] = useState(
-    item.linked_asset_id || ""
-  );
+
+  const isAlreadyLinked = !!item.linked_asset_id;
+
+  const [linkedAssetId, setLinkedAssetId] = useState("");
   const [linkError, setLinkError] = useState("");
 
   const availableHouses = state?.assets?.house || [];
+
+  const linkedHouse = linkedAssetId
+  ? availableHouses.find((house) => house.id === linkedAssetId)
+  : null;
+
 
   const monthlyExpense =
     Number(originalPrincipal) > 0 &&
@@ -1399,7 +1405,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose }) {
         name: name || "Home Loan",
         start_year: Number(startYear),
         end_year: Number(startYear) + Number(loanTermYears),
-        linked_asset_id: linkedAssetId || null,
+        linked_asset_id: item.linked_asset_id || linkedAssetId || null,
         monthly_expense: monthlyExpense,
         original_principal: Number(originalPrincipal),
         interest_rate: Number(interestRate) / 100,
@@ -1558,6 +1564,20 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose }) {
                   <p className="link-card__no-accounts">
                     No house assets available.
                   </p>
+                ) : isAlreadyLinked ? (
+                  <div className="link-card__synced">
+                    🔗 Linked to {linkedHouse?.name || "House asset"}
+
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#6B7280",
+                        marginTop: "0.5rem",
+                      }}
+                    >
+                      Delete the linked loan to reassign
+                    </div>
+                  </div>
                 ) : (
                   <div className="form-field--gap8">
                     <select
@@ -1568,20 +1588,15 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose }) {
                       <option value="">None - No linking</option>
 
                       {availableHouses.map((house) => {
-                        const isLinkedToAnotherLoan =
-                          house.linked_loan_id &&
-                          house.linked_loan_id !== item.id;
+                        const isLinked = Boolean(house.linked_loan_id);
 
                         return (
                           <option
                             key={house.id}
                             value={house.id}
-                            disabled={Boolean(isLinkedToAnotherLoan)}
+                            disabled={isLinked}
                           >
-                            {house.name}{" "}
-                            {isLinkedToAnotherLoan
-                              ? "(already linked)"
-                              : ""}
+                            {house.name} {isLinked ? "(already linked)" : ""}
                           </option>
                         );
                       })}
@@ -1601,12 +1616,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose }) {
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Linked to{" "}
-                        {
-                          availableHouses.find(
-                            (house) => house.id === linkedAssetId
-                          )?.name
-                        }
+                        🔗 Linked to {linkedHouse?.name}
                       </div>
                     )}
                   </div>

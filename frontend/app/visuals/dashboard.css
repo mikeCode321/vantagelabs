@@ -299,6 +299,8 @@ tbody tr:hover {
 .form-panel {
   font-family: 'DM Mono', monospace;
   margin: 25px;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 /* Form header row (icon + title + description) */
@@ -520,7 +522,7 @@ tbody tr:hover {
 
 /* Submit with top margin (standalone submit, not in a footer row) */
 .form-btn-submit--mt {
-  margin-top: 28px;
+  /* margin-top: 28px; */
 }
 
 

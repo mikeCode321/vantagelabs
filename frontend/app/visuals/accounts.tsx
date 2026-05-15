@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
 
 // ─────────────────────────────────────────────
@@ -35,11 +35,16 @@ export type TaxableInvestmentAccount = {
   start_year: number;
   end_year: number;
   starting_balance: number;
+
+  contribution_mode: "dollar" | "percentage";
   monthly_contribution: number;
+  contribution_percentage?: number;
+
   expected_return: number;
   dividend_yield: number;
   dividend_reinvestment: "drip" | "cash_out";
   cash_out_account_id?: string;
+  linked_income_id?: string;
 };
 
 export type EmployerRetirementAccount = {
@@ -50,7 +55,11 @@ export type EmployerRetirementAccount = {
   start_year: number;
   end_year: number;
   starting_balance: number;
+
+  contribution_mode: "dollar" | "percentage";
   monthly_contribution: number;
+  contribution_percentage?: number;
+
   expected_return: number;
   employer_match: number;
   linked_income_id?: string;
@@ -59,7 +68,7 @@ export type EmployerRetirementAccount = {
 export type LiquidAccount = CheckingAccount | TaxableInvestmentAccount | EmployerRetirementAccount;
 
 // ACCOUNT FORMS
-export function CheckingAccountForm({ dispatch, state}) {
+export function CheckingAccountForm({ dispatch, state }) {
   const hasCheckingAccount = state.accounts?.checking?.length > 0;
   const [name, setName] = useState("Checking Account");
   const [balance, setBalance] = useState("");
@@ -124,19 +133,21 @@ export function CheckingAccountForm({ dispatch, state}) {
         </div>
       </div>
 
-      <div style={{ marginBottom: '12px' }}>
+      <div style={{ marginBottom: "12px" }}>
         {hasCheckingAccount && (
-          <div style={{
-              backgroundColor: '#FEF3F2',
-              border: '1px solid #FECACA',
-              borderRadius: '12px',
-              padding: '12px 14px',
-              fontSize: '13px',
-              color: '#991B1B',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
+          <div
+            style={{
+              backgroundColor: "#FEF3F2",
+              border: "1px solid #FECACA",
+              borderRadius: "12px",
+              padding: "12px 14px",
+              fontSize: "13px",
+              color: "#991B1B",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
             At the moment we are only supporting 1 checking account. Remove the existing account or edit it.
           </div>
         )}
@@ -214,8 +225,7 @@ export function CheckingAccountForm({ dispatch, state}) {
         </div>
 
         {/* Submit Button */}
-        <button type="submit" className="form-btn-submit form-btn-submit--mt" 
-        disabled={hasCheckingAccount} style={{ opacity: hasCheckingAccount ? 0.5 : 1, cursor: hasCheckingAccount ? 'not-allowed' : 'pointer' }}>
+        <button type="submit" className="form-btn-submit form-btn-submit--mt" disabled={hasCheckingAccount} style={{ opacity: hasCheckingAccount ? 0.5 : 1, cursor: hasCheckingAccount ? "not-allowed" : "pointer" }}>
           Add Checking Account
         </button>
       </form>
@@ -223,16 +233,76 @@ export function CheckingAccountForm({ dispatch, state}) {
   );
 }
 
-export function TaxableInvestmentAccountForm({ dispatch }) {
+export function TaxableInvestmentAccountForm({ dispatch, state }) {
   const [name, setName] = useState("Taxable Investments");
   const [balance, setBalance] = useState("");
+  const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">("dollar");
   const [monthlyContribution, setMonthlyContribution] = useState("");
+  const [contributionPercentage, setContributionPercentage] = useState("");
   const [expectedReturn, setExpectedReturn] = useState("");
   const [dividendYield, setDividendYield] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
   const [dividendStrategy, setDividendStrategy] = useState<"drip" | "cash_out">("drip");
   const [cashOutAccountId, setCashOutAccountId] = useState("");
+  const [linkedIncomeId, setLinkedIncomeId] = useState("");
+  const [linkError, setLinkError] = useState("");
+  const [netIncome, setNetIncome] = useState<number | null>(null);
+  const [isLoadingTaxCalc, setIsLoadingTaxCalc] = useState(false);
+
+  const salaries = state?.incomes?.salary || [];
+  const hourlyIncomes = state?.incomes?.hourly || [];
+  const allJobs = [...salaries, ...hourlyIncomes];
+  const checkingAccounts = state?.accounts?.checking || [];
+  const selectedJob = linkedIncomeId ? allJobs.find((job) => job.id === linkedIncomeId) : null;
+
+  const calculateNetIncome = async (grossIncome: number, jobId: string) => {
+    // TODO: Call tax API here when implemented
+    // const response = await fetch('/api/calculate-taxes', { jobId, year: ... })
+    // return response.net_income
+
+    // For now we will use a placeholder estimate 
+    return grossIncome * 0.75;
+  };
+
+  const handleJobSelect = async (jobId: string) => {
+    setLinkError("");
+
+    if (!jobId) {
+      setLinkedIncomeId("");
+      setNetIncome(null);
+      return;
+    }
+
+    const job = allJobs.find((job) => job.id === jobId);
+    if (!job) return;
+
+    setLinkedIncomeId(jobId);
+    setStartYear(job.start_year.toString());
+    setEndYear(job.end_year.toString());
+
+    // Calculate net income
+    setIsLoadingTaxCalc(true);
+    try {
+      const calculated = await calculateNetIncome(job.gross_income, jobId);
+      setNetIncome(calculated);
+    } finally {
+      setIsLoadingTaxCalc(false);
+    }
+  };
+
+  // Calculate effective monthly contribution based on mode
+  const effectiveMonthlyContribution = () => {
+    if (contributionMode === "dollar") {
+      return Number(monthlyContribution) || 0;
+    } else if (netIncome && contributionMode === "percentage") {
+      const monthlyNet = netIncome / 12;
+      return (monthlyNet * Number(contributionPercentage)) / 100;
+    }
+    return 0;
+  };
+
+  const canUsePercentageMode = netIncome !== null && !isLoadingTaxCalc;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -252,28 +322,34 @@ export function TaxableInvestmentAccountForm({ dispatch }) {
         start_year: Number(startYear),
         end_year: Number(endYear),
         starting_balance: Number(balance),
-        monthly_contribution: Number(monthlyContribution),
+        contribution_mode: contributionMode,
+        monthly_contribution: effectiveMonthlyContribution(),
+        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
         expected_return: Number(expectedReturn) / 100,
         dividend_yield: Number(dividendYield) / 100,
         dividend_reinvestment: dividendStrategy,
         cash_out_account_id: dividendStrategy === "cash_out" ? cashOutAccountId : undefined,
+        linked_income_id: linkedIncomeId || undefined,
       },
     });
 
     setName("Taxable Investments");
     setBalance("");
+    setContributionMode("dollar");
     setMonthlyContribution("");
+    setContributionPercentage("");
     setExpectedReturn("");
     setDividendYield("");
     setStartYear("");
     setEndYear("");
     setDividendStrategy("drip");
     setCashOutAccountId("");
+    setLinkedIncomeId("");
+    setNetIncome(null);
   };
 
   return (
     <div className="form-panel">
-      {/* Header */}
       <div className="form-header">
         <div className="form-header-icon">📈</div>
         <div>
@@ -288,13 +364,11 @@ export function TaxableInvestmentAccountForm({ dispatch }) {
           <div className="form-col">
             <p className="form-section-heading">Account Details</p>
 
-            {/* Account Name */}
             <div className="form-field">
               <label className="form-label">Account Name</label>
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Fidelity Brokerage" required />
             </div>
 
-            {/* Starting Balance */}
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
@@ -303,17 +377,55 @@ export function TaxableInvestmentAccountForm({ dispatch }) {
               </div>
             </div>
 
-            {/* Monthly Contribution */}
+            {/* Contribution Mode Toggle - Compact */}
             <div className="form-field">
-              <label className="form-label">Monthly Contribution</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/mo</span>
-                <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="1,000" type="text" />
+              <label className="form-label">Contribution</label>
+              <div style={{ display: "flex", gap: "4px" }}>
+                <button type="button" className={contributionMode === "dollar" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setContributionMode("dollar")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+                  $
+                </button>
+                <button
+                  type="button"
+                  className={contributionMode === "percentage" ? "form-btn-secondary active" : "form-btn-secondary"}
+                  onClick={() => setContributionMode("percentage")}
+                  disabled={!canUsePercentageMode}
+                  title={!canUsePercentageMode ? "Link a job first and calculate taxes" : ""}
+                  style={{
+                    flex: 1,
+                    padding: "8px 12px",
+                    fontSize: "13px",
+                    opacity: !canUsePercentageMode ? 0.5 : 1,
+                    cursor: !canUsePercentageMode ? "not-allowed" : "pointer",
+                  }}
+                >
+                  %
+                </button>
               </div>
             </div>
 
-            {/* Expected Return slider */}
+            {/* Dollar Mode */}
+            {contributionMode === "dollar" && (
+              <div className="form-field">
+                <label className="form-label">Monthly Contribution</label>
+                <div className="form-input-wrap">
+                  <span className="form-input-prefix">$</span>
+                  <span className="form-input-suffix">/mo</span>
+                  <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="1,000" type="text" />
+                </div>
+              </div>
+            )}
+
+            {/* Percentage Mode */}
+            {contributionMode === "percentage" && (
+              <div className="form-field">
+                <label className="form-label">Percentage of Net Income</label>
+                <div className="form-input-wrap">
+                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input--suffix" placeholder="10" type="number" min="0" max="100" step="0.1" />
+                  <span className="form-input-suffix">%</span>
+                </div>
+              </div>
+            )}
+
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Expected Annual Return</label>
@@ -322,7 +434,6 @@ export function TaxableInvestmentAccountForm({ dispatch }) {
               <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
             </div>
 
-            {/* Dividend Yield slider */}
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Dividend Yield</label>
@@ -334,7 +445,7 @@ export function TaxableInvestmentAccountForm({ dispatch }) {
 
           {/* ── RIGHT ── */}
           <div className="form-col">
-            <p className="form-section-heading">Timeline</p>
+            <p className="form-section-heading">Timeline & Dividend</p>
 
             <div className="form-year-grid">
               <div className="form-field">
@@ -346,13 +457,107 @@ export function TaxableInvestmentAccountForm({ dispatch }) {
                 <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" required />
               </div>
             </div>
+
+            {/* 🔧 FIX: Link to job card - NOW SHOWS IN BOTH MODES */}
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">💼</span>
+                  <div>
+                    <div className="link-card__title">Link to a job</div>
+                    <div className="link-card__sub">
+                      {contributionMode === "percentage" 
+                        ? "Required for percentage-based contributions"
+                        : "Optional — enables percentage-based contributions"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="link-card__body">
+                {allJobs.length === 0 ? (
+                  <p className="link-card__no-jobs">No jobs yet — add a qualifying job first.</p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select 
+                      value={linkedIncomeId} 
+                      onChange={(e) => handleJobSelect(e.target.value)} 
+                      className="form-input" 
+                      disabled={isLoadingTaxCalc}
+                    >
+                      <option value="">None - No linking</option>
+                      {allJobs.map((job) => (
+                        <option key={job.id} value={job.id}>
+                          {job.name}
+                        </option>
+                      ))}
+                    </select>
+                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
+                    {isLoadingTaxCalc && <div style={{ color: "#3B82F6", fontSize: "0.875rem", marginTop: "0.5rem" }}>⏳ Calculating net income...</div>}
+                  
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Merged Contribution Preview - Only show in percentage mode */}
+            {contributionMode === "percentage" && selectedJob && netIncome && !isLoadingTaxCalc && (
+              <div className="preview-card">
+                <div className="preview-card__header">
+                  <span className="preview-icon">💵</span>
+                  <span className="preview-card__label">Contribution Preview</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
+                  <div>
+                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Monthly</div>
+                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Annual</div>
+                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</div>
+                  </div>
+                </div>
+                <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", paddingTop: "8px", borderTop: "1px solid var(--color-border-tertiary)" }}>
+                  {Number(contributionPercentage).toFixed(1)}% of ${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
+                </div>
+              </div>
+            )}
+
+            {/* Dividend strategy section */}
+            <p className="form-section-heading">Dividend Strategy</p>
+
+            <div className="form-field">
+              <div style={{ display: "flex", gap: "4px" }}>
+                <button type="button" className={dividendStrategy === "drip" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("drip")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+                  DRIP
+                </button>
+                <button type="button" className={dividendStrategy === "cash_out" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("cash_out")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+                  Cash Out
+                </button>
+              </div>
+            </div>
+
+            {dividendStrategy === "cash_out" && (
+              <div className="form-field">
+                <label className="form-label">Cash Out Account</label>
+                <select value={cashOutAccountId} onChange={(e) => setCashOutAccountId(e.target.value)} className="form-input" required>
+                  <option value="">Select a checking account</option>
+                  {checkingAccounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Submit Button */}
-        <button type="submit" className="form-btn-submit form-btn-submit--mt">
-          Add Taxable Investment Account
-        </button>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit form-btn-submit--mt">
+            Add Taxable Investment Account
+          </button>
+        </div>
       </form>
     </div>
   );
@@ -361,7 +566,9 @@ export function TaxableInvestmentAccountForm({ dispatch }) {
 export function EmployerRetirementAccountForm({ dispatch, state }) {
   const [name, setName] = useState("");
   const [balance, setBalance] = useState("");
+  const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">("dollar");
   const [monthlyContribution, setMonthlyContribution] = useState("");
+  const [contributionPercentage, setContributionPercentage] = useState("");
   const [expectedReturn, setExpectedReturn] = useState("7");
   const [employerMatch, setEmployerMatch] = useState("4");
   const [startYear, setStartYear] = useState("");
@@ -372,13 +579,28 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
   const salaries = state.incomes.salary;
   const hourlyIncomes = state.incomes.hourly;
   const allJobs = [...salaries, ...hourlyIncomes];
+  const selectedJob = linkedIncomeId ? allJobs.find((job) => job.id === linkedIncomeId) : null;
+
+  // Calculate effective monthly contribution based on mode
+  const effectiveMonthlyContribution = () => {
+    if (contributionMode === "dollar") {
+      return Number(monthlyContribution) || 0;
+    } else if (selectedJob && contributionMode === "percentage") {
+      const annualGross = selectedJob.gross_income;
+      const monthlyGross = annualGross / 12;
+      return (monthlyGross * Number(contributionPercentage)) / 100;
+    }
+    return 0;
+  };
 
   // Calculate annual contribution preview
-  const monthlyNum = Number(monthlyContribution) || 0;
+  const monthlyNum = effectiveMonthlyContribution();
   const matchPercent = Number(employerMatch) || 0;
   const annualEmployee = monthlyNum * 12;
   const annualEmployer = (annualEmployee * matchPercent) / 100;
   const annualTotal = annualEmployee + annualEmployer;
+
+  const canUsePercentageMode = !!selectedJob;
 
   const handleJobSelect = (jobId: string) => {
     setLinkError("");
@@ -388,18 +610,17 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
       return;
     }
 
-    const selectedJob = allJobs.find((job) => job.id === jobId);
+    const job = allJobs.find((job) => job.id === jobId);
 
-    // Check if this job is already linked to another 401k
-    if (selectedJob?.linked_401k_id) {
+    if (job?.linked_401k_id) {
       setLinkError("This job is already linked to another 401(k) account.");
       setLinkedIncomeId("");
       return;
     }
 
     setLinkedIncomeId(jobId);
-    setStartYear(selectedJob.start_year.toString());
-    setEndYear(selectedJob.end_year.toString());
+    setStartYear(job.start_year.toString());
+    setEndYear(job.end_year.toString());
   };
 
   const onSubmit = (e: React.FormEvent) => {
@@ -411,15 +632,14 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
 
     const newAccountId = crypto.randomUUID();
 
-    // If a job is linked, update it with the new 401k ID
     if (linkedIncomeId) {
-      const selectedJob = allJobs.find((job) => job.id === linkedIncomeId);
+      const job = allJobs.find((job) => job.id === linkedIncomeId);
 
-      if (selectedJob) {
+      if (job) {
         dispatch({
           type: "UPDATE_INCOME",
           payload: {
-            ...selectedJob,
+            ...job,
             linked_401k_id: newAccountId,
           },
         });
@@ -436,17 +656,20 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
         start_year: Number(startYear),
         end_year: Number(endYear),
         starting_balance: Number(balance),
-        monthly_contribution: Number(monthlyContribution),
+        contribution_mode: contributionMode,
+        monthly_contribution: effectiveMonthlyContribution(),
+        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
         expected_return: Number(expectedReturn) / 100,
         employer_match: Number(employerMatch) / 100,
         linked_income_id: linkedIncomeId || undefined,
       },
     });
 
-    // Reset form
     setName("");
     setBalance("");
+    setContributionMode("dollar");
     setMonthlyContribution("");
+    setContributionPercentage("");
     setExpectedReturn("7");
     setEmployerMatch("4");
     setStartYear("");
@@ -455,11 +678,10 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
     setLinkError("");
   };
 
-  const linkedJob = linkedIncomeId ? allJobs.find((job) => job.id === linkedIncomeId) : null;
+  const linkedJob = selectedJob;
 
   return (
     <div className="form-panel">
-      {/* Header */}
       <div className="form-header">
         <div className="form-header-icon">🏢</div>
         <div>
@@ -474,13 +696,11 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
           <div className="form-col">
             <p className="form-section-heading">Account Details</p>
 
-            {/* Account Name */}
             <div className="form-field">
               <label className="form-label">Account Name</label>
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Fidelity 401(k)" required />
             </div>
 
-            {/* Starting Balance */}
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
@@ -489,17 +709,55 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
               </div>
             </div>
 
-            {/* Monthly Contribution */}
+            {/* Contribution Mode Toggle - Compact */}
             <div className="form-field">
-              <label className="form-label">Monthly Contribution</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/mo</span>
-                <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="500" type="text" />
+              <label className="form-label">Contribution</label>
+              <div style={{ display: "flex", gap: "4px" }}>
+                <button type="button" className={contributionMode === "dollar" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setContributionMode("dollar")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+                  $
+                </button>
+                <button
+                  type="button"
+                  className={contributionMode === "percentage" ? "form-btn-secondary active" : "form-btn-secondary"}
+                  onClick={() => setContributionMode("percentage")}
+                  disabled={!canUsePercentageMode}
+                  title={!canUsePercentageMode ? "Link a job first" : ""}
+                  style={{
+                    flex: 1,
+                    padding: "8px 12px",
+                    fontSize: "13px",
+                    opacity: !canUsePercentageMode ? 0.5 : 1,
+                    cursor: !canUsePercentageMode ? "not-allowed" : "pointer",
+                  }}
+                >
+                  %
+                </button>
               </div>
             </div>
 
-            {/* Expected Return slider */}
+            {/* Dollar Mode */}
+            {contributionMode === "dollar" && (
+              <div className="form-field">
+                <label className="form-label">Monthly Contribution</label>
+                <div className="form-input-wrap">
+                  <span className="form-input-prefix">$</span>
+                  <span className="form-input-suffix">/mo</span>
+                  <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="500" type="text" />
+                </div>
+              </div>
+            )}
+
+            {/* Percentage Mode */}
+            {contributionMode === "percentage" && (
+              <div className="form-field">
+                <label className="form-label">Percentage of Gross Income</label>
+                <div className="form-input-wrap">
+                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input--suffix" placeholder="6" type="number" min="0" max="100" step="0.1" />
+                  <span className="form-input-suffix">%</span>
+                </div>
+              </div>
+            )}
+
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Expected Annual Return</label>
@@ -508,7 +766,6 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
               <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
             </div>
 
-            {/* Employer Match slider */}
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Employer Match</label>
@@ -540,7 +797,7 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
                   <span className="preview-icon">💼</span>
                   <div>
                     <div className="link-card__title">Link to a job</div>
-                    <div className="link-card__sub">Sync contribution years automatically</div>
+                    <div className="link-card__sub">Required for percentage-based contributions</div>
                   </div>
                 </div>
               </div>
@@ -572,24 +829,48 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
               </div>
             </div>
 
-            {/* Annual contribution preview */}
-            <div className="preview-card">
-              <div className="preview-card__header preview-card__header--mb10">
-                <span className="preview-icon">✨</span>
-                <span className="preview-card__label">Annual Contribution</span>
+            {/* Merged Contribution Preview - Only show in percentage mode */}
+            {contributionMode === "percentage" && selectedJob && (
+              <div className="preview-card">
+                <div className="preview-card__header">
+                  <span className="preview-icon">💵</span>
+                  <span className="preview-card__label">Contribution Preview</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
+                  <div>
+                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Monthly</div>
+                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Annual</div>
+                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</div>
+                  </div>
+                </div>
+                <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", paddingTop: "8px", borderTop: "1px solid var(--color-border-tertiary)" }}>
+                  {Number(contributionPercentage).toFixed(1)}% of ${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly gross
+                </div>
               </div>
-              <div className="preview-card__amount preview-card__amount--lg">
-                ${annualTotal.toLocaleString()}
-                <span className="preview-card__unit preview-card__unit--lg">/yr</span>
+            )}
+
+            {/* Annual contribution preview with employer match */}
+            {contributionMode == "dollar" && (
+              <div className="preview-card">
+                <div className="preview-card__header preview-card__header--mb10">
+                  <span className="preview-icon">✨</span>
+                  <span className="preview-card__label">Annual Total</span>
+                </div>
+                <div className="preview-card__amount preview-card__amount--lg">
+                  ${annualTotal.toLocaleString()}
+                  <span className="preview-card__unit preview-card__unit--lg">/yr</span>
+                </div>
+                <div className="preview-card__sub">
+                  ${annualEmployee.toLocaleString()} you + ${annualEmployer.toLocaleString()} employer match
+                </div>
               </div>
-              <div className="preview-card__sub">
-                ${annualEmployee.toLocaleString()} you + ${annualEmployer.toLocaleString()} employer match
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
-        {/* Footer */}
         <div className="form-footer">
           <button type="submit" className="form-btn-submit form-btn-submit--mt">
             Add Employer Retirement Account
@@ -604,7 +885,7 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
 
 export function EditCheckingAccountForm({ item, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
-  const [balance, setBalance] = useState(item.balance.toString());
+  const [balance, setBalance] = useState(item.starting_balance.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
   const [tiers, setTiers] = useState(item.interest_tiers && item.interest_tiers.length > 0 ? item.interest_tiers : [{ threshold: 0, annual_rate: 0 }]);
@@ -740,18 +1021,87 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
   );
 }
 
-export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
+export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [balance, setBalance] = useState(item.starting_balance.toString());
+  const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">(item.contribution_mode || "dollar");
   const [monthlyContribution, setMonthlyContribution] = useState(item.monthly_contribution?.toString() || "");
+  const [contributionPercentage, setContributionPercentage] = useState(item.contribution_percentage?.toString() || "");
   const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "");
   const [dividendYield, setDividendYield] = useState((item.dividend_yield * 100)?.toString() || "");
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
   const [dividendStrategy, setDividendStrategy] = useState(item.dividend_reinvestment || "drip");
+  const [cashOutAccountId, setCashOutAccountId] = useState(item.cash_out_account_id || "");
+  const [linkedIncomeId, setLinkedIncomeId] = useState(item.linked_income_id || "");
+  const [linkError, setLinkError] = useState("");
+  const [netIncome, setNetIncome] = useState<number | null>(null);
+  const [isLoadingTaxCalc, setIsLoadingTaxCalc] = useState(false);
+
+  const salaries = state?.incomes?.salary || [];
+  const hourlyIncomes = state?.incomes?.hourly || [];
+  const allJobs = [...salaries, ...hourlyIncomes];
+  const checkingAccounts = state?.accounts?.checking || [];
+  const selectedJob = linkedIncomeId ? allJobs.find((job) => job.id === linkedIncomeId) : null;
+
+  const calculateNetIncome = async (grossIncome: number, jobId: string) => {
+    // TODO: Call our future tax API here when implemented
+    // For now we use a placeholder estimate
+    return grossIncome * 0.75;
+  };
+
+  const handleJobSelect = async (jobId: string) => {
+    setLinkError("");
+
+    if (!jobId) {
+      setLinkedIncomeId("");
+      setNetIncome(null);
+      return;
+    }
+
+    const job = allJobs.find((job) => job.id === jobId);
+    if (!job) return;
+
+    setLinkedIncomeId(jobId);
+    setStartYear(job.start_year.toString());
+    setEndYear(job.end_year.toString());
+
+    setIsLoadingTaxCalc(true);
+    try {
+      const calculated = await calculateNetIncome(job.gross_income, jobId);
+      setNetIncome(calculated);
+    } finally {
+      setIsLoadingTaxCalc(false);
+    }
+  };
+
+  useEffect(() => {
+    if (linkedIncomeId && selectedJob && !netIncome) {
+      handleJobSelect(linkedIncomeId);
+    }
+  }, []); // Run once on mount
+
+  // Calculate effective monthly contribution based on mode
+  const effectiveMonthlyContribution = () => {
+    if (contributionMode === "dollar") {
+      return Number(monthlyContribution) || 0;
+    } else if (netIncome && contributionMode === "percentage") {
+      const monthlyNet = netIncome / 12;
+      return (monthlyNet * Number(contributionPercentage)) / 100;
+    }
+    return 0;
+  };
+
+  const canUsePercentageMode = netIncome !== null && !isLoadingTaxCalc;
 
   const onSubmit = (e) => {
     e.preventDefault();
+
+    if (dividendStrategy === "cash_out" && !cashOutAccountId) {
+      alert("Please select a checking account for dividend payouts");
+      return;
+    }
+
     dispatch({
       type: "UPDATE_ACCOUNT",
       payload: {
@@ -760,18 +1110,22 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
         start_year: Number(startYear),
         end_year: Number(endYear),
         starting_balance: Number(balance),
-        monthly_contribution: Number(monthlyContribution),
+        contribution_mode: contributionMode,
+        monthly_contribution: effectiveMonthlyContribution(),
+        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
         expected_return: Number(expectedReturn) / 100,
         dividend_yield: Number(dividendYield) / 100,
         dividend_reinvestment: dividendStrategy,
+        cash_out_account_id: dividendStrategy === "cash_out" ? cashOutAccountId : undefined,
+        linked_income_id: linkedIncomeId || undefined,
       },
     });
+
     onClose();
   };
 
   return (
     <div className="form-panel">
-      {/* Header */}
       <div className="form-header">
         <div className="form-header-icon">📈</div>
         <div>
@@ -786,13 +1140,11 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
           <div className="form-col">
             <p className="form-section-heading">Account Details</p>
 
-            {/* Account Name */}
             <div className="form-field">
               <label className="form-label">Account Name</label>
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Fidelity Brokerage" />
             </div>
 
-            {/* Starting Balance */}
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
@@ -801,17 +1153,55 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
               </div>
             </div>
 
-            {/* Monthly Contribution */}
+            {/* Contribution Mode Toggle - Compact */}
             <div className="form-field">
-              <label className="form-label">Monthly Contribution</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/mo</span>
-                <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="1,000" type="text" />
+              <label className="form-label">Contribution</label>
+              <div style={{ display: "flex", gap: "4px" }}>
+                <button type="button" className={contributionMode === "dollar" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setContributionMode("dollar")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+                  $
+                </button>
+                <button
+                  type="button"
+                  className={contributionMode === "percentage" ? "form-btn-secondary active" : "form-btn-secondary"}
+                  onClick={() => setContributionMode("percentage")}
+                  disabled={!canUsePercentageMode}
+                  title={!canUsePercentageMode ? "Link a job first and calculate taxes" : ""}
+                  style={{
+                    flex: 1,
+                    padding: "8px 12px",
+                    fontSize: "13px",
+                    opacity: !canUsePercentageMode ? 0.5 : 1,
+                    cursor: !canUsePercentageMode ? "not-allowed" : "pointer",
+                  }}
+                >
+                  %
+                </button>
               </div>
             </div>
 
-            {/* Expected Return slider */}
+            {/* Dollar Mode */}
+            {contributionMode === "dollar" && (
+              <div className="form-field">
+                <label className="form-label">Monthly Contribution</label>
+                <div className="form-input-wrap">
+                  <span className="form-input-prefix">$</span>
+                  <span className="form-input-suffix">/mo</span>
+                  <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="1,000" type="text" />
+                </div>
+              </div>
+            )}
+
+            {/* Percentage Mode */}
+            {contributionMode === "percentage" && (
+              <div className="form-field">
+                <label className="form-label">Percentage of Net Income</label>
+                <div className="form-input-wrap">
+                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input--suffix" placeholder="10" type="number" min="0" max="100" step="0.1" />
+                  <span className="form-input-suffix">%</span>
+                </div>
+              </div>
+            )}
+
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Expected Annual Return</label>
@@ -820,7 +1210,6 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
               <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
             </div>
 
-            {/* Dividend Yield slider */}
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Dividend Yield</label>
@@ -832,7 +1221,7 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
 
           {/* ── RIGHT ── */}
           <div className="form-col">
-            <p className="form-section-heading">Timeline</p>
+            <p className="form-section-heading">Timeline & Dividend</p>
 
             <div className="form-year-grid">
               <div className="form-field">
@@ -844,13 +1233,109 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
                 <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" />
               </div>
             </div>
+
+            {/* 🔧 FIX: Link to job card - NOW SHOWS IN BOTH MODES */}
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">💼</span>
+                  <div>
+                    <div className="link-card__title">Link to a job</div>
+                    <div className="link-card__sub">
+                      {contributionMode === "percentage" 
+                        ? "Required for percentage-based contributions"
+                        : "Optional — enables percentage-based contributions"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="link-card__body">
+                {allJobs.length === 0 ? (
+                  <p className="link-card__no-jobs">No jobs yet — add a qualifying job first.</p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select 
+                      value={linkedIncomeId} 
+                      onChange={(e) => handleJobSelect(e.target.value)} 
+                      className="form-input" 
+                      disabled={isLoadingTaxCalc}
+                    >
+                      <option value="">None - No linking</option>
+                      {allJobs.map((job) => (
+                        <option key={job.id} value={job.id}>
+                          {job.name}
+                        </option>
+                      ))}
+                    </select>
+                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
+                    {isLoadingTaxCalc && <div style={{ color: "#3B82F6", fontSize: "0.875rem", marginTop: "0.5rem" }}>⏳ Calculating net income...</div>}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Merged Contribution Preview - Only show in percentage mode */}
+            {contributionMode === "percentage" && selectedJob && netIncome && !isLoadingTaxCalc && (
+              <div className="preview-card">
+                <div className="preview-card__header">
+                  <span className="preview-icon">💵</span>
+                  <span className="preview-card__label">Contribution Preview</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
+                  <div>
+                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Monthly</div>
+                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Annual</div>
+                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</div>
+                  </div>
+                </div>
+                <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", paddingTop: "8px", borderTop: "1px solid var(--color-border-tertiary)" }}>
+                  {Number(contributionPercentage).toFixed(1)}% of ${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
+                </div>
+              </div>
+            )}
+
+            {/* Dividend strategy section */}
+            <p className="form-section-heading">Dividend Strategy</p>
+
+            <div className="form-field">
+              <div style={{ display: "flex", gap: "4px" }}>
+                <button type="button" className={dividendStrategy === "drip" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("drip")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+                  DRIP
+                </button>
+                <button type="button" className={dividendStrategy === "cash_out" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("cash_out")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+                  Cash Out
+                </button>
+              </div>
+            </div>
+
+            {dividendStrategy === "cash_out" && (
+              <div className="form-field">
+                <label className="form-label">Cash Out Account</label>
+                <select value={cashOutAccountId} onChange={(e) => setCashOutAccountId(e.target.value)} className="form-input" required>
+                  <option value="">Select a checking account</option>
+                  {checkingAccounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Submit Button */}
-        <button type="submit" className="form-btn-submit form-btn-submit--mt">
-          Save Taxable Investment Account
-        </button>
+        <div className="form-footer">
+          <button type="button" onClick={onClose} className="form-btn-cancel">
+            Cancel
+          </button>
+          <button type="submit" className="form-btn-submit">
+            Update Account
+          </button>
+        </div>
       </form>
     </div>
   );
@@ -859,7 +1344,9 @@ export function EditTaxableInvestmentAccountForm({ item, dispatch, onClose }) {
 export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
   const [name, setName] = useState(item.name);
   const [balance, setBalance] = useState(item.starting_balance.toString());
+  const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">(item.contribution_mode || "dollar");
   const [monthlyContribution, setMonthlyContribution] = useState(item.monthly_contribution?.toString() || "");
+  const [contributionPercentage, setContributionPercentage] = useState(item.contribution_percentage?.toString() || "");
   const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "7");
   const [employerMatch, setEmployerMatch] = useState((item.employer_match * 100)?.toString() || "4");
   const [startYear, setStartYear] = useState(item.start_year.toString());
@@ -870,13 +1357,26 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   const salaries = state.incomes.salary;
   const hourlyIncomes = state.incomes.hourly;
   const allJobs = [...salaries, ...hourlyIncomes];
+  const selectedJob = linkedIncomeId ? allJobs.find((job) => job.id === linkedIncomeId) : null;
 
-  // Calculate annual contribution preview
-  const monthlyNum = Number(monthlyContribution) || 0;
+  const effectiveMonthlyContribution = () => {
+    if (contributionMode === "dollar") {
+      return Number(monthlyContribution) || 0;
+    } else if (selectedJob && contributionMode === "percentage") {
+      const annualGross = selectedJob.gross_income;
+      const monthlyGross = annualGross / 12;
+      return (monthlyGross * Number(contributionPercentage)) / 100;
+    }
+    return 0;
+  };
+
+  const monthlyNum = effectiveMonthlyContribution();
   const matchPercent = Number(employerMatch) || 0;
   const annualEmployee = monthlyNum * 12;
   const annualEmployer = (annualEmployee * matchPercent) / 100;
   const annualTotal = annualEmployee + annualEmployer;
+
+  const canUsePercentageMode = !!selectedJob;
 
   const handleJobSelect = (jobId: string) => {
     setLinkError("");
@@ -886,24 +1386,22 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
       return;
     }
 
-    const selectedJob = allJobs.find((job) => job.id === jobId);
+    const job = allJobs.find((job) => job.id === jobId);
 
-    // Check if this job is already linked to another 401k
-    if (selectedJob?.linked_401k_id) {
+    if (job?.linked_401k_id && job.linked_401k_id !== item.id) {
       setLinkError("This job is already linked to another 401(k) account.");
       setLinkedIncomeId("");
       return;
     }
 
     setLinkedIncomeId(jobId);
-    setStartYear(selectedJob.start_year.toString());
-    setEndYear(selectedJob.end_year.toString());
+    setStartYear(job.start_year.toString());
+    setEndYear(job.end_year.toString());
   };
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Prevent submission if there's a link error
     if (linkError) {
       return;
     }
@@ -914,22 +1412,22 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
       start_year: Number(startYear),
       end_year: Number(endYear),
       starting_balance: Number(balance),
-      monthly_contribution: Number(monthlyContribution),
-      expected_return: Number(expectedReturn),
-      employer_match: Number(employerMatch),
+      contribution_mode: contributionMode,
+      monthly_contribution: effectiveMonthlyContribution(),
+      contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
+      expected_return: Number(expectedReturn) / 100,
+      employer_match: Number(employerMatch) / 100,
       linked_income_id: linkedIncomeId || undefined,
     };
 
-    // Only handle linking if this account wasn't previously linked
-    // (If it was linked, user must delete and recreate to change the link)
     if (!item.linked_income_id && linkedIncomeId) {
-      const selectedJob = allJobs.find((job) => job.id === linkedIncomeId);
+      const job = allJobs.find((job) => job.id === linkedIncomeId);
 
-      if (selectedJob) {
+      if (job) {
         dispatch({
           type: "UPDATE_INCOME",
           payload: {
-            ...selectedJob,
+            ...job,
             linked_401k_id: item.id,
           },
         });
@@ -944,11 +1442,10 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
     onClose();
   };
 
-  const linkedJob = linkedIncomeId ? allJobs.find((job) => job.id === linkedIncomeId) : null;
+  const linkedJob = selectedJob;
 
   return (
     <div className="form-panel">
-      {/* Header */}
       <div className="form-header">
         <div className="form-header-icon">🏢</div>
         <div>
@@ -963,13 +1460,11 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
           <div className="form-col">
             <p className="form-section-heading">Account Details</p>
 
-            {/* Account Name */}
             <div className="form-field">
               <label className="form-label">Account Name</label>
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Fidelity 401(k)" />
             </div>
 
-            {/* Starting Balance */}
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
@@ -978,17 +1473,55 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               </div>
             </div>
 
-            {/* Monthly Contribution */}
+            {/* Contribution Mode Toggle - Compact */}
             <div className="form-field">
-              <label className="form-label">Monthly Contribution</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/mo</span>
-                <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="500" type="text" />
+              <label className="form-label">Contribution</label>
+              <div style={{ display: "flex", gap: "4px" }}>
+                <button type="button" className={contributionMode === "dollar" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setContributionMode("dollar")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+                  $
+                </button>
+                <button
+                  type="button"
+                  className={contributionMode === "percentage" ? "form-btn-secondary active" : "form-btn-secondary"}
+                  onClick={() => setContributionMode("percentage")}
+                  disabled={!canUsePercentageMode}
+                  title={!canUsePercentageMode ? "Link a job first" : ""}
+                  style={{
+                    flex: 1,
+                    padding: "8px 12px",
+                    fontSize: "13px",
+                    opacity: !canUsePercentageMode ? 0.5 : 1,
+                    cursor: !canUsePercentageMode ? "not-allowed" : "pointer",
+                  }}
+                >
+                  %
+                </button>
               </div>
             </div>
 
-            {/* Expected Return slider */}
+            {/* Dollar Mode */}
+            {contributionMode === "dollar" && (
+              <div className="form-field">
+                <label className="form-label">Monthly Contribution</label>
+                <div className="form-input-wrap">
+                  <span className="form-input-prefix">$</span>
+                  <span className="form-input-suffix">/mo</span>
+                  <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="500" type="text" />
+                </div>
+              </div>
+            )}
+
+            {/* Percentage Mode */}
+            {contributionMode === "percentage" && (
+              <div className="form-field">
+                <label className="form-label">Percentage of Gross Income</label>
+                <div className="form-input-wrap">
+                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input--suffix" placeholder="6" type="number" min="0" max="100" step="0.1" />
+                  <span className="form-input-suffix">%</span>
+                </div>
+              </div>
+            )}
+
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Expected Annual Return</label>
@@ -997,7 +1530,6 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
             </div>
 
-            {/* Employer Match slider */}
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Employer Match</label>
@@ -1029,7 +1561,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
                   <span className="preview-icon">💼</span>
                   <div>
                     <div className="link-card__title">Link to a job</div>
-                    <div className="link-card__sub">Sync contribution years automatically</div>
+                    <div className="link-card__sub">Required for percentage-based contributions</div>
                   </div>
                 </div>
               </div>
@@ -1038,7 +1570,6 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
                 {allJobs.length === 0 ? (
                   <p className="link-card__no-jobs">No jobs yet — add a qualifying job first.</p>
                 ) : item.linked_income_id ? (
-                  // If already linked, show read-only status
                   <div>
                     <div className="link-card__synced">
                       🔗 Linked to {allJobs.find((j) => j.id === linkedIncomeId)?.name}
@@ -1046,7 +1577,6 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
                     </div>
                   </div>
                 ) : (
-                  // Always show dropdown for selection
                   <div className="form-field--gap8">
                     <select value={linkedIncomeId} onChange={(e) => handleJobSelect(e.target.value)} className="form-input">
                       <option value="">None - No linking</option>
@@ -1070,24 +1600,48 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               </div>
             </div>
 
-            {/* Annual contribution preview */}
-            <div className="preview-card">
-              <div className="preview-card__header preview-card__header--mb10">
-                <span className="preview-icon">✨</span>
-                <span className="preview-card__label">Annual Contribution</span>
+            {/* Merged Contribution Preview - Only show in percentage mode */}
+            {contributionMode === "percentage" && selectedJob && (
+              <div className="preview-card">
+                <div className="preview-card__header">
+                  <span className="preview-icon">💵</span>
+                  <span className="preview-card__label">Contribution Preview</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
+                  <div>
+                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Monthly</div>
+                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Annual</div>
+                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</div>
+                  </div>
+                </div>
+                <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", paddingTop: "8px", borderTop: "1px solid var(--color-border-tertiary)" }}>
+                  {Number(contributionPercentage).toFixed(1)}% of ${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly gross
+                </div>
               </div>
-              <div className="preview-card__amount preview-card__amount--lg">
-                ${annualTotal.toLocaleString()}
-                <span className="preview-card__unit preview-card__unit--lg">/yr</span>
+            )}
+
+            {/* Annual contribution preview with employer match */}
+            {contributionMode == "dollar" && (
+              <div className="preview-card">
+                <div className="preview-card__header preview-card__header--mb10">
+                  <span className="preview-icon">✨</span>
+                  <span className="preview-card__label">Annual Total</span>
+                </div>
+                <div className="preview-card__amount preview-card__amount--lg">
+                  ${annualTotal.toLocaleString()}
+                  <span className="preview-card__unit preview-card__unit--lg">/yr</span>
+                </div>
+                <div className="preview-card__sub">
+                  ${annualEmployee.toLocaleString()} you + ${annualEmployer.toLocaleString()} employer match
+                </div>
               </div>
-              <div className="preview-card__sub">
-                ${annualEmployee.toLocaleString()} you + ${annualEmployer.toLocaleString()} employer match
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
-        {/* Footer */}
         <div className="form-footer">
           <button type="button" onClick={onClose} className="form-btn-cancel">
             Cancel

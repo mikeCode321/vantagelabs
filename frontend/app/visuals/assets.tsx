@@ -46,7 +46,7 @@ export type CarAsset = {
 export type AssetSource = HouseAsset | CarAsset;
 
 // ASSET FORMS
-export function HouseAssetForm({ dispatch, onClose, onToast }) {
+export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
   const [name, setName] = useState("");
   const [houseValue, setHouseValue] = useState("");
   const [appreciation, setAppreciation] = useState("3");
@@ -54,21 +54,98 @@ export function HouseAssetForm({ dispatch, onClose, onToast }) {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
+  const [linkedLoanId, setLinkedLoanId] = useState("");
+  const [linkError, setLinkError] = useState("");
+  
+  const availableHouseLoans = state?.expenses?.house_loan || [];
+
+  const availableHouses = state?.assets?.house || [];
+
+  const getHouseLinkedToLoan = (loanId: string) => {
+    return availableHouses.find((house) => house.linked_loan_id === loanId);
+  };
+
+  const isLoanLinkedToAnotherHouse = (loan) => {
+    const houseLinkedFromAssetSide = getHouseLinkedToLoan(loan.id);
+
+    return Boolean(
+      (loan.linked_asset_id && loan.linked_asset_id !== item.id) ||
+        (houseLinkedFromAssetSide && houseLinkedFromAssetSide.id !== item.id)
+    );
+  };
+  
+  const linkedLoan = linkedLoanId
+    ? availableHouseLoans.find((loan) => loan.id === linkedLoanId)
+    : null;
+  
+  const handleHouseLoanSelect = (loanId: string) => {
+    setLinkError("");
+  
+    if (!loanId) {
+      setLinkedLoanId("");
+      return;
+    }
+  
+    const selectedLoan = availableHouseLoans.find((loan) => loan.id === loanId);
+  
+    if (selectedLoan && isLoanLinkedToAnotherHouse(selectedLoan)) {
+      setLinkError("This home loan is already linked to another house.");
+      setLinkedLoanId("");
+      return;
+    }
+  
+    setLinkedLoanId(loanId);
+  
+    if (selectedLoan) {
+      setName(selectedLoan.name.replace(" Loan", "") || "House");
+      setStartYear(selectedLoan.start_year.toString());
+  
+      if (selectedLoan.original_principal) {
+        setHouseValue(
+          (
+            Number(selectedLoan.original_principal || 0) +
+            Number(downPayment || 0)
+          ).toString()
+        );
+      }
+    }
+  };
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    if (linkError) return;
+  
+    const assetId = crypto.randomUUID();
+  
     const houseAsset: HouseAsset = {
       source_type: "asset",
       variant: "house",
-      id: crypto.randomUUID(),
+      id: assetId,
       name: name || "House",
       start_year: Number(startYear),
       end_year: endYear === "" ? null : Number(endYear),
       asset_value: Number(houseValue),
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
+      linked_loan_id: linkedLoanId || null,
     };
-
+  
+    if (linkedLoanId) {
+      const selectedLoan = availableHouseLoans.find(
+        (loan) => loan.id === linkedLoanId
+      );
+  
+      if (selectedLoan) {
+        dispatch({
+          type: "UPDATE_EXPENSE",
+          payload: {
+            ...selectedLoan,
+            linked_asset_id: assetId,
+          },
+        });
+      }
+    }
+  
     dispatch({
       type: "ADD_ASSET",
       payload: houseAsset,
@@ -78,7 +155,9 @@ export function HouseAssetForm({ dispatch, onClose, onToast }) {
 
     if (onClose) onClose();
   };
-  const appreciatedValue = Number(houseValue) * (1 - (Number(appreciation) || 0) / 100);
+
+  const appreciatedValue =
+    Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
   return (
     <div className="form-panel">
       <div className="form-header">
@@ -135,11 +214,83 @@ export function HouseAssetForm({ dispatch, onClose, onToast }) {
                 <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
 
+
+
               <div className="form-field">
                 <label className="form-label">
                   End yr <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <input
+                  value={endYear}
+                  onChange={e => setEndYear(e.target.value)}
+                  className="form-input"
+                  placeholder="30"
+                  type="number"
+                />
+              </div>
+            </div>
+
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🏦</span>
+                  <div>
+                    <div className="link-card__title">Link to a Home Loan</div>
+                    <div className="link-card__sub">
+                      Sync this house with an existing mortgage
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="link-card__body">
+                {availableHouseLoans.length === 0 ? (
+                  <p className="link-card__no-accounts">
+                    No home loans available.
+                  </p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select
+                      value={linkedLoanId}
+                      onChange={(e) => handleHouseLoanSelect(e.target.value)}
+                      className="form-input"
+                    >
+                      <option value="">None - No linking</option>
+
+                      {availableHouseLoans.map((loan) => {
+                        const isLinked = isLoanLinkedToAnotherHouse(loan);
+
+                        return (
+                          <option
+                            key={loan.id}
+                            value={loan.id}
+                            disabled={isLinked}
+                          >
+                            {loan.name} {isLinked ? "(already linked)" : ""}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
+                    {linkedLoan && !linkError && (
+                      <div className="link-card__synced">
+                        🔗 Linked to {linkedLoan.name}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -173,7 +324,7 @@ export function HouseAssetForm({ dispatch, onClose, onToast }) {
   );
 }
 
-export function CarAssetForm({ dispatch, onClose, onToast }) {
+export function CarAssetForm({ dispatch,state, onClose, onToast }) {
   const [name, setName] = useState("");
   const [carValue, setCarValue] = useState("");
   const [depreciation, setDepreciation] = useState("12");
@@ -181,21 +332,85 @@ export function CarAssetForm({ dispatch, onClose, onToast }) {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
 
+  const [linkedLoanId, setLinkedLoanId] = useState("");
+  const [linkError, setLinkError] = useState("");
+
+  const availableCarLoans = state?.expenses?.car_loan || [];
+
+  const linkedLoan = linkedLoanId
+    ? availableCarLoans.find((loan) => loan.id === linkedLoanId)
+    : null;
+
+  const handleCarLoanSelect = (loanId: string) => {
+    setLinkError("");
+
+    if (!loanId) {
+      setLinkedLoanId("");
+      return;
+    }
+
+    const selectedLoan = availableCarLoans.find((loan) => loan.id === loanId);
+
+    if (selectedLoan?.linked_asset_id) {
+      setLinkError("This car loan is already linked to another car.");
+      setLinkedLoanId("");
+      return;
+    }
+
+    setLinkedLoanId(loanId);
+
+    if (selectedLoan) {
+      setName(selectedLoan.name.replace(" Loan", "") || "Car");
+      setStartYear(selectedLoan.start_year.toString());
+
+      if (selectedLoan.original_principal) {
+        setCarValue(
+          (
+            Number(selectedLoan.original_principal || 0) +
+            Number(downPayment || 0)
+          ).toString()
+        );
+      }
+    }
+  };
+
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    if (linkError) return;
+  
+    const assetId = crypto.randomUUID();
+  
     const carAsset: CarAsset = {
       source_type: "asset",
       variant: "car",
-      id: crypto.randomUUID(),
+      id: assetId,
       name: name || "Car",
       start_year: Number(startYear),
       end_year: endYear === "" ? null : Number(endYear),
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
+      linked_loan_id: linkedLoanId || null,
     };
-
+  
+    if (linkedLoanId) {
+      const selectedLoan = availableCarLoans.find(
+        (loan) => loan.id === linkedLoanId
+      );
+  
+      if (selectedLoan) {
+        dispatch({
+          type: "UPDATE_EXPENSE",
+          payload: {
+            ...selectedLoan,
+            linked_asset_id: assetId,
+          },
+        });
+      }
+    }
+  
     dispatch({
       type: "ADD_ASSET",
       payload: carAsset,
@@ -269,7 +484,77 @@ export function CarAssetForm({ dispatch, onClose, onToast }) {
                 <label className="form-label">
                   End yr <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="5" type="number" />
+                <input
+                  value={endYear}
+                  onChange={(e) => setEndYear(e.target.value)}
+                  className="form-input"
+                  placeholder="5"
+                  type="number"
+                />
+              </div>
+            </div>
+
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🏦</span>
+                  <div>
+                    <div className="link-card__title">Link to a Car Loan</div>
+                    <div className="link-card__sub">
+                      Sync this car with an existing vehicle loan
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="link-card__body">
+                {availableCarLoans.length === 0 ? (
+                  <p className="link-card__no-accounts">
+                    No car loans available.
+                  </p>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select
+                      value={linkedLoanId}
+                      onChange={(e) => handleCarLoanSelect(e.target.value)}
+                      className="form-input"
+                    >
+                      <option value="">None - No linking</option>
+
+                      {availableCarLoans.map((loan) => {
+                        const isLinked = Boolean(loan.linked_asset_id);
+
+                        return (
+                          <option
+                            key={loan.id}
+                            value={loan.id}
+                            disabled={isLinked}
+                          >
+                            {loan.name} {isLinked ? "(already linked)" : ""}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
+                    {linkedLoan && !linkError && (
+                      <div className="link-card__synced">
+                        🔗 Linked to {linkedLoan.name}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -312,8 +597,41 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
 
+  const [linkedLoanId, setLinkedLoanId] = useState(item.linked_loan_id || "");
+  const [linkError, setLinkError] = useState("");
+
+  const availableHouseLoans = state?.expenses?.house_loan || [];
+
+  const linkedLoan = linkedLoanId
+    ? availableHouseLoans.find((loan) => loan.id === linkedLoanId)
+    : null;
+
+  const isAlreadyLinked = !!item.linked_loan_id;
+
+  const handleHouseLoanSelect = (loanId: string) => {
+    setLinkError("");
+
+    if (!loanId) {
+      setLinkedLoanId("");
+      return;
+    }
+
+    const selectedLoan = availableHouseLoans.find((loan) => loan.id === loanId);
+
+    if (selectedLoan?.linked_asset_id) {
+      setLinkError("This home loan is already linked to another house.");
+      setLinkedLoanId("");
+      return;
+    }
+
+    setLinkedLoanId(loanId);
+  };
+
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (linkError) return;
 
     const updatedHouseAsset = {
       ...item,
@@ -325,8 +643,25 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
       asset_value: Number(houseValue),
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
-      //linked_loan_id: item.linked_loan_id ?? null,
+      linked_loan_id: item.linked_loan_id || linkedLoanId || null,
     };
+    
+    
+    if (!isAlreadyLinked && linkedLoanId) {
+      const selectedLoan = availableHouseLoans.find(
+        (loan) => loan.id === linkedLoanId
+      );
+    
+      if (selectedLoan) {
+        dispatch({
+          type: "UPDATE_EXPENSE",
+          payload: {
+            ...selectedLoan,
+            linked_asset_id: item.id,
+          },
+        });
+      }
+    }
 
     dispatch({
       type: "UPDATE_ASSET",
@@ -400,7 +735,91 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
                 <label className="form-label">
                   End yr <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <input
+                  value={endYear}
+                  onChange={(e) => setEndYear(e.target.value)}
+                  className="form-input"
+                  placeholder="30"
+                  type="number"
+                />
+              </div>
+            </div>
+
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🏦</span>
+                  <div>
+                    <div className="link-card__title">Link to a Home Loan</div>
+                    <div className="link-card__sub">
+                      Sync this house with an existing mortgage
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="link-card__body">
+                {availableHouseLoans.length === 0 ? (
+                  <p className="link-card__no-accounts">
+                    No home loans available.
+                  </p>
+                ) : isAlreadyLinked ? (
+                  <div className="link-card__synced">
+                    🔗 Linked to {linkedLoan?.name || "Home loan"}
+
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#6B7280",
+                        marginTop: "0.5rem",
+                      }}
+                    >
+                      Delete the linked loan to reassign
+                    </div>
+                  </div>
+                ) : (
+                  <div className="form-field--gap8">
+                    <select
+                      value={linkedLoanId}
+                      onChange={(e) => handleHouseLoanSelect(e.target.value)}
+                      className="form-input"
+                    >
+                      <option value="">None - No linking</option>
+
+                      {availableHouseLoans.map((loan) => {
+                        const isLinked = Boolean(loan.linked_asset_id);
+
+                        return (
+                          <option
+                            key={loan.id}
+                            value={loan.id}
+                            disabled={isLinked}
+                          >
+                            {loan.name} {isLinked ? "(already linked)" : ""}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
+                    {linkedLoanId && !linkError && (
+                      <div className="link-card__synced">
+                        🔗 Linked to {linkedLoan?.name}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -440,13 +859,66 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
 export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [carValue, setCarValue] = useState(item.asset_value.toString());
-  const [depreciation, setDepreciation] = useState((item.annual_depreciation * 100).toString());
-  const [downPayment, setDownPayment] = useState(item.down_payment == null ? "" : item.down_payment.toString());
+  const [depreciation, setDepreciation] = useState(
+    (item.annual_depreciation * 100).toString()
+  );
+  const [downPayment, setDownPayment] = useState(
+    item.down_payment == null ? "" : item.down_payment.toString()
+  );
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
 
+  const [linkedLoanId, setLinkedLoanId] = useState(item.linked_loan_id || "");
+  const [linkError, setLinkError] = useState("");
+
+  const availableCarLoans = state?.expenses?.car_loan || [];
+
+  const availableCars = state?.assets?.car || [];
+
+  const getCarLinkedToLoan = (loanId: string) => {
+    return availableCars.find((car) => car.linked_loan_id === loanId);
+  };
+
+  const isLoanLinkedToAnotherCar = (loan) => {
+    const carLinkedFromAssetSide = getCarLinkedToLoan(loan.id);
+
+    return Boolean(
+      (loan.linked_asset_id && loan.linked_asset_id !== item.id) ||
+        (carLinkedFromAssetSide && carLinkedFromAssetSide.id !== item.id)
+    );
+  };
+
+  const linkedLoan = linkedLoanId
+    ? availableCarLoans.find((loan) => loan.id === linkedLoanId)
+    : null;
+
+  const isAlreadyLinked = !!item.linked_loan_id;
+
+  const handleCarLoanSelect = (loanId: string) => {
+    setLinkError("");
+
+    if (!loanId) {
+      setLinkedLoanId("");
+      return;
+    }
+
+    const selectedLoan = availableCarLoans.find(
+      (loan) => loan.id === loanId
+    );
+
+    if (selectedLoan && isLoanLinkedToAnotherCar(selectedLoan)) {
+      setLinkError("This car loan is already linked to another car.");
+      setLinkedLoanId("");
+      return;
+    }
+
+    setLinkedLoanId(loanId);
+  };
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (linkError) return;
 
     const updatedCarAsset = {
       ...item,
@@ -458,8 +930,29 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
-      //linked_loan_id: item.linked_loan_id ?? null,
+
+      // Keep existing link locked if already linked.
+      linked_loan_id: item.linked_loan_id || linkedLoanId || null,
     };
+
+    // Only create the two-way link if this car was not already linked.
+    // If it was already linked, user must delete/recreate to reassign.
+    if (!isAlreadyLinked && linkedLoanId) {
+      const selectedLoan = availableCarLoans.find(
+        (loan) => loan.id === linkedLoanId
+      );
+
+      if (selectedLoan) {
+        dispatch({
+          type: "UPDATE_EXPENSE",
+          payload: {
+            ...selectedLoan,
+            linked_asset_id: item.id,
+          },
+        });
+      }
+    }
+
 
     dispatch({
       type: "UPDATE_ASSET",
@@ -471,75 +964,186 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
     onClose();
   };
 
-  const depreciatedValue = Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
+  const depreciatedValue =
+    Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
 
   return (
     <div className="form-panel">
-      {/* Header */}
       <div className="form-header">
         <div className="form-header-icon">🚗</div>
         <div>
           <h3 className="form-header-title">Edit Car</h3>
-          <p className="form-header-desc">Update vehicle value, depreciation rate, and timeline.</p>
+          <p className="form-header-desc">
+            Update vehicle value, depreciation rate, and timeline.
+          </p>
         </div>
       </div>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Vehicle Details</p>
 
             <div className="form-field">
               <label className="form-label">Car Name</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Toyota Camry" />
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="form-input"
+                placeholder="Toyota Camry"
+              />
             </div>
 
             <div className="form-field">
               <label className="form-label">Car Value</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(carValue)} onChange={(e) => handleNumberInput(e, setCarValue)} className="form-input form-input--prefix-dollar" placeholder="30,000" type="text" inputMode="decimal" />
+                <input
+                  value={formatNumberWithCommas(carValue)}
+                  onChange={(e) => handleNumberInput(e, setCarValue)}
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="30,000"
+                  type="text"
+                  inputMode="decimal"
+                />
               </div>
             </div>
 
             <div className="form-field">
               <label className="form-label">
-                Down Payment <span className="form-label--muted">(optional)</span>
+                Down Payment{" "}
+                <span className="form-label--muted">(optional)</span>
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(downPayment)} onChange={(e) => handleNumberInput(e, setDownPayment)} className="form-input form-input--prefix-dollar" placeholder="5,000" type="text" inputMode="decimal" />
+                <input
+                  value={formatNumberWithCommas(downPayment)}
+                  onChange={(e) => handleNumberInput(e, setDownPayment)}
+                  className="form-input form-input--prefix-dollar"
+                  placeholder="5,000"
+                  type="text"
+                  inputMode="decimal"
+                />
               </div>
             </div>
 
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Annual Depreciation</label>
-                <span className="form-slider-value">{Number(depreciation).toFixed(1)}%</span>
+                <span className="form-slider-value">
+                  {Number(depreciation).toFixed(1)}%
+                </span>
               </div>
-              <input type="range" min={0} max={30} step={0.5} value={depreciation} onChange={(e) => setDepreciation(e.target.value)} className="form-slider" />
+              <input
+                type="range"
+                min={0}
+                max={30}
+                step={0.5}
+                value={depreciation}
+                onChange={(e) => setDepreciation(e.target.value)}
+                className="form-slider"
+              />
             </div>
           </div>
 
-          {/* ── RIGHT ── */}
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
             <div className="form-year-grid">
               <div className="form-field">
                 <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <input
+                  value={startYear}
+                  onChange={(e) => setStartYear(e.target.value)}
+                  className="form-input"
+                  placeholder="1"
+                  type="number"
+                />
               </div>
+
               <div className="form-field">
                 <label className="form-label">
                   End yr <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="10" type="number" />
+                <input
+                  value={endYear}
+                  onChange={(e) => setEndYear(e.target.value)}
+                  className="form-input"
+                  placeholder="10"
+                  type="number"
+                />
               </div>
             </div>
 
-            {/* Value Preview */}
+            <div className="link-card">
+              <div className="link-card__header">
+                <div className="link-card__info">
+                  <span className="preview-icon">🏦</span>
+                  <div>
+                    <div className="link-card__title">Link to a Car Loan</div>
+                    <div className="link-card__sub">
+                      Sync this car with an existing vehicle loan
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="link-card__body">
+              {availableCarLoans.length === 0 ? (
+                <p className="link-card__no-accounts">No car loans available.</p>
+              ) : isAlreadyLinked ? (
+                <div className="link-card__synced">
+                  🔗 Linked to {linkedLoan?.name || "Car loan"}
+                  <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "0.5rem" }}>
+                    Delete the linked loan to reassign
+                  </div>
+                </div>
+              ) : (
+                  <div className="form-field--gap8">
+                    <select
+                      value={linkedLoanId}
+                      onChange={(e) => handleCarLoanSelect(e.target.value)}
+                      className="form-input"
+                    >
+                      <option value="">None - No linking</option>
+
+                      {availableCarLoans.map((loan) => {
+                      const isLinked = isLoanLinkedToAnotherCar(loan);
+
+                      return (
+                        <option
+                          key={loan.id}
+                          value={loan.id}
+                          disabled={isLinked}
+                        >
+                          {loan.name} {isLinked ? "(already linked)" : ""}
+                        </option>
+                      );
+                    })}
+                    </select>
+
+                    {linkError && (
+                      <div
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "0.875rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {linkError}
+                      </div>
+                    )}
+
+                    {linkedLoanId && !linkError && (
+                      <div className="link-card__synced">
+                        🔗 Linked to {linkedLoan?.name}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="preview-card">
               <div className="preview-card__header preview-card__header--mb10">
                 <span className="preview-icon">📉</span>
@@ -561,9 +1165,14 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
+          <button
+            type="button"
+            onClick={onClose}
+            className="form-btn-cancel"
+          >
             Cancel
           </button>
+
           <button type="submit" className="form-btn-submit">
             Save Car
           </button>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/accounts";
+import { on } from "events";
 
 // ─────────────────────────────────────────────
 // ASSET
@@ -45,7 +46,7 @@ export type CarAsset = {
 export type AssetSource = HouseAsset | CarAsset;
 
 // ASSET FORMS
-export function HouseAssetForm({ dispatch, state, onClose }) {
+export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
   const [name, setName] = useState("");
   const [houseValue, setHouseValue] = useState("");
   const [appreciation, setAppreciation] = useState("3");
@@ -149,7 +150,9 @@ export function HouseAssetForm({ dispatch, state, onClose }) {
       type: "ADD_ASSET",
       payload: houseAsset,
     });
-  
+
+    onToast(name, "added");
+
     if (onClose) onClose();
   };
 
@@ -161,9 +164,7 @@ export function HouseAssetForm({ dispatch, state, onClose }) {
         <div className="form-header-icon">🏡</div>
         <div>
           <h3 className="form-header-title">Add House</h3>
-          <p className="form-header-desc">
-            Track a property asset with appreciation and optional down payment.
-          </p>
+          <p className="form-header-desc">Track a property asset with appreciation and optional down payment.</p>
         </div>
       </div>
 
@@ -174,27 +175,14 @@ export function HouseAssetForm({ dispatch, state, onClose }) {
 
             <div className="form-field">
               <label className="form-label">Property Name</label>
-              <input
-                value={name}
-                onChange={e => setName(e.target.value)}
-                className="form-input"
-                placeholder="Primary Residence, Rental Property"
-              />
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Primary Residence, Rental Property" />
             </div>
 
             <div className="form-field">
               <label className="form-label">House Value</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(houseValue)}
-                  onChange={e => handleNumberInput(e, setHouseValue)}
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="400,000"
-                  type="text"
-                  inputMode="decimal"
-                  required
-                />
+                <input value={formatNumberWithCommas(houseValue)} onChange={(e) => handleNumberInput(e, setHouseValue)} className="form-input form-input--prefix-dollar" placeholder="400,000" type="text" inputMode="decimal" required />
               </div>
             </div>
 
@@ -204,33 +192,16 @@ export function HouseAssetForm({ dispatch, state, onClose }) {
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(downPayment)}
-                  onChange={e => handleNumberInput(e, setDownPayment)}
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="80,000"
-                  type="text"
-                  inputMode="decimal"
-                />
+                <input value={formatNumberWithCommas(downPayment)} onChange={(e) => handleNumberInput(e, setDownPayment)} className="form-input form-input--prefix-dollar" placeholder="80,000" type="text" inputMode="decimal" />
               </div>
             </div>
 
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Annual Appreciation</label>
-                <span className="form-slider-value">
-                  {Number(appreciation).toFixed(1)}%
-                </span>
+                <span className="form-slider-value">{Number(appreciation).toFixed(1)}%</span>
               </div>
-              <input
-                type="range"
-                min={0}
-                max={15}
-                step={0.1}
-                value={appreciation}
-                onChange={e => setAppreciation(e.target.value)}
-                className="form-slider"
-              />
+              <input type="range" min={0} max={15} step={0.1} value={appreciation} onChange={(e) => setAppreciation(e.target.value)} className="form-slider" />
             </div>
           </div>
 
@@ -240,14 +211,7 @@ export function HouseAssetForm({ dispatch, state, onClose }) {
             <div className="form-year-grid">
               <div className="form-field">
                 <label className="form-label">Start yr</label>
-                <input
-                  value={startYear}
-                  onChange={e => setStartYear(e.target.value)}
-                  className="form-input"
-                  placeholder="1"
-                  type="number"
-                  required
-                />
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
 
 
@@ -344,12 +308,9 @@ export function HouseAssetForm({ dispatch, state, onClose }) {
               </div>
 
               <div className="preview-card__sub">
-                +{Number(appreciation).toFixed(1)}% appreciation from $
-                {(Number(houseValue) || 0).toLocaleString()}
+                +{Number(appreciation).toFixed(1)}% appreciation from ${(Number(houseValue) || 0).toLocaleString()}
               </div>
             </div>
-
-
           </div>
         </div>
 
@@ -363,8 +324,7 @@ export function HouseAssetForm({ dispatch, state, onClose }) {
   );
 }
 
-
-export function CarAssetForm({ dispatch,state, onClose }) {
+export function CarAssetForm({ dispatch,state, onClose, onToast }) {
   const [name, setName] = useState("");
   const [carValue, setCarValue] = useState("");
   const [depreciation, setDepreciation] = useState("12");
@@ -455,22 +415,20 @@ export function CarAssetForm({ dispatch,state, onClose }) {
       type: "ADD_ASSET",
       payload: carAsset,
     });
-  
+
+    onToast(name, "added");
+
     if (onClose) onClose();
   };
-  
 
-  const depreciatedValue =
-    Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
+  const depreciatedValue = Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
   return (
     <div className="form-panel">
       <div className="form-header">
         <div className="form-header-icon">🚗</div>
         <div>
           <h3 className="form-header-title">Add Car</h3>
-          <p className="form-header-desc">
-            Track a vehicle asset with depreciation and optional down payment.
-          </p>
+          <p className="form-header-desc">Track a vehicle asset with depreciation and optional down payment.</p>
         </div>
       </div>
 
@@ -482,64 +440,33 @@ export function CarAssetForm({ dispatch,state, onClose }) {
 
             <div className="form-field">
               <label className="form-label">Car Name</label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="form-input"
-                placeholder="Mazda 3, Tesla Model 3"
-              />
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Mazda 3, Tesla Model 3" />
             </div>
 
             <div className="form-field">
               <label className="form-label">Car Value</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(carValue)}
-                  onChange={(e) => handleNumberInput(e, setCarValue)}
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="30,000"
-                  type="text"
-                  inputMode="decimal"
-                  required
-                />
+                <input value={formatNumberWithCommas(carValue)} onChange={(e) => handleNumberInput(e, setCarValue)} className="form-input form-input--prefix-dollar" placeholder="30,000" type="text" inputMode="decimal" required />
               </div>
             </div>
 
             <div className="form-field">
               <label className="form-label">
-                Down Payment{" "}
-                <span className="form-label--muted">(optional)</span>
+                Down Payment <span className="form-label--muted">(optional)</span>
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(downPayment)}
-                  onChange={(e) => handleNumberInput(e, setDownPayment)}
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="5,000"
-                  type="text"
-                  inputMode="decimal"
-                />
+                <input value={formatNumberWithCommas(downPayment)} onChange={(e) => handleNumberInput(e, setDownPayment)} className="form-input form-input--prefix-dollar" placeholder="5,000" type="text" inputMode="decimal" />
               </div>
             </div>
 
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Annual Depreciation</label>
-                <span className="form-slider-value">
-                  {Number(depreciation).toFixed(1)}%
-                </span>
+                <span className="form-slider-value">{Number(depreciation).toFixed(1)}%</span>
               </div>
-              <input
-                type="range"
-                min={0}
-                max={40}
-                step={0.1}
-                value={depreciation}
-                onChange={(e) => setDepreciation(e.target.value)}
-                className="form-slider"
-              />
+              <input type="range" min={0} max={40} step={0.1} value={depreciation} onChange={(e) => setDepreciation(e.target.value)} className="form-slider" />
             </div>
           </div>
 
@@ -550,14 +477,7 @@ export function CarAssetForm({ dispatch,state, onClose }) {
             <div className="form-year-grid">
               <div className="form-field">
                 <label className="form-label">Start yr</label>
-                <input
-                  value={startYear}
-                  onChange={(e) => setStartYear(e.target.value)}
-                  className="form-input"
-                  placeholder="1"
-                  type="number"
-                  required
-                />
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
 
               <div className="form-field">
@@ -652,11 +572,9 @@ export function CarAssetForm({ dispatch,state, onClose }) {
               </div>
 
               <div className="preview-card__sub">
-                -{Number(depreciation).toFixed(1)}% depreciation from $
-                {(Number(carValue) || 0).toLocaleString()}
+                -{Number(depreciation).toFixed(1)}% depreciation from ${(Number(carValue) || 0).toLocaleString()}
               </div>
             </div>
-            
           </div>
         </div>
 
@@ -671,15 +589,11 @@ export function CarAssetForm({ dispatch,state, onClose }) {
 }
 
 /* -------------------- EDIT ASSET FORMS -------------------- */
-export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
+export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [houseValue, setHouseValue] = useState(item.asset_value.toString());
-  const [appreciation, setAppreciation] = useState(
-    (item.annual_appreciation * 100).toString()
-  );
-  const [downPayment, setDownPayment] = useState(
-    item.down_payment == null ? "" : item.down_payment.toString()
-  );
+  const [appreciation, setAppreciation] = useState((item.annual_appreciation * 100).toString());
+  const [downPayment, setDownPayment] = useState(item.down_payment == null ? "" : item.down_payment.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
 
@@ -754,11 +668,12 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
       payload: updatedHouseAsset,
     });
 
+    onToast(name,"edited");
+    
+    onClose();
   };
 
-
-  const appreciatedValue =
-    Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
+  const appreciatedValue = Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
 
   return (
     <div className="form-panel">
@@ -766,9 +681,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
         <div className="form-header-icon">🏡</div>
         <div>
           <h3 className="form-header-title">Edit House</h3>
-          <p className="form-header-desc">
-            Update property value, appreciation rate, and timeline.
-          </p>
+          <p className="form-header-desc">Update property value, appreciation rate, and timeline.</p>
         </div>
       </div>
 
@@ -779,26 +692,14 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
 
             <div className="form-field">
               <label className="form-label">Property Name</label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="form-input"
-                placeholder="Primary Residence"
-              />
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Primary Residence" />
             </div>
 
             <div className="form-field">
               <label className="form-label">House Value</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(houseValue)}
-                  onChange={(e) => handleNumberInput(e, setHouseValue)}
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="400,000"
-                  type="text"
-                  inputMode="decimal"
-                />
+                <input value={formatNumberWithCommas(houseValue)} onChange={(e) => handleNumberInput(e, setHouseValue)} className="form-input form-input--prefix-dollar" placeholder="400,000" type="text" inputMode="decimal" />
               </div>
             </div>
 
@@ -808,33 +709,16 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(downPayment)}
-                  onChange={(e) => handleNumberInput(e, setDownPayment)}
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="80,000"
-                  type="text"
-                  inputMode="decimal"
-                />
+                <input value={formatNumberWithCommas(downPayment)} onChange={(e) => handleNumberInput(e, setDownPayment)} className="form-input form-input--prefix-dollar" placeholder="80,000" type="text" inputMode="decimal" />
               </div>
             </div>
 
             <div className="form-field--gap8">
               <div className="form-slider-header">
                 <label className="form-label">Annual Appreciation</label>
-                <span className="form-slider-value">
-                  {Number(appreciation).toFixed(1)}%
-                </span>
+                <span className="form-slider-value">{Number(appreciation).toFixed(1)}%</span>
               </div>
-              <input
-                type="range"
-                min={0}
-                max={15}
-                step={0.1}
-                value={appreciation}
-                onChange={(e) => setAppreciation(e.target.value)}
-                className="form-slider"
-              />
+              <input type="range" min={0} max={15} step={0.1} value={appreciation} onChange={(e) => setAppreciation(e.target.value)} className="form-slider" />
             </div>
           </div>
 
@@ -844,13 +728,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
             <div className="form-year-grid">
               <div className="form-field">
                 <label className="form-label">Start yr</label>
-                <input
-                  value={startYear}
-                  onChange={(e) => setStartYear(e.target.value)}
-                  className="form-input"
-                  placeholder="1"
-                  type="number"
-                />
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
 
               <div className="form-field">
@@ -959,12 +837,9 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
               </div>
 
               <div className="preview-card__sub">
-                +{Number(appreciation).toFixed(1)}% appreciation from $
-                {(Number(houseValue) || 0).toLocaleString()}
+                +{Number(appreciation).toFixed(1)}% appreciation from ${(Number(houseValue) || 0).toLocaleString()}
               </div>
             </div>
-
-            
           </div>
         </div>
 
@@ -981,7 +856,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
   );
 }
 
-export function EditCarAssetForm({ state, item, dispatch, onClose }) {
+export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [carValue, setCarValue] = useState(item.asset_value.toString());
   const [depreciation, setDepreciation] = useState(
@@ -1078,11 +953,14 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
       }
     }
 
+
     dispatch({
       type: "UPDATE_ASSET",
       payload: updatedCarAsset,
     });
 
+    onToast(name,"edited");
+    
     onClose();
   };
 
@@ -1280,8 +1158,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
               </div>
 
               <div className="preview-card__sub">
-                -{Number(depreciation).toFixed(1)}% depreciation from $
-                {(Number(carValue) || 0).toLocaleString()}
+                -{Number(depreciation).toFixed(1)}% depreciation from ${(Number(carValue) || 0).toLocaleString()}
               </div>
             </div>
           </div>

@@ -22,7 +22,7 @@ import {
   HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
 
 import { 
-  FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult } from "@/app/visuals/misc";
+  FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner } from "@/app/visuals/misc";
   
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
@@ -362,13 +362,15 @@ export function EntityModalCell({ item, setSelectedVariant }) {
   );
 }
 
-export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEdited, state }) {
+export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEdited, state, onToast }) {
   const [selectedVariant, setSelectedVariant] = useState(variantBeingEdited?.variant || null);
 
   const goBack = () => setSelectedVariant(null);
   const closeModal = () => setIsModalOpen(false);
 
-  const FormComponent = selectedVariant ? (variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent) : null;
+  const FormComponent = selectedVariant ? 
+  (variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent) 
+  : null;
 
   let renderedForm;
 
@@ -377,9 +379,9 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
       renderedForm = <div>Form not implemented</div>;
     } else if (variantBeingEdited) {
       // i'm not sure how passing state for one edit form doesn't affect others check on this, but it works for now
-      renderedForm = <FormComponent item={variantBeingEdited} state={state} dispatch={dispatch} onClose={closeModal} />;
+      renderedForm = <FormComponent item={variantBeingEdited} state={state} dispatch={dispatch} onClose={closeModal} onToast={onToast} />;
     } else {
-      renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} />;
+      renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} onToast={onToast} />;
     }
   }
 
@@ -436,7 +438,7 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
 /* -------------------- Row Styles -------------------- */
 
 
-function EntityRow({ item, category, dispatch, onEdit, state }) {
+function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
 
   const handleDelete401k = (account, state, dispatch) => {
     const allJobs = [...state.incomes.salary, ...state.incomes.hourly, ...state.incomes.side];
@@ -451,6 +453,7 @@ function EntityRow({ item, category, dispatch, onEdit, state }) {
             linked_401k_id: undefined,
           },
         });
+        onToast(linkedJob.name, "edited");
       }
     }
     
@@ -458,6 +461,8 @@ function EntityRow({ item, category, dispatch, onEdit, state }) {
       type: "DELETE_ACCOUNT",
       payload: account,
     });
+
+    onToast(item.name, "deleted");
   };
   
   const handleDeleteJob = (job, state, dispatch) => {
@@ -470,6 +475,7 @@ function EntityRow({ item, category, dispatch, onEdit, state }) {
           type: "DELETE_ACCOUNT",
           payload: linked401k,
         });
+        onToast(linked401k.name, "deleted");
       }
     }
     
@@ -477,6 +483,7 @@ function EntityRow({ item, category, dispatch, onEdit, state }) {
       type: "DELETE_INCOME",
       payload: job,
     });
+    onToast(item.name, "deleted");
   };
 
   const handleDelete = () => {
@@ -499,6 +506,8 @@ function EntityRow({ item, category, dispatch, onEdit, state }) {
       type: deleteType,
       payload: { id: item.id, variant: item.variant },
     });
+
+    onToast(item.name, "deleted");
   };
 
   return (
@@ -529,7 +538,7 @@ function EntityRow({ item, category, dispatch, onEdit, state }) {
 }
 /* -------------------- Financial Entity Card -------------------- */
 
-export function Entity({ state, entityName, category, dispatch }) {
+export function Entity({ state, entityName, category, dispatch, onToast }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [variantBeingEdited, setVariantBeingEdited] = useState(null);
 
@@ -580,17 +589,17 @@ export function Entity({ state, entityName, category, dispatch }) {
         </div>
 
         {getItems().map((item) => (
-          <EntityRow key={item.id} item={item} category={category} dispatch={dispatch} onEdit={handleEdit} state={state} />
+          <EntityRow key={item.id} item={item} category={category} dispatch={dispatch} onEdit={handleEdit} state={state} onToast={onToast} />
         ))}
       </div>
 
-      {isModalOpen && <Modal state={state} setIsModalOpen={handleCloseModal} data={data} category={category} dispatch={dispatch} variantBeingEdited={variantBeingEdited} />}
+      {isModalOpen && <Modal state={state} setIsModalOpen={handleCloseModal} data={data} category={category} dispatch={dispatch} variantBeingEdited={variantBeingEdited} onToast={onToast} />}
     </>
   );
 }
 /* -------------------- Financial Entities (Horizontal Container) -------------------- */
 
-export function FinancialEntities({ state, dispatch }) {
+export function FinancialEntities({ state, dispatch, onToast }) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -654,19 +663,19 @@ export function FinancialEntities({ state, dispatch }) {
 
       <div ref={ref} className="entities-scroll hide-scrollbar" onScroll={updateScrollState}>
         <div className="entities-item">
-          <Entity state={state} entityName="Accounts" category="account" dispatch={dispatch} />
+          <Entity state={state} entityName="Accounts" category="account" dispatch={dispatch} onToast={onToast} />
         </div>
 
         <div className="entities-item">
-          <Entity state={state} entityName="Incomes" category="income" dispatch={dispatch} />
+          <Entity state={state} entityName="Incomes" category="income" dispatch={dispatch} onToast={onToast} />
         </div>
 
         <div className="entities-item">
-          <Entity state={state} entityName="Expenses" category="expense" dispatch={dispatch} />
+          <Entity state={state} entityName="Expenses" category="expense" dispatch={dispatch} onToast={onToast} />
         </div>
 
         <div className="entities-item">
-          <Entity state={state} entityName="Assets" category="asset" dispatch={dispatch} />
+          <Entity state={state} entityName="Assets" category="asset" dispatch={dispatch} onToast={onToast} />
         </div>
       </div>
     </div>
@@ -678,6 +687,18 @@ export default function Dashboard() {
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
   const [simResult, setSimResult] = useState<SimYearResult[]>([]);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
+    const id = crypto.randomUUID();
+    const message = `${entityName} ${action} successfully`;
+    
+    setToasts((prev) => [...prev, { id, message, entityName, action, type: "success" }]);
+
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 7000);
+  };
 
   return (
     <div className="dash-root">
@@ -713,12 +734,13 @@ export default function Dashboard() {
         </header>
 
         <pre>{JSON.stringify(state, null, 2)}</pre>
-        <FinancialEntities state={state} dispatch={dispatch} />
+        <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
 
         <SimulationControls state={state} setSimResult={setSimResult} />
         <NetWorthStackedChart simResult={simResult} />
         <SimResultViewer simResult={simResult} />
 
+        <ToastBanner toasts={toasts} setToasts={setToasts} />
         {/* {sim.error && <div className="dash-error">{sim.error}</div>} */}
       </main>
     </div>

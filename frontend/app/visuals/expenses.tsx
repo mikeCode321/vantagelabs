@@ -104,7 +104,7 @@ export function calculateMonthlyLoanPayment(principal: number, annualInterestRat
   return (principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments))) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
 }
 
-export function HouseLoanExpenseForm({ dispatch, state, onClose }) {
+export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   const [name, setName] = useState("House Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState("");
   const [interestRate, setInterestRate] = useState("6.75");
@@ -158,10 +158,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose }) {
         )
       : 0;
 
-  const calculatedEndYear =
-    startYear && loanTermYears
-      ? Number(startYear) + Number(loanTermYears)
-      : "";
+  const calculatedEndYear = startYear && loanTermYears ? Number(startYear) + Number(loanTermYears) : "";
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,8 +179,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose }) {
       original_principal: Number(originalPrincipal),
       interest_rate: Number(interestRate) / 100,
       loan_term_years: Number(loanTermYears),
-      extra_monthly_payment:
-        extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
+      extra_monthly_payment: extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
     };
 
     if (linkedAssetId) {
@@ -207,6 +203,8 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose }) {
       payload: houseLoanExpense,
     });
 
+    onToast(name, "added");
+    
     if (onClose) onClose();
   };
 
@@ -229,72 +227,34 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose }) {
 
             <div className="form-field">
               <label className="form-label">Loan Name</label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="form-input"
-                placeholder="Primary Residence Loan"
-              />
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Primary Residence Loan" />
             </div>
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(originalPrincipal)}
-                  onChange={(e) => handleNumberInput(e, setOriginalPrincipal)}
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="320,000"
-                  type="text"
-                  inputMode="decimal"
-                  required
-                />
+                <input value={formatNumberWithCommas(originalPrincipal)} onChange={(e) => handleNumberInput(e, setOriginalPrincipal)} className="form-input form-input--prefix-dollar" placeholder="320,000" type="text" inputMode="decimal" required />
               </div>
             </div>
 
             <div className="form-field">
               <label className="form-label">Interest Rate %</label>
-              <input
-                value={interestRate}
-                onChange={(e) => setInterestRate(e.target.value)}
-                className="form-input"
-                placeholder="6.75"
-                type="number"
-                step="0.01"
-                required
-              />
+              <input value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input" placeholder="6.75" type="number" step="0.01" required />
             </div>
 
             <div className="form-field">
               <label className="form-label">Loan Term Years</label>
-              <input
-                value={loanTermYears}
-                onChange={(e) => setLoanTermYears(e.target.value)}
-                className="form-input"
-                placeholder="30"
-                type="number"
-                required
-              />
+              <input value={loanTermYears} onChange={(e) => setLoanTermYears(e.target.value)} className="form-input" placeholder="30" type="number" required />
             </div>
 
             <div className="form-field">
               <label className="form-label">
-                Extra Monthly Payment{" "}
-                <span className="form-label--muted">(optional)</span>
+                Extra Monthly Payment <span className="form-label--muted">(optional)</span>
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(extraMonthlyPayment)}
-                  onChange={(e) =>
-                    handleNumberInput(e, setExtraMonthlyPayment)
-                  }
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="0"
-                  type="text"
-                  inputMode="decimal"
-                />
+                <input value={formatNumberWithCommas(extraMonthlyPayment)} onChange={(e) => handleNumberInput(e, setExtraMonthlyPayment)} className="form-input form-input--prefix-dollar" placeholder="0" type="text" inputMode="decimal" />
               </div>
             </div>
           </div>
@@ -305,14 +265,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose }) {
             <div className="form-year-grid">
               <div className="form-field">
                 <label className="form-label">Start yr</label>
-                <input
-                  value={startYear}
-                  onChange={(e) => setStartYear(e.target.value)}
-                  className="form-input"
-                  placeholder="1"
-                  type="number"
-                  required
-                />
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
 
               <div className="form-field">
@@ -435,7 +388,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose }) {
 }
 
 
-export function CarLoanExpenseForm({ dispatch, state, onClose }) {
+export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   const [name, setName] = useState("Car Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState("");
   const [interestRate, setInterestRate] = useState("7.5");
@@ -488,10 +441,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose }) {
         )
       : 0;
 
-  const calculatedEndYear =
-    startYear && loanTermYears
-      ? Number(startYear) + Number(loanTermYears)
-      : "";
+  const calculatedEndYear = startYear && loanTermYears ? Number(startYear) + Number(loanTermYears) : "";
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -533,6 +483,8 @@ export function CarLoanExpenseForm({ dispatch, state, onClose }) {
       payload: carLoanExpense,
     });
 
+    onToast(name, "added");
+
     if (onClose) onClose();
   };
 
@@ -555,53 +507,25 @@ export function CarLoanExpenseForm({ dispatch, state, onClose }) {
 
             <div className="form-field">
               <label className="form-label">Loan Name</label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="form-input"
-                placeholder="Mazda 3 Loan"
-              />
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Mazda 3 Loan" />
             </div>
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(originalPrincipal)}
-                  onChange={(e) => handleNumberInput(e, setOriginalPrincipal)}
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="25,000"
-                  type="text"
-                  inputMode="decimal"
-                  required
-                />
+                <input value={formatNumberWithCommas(originalPrincipal)} onChange={(e) => handleNumberInput(e, setOriginalPrincipal)} className="form-input form-input--prefix-dollar" placeholder="25,000" type="text" inputMode="decimal" required />
               </div>
             </div>
 
             <div className="form-field">
               <label className="form-label">Interest Rate %</label>
-              <input
-                value={interestRate}
-                onChange={(e) => setInterestRate(e.target.value)}
-                className="form-input"
-                placeholder="7.5"
-                type="number"
-                step="0.01"
-                required
-              />
+              <input value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input" placeholder="7.5" type="number" step="0.01" required />
             </div>
 
             <div className="form-field">
               <label className="form-label">Loan Term Years</label>
-              <input
-                value={loanTermYears}
-                onChange={(e) => setLoanTermYears(e.target.value)}
-                className="form-input"
-                placeholder="5"
-                type="number"
-                required
-              />
+              <input value={loanTermYears} onChange={(e) => setLoanTermYears(e.target.value)} className="form-input" placeholder="5" type="number" required />
             </div>
           </div>
 
@@ -611,14 +535,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose }) {
             <div className="form-year-grid">
               <div className="form-field">
                 <label className="form-label">Start yr</label>
-                <input
-                  value={startYear}
-                  onChange={(e) => setStartYear(e.target.value)}
-                  className="form-input"
-                  placeholder="1"
-                  type="number"
-                  required
-                />
+                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
 
               <div className="form-field">
@@ -716,17 +633,14 @@ export function CarLoanExpenseForm({ dispatch, state, onClose }) {
                 /mo
               </div>
               <div className="form-preview-desc">Principal + interest only</div>
+              <div className="form-preview-desc">Principal + interest only</div>
             </div>
           </div>
         </div>
 
         <div className="form-actions">
           {onClose && (
-            <button
-              type="button"
-              onClick={onClose}
-              className="form-btn-secondary"
-            >
+            <button type="button" onClick={onClose} className="form-btn-secondary">
               Cancel
             </button>
           )}
@@ -739,7 +653,8 @@ export function CarLoanExpenseForm({ dispatch, state, onClose }) {
     </div>
   );
 }
-export function LivingExpensesForm({ dispatch }) {
+
+export function LivingExpensesForm({ dispatch, onToast }) {
   const [name, setName] = useState("Living Expenses");
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("3");
@@ -762,6 +677,8 @@ export function LivingExpensesForm({ dispatch }) {
         expense_growth: Number(growth) / 100,
       },
     });
+
+    onToast(name, "added");
 
     setName("Living Expense");
     setAmount("");
@@ -854,7 +771,7 @@ export function LivingExpensesForm({ dispatch }) {
   );
 }
 
-export function DebtExpenseForm({ dispatch }) {
+export function DebtExpenseForm({ dispatch, onToast }) {
   const [name, setName] = useState("Debt Expense");
   const [debtAmount, setDebtAmount] = useState("");
   const [monthlyPayment, setMonthlyPayment] = useState("");
@@ -879,6 +796,8 @@ export function DebtExpenseForm({ dispatch }) {
         interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
       },
     });
+
+    onToast(name, "added");
 
     setName("Debt Expense");
     setDebtAmount("");
@@ -985,7 +904,7 @@ export function DebtExpenseForm({ dispatch }) {
   );
 }
 
-export function RentExpenseForm({ dispatch }) {
+export function RentExpenseForm({ dispatch, onToast }) {
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("3");
   const [startYear, setStartYear] = useState("");
@@ -1007,6 +926,8 @@ export function RentExpenseForm({ dispatch }) {
         expense_growth: Number(growth) / 100,
       },
     });
+
+    onToast("Rent", "added");
 
     setAmount("");
     setGrowth("");
@@ -1097,7 +1018,7 @@ export function RentExpenseForm({ dispatch }) {
 
 /* -------------------- EDIT EXPENSE FORMS -------------------- */
 
-export function EditCarLoanExpenseForm({ item, state, dispatch, onClose }) {
+export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name || "Car Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "");
   const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
@@ -1163,6 +1084,8 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose }) {
         loan_term_years: Number(loanTermYears),
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -1281,7 +1204,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose }) {
   );
 }
 
-export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose }) {
+export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name || "Home Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "" );
   const [interestRate, setInterestRate] = useState(
@@ -1421,6 +1344,8 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose }) {
           extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -1665,7 +1590,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose }) {
   );
 }
 
-export function EditLivingExpensesForm({ item, dispatch, onClose }) {
+export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [amount, setAmount] = useState(item.monthly_expense.toString());
   const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
@@ -1687,6 +1612,8 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
         expense_growth: Number(growth) / 100,
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -1778,7 +1705,7 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
   );
 }
 
-export function EditRentExpenseForm({ item, dispatch, onClose }) {
+export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
   const [amount, setAmount] = useState(item.monthly_expense.toString());
   const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
@@ -1800,6 +1727,8 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
         expense_growth: Number(growth) / 100,
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -1886,7 +1815,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
   );
 }
 
-export function EditDebtExpenseForm({ item, dispatch, onClose }) {
+export function EditDebtExpenseForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [debtAmount, setDebtAmount] = useState(item.debt_amount.toString());
   const [monthlyPayment, setMonthlyPayment] = useState(item.monthly_expense.toString());
@@ -1910,6 +1839,8 @@ export function EditDebtExpenseForm({ item, dispatch, onClose }) {
         interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };

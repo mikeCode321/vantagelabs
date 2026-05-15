@@ -12,8 +12,8 @@ export type SalaryIncome = {
   id: ID;
   name: string;
 
-  start_year: number;
-  end_year: number;
+  start_age: number;
+  end_age: number;
 
   gross_income: number;
   income_growth: number;
@@ -28,8 +28,8 @@ export type HourlyWageIncome = {
   id: ID;
   name: string;
 
-  start_year: number;
-  end_year: number;
+  start_age: number;
+  end_age: number;
 
   hourly_rate: number;          
   hours_per_week: number;       
@@ -46,8 +46,8 @@ export type SideHustleIncome = {
   id: ID;
   name: string;
 
-  start_year: number;
-  end_year: number;
+  start_age: number;
+  end_age: number;
 
   gross_income: number;
   variability: number;
@@ -62,8 +62,8 @@ export function SalaryForm({ dispatch, state, onToast }) {
   const [name, setName] = useState("");
   const [grossIncome, setGrossIncome] = useState("");
   const [growth, setGrowth] = useState("");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
   const [linked401kId, setLinked401kId] = useState("");
   const [linkError, setLinkError] = useState("");
 
@@ -120,8 +120,8 @@ export function SalaryForm({ dispatch, state, onToast }) {
         variant: "salary",
         id: newIncomeId,
         name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         gross_income: Number(grossIncome),
         income_growth: Number(growth),
         linked_401k_id: linked401kId || undefined,
@@ -133,8 +133,8 @@ export function SalaryForm({ dispatch, state, onToast }) {
     setName("");
     setGrossIncome("");
     setGrowth("");
-    setStartYear("");
-    setEndYear("");
+    setStartAge("");
+    setEndAge("");
     setLinked401kId("");
   };
 
@@ -186,12 +186,12 @@ export function SalaryForm({ dispatch, state, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
@@ -261,8 +261,8 @@ export function SalaryForm({ dispatch, state, onToast }) {
 
 export function HourlyWageForm({ dispatch, state, onToast }) {
   const [name, setName] = useState("");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
   const [hourlyRate, setHourlyRate] = useState("");
   const [hoursPerWeek, setHoursPerWeek] = useState("");
   const [growth, setGrowth] = useState("");
@@ -321,8 +321,8 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
         variant: "hourly",
         id: newIncomeId,
         name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         hourly_rate: Number(hourlyRate),       
         hours_per_week: Number(hoursPerWeek),  
         gross_income: Number(annualIncome),
@@ -334,8 +334,8 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
     onToast(name, "added");
 
     setName("");
-    setStartYear("");
-    setEndYear("");
+    setStartAge("");
+    setEndAge("");
     setHourlyRate("");
     setHoursPerWeek("");
     setGrowth("");
@@ -400,12 +400,12 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
@@ -490,8 +490,8 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
 
 export function SideHustleForm({ dispatch, onToast }) {
   const [name, setName] = useState("");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
   const [averageIncome, setAverageIncome] = useState("");
   const [frequency, setFrequency] = useState("monthly");
   const [variability, setVariability] = useState("5");
@@ -510,8 +510,8 @@ export function SideHustleForm({ dispatch, onToast }) {
         variant: "side",
         id: crypto.randomUUID(),
         name: name || "Side Hustle",
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         gross_income: annualIncome,
         variability: Number(variability) / 100,
         frequency: frequency,
@@ -522,8 +522,8 @@ export function SideHustleForm({ dispatch, onToast }) {
     onToast(name, "added");
 
     setName("");
-    setStartYear("");
-    setEndYear("");
+    setStartAge("");
+    setEndAge("");
     setAverageIncome("");
     setFrequency("monthly");
     setVariability("5");
@@ -592,12 +592,12 @@ export function SideHustleForm({ dispatch, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
@@ -635,8 +635,8 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [grossIncome, setGrossIncome] = useState(item.gross_income.toString());
   const [growth, setGrowth] = useState(item.income_growth.toString());
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age.toString());
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
   const [linkError, setLinkError] = useState("");
 
@@ -672,8 +672,8 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
     const updatedIncome = {
       ...item,
       name,
-      start_year: Number(startYear),
-      end_year: Number(endYear),
+      start_age: Number(startAge),
+      end_age: Number(endAge),
       gross_income: Number(grossIncome),
       income_growth: Number(growth),
       linked_401k_id: linked401kId || undefined,
@@ -760,15 +760,15 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
+                <label className="form-label">Start Age</label>
 
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
 
               <div className="form-field">
-                <label className="form-label">End yr</label>
+                <label className="form-label">End Age</label>
 
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
@@ -842,8 +842,8 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
 
 export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age.toString());
   const [hourlyRate, setHourlyRate] = useState(item.hourly_rate?.toString() || "");
   const [hoursPerWeek, setHoursPerWeek] = useState(item.hours_per_week?.toString() || "");
   const [growth, setGrowth] = useState(item.income_growth.toString());
@@ -884,8 +884,8 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
     const updatedIncome = {
       ...item,
       name,
-      start_year: Number(startYear),
-      end_year: Number(endYear),
+      start_age: Number(startAge),
+      end_age: Number(endAge),
       hourly_rate: Number(hourlyRate),          
       hours_per_week: Number(hoursPerWeek),     
       gross_income: Number(annualIncome),
@@ -977,12 +977,12 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
@@ -1083,8 +1083,8 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
 
 export function EditSideHustleForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age.toString());
   const [averageIncome, setAverageIncome] = useState(item.average_income_per_period?.toString() || "");
   const [frequency, setFrequency] = useState(item.frequency || "monthly");
   const [variability, setVariability] = useState((item.variability * 100)?.toString() || "5");
@@ -1101,8 +1101,8 @@ export function EditSideHustleForm({ item, dispatch, onClose, onToast }) {
       payload: {
         ...item,
         name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         gross_income: annualIncome,
         variability: Number(variability) / 100,
         frequency: frequency,
@@ -1178,12 +1178,12 @@ export function EditSideHustleForm({ item, dispatch, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 

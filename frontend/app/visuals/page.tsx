@@ -11,13 +11,13 @@ import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpen
 
 import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
 
-import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner } from "@/app/visuals/misc";
+import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 type SimRequest = {
-  start_year: number;
-  end_year: number;
+  user_start_age: number;
+  user_end_age: number;
   accounts: {
     checking: CheckingAccount[];
     taxable_investments: TaxableInvestmentAccount[];
@@ -44,10 +44,7 @@ type SimRequest = {
 type Action =
   | { type: "ADD_ACCOUNT"; payload: LiquidAccount }
   | { type: "UPDATE_ACCOUNT"; payload: LiquidAccount }
-  | {
-      type: "DELETE_ACCOUNT";
-      payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" };
-    }
+  | { type: "DELETE_ACCOUNT"; payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" } }
   | { type: "ADD_INCOME"; payload: IncomeSource }
   | { type: "UPDATE_INCOME"; payload: IncomeSource }
   | { type: "DELETE_INCOME"; payload: { id: string; variant: "salary" | "hourly" | "side" } }
@@ -56,7 +53,8 @@ type Action =
   | { type: "DELETE_EXPENSE"; payload: { id: string; variant: "living" | "rent" | "debt" } }
   | { type: "ADD_ASSET"; payload: AssetSource }
   | { type: "UPDATE_ASSET"; payload: AssetSource }
-  | { type: "DELETE_ASSET"; payload: { id: string; variant: "house" | "car" } };
+  | { type: "DELETE_ASSET"; payload: { id: string; variant: "house" | "car" } }
+  | { type: "UPDATE_SIMULATION_BOUNDS"; payload: { user_start_age: number; user_end_age: number } };
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
@@ -203,14 +201,19 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
       };
     }
 
+    case "UPDATE_SIMULATION_BOUNDS": {
+      const { user_start_age, user_end_age } = action.payload;
+      return { ...state, user_start_age, user_end_age };
+    }
+
     default:
       return state;
   }
 }
 
 const INITIAL_STATE: SimRequest = {
-  start_year: 1,
-  end_year: SIM_MAX,
+  user_start_age: 25,
+  user_end_age: 65,
 
   accounts: {
     checking: [],
@@ -820,11 +823,16 @@ export default function Dashboard() {
             <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
           </div>
           <div className="dash-topbar-right">
-            <span className="dash-sim-badge">Sim: {SIM_MAX}yr</span>
+            <span className="dash-sim-badge">Sim: 30 yr</span>
           </div>
         </header>
 
-        <pre>{JSON.stringify(state, null, 2)}</pre>
+        <div style={{ display: "flex", justifyContent: "space-between"}}>
+          <pre>{JSON.stringify(state, null, 2)}</pre>
+          <UserAgeForm state={state} dispatch={dispatch} />
+        </div>
+        
+
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
 
         <SimulationControls state={state} setSimResult={setSimResult} />
@@ -833,6 +841,7 @@ export default function Dashboard() {
 
         <ToastBanner toasts={toasts} setToasts={setToasts} />
         {/* {sim.error && <div className="dash-error">{sim.error}</div>} */}
+
       </main>
     </div>
   );

@@ -13,13 +13,13 @@ export type HouseAsset = {
   id: ID;
   name: string;
 
-  start_year: number;
-  end_year?: number | null;
+  start_age: number;
+  end_age?: number | null;
 
   asset_value: number;
   annual_appreciation: number; // example: 0.03 = 3% yearly growth
 
-  down_payment?: number | null; // optional; deducted from cash if start_year > 0
+  down_payment?: number | null; // optional; deducted from cash if start_age > 0
 
   linked_loan_id?: ID | null;
 };
@@ -31,13 +31,13 @@ export type CarAsset = {
   id: ID;
   name: string;
 
-  start_year: number;
-  end_year?: number | null;
+  start_age: number;
+  end_age?: number | null;
 
   asset_value: number;
   annual_depreciation: number; // example: 0.12 = loses 12% per year
 
-  down_payment?: number | null; // optional; deducted from cash if start_year > 0
+  down_payment?: number | null; // optional; deducted from cash if start_age > 0
 
   linked_loan_id?: ID | null;
 };
@@ -50,8 +50,8 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
   const [houseValue, setHouseValue] = useState("");
   const [appreciation, setAppreciation] = useState("3");
   const [downPayment, setDownPayment] = useState("");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
 
   const [linkedLoanId, setLinkedLoanId] = useState("");
   const [linkError, setLinkError] = useState("");
@@ -97,7 +97,7 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
   
     if (selectedLoan) {
       setName(selectedLoan.name.replace(" Loan", "") || "House");
-      setStartYear(selectedLoan.start_year.toString());
+      setStartAge(selectedLoan.start_age.toString());
   
       if (selectedLoan.original_principal) {
         setHouseValue(
@@ -121,8 +121,8 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
       variant: "house",
       id: assetId,
       name: name || "House",
-      start_year: Number(startYear),
-      end_year: endYear === "" ? null : Number(endYear),
+      start_age: Number(startAge),
+      end_age: endAge === "" ? null : Number(endAge),
       asset_value: Number(houseValue),
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
@@ -209,19 +209,19 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
 
 
 
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(opt)</span>
+                  End Age <span className="form-label--muted">(opt)</span>
                 </label>
                 <input
-                  value={endYear}
-                  onChange={e => setEndYear(e.target.value)}
+                  value={endAge}
+                  onChange={e => setEndAge(e.target.value)}
                   className="form-input"
                   placeholder="30"
                   type="number"
@@ -328,8 +328,8 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
   const [carValue, setCarValue] = useState("");
   const [depreciation, setDepreciation] = useState("12");
   const [downPayment, setDownPayment] = useState("");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
 
   const [linkedLoanId, setLinkedLoanId] = useState("");
   const [linkError, setLinkError] = useState("");
@@ -360,7 +360,7 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
 
     if (selectedLoan) {
       setName(selectedLoan.name.replace(" Loan", "") || "Car");
-      setStartYear(selectedLoan.start_year.toString());
+      setStartAge(selectedLoan.start_age.toString());
 
       if (selectedLoan.original_principal) {
         setCarValue(
@@ -386,8 +386,8 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
       variant: "car",
       id: assetId,
       name: name || "Car",
-      start_year: Number(startYear),
-      end_year: endYear === "" ? null : Number(endYear),
+      start_age: Number(startAge),
+      end_age: endAge === "" ? null : Number(endAge),
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
@@ -475,17 +475,17 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
 
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(opt)</span>
+                  End Age <span className="form-label--muted">(opt)</span>
                 </label>
                 <input
-                  value={endYear}
-                  onChange={(e) => setEndYear(e.target.value)}
+                  value={endAge}
+                  onChange={(e) => setEndAge(e.target.value)}
                   className="form-input"
                   placeholder="5"
                   type="number"
@@ -593,8 +593,8 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
   const [houseValue, setHouseValue] = useState(item.asset_value.toString());
   const [appreciation, setAppreciation] = useState((item.annual_appreciation * 100).toString());
   const [downPayment, setDownPayment] = useState(item.down_payment == null ? "" : item.down_payment.toString());
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age?.toString() || "");
 
   const [linkedLoanId, setLinkedLoanId] = useState(item.linked_loan_id || "");
   const [linkError, setLinkError] = useState("");
@@ -637,8 +637,8 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
       source_type: "asset",
       variant: "house",
       name: name || "House",
-      start_year: Number(startYear),
-      end_year: endYear === "" ? null : Number(endYear),
+      start_age: Number(startAge),
+      end_age: endAge === "" ? null : Number(endAge),
       asset_value: Number(houseValue),
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
@@ -726,17 +726,17 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
 
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(opt)</span>
+                  End Age <span className="form-label--muted">(opt)</span>
                 </label>
                 <input
-                  value={endYear}
-                  onChange={(e) => setEndYear(e.target.value)}
+                  value={endAge}
+                  onChange={(e) => setEndAge(e.target.value)}
                   className="form-input"
                   placeholder="30"
                   type="number"
@@ -864,8 +864,8 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
   const [downPayment, setDownPayment] = useState(
     item.down_payment == null ? "" : item.down_payment.toString()
   );
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age?.toString() || "");
 
   const [linkedLoanId, setLinkedLoanId] = useState(item.linked_loan_id || "");
   const [linkError, setLinkError] = useState("");
@@ -924,8 +924,8 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
       source_type: "asset",
       variant: "car",
       name: name || "Car",
-      start_year: Number(startYear),
-      end_year: endYear === "" ? null : Number(endYear),
+      start_age: Number(startAge),
+      end_age: endAge === "" ? null : Number(endAge),
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
@@ -1050,10 +1050,10 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
+                <label className="form-label">Start Age</label>
                 <input
-                  value={startYear}
-                  onChange={(e) => setStartYear(e.target.value)}
+                  value={startAge}
+                  onChange={(e) => setStartAge(e.target.value)}
                   className="form-input"
                   placeholder="1"
                   type="number"
@@ -1062,11 +1062,11 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
 
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(opt)</span>
+                  End Age <span className="form-label--muted">(opt)</span>
                 </label>
                 <input
-                  value={endYear}
-                  onChange={(e) => setEndYear(e.target.value)}
+                  value={endAge}
+                  onChange={(e) => setEndAge(e.target.value)}
                   className="form-input"
                   placeholder="10"
                   type="number"

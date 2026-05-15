@@ -21,8 +21,8 @@ export type CheckingAccount = {
   variant: "checking";
   id: ID;
   name: string;
-  start_year: number;
-  end_year: number;
+  start_age: number;
+  end_age: number;
   starting_balance: number;
   interest_tiers: Tier[];
 };
@@ -32,8 +32,8 @@ export type TaxableInvestmentAccount = {
   variant: "taxable_investments";
   id: ID;
   name: string;
-  start_year: number;
-  end_year: number;
+  start_age: number;
+  end_age: number;
   starting_balance: number;
 
   contribution_mode: "dollar" | "percentage";
@@ -52,8 +52,8 @@ export type EmployerRetirementAccount = {
   variant: "employer_retirement";
   id: ID;
   name: string;
-  start_year: number;
-  end_year: number;
+  start_age: number;
+  end_age: number;
   starting_balance: number;
 
   contribution_mode: "dollar" | "percentage";
@@ -72,8 +72,8 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
   const hasCheckingAccount = state.accounts?.checking?.length > 0;
   const [name, setName] = useState("Checking Account");
   const [balance, setBalance] = useState("");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
   const [tiers, setTiers] = useState<Array<{ threshold: number; annual_rate: number }>>([{ threshold: 0, annual_rate: 0 }]);
 
   const onSubmit = (e: React.FormEvent) => {
@@ -86,8 +86,8 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
         variant: "checking",
         id: crypto.randomUUID(),
         name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         starting_balance: Number(balance),
         interest_tiers: tiers,
       },
@@ -99,8 +99,8 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
 
     // setName("Checking Account");
     // setBalance("");
-    // setStartYear("");
-    // setEndYear("");
+    // setStartAge("");
+    // setEndAge("");
     // setTiers([{ threshold: 0, annual_rate: 0 }]);
   };
 
@@ -217,12 +217,12 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" />
               </div>
             </div>
           </div>
@@ -245,8 +245,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
   const [contributionPercentage, setContributionPercentage] = useState("");
   const [expectedReturn, setExpectedReturn] = useState("");
   const [dividendYield, setDividendYield] = useState("");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
   const [dividendStrategy, setDividendStrategy] = useState<"drip" | "cash_out">("drip");
   const [cashOutAccountId, setCashOutAccountId] = useState("");
   const [linkedIncomeId, setLinkedIncomeId] = useState("");
@@ -282,8 +282,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
     if (!job) return;
 
     setLinkedIncomeId(jobId);
-    setStartYear(job.start_year.toString());
-    setEndYear(job.end_year.toString());
+    setStartAge(job.start_age.toString());
+    setEndAge(job.end_age.toString());
 
     // Calculate net income
     setIsLoadingTaxCalc(true);
@@ -323,8 +323,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
         variant: "taxable_investments",
         id: crypto.randomUUID(),
         name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
@@ -346,8 +346,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
     setContributionPercentage("");
     setExpectedReturn("");
     setDividendYield("");
-    setStartYear("");
-    setEndYear("");
+    setStartAge("");
+    setEndAge("");
     setDividendStrategy("drip");
     setCashOutAccountId("");
     setLinkedIncomeId("");
@@ -455,12 +455,12 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" required />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" required />
               </div>
             </div>
 
@@ -577,8 +577,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
   const [contributionPercentage, setContributionPercentage] = useState("");
   const [expectedReturn, setExpectedReturn] = useState("7");
   const [employerMatch, setEmployerMatch] = useState("4");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
   const [linkedIncomeId, setLinkedIncomeId] = useState("");
   const [linkError, setLinkError] = useState("");
 
@@ -625,8 +625,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
     }
 
     setLinkedIncomeId(jobId);
-    setStartYear(job.start_year.toString());
-    setEndYear(job.end_year.toString());
+    setStartAge(job.start_age.toString());
+    setEndAge(job.end_age.toString());
   };
 
   const onSubmit = (e: React.FormEvent) => {
@@ -659,8 +659,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
         variant: "employer_retirement",
         id: newAccountId,
         name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
@@ -680,8 +680,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
     setContributionPercentage("");
     setExpectedReturn("7");
     setEmployerMatch("4");
-    setStartYear("");
-    setEndYear("");
+    setStartAge("");
+    setEndAge("");
     setLinkedIncomeId("");
     setLinkError("");
   };
@@ -789,12 +789,12 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" required />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" required />
               </div>
             </div>
 
@@ -829,7 +829,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
                     {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
                     {linkedJob && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Synced years {linkedJob.start_year}–{linkedJob.end_year}
+                        🔗 Synced years {linkedJob.start_age}–{linkedJob.end_age}
                       </div>
                     )}
                   </div>
@@ -894,8 +894,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 export function EditCheckingAccountForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [balance, setBalance] = useState(item.starting_balance.toString());
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age.toString());
   const [tiers, setTiers] = useState(item.interest_tiers && item.interest_tiers.length > 0 ? item.interest_tiers : [{ threshold: 0, annual_rate: 0 }]);
 
   const onSubmit = (e: React.FormEvent) => {
@@ -906,8 +906,8 @@ export function EditCheckingAccountForm({ item, dispatch, onClose, onToast }) {
       payload: {
         ...item,
         name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         starting_balance: Number(balance),
         interest_tiers: tiers,
       },
@@ -1010,12 +1010,12 @@ export function EditCheckingAccountForm({ item, dispatch, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" />
               </div>
             </div>
           </div>
@@ -1038,8 +1038,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
   const [contributionPercentage, setContributionPercentage] = useState(item.contribution_percentage?.toString() || "");
   const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "");
   const [dividendYield, setDividendYield] = useState((item.dividend_yield * 100)?.toString() || "");
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age.toString());
   const [dividendStrategy, setDividendStrategy] = useState(item.dividend_reinvestment || "drip");
   const [cashOutAccountId, setCashOutAccountId] = useState(item.cash_out_account_id || "");
   const [linkedIncomeId, setLinkedIncomeId] = useState(item.linked_income_id || "");
@@ -1072,8 +1072,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
     if (!job) return;
 
     setLinkedIncomeId(jobId);
-    setStartYear(job.start_year.toString());
-    setEndYear(job.end_year.toString());
+    setStartAge(job.start_age.toString());
+    setEndAge(job.end_age.toString());
 
     setIsLoadingTaxCalc(true);
     try {
@@ -1116,8 +1116,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
       payload: {
         ...item,
         name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
@@ -1236,12 +1236,12 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" />
               </div>
             </div>
 
@@ -1360,8 +1360,8 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   const [contributionPercentage, setContributionPercentage] = useState(item.contribution_percentage?.toString() || "");
   const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "7");
   const [employerMatch, setEmployerMatch] = useState((item.employer_match * 100)?.toString() || "4");
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age.toString());
   const [linkedIncomeId, setLinkedIncomeId] = useState(item.linked_income_id || "");
   const [linkError, setLinkError] = useState("");
 
@@ -1406,8 +1406,8 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
     }
 
     setLinkedIncomeId(jobId);
-    setStartYear(job.start_year.toString());
-    setEndYear(job.end_year.toString());
+    setStartAge(job.start_age.toString());
+    setEndAge(job.end_age.toString());
   };
 
   const onSubmit = (e: React.FormEvent) => {
@@ -1420,8 +1420,8 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
     const updatedAccount = {
       ...item,
       name,
-      start_year: Number(startYear),
-      end_year: Number(endYear),
+      start_age: Number(startAge),
+      end_age: Number(endAge),
       starting_balance: Number(balance),
       contribution_mode: contributionMode,
       monthly_contribution: effectiveMonthlyContribution(),
@@ -1558,12 +1558,12 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="30" type="number" />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
               </div>
             </div>
 
@@ -1605,7 +1605,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
                     {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
                     {linkedJob && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Synced years {linkedJob.start_year}–{linkedJob.end_year}
+                        🔗 Synced years {linkedJob.start_age}–{linkedJob.end_age}
                       </div>
                     )}
                   </div>

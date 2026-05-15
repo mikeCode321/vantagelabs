@@ -353,17 +353,21 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
               </div>
             </div>
 
-            <div className="form-preview-card">
-              <div className="form-preview-label">Estimated Payment</div>
-              <div className="form-preview-value">
+            <div className="preview-card">
+              <div className="preview-card__header preview-card__header--mb10">
+                <span>📊</span>
+                <div className="preview-card__label">Estimated Payment</div>
+              </div>
+              <div className="preview-card__amount">
                 $
                 {monthlyExpense.toLocaleString(undefined, {
                   maximumFractionDigits: 0,
                 })}
                 /mo
               </div>
-              <div className="form-preview-desc">Principal + interest only</div>
+              <div className="preview-card__sub">Principal + interest only</div>
             </div>
+
           </div>
         </div>
 
@@ -623,18 +627,21 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
               </div>
             </div>
 
-            <div className="form-preview-card">
-              <div className="form-preview-label">Estimated Payment</div>
-              <div className="form-preview-value">
+            <div className="preview-card">
+              <div className="preview-card__header preview-card__header--mb10">
+                <span>📊</span>
+                <div className="preview-card__label">Estimated Payment</div>
+              </div>
+              <div className="preview-card__amount">
                 $
                 {monthlyExpense.toLocaleString(undefined, {
                   maximumFractionDigits: 0,
                 })}
                 /mo
               </div>
-              <div className="form-preview-desc">Principal + interest only</div>
-              <div className="form-preview-desc">Principal + interest only</div>
+              <div className="preview-card__sub">Principal + interest only</div>
             </div>
+
           </div>
         </div>
 
@@ -1187,11 +1194,21 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
               </div>
             </div>
 
-            <div className="form-preview-card">
-              <div className="form-preview-label">Estimated Payment</div>
-              <div className="form-preview-value">${monthlyExpense.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
-              <div className="form-preview-desc">Principal + interest only</div>
+            <div className="preview-card">
+              <div className="preview-card__header preview-card__header--mb10">
+                <span>📊</span>
+                <div className="preview-card__label">Estimated Payment</div>
+              </div>
+              <div className="preview-card__amount">
+                $
+                {monthlyExpense.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
+                /mo
+              </div>
+              <div className="preview-card__sub">Principal + interest only</div>
             </div>
+            
           </div>
         </div>
 
@@ -1556,19 +1573,21 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
               </div>
             </div>
 
-            <div className="form-preview-card">
-              <div className="form-preview-label">Estimated Payment</div>
-              <div className="form-preview-value">
+            <div className="preview-card">
+              <div className="preview-card__header preview-card__header--mb10">
+                <span>📊</span>
+                <div className="preview-card__label">Estimated Payment</div>
+              </div>
+              <div className="preview-card__amount">
                 $
                 {monthlyExpense.toLocaleString(undefined, {
                   maximumFractionDigits: 0,
                 })}
                 /mo
               </div>
-              <div className="form-preview-desc">
-                Principal + interest only
-              </div>
+              <div className="preview-card__sub">Principal + interest only</div>
             </div>
+
           </div>
         </div>
 
@@ -1799,6 +1818,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
                 ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
               </div>
             </div>
+            
           </div>
         </div>
 

@@ -13,8 +13,8 @@ export type LivingExpense = {
   id: ID;
   name: string;
 
-  start_year: number;
-  end_year?: number | null;
+  start_age: number;
+  end_age?: number | null;
 
   monthly_expense: number;
   expense_growth: number;
@@ -27,8 +27,8 @@ export type RentExpense = {
   id: ID;
   name: string;
 
-  start_year: number;
-  end_year?: number | null;
+  start_age: number;
+  end_age?: number | null;
 
   monthly_expense: number;
   rent_growth: number;
@@ -41,8 +41,8 @@ export type DebtExpense = {
   id: ID;
   name: string;
 
-  start_year: number;
-  end_year?: number | null;
+  start_age: number;
+  end_age?: number | null;
 
   debt_amount: number;
   monthly_expense: number;
@@ -57,8 +57,8 @@ export type HouseLoanExpense = {
   id: ID;
   name: string;
 
-  start_year: number;
-  end_year?: number | null;
+  start_age: number;
+  end_age?: number | null;
 
   // Links this mortgage to a specific house asset
   linked_asset_id?: ID;
@@ -78,8 +78,8 @@ export type CarLoanExpense = {
   id: ID;
   name: string;
 
-  start_year: number;
-  end_year?: number | null;
+  start_age: number;
+  end_age?: number | null;
 
   linked_asset_id?: ID; // points to the CarAsset
 
@@ -109,7 +109,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   const [originalPrincipal, setOriginalPrincipal] = useState("");
   const [interestRate, setInterestRate] = useState("6.75");
   const [loanTermYears, setLoanTermYears] = useState("30");
-  const [startYear, setStartYear] = useState("");
+  const [startAge, setStartAge] = useState("");
   const [extraMonthlyPayment, setExtraMonthlyPayment] = useState("");
 
   const [linkedAssetId, setLinkedAssetId] = useState("");
@@ -137,7 +137,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
     if (selectedHouse) {
       setName(`${selectedHouse.name} Loan`);
-      setStartYear(selectedHouse.start_year.toString());
+      setStartAge(selectedHouse.start_age.toString());
 
       const principal =
         Number(selectedHouse.asset_value || 0) -
@@ -158,7 +158,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
         )
       : 0;
 
-  const calculatedEndYear = startYear && loanTermYears ? Number(startYear) + Number(loanTermYears) : "";
+  const calculatedEndYear = startAge && loanTermYears ? Number(startAge) + Number(loanTermYears) : "";
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -172,8 +172,8 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
       variant: "house_loan",
       id: loanId,
       name: name || "House Loan",
-      start_year: Number(startYear),
-      end_year: Number(startYear) + Number(loanTermYears),
+      start_age: Number(startAge),
+      end_age: Number(startAge) + Number(loanTermYears),
       linked_asset_id: linkedAssetId || null,
       monthly_expense: monthlyExpense,
       original_principal: Number(originalPrincipal),
@@ -264,13 +264,13 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
 
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(auto)</span>
+                  End Age <span className="form-label--muted">(auto)</span>
                 </label>
                 <input
                   value={calculatedEndYear}
@@ -397,7 +397,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   const [originalPrincipal, setOriginalPrincipal] = useState("");
   const [interestRate, setInterestRate] = useState("7.5");
   const [loanTermYears, setLoanTermYears] = useState("5");
-  const [startYear, setStartYear] = useState("");
+  const [startAge, setStartAge] = useState("");
 
   const [linkedAssetId, setLinkedAssetId] = useState("");
   const [linkError, setLinkError] = useState("");
@@ -424,7 +424,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
     if (selectedCar) {
       setName(`${selectedCar.name} Loan`);
-      setStartYear(selectedCar.start_year.toString());
+      setStartAge(selectedCar.start_age.toString());
 
       const principal =
         Number(selectedCar.asset_value || 0) -
@@ -445,7 +445,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
         )
       : 0;
 
-  const calculatedEndYear = startYear && loanTermYears ? Number(startYear) + Number(loanTermYears) : "";
+  const calculatedEndYear = startAge && loanTermYears ? Number(startAge) + Number(loanTermYears) : "";
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -459,8 +459,8 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
       variant: "car_loan",
       id: loanId,
       name: name || "Car Loan",
-      start_year: Number(startYear),
-      end_year: Number(startYear) + Number(loanTermYears),
+      start_age: Number(startAge),
+      end_age: Number(startAge) + Number(loanTermYears),
       linked_asset_id: linkedAssetId || null,
       monthly_expense: monthlyExpense,
       original_principal: Number(originalPrincipal),
@@ -538,13 +538,13 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
 
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(auto)</span>
+                  End Age <span className="form-label--muted">(auto)</span>
                 </label>
                 <input
                   value={calculatedEndYear}
@@ -665,8 +665,8 @@ export function LivingExpensesForm({ dispatch, onToast }) {
   const [name, setName] = useState("Living Expenses");
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("3");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -678,8 +678,8 @@ export function LivingExpensesForm({ dispatch, onToast }) {
         variant: "living",
         id: crypto.randomUUID(),
         name,
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         monthly_expense: Number(amount),
         expense_growth: Number(growth) / 100,
       },
@@ -690,8 +690,8 @@ export function LivingExpensesForm({ dispatch, onToast }) {
     setName("Living Expense");
     setAmount("");
     setGrowth("3");
-    setStartYear("");
-    setEndYear("");
+    setStartAge("");
+    setEndAge("");
   };
 
   const annualExpense = Number(amount) * 12;
@@ -742,14 +742,14 @@ export function LivingExpensesForm({ dispatch, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(opt)</span>
+                  End Age <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" type="number" />
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" />
               </div>
             </div>
 
@@ -783,8 +783,8 @@ export function DebtExpenseForm({ dispatch, onToast }) {
   const [debtAmount, setDebtAmount] = useState("");
   const [monthlyPayment, setMonthlyPayment] = useState("");
   const [interestRate, setInterestRate] = useState("");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -796,8 +796,8 @@ export function DebtExpenseForm({ dispatch, onToast }) {
         variant: "debt",
         id: crypto.randomUUID(),
         name: name || "Debt",
-        start_year: Number(startYear),
-        end_year: endYear === "" ? null : Number(endYear),
+        start_age: Number(startAge),
+        end_age: endAge === "" ? null : Number(endAge),
         debt_amount: Number(debtAmount),
         monthly_expense: Number(monthlyPayment),
         interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
@@ -810,8 +810,8 @@ export function DebtExpenseForm({ dispatch, onToast }) {
     setDebtAmount("");
     setMonthlyPayment("");
     setInterestRate("");
-    setStartYear("");
-    setEndYear("");
+    setStartAge("");
+    setEndAge("");
   };
 
   const annualPayment = Number(monthlyPayment) * 12;
@@ -872,14 +872,14 @@ export function DebtExpenseForm({ dispatch, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input type="number" placeholder="1" value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" required />
+                <label className="form-label">Start Age</label>
+                <input type="number" placeholder="1" value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" required />
               </div>
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(opt)</span>
+                  End Age <span className="form-label--muted">(opt)</span>
                 </label>
-                <input type="number" placeholder="10" value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" />
+                <input type="number" placeholder="10" value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" />
               </div>
             </div>
 
@@ -914,8 +914,8 @@ export function DebtExpenseForm({ dispatch, onToast }) {
 export function RentExpenseForm({ dispatch, onToast }) {
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("3");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -927,8 +927,8 @@ export function RentExpenseForm({ dispatch, onToast }) {
         variant: "rent",
         id: crypto.randomUUID(),
         name: "Rent",
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         monthly_expense: Number(amount),
         expense_growth: Number(growth) / 100,
       },
@@ -938,8 +938,8 @@ export function RentExpenseForm({ dispatch, onToast }) {
 
     setAmount("");
     setGrowth("");
-    setStartYear("");
-    setEndYear("");
+    setStartAge("");
+    setEndAge("");
   };
 
   const annualRent = Number(amount) * 12;
@@ -985,14 +985,14 @@ export function RentExpenseForm({ dispatch, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(opt)</span>
+                  End Age <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="10" type="number" />
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="10" type="number" />
               </div>
             </div>
 
@@ -1030,7 +1030,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
   const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "");
   const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
   const [loanTermYears, setLoanTermYears] = useState(item.loan_term_years?.toString() || "5");
-  const [startYear, setStartYear] = useState(item.start_year?.toString() || "");
+  const [startAge, setStartAge] = useState(item.start_age?.toString() || "");
   const [linkedAssetId, setLinkedAssetId] = useState(item.linked_asset_id || "");
   const [linkError, setLinkError] = useState("");
 
@@ -1039,7 +1039,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
   const monthlyExpense = Number(originalPrincipal) > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0
     ? calculateMonthlyLoanPayment(Number(originalPrincipal), Number(interestRate) / 100, Number(loanTermYears))
     : 0;
-  const calculatedEndYear = Number(startYear) + Number(loanTermYears);
+  const calculatedEndYear = Number(startAge) + Number(loanTermYears);
 
   const handleCarSelect = (assetId: string) => {
     setLinkError("");
@@ -1055,7 +1055,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
     setLinkedAssetId(assetId);
     if (selectedCar) {
       setName(`${selectedCar.name} Loan`);
-      setStartYear(selectedCar.start_year.toString());
+      setStartAge(selectedCar.start_age.toString());
       const principal = Number(selectedCar.asset_value || 0) - Number(selectedCar.down_payment || 0);
       setOriginalPrincipal(principal.toString());
     }
@@ -1082,8 +1082,8 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
         source_type: "expense",
         variant: "car_loan",
         name: name || "Car Loan",
-        start_year: Number(startYear),
-        end_year: calculatedEndYear,
+        start_age: Number(startAge),
+        end_age: calculatedEndYear,
         linked_asset_id: linkedAssetId || null,
         monthly_expense: monthlyExpense,
         original_principal: Number(originalPrincipal),
@@ -1144,11 +1144,11 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" required />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr <span className="form-label--muted">(auto)</span></label>
+                <label className="form-label">End Age <span className="form-label--muted">(auto)</span></label>
                 <input value={calculatedEndYear || ''} className="form-input" disabled style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }} />
               </div>
             </div>
@@ -1235,8 +1235,8 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
       ? ""
       : item.extra_monthly_payment.toString()
   );
-  const [startYear, setStartYear] = useState(
-    item.start_year?.toString() || ""
+  const [startAge, setStartAge] = useState(
+    item.start_age?.toString() || ""
   );
 
 
@@ -1264,8 +1264,8 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
       : 0;
 
   const calculatedEndYear =
-    startYear && loanTermYears
-      ? Number(startYear) + Number(loanTermYears)
+    startAge && loanTermYears
+      ? Number(startAge) + Number(loanTermYears)
       : "";
 
   const handleHouseSelect = (assetId: string) => {
@@ -1293,7 +1293,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
     if (selectedHouse) {
       setName(`${selectedHouse.name} Loan`);
-      setStartYear(selectedHouse.start_year.toString());
+      setStartAge(selectedHouse.start_age.toString());
 
       const principal =
         Number(selectedHouse.asset_value || 0) -
@@ -1350,8 +1350,8 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
         source_type: "expense",
         variant: "house_loan",
         name: name || "Home Loan",
-        start_year: Number(startYear),
-        end_year: Number(startYear) + Number(loanTermYears),
+        start_age: Number(startAge),
+        end_age: Number(startAge) + Number(loanTermYears),
         linked_asset_id: item.linked_asset_id || linkedAssetId || null,
         monthly_expense: monthlyExpense,
         original_principal: Number(originalPrincipal),
@@ -1466,10 +1466,10 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
+                <label className="form-label">Start Age</label>
                 <input
-                  value={startYear}
-                  onChange={(e) => setStartYear(e.target.value)}
+                  value={startAge}
+                  onChange={(e) => setStartAge(e.target.value)}
                   className="form-input"
                   placeholder="1"
                   type="number"
@@ -1479,7 +1479,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(auto)</span>
+                  End Age <span className="form-label--muted">(auto)</span>
                 </label>
                 <input
                   value={calculatedEndYear}
@@ -1613,8 +1613,8 @@ export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [amount, setAmount] = useState(item.monthly_expense.toString());
   const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age?.toString() || "");
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1625,8 +1625,8 @@ export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
         ...item,
         variant: "living",
         name,
-        start_year: Number(startYear),
-        end_year: endYear === "" ? null : Number(endYear),
+        start_age: Number(startAge),
+        end_age: endAge === "" ? null : Number(endAge),
         monthly_expense: Number(amount),
         expense_growth: Number(growth) / 100,
       },
@@ -1685,14 +1685,14 @@ export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" />
               </div>
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(opt)</span>
+                  End Age <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="40" />
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" />
               </div>
             </div>
 
@@ -1727,8 +1727,8 @@ export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
 export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
   const [amount, setAmount] = useState(item.monthly_expense.toString());
   const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year.toString());
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age.toString());
   const [name, setName] = useState(item.name || "Rent");
 
   const onSubmit = (e: React.FormEvent) => {
@@ -1740,8 +1740,8 @@ export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
         ...item,
         variant: "rent",
         name: name || "Rent",
-        start_year: Number(startYear),
-        end_year: Number(endYear),
+        start_age: Number(startAge),
+        end_age: Number(endAge),
         monthly_expense: Number(amount),
         expense_growth: Number(growth) / 100,
       },
@@ -1795,12 +1795,12 @@ export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" />
               </div>
               <div className="form-field">
-                <label className="form-label">End yr</label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="10" />
+                <label className="form-label">End Age</label>
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="10" />
               </div>
             </div>
 
@@ -1840,8 +1840,8 @@ export function EditDebtExpenseForm({ item, dispatch, onClose, onToast }) {
   const [debtAmount, setDebtAmount] = useState(item.debt_amount.toString());
   const [monthlyPayment, setMonthlyPayment] = useState(item.monthly_expense.toString());
   const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
-  const [startYear, setStartYear] = useState(item.start_year.toString());
-  const [endYear, setEndYear] = useState(item.end_year?.toString() || "");
+  const [startAge, setStartAge] = useState(item.start_age.toString());
+  const [endAge, setEndAge] = useState(item.end_age?.toString() || "");
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1852,8 +1852,8 @@ export function EditDebtExpenseForm({ item, dispatch, onClose, onToast }) {
         ...item,
         variant: "debt",
         name: name || "Debt",
-        start_year: Number(startYear),
-        end_year: endYear === "" ? null : Number(endYear),
+        start_age: Number(startAge),
+        end_age: endAge === "" ? null : Number(endAge),
         debt_amount: Number(debtAmount),
         monthly_expense: Number(monthlyPayment),
         interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
@@ -1923,14 +1923,14 @@ export function EditDebtExpenseForm({ item, dispatch, onClose, onToast }) {
 
             <div className="form-year-grid">
               <div className="form-field">
-                <label className="form-label">Start yr</label>
-                <input value={startYear} onChange={(e) => setStartYear(e.target.value)} className="form-input" placeholder="1" type="number" />
+                <label className="form-label">Start Age</label>
+                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
               </div>
               <div className="form-field">
                 <label className="form-label">
-                  End yr <span className="form-label--muted">(opt)</span>
+                  End Age <span className="form-label--muted">(opt)</span>
                 </label>
-                <input value={endYear} onChange={(e) => setEndYear(e.target.value)} className="form-input" placeholder="10" type="number" />
+                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="10" type="number" />
               </div>
             </div>
 

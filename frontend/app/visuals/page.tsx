@@ -16,8 +16,8 @@ import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewe
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 type SimRequest = {
-  start_year: number;
-  end_year: number;
+  user_start_age: number;
+  user_end_age: number;
   accounts: {
     checking: CheckingAccount[];
     taxable_investments: TaxableInvestmentAccount[];
@@ -44,10 +44,7 @@ type SimRequest = {
 type Action =
   | { type: "ADD_ACCOUNT"; payload: LiquidAccount }
   | { type: "UPDATE_ACCOUNT"; payload: LiquidAccount }
-  | {
-      type: "DELETE_ACCOUNT";
-      payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" };
-    }
+  | { type: "DELETE_ACCOUNT"; payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" } }
   | { type: "ADD_INCOME"; payload: IncomeSource }
   | { type: "UPDATE_INCOME"; payload: IncomeSource }
   | { type: "DELETE_INCOME"; payload: { id: string; variant: "salary" | "hourly" | "side" } }
@@ -56,7 +53,8 @@ type Action =
   | { type: "DELETE_EXPENSE"; payload: { id: string; variant: "living" | "rent" | "debt" } }
   | { type: "ADD_ASSET"; payload: AssetSource }
   | { type: "UPDATE_ASSET"; payload: AssetSource }
-  | { type: "DELETE_ASSET"; payload: { id: string; variant: "house" | "car" } };
+  | { type: "DELETE_ASSET"; payload: { id: string; variant: "house" | "car" } }
+  | { type: "UPDATE_SIMULATION_BOUNDS"; payload: { user_start_age: number; user_end_age: number } };
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
@@ -203,14 +201,19 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
       };
     }
 
+    case "UPDATE_SIMULATION_BOUNDS": {
+      const { user_start_age, user_end_age } = action.payload;
+      return { ...state, user_start_age, user_end_age };
+    }
+
     default:
       return state;
   }
 }
 
 const INITIAL_STATE: SimRequest = {
-  start_year: 1,
-  end_year: SIM_MAX,
+  user_start_age: 25,
+  user_end_age: 65,
 
   accounts: {
     checking: [],
@@ -820,7 +823,7 @@ export default function Dashboard() {
             <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
           </div>
           <div className="dash-topbar-right">
-            <span className="dash-sim-badge">Sim: {SIM_MAX}yr</span>
+            <span className="dash-sim-badge">Sim: 30 yr</span>
           </div>
         </header>
 
@@ -833,6 +836,62 @@ export default function Dashboard() {
 
         <ToastBanner toasts={toasts} setToasts={setToasts} />
         {/* {sim.error && <div className="dash-error">{sim.error}</div>} */}
+
+        {/* SIMULATION SETUP */}
+        <div className="setup-section">
+          <div className="setup-header">
+            <h2>Simulation Setup</h2>
+            <p>Define your planning timeline</p>
+          </div>
+
+          <div className="setup-grid">
+            <div className="setup-field">
+              <label className="setup-label">Your Current Age</label>
+              <input
+                type="number"
+                min="0"
+                max="120"
+                value={state.user_start_age}
+                onChange={(e) => {
+                  const newAge = Number(e.target.value);
+                  if (newAge < state.user_end_age) {
+                    dispatch({
+                      type: "UPDATE_SIMULATION_BOUNDS",
+                      payload: { user_start_age: newAge, user_end_age: state.user_end_age },
+                    });
+                  }
+                }}
+                className="setup-input"
+              />
+            </div>
+
+            <div className="setup-field">
+              <label className="setup-label">Plan Until Age</label>
+              <input
+                type="number"
+                min={state.user_start_age}
+                max="150"
+                value={state.user_end_age}
+                onChange={(e) => {
+                  const newAge = Number(e.target.value);
+                  if (newAge > state.user_start_age) {
+                    dispatch({
+                      type: "UPDATE_SIMULATION_BOUNDS",
+                      payload: { user_start_age: state.user_start_age, user_end_age: newAge },
+                    });
+                  }
+                }}
+                className="setup-input"
+              />
+            </div>
+          </div>
+
+          <div className="setup-summary">
+            <span className="setup-summary-text">
+              Timeline: <strong>{state.user_end_age - state.user_start_age} years</strong>
+            </span>
+          </div>
+        </div>
       </main>
     </div>
   );

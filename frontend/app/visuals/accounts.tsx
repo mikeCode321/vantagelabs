@@ -68,7 +68,7 @@ export type EmployerRetirementAccount = {
 export type LiquidAccount = CheckingAccount | TaxableInvestmentAccount | EmployerRetirementAccount;
 
 // ACCOUNT FORMS
-export function CheckingAccountForm({ dispatch, state, onToast }) {
+export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
   const hasCheckingAccount = state.accounts?.checking?.length > 0;
   const [name, setName] = useState("Checking Account");
   const [balance, setBalance] = useState("");
@@ -95,11 +95,13 @@ export function CheckingAccountForm({ dispatch, state, onToast }) {
 
     onToast(name, "added");
 
-    setName("Checking Account");
-    setBalance("");
-    setStartYear("");
-    setEndYear("");
-    setTiers([{ threshold: 0, annual_rate: 0 }]);
+    onClose();
+
+    // setName("Checking Account");
+    // setBalance("");
+    // setStartYear("");
+    // setEndYear("");
+    // setTiers([{ threshold: 0, annual_rate: 0 }]);
   };
 
   const addTier = () => {

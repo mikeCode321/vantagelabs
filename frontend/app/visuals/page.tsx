@@ -368,7 +368,9 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
   const goBack = () => setSelectedVariant(null);
   const closeModal = () => setIsModalOpen(false);
 
-  const FormComponent = selectedVariant ? (variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent) : null;
+  const FormComponent = selectedVariant ? 
+  (variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent) 
+  : null;
 
   let renderedForm;
 

@@ -59,7 +59,8 @@ export type EmployerRetirementAccount = {
 export type LiquidAccount = CheckingAccount | TaxableInvestmentAccount | EmployerRetirementAccount;
 
 // ACCOUNT FORMS
-export function CheckingAccountForm({ dispatch }) {
+export function CheckingAccountForm({ dispatch, state}) {
+  const hasCheckingAccount = state.accounts?.checking?.length > 0;
   const [name, setName] = useState("Checking Account");
   const [balance, setBalance] = useState("");
   const [startYear, setStartYear] = useState("");
@@ -121,6 +122,24 @@ export function CheckingAccountForm({ dispatch }) {
           <h3 className="form-header-title">Add Checking Account</h3>
           <p className="form-header-desc">Track your checking account balance and tiered interest rates.</p>
         </div>
+      </div>
+
+      <div style={{ marginBottom: '12px' }}>
+        {hasCheckingAccount && (
+          <div style={{
+              backgroundColor: '#FEF3F2',
+              border: '1px solid #FECACA',
+              borderRadius: '12px',
+              padding: '12px 14px',
+              fontSize: '13px',
+              color: '#991B1B',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}>
+            At the moment we are only supporting 1 checking account. Remove the existing account or edit it.
+          </div>
+        )}
       </div>
 
       <form onSubmit={onSubmit}>
@@ -195,7 +214,8 @@ export function CheckingAccountForm({ dispatch }) {
         </div>
 
         {/* Submit Button */}
-        <button type="submit" className="form-btn-submit form-btn-submit--mt">
+        <button type="submit" className="form-btn-submit form-btn-submit--mt" 
+        disabled={hasCheckingAccount} style={{ opacity: hasCheckingAccount ? 0.5 : 1, cursor: hasCheckingAccount ? 'not-allowed' : 'pointer' }}>
           Add Checking Account
         </button>
       </form>

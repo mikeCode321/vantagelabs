@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/accounts";
+import { on } from "events";
 
 // ─────────────────────────────────────────────
 // ASSET
@@ -45,7 +46,7 @@ export type CarAsset = {
 export type AssetSource = HouseAsset | CarAsset;
 
 // ASSET FORMS
-export function HouseAssetForm({ dispatch, onClose }) {
+export function HouseAssetForm({ dispatch, onClose, onToast }) {
   const [name, setName] = useState("");
   const [houseValue, setHouseValue] = useState("");
   const [appreciation, setAppreciation] = useState("3");
@@ -72,6 +73,8 @@ export function HouseAssetForm({ dispatch, onClose }) {
       type: "ADD_ASSET",
       payload: houseAsset,
     });
+
+    onToast(name, "added");
 
     if (onClose) onClose();
   };
@@ -170,7 +173,7 @@ export function HouseAssetForm({ dispatch, onClose }) {
   );
 }
 
-export function CarAssetForm({ dispatch, onClose }) {
+export function CarAssetForm({ dispatch, onClose, onToast }) {
   const [name, setName] = useState("");
   const [carValue, setCarValue] = useState("");
   const [depreciation, setDepreciation] = useState("12");
@@ -197,6 +200,8 @@ export function CarAssetForm({ dispatch, onClose }) {
       type: "ADD_ASSET",
       payload: carAsset,
     });
+
+    onToast(name, "added");
 
     if (onClose) onClose();
   };
@@ -299,7 +304,7 @@ export function CarAssetForm({ dispatch, onClose }) {
 }
 
 /* -------------------- EDIT ASSET FORMS -------------------- */
-export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
+export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [houseValue, setHouseValue] = useState(item.asset_value.toString());
   const [appreciation, setAppreciation] = useState((item.annual_appreciation * 100).toString());
@@ -327,6 +332,10 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
       type: "UPDATE_ASSET",
       payload: updatedHouseAsset,
     });
+
+    onToast(name,"edited");
+    
+    onClose();
   };
 
   const appreciatedValue = Number(houseValue) * (1 + (Number(appreciation) || 0) / 100);
@@ -428,7 +437,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose }) {
   );
 }
 
-export function EditCarAssetForm({ state, item, dispatch, onClose }) {
+export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [carValue, setCarValue] = useState(item.asset_value.toString());
   const [depreciation, setDepreciation] = useState((item.annual_depreciation * 100).toString());
@@ -456,6 +465,10 @@ export function EditCarAssetForm({ state, item, dispatch, onClose }) {
       type: "UPDATE_ASSET",
       payload: updatedCarAsset,
     });
+
+    onToast(name,"edited");
+    
+    onClose();
   };
 
   const depreciatedValue = Number(carValue) * (1 - (Number(depreciation) || 0) / 100);

@@ -1,7 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BarChart, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer, Bar } from "recharts";
 
 import React from "react";
+
+/* -------------------- Toast Banner -------------------- */
+export type Toast = {
+  id: string;
+  message: string;
+  entityName: string;
+  action: "added" | "edited" | "deleted";
+  type: "success" | "error" | "info";
+};
+
+export function ToastBanner({ toasts, setToasts }) {
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  return (
+    <div className="toast-banner-wrapper">
+      {toasts.map((toast) => (
+        <div key={toast.id} className={`toast-item toast-item--${toast.action}`}>
+          <span className="toast-icon">✓</span>
+
+          <span className="toast-message">{toast.message}</span>
+
+          <button className="toast-close" onClick={() => removeToast(toast.id)} aria-label="Close notification">
+            ×
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 /* -------------------- Feedback Model -------------------- */
 function getAnonymousId() {
@@ -117,7 +148,7 @@ export function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
       </div>
     </div>
   );
- }
+}
 
 export type SourceSnapshot = {
   id: string;
@@ -278,7 +309,7 @@ export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
     });
   };
 
-//   const mockResults = generateMockResults();
+  //   const mockResults = generateMockResults();
 
   return (
     <div className="section">

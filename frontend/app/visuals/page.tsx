@@ -25,7 +25,6 @@ import {
   FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner } from "@/app/visuals/misc";
   
 import { formatNumberWithCommas } from "@/app/visuals/utils";
-import { on } from "events";
 
 type SimRequest = {
   start_year: number;

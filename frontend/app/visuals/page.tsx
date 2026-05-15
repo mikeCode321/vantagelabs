@@ -3,27 +3,16 @@ import "./dashboard.css";
 import { SIM_MAX } from "@/app/testing/constants";
 import { useState, useReducer, useEffect, useRef } from "react";
 
-import { 
-  CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, 
-  CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, 
-  EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/accounts";
+import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/accounts";
 
-import { 
-  SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, 
-  SalaryForm, HourlyWageForm, SideHustleForm, 
-  EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/incomes";
+import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/incomes";
 
-import { 
-  LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource,
-  LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm,CarLoanExpenseForm,
-  EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/expenses";
+import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/expenses";
 
-import { 
-  HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
+import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
 
-import { 
-  FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner } from "@/app/visuals/misc";
-  
+import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner } from "@/app/visuals/misc";
+
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 type SimRequest = {
@@ -368,9 +357,7 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
   const goBack = () => setSelectedVariant(null);
   const closeModal = () => setIsModalOpen(false);
 
-  const FormComponent = selectedVariant ? 
-  (variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent) 
-  : null;
+  const FormComponent = selectedVariant ? (variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent) : null;
 
   let renderedForm;
 
@@ -437,8 +424,96 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
 
 /* -------------------- Row Styles -------------------- */
 
-
 function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
+  const handleDeleteHouseAsset = (asset, state, dispatch) => {
+    if (asset.linked_loan_id) {
+      const linkedLoan = state.expenses.house_loan.find((loan) => loan.id === asset.linked_loan_id);
+
+      if (linkedLoan) {
+        dispatch({
+          type: "DELETE_EXPENSE",
+          payload: { id: linkedLoan.id, variant: "house_loan" },
+        });
+        onToast(linkedLoan.name, "deleted");
+      }
+    }
+
+    dispatch({
+      type: "DELETE_ASSET",
+      payload: { id: asset.id, variant: "house" },
+    });
+
+    onToast(asset.name, "deleted");
+  };
+
+  const handleDeleteCarAsset = (asset, state, dispatch) => {
+    if (asset.linked_loan_id) {
+      const linkedLoan = state.expenses.car_loan.find((loan) => loan.id === asset.linked_loan_id);
+
+      if (linkedLoan) {
+        dispatch({
+          type: "DELETE_EXPENSE",
+          payload: { id: linkedLoan.id, variant: "car_loan" },
+        });
+        onToast(linkedLoan.name, "deleted");
+      }
+    }
+
+    dispatch({
+      type: "DELETE_ASSET",
+      payload: { id: asset.id, variant: "car" },
+    });
+
+    onToast(asset.name, "deleted");
+  };
+
+  const handleDeleteHouseLoan = (expense, state, dispatch) => {
+    if (expense.linked_asset_id) {
+      const linkedHouse = state.assets.house.find((house) => house.id === expense.linked_asset_id);
+
+      if (linkedHouse) {
+        dispatch({
+          type: "UPDATE_ASSET",
+          payload: {
+            ...linkedHouse,
+            linked_loan_id: null,
+          },
+        });
+        onToast(linkedHouse.name, "unlinked");
+      }
+    }
+
+    dispatch({
+      type: "DELETE_EXPENSE",
+      payload: { id: expense.id, variant: "house_loan" },
+    });
+
+    onToast(expense.name, "deleted");
+  };
+
+  const handleDeleteCarLoan = (expense, state, dispatch) => {
+    if (expense.linked_asset_id) {
+      const linkedCar = state.assets.car.find((car) => car.id === expense.linked_asset_id);
+
+      if (linkedCar) {
+        dispatch({
+          type: "UPDATE_ASSET",
+          payload: {
+            ...linkedCar,
+            linked_loan_id: null,
+          },
+        });
+        onToast(linkedCar.name, "unlinked");
+      }
+    }
+
+    dispatch({
+      type: "DELETE_EXPENSE",
+      payload: { id: expense.id, variant: "car_loan" },
+    });
+
+    onToast(expense.name, "deleted");
+  };
 
   const handleDelete401k = (account, state, dispatch) => {
     const allJobs = [...state.incomes.salary, ...state.incomes.hourly, ...state.incomes.side];
@@ -456,7 +531,7 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
         onToast(linkedJob.name, "edited");
       }
     }
-    
+
     dispatch({
       type: "DELETE_ACCOUNT",
       payload: account,
@@ -464,7 +539,7 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
 
     onToast(item.name, "deleted");
   };
-  
+
   const handleDeleteJob = (job, state, dispatch) => {
     const available401ks = [...state.accounts.employer_retirement];
     // If linked, delete the 401k first
@@ -478,7 +553,7 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
         onToast(linked401k.name, "deleted");
       }
     }
-    
+
     dispatch({
       type: "DELETE_INCOME",
       payload: job,
@@ -487,14 +562,30 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
   };
 
   const handleDelete = () => {
-    if (item.variant === 'employer_retirement') {
+    if (item.variant === "employer_retirement") {
       return handleDelete401k(item, state, dispatch);
     }
-    
-    if (item.variant === 'salary' || item.variant === 'hourly') {
+
+    if (item.variant === "salary" || item.variant === "hourly") {
       return handleDeleteJob(item, state, dispatch);
     }
-    
+
+    if (item.variant === "house") {
+      return handleDeleteHouseAsset(item, state, dispatch);
+    }
+
+    if (item.variant === "car") {
+      return handleDeleteCarAsset(item, state, dispatch);
+    }
+
+    if (item.variant === "house_loan") {
+      return handleDeleteHouseLoan(item, state, dispatch);
+    }
+
+    if (item.variant === "car_loan") {
+      return handleDeleteCarLoan(item, state, dispatch);
+    }
+
     const deleteType = {
       account: "DELETE_ACCOUNT",
       income: "DELETE_INCOME",
@@ -561,7 +652,7 @@ export function Entity({ state, entityName, category, dispatch, onToast }) {
       emoji: v.emoji,
     };
   });
-  
+
   const getItems = () => {
     switch (category) {
       case "account":
@@ -569,7 +660,7 @@ export function Entity({ state, entityName, category, dispatch, onToast }) {
       case "income":
         return [...state.incomes.salary, ...state.incomes.hourly, ...state.incomes.side];
       case "expense":
-        return [...state.expenses.living, ...state.expenses.rent, ...state.expenses.debt, ...state.expenses.house_loan , ...state.expenses.car_loan];
+        return [...state.expenses.living, ...state.expenses.rent, ...state.expenses.debt, ...state.expenses.house_loan, ...state.expenses.car_loan];
       case "asset":
         return [...state.assets.house, ...state.assets.car];
       default:
@@ -692,7 +783,7 @@ export default function Dashboard() {
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
     const id = crypto.randomUUID();
     const message = `${entityName} ${action} successfully`;
-    
+
     setToasts((prev) => [...prev, { id, message, entityName, action, type: "success" }]);
 
     setTimeout(() => {

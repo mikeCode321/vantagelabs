@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/accounts";
-import { on } from "events";
 
 // ─────────────────────────────────────────────
 // ASSET

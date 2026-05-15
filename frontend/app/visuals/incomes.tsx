@@ -58,7 +58,7 @@ export type SideHustleIncome = {
 export type IncomeSource = SalaryIncome | HourlyWageIncome | SideHustleIncome;
 
 // INCOME FORMS
-export function SalaryForm({ dispatch, state }) {
+export function SalaryForm({ dispatch, state, onToast }) {
   const [name, setName] = useState("");
   const [grossIncome, setGrossIncome] = useState("");
   const [growth, setGrowth] = useState("");
@@ -127,6 +127,8 @@ export function SalaryForm({ dispatch, state }) {
         linked_401k_id: linked401kId || undefined,
       },
     });
+
+    onToast(name, "added");
 
     setName("");
     setGrossIncome("");
@@ -257,7 +259,7 @@ export function SalaryForm({ dispatch, state }) {
   );
 }
 
-export function HourlyWageForm({ dispatch, state }) {
+export function HourlyWageForm({ dispatch, state, onToast }) {
   const [name, setName] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
@@ -328,6 +330,8 @@ export function HourlyWageForm({ dispatch, state }) {
         linked_401k_id: linked401kId || undefined,
       },
     });
+
+    onToast(name, "added");
 
     setName("");
     setStartYear("");
@@ -484,7 +488,7 @@ export function HourlyWageForm({ dispatch, state }) {
   );
 }
 
-export function SideHustleForm({ dispatch }) {
+export function SideHustleForm({ dispatch, onToast }) {
   const [name, setName] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
@@ -514,6 +518,8 @@ export function SideHustleForm({ dispatch }) {
         average_income_per_period: Number(averageIncome),
       },
     });
+
+    onToast(name, "added");
 
     setName("");
     setStartYear("");
@@ -625,7 +631,7 @@ export function SideHustleForm({ dispatch }) {
 
 /* -------------------- EDIT INCOME FORMS -------------------- */
 
-export function EditSalaryForm({ item, state, dispatch, onClose }) {
+export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [grossIncome, setGrossIncome] = useState(item.gross_income.toString());
   const [growth, setGrowth] = useState(item.income_growth.toString());
@@ -693,6 +699,8 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
       type: "UPDATE_INCOME",
       payload: updatedIncome,
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -832,7 +840,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose }) {
   );
 }
 
-export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
+export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
@@ -905,6 +913,8 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
       type: "UPDATE_INCOME",
       payload: updatedIncome,
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -1071,7 +1081,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose }) {
   );
 }
 
-export function EditSideHustleForm({ item, dispatch, onClose }) {
+export function EditSideHustleForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [startYear, setStartYear] = useState(item.start_year.toString());
   const [endYear, setEndYear] = useState(item.end_year.toString());
@@ -1099,6 +1109,8 @@ export function EditSideHustleForm({ item, dispatch, onClose }) {
         average_income_per_period: Number(averageIncome),
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };

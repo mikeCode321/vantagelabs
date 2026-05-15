@@ -68,7 +68,7 @@ export type EmployerRetirementAccount = {
 export type LiquidAccount = CheckingAccount | TaxableInvestmentAccount | EmployerRetirementAccount;
 
 // ACCOUNT FORMS
-export function CheckingAccountForm({ dispatch, state }) {
+export function CheckingAccountForm({ dispatch, state, onToast }) {
   const hasCheckingAccount = state.accounts?.checking?.length > 0;
   const [name, setName] = useState("Checking Account");
   const [balance, setBalance] = useState("");
@@ -92,6 +92,8 @@ export function CheckingAccountForm({ dispatch, state }) {
         interest_tiers: tiers,
       },
     });
+
+    onToast(name, "added");
 
     setName("Checking Account");
     setBalance("");
@@ -233,7 +235,7 @@ export function CheckingAccountForm({ dispatch, state }) {
   );
 }
 
-export function TaxableInvestmentAccountForm({ dispatch, state }) {
+export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
   const [name, setName] = useState("Taxable Investments");
   const [balance, setBalance] = useState("");
   const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">("dollar");
@@ -332,6 +334,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state }) {
         linked_income_id: linkedIncomeId || undefined,
       },
     });
+
+    onToast(name, "added");
 
     setName("Taxable Investments");
     setBalance("");
@@ -563,7 +567,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state }) {
   );
 }
 
-export function EmployerRetirementAccountForm({ dispatch, state }) {
+export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
   const [name, setName] = useState("");
   const [balance, setBalance] = useState("");
   const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">("dollar");
@@ -664,6 +668,8 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
         linked_income_id: linkedIncomeId || undefined,
       },
     });
+
+    onToast(name, "added");
 
     setName("");
     setBalance("");
@@ -883,7 +889,7 @@ export function EmployerRetirementAccountForm({ dispatch, state }) {
 
 /* -------------------- EDIT ACCOUNT FORMS -------------------- */
 
-export function EditCheckingAccountForm({ item, dispatch, onClose }) {
+export function EditCheckingAccountForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
@@ -905,6 +911,7 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
       },
     });
 
+    onToast(name, "edited");
     onClose();
   };
 
@@ -1021,7 +1028,7 @@ export function EditCheckingAccountForm({ item, dispatch, onClose }) {
   );
 }
 
-export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClose }) {
+export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">(item.contribution_mode || "dollar");
@@ -1120,6 +1127,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
         linked_income_id: linkedIncomeId || undefined,
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -1341,7 +1350,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
   );
 }
 
-export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose }) {
+export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">(item.contribution_mode || "dollar");
@@ -1438,6 +1447,8 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
       type: "UPDATE_ACCOUNT",
       payload: updatedAccount,
     });
+
+    onToast(name, "edited");
 
     onClose();
   };

@@ -104,7 +104,7 @@ export function calculateMonthlyLoanPayment(principal: number, annualInterestRat
   return (principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments))) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
 }
 
-export function HouseLoanExpenseForm({ dispatch, onClose }) {
+export function HouseLoanExpenseForm({ dispatch, onClose, onToast }) {
   const [name, setName] = useState("House Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState("");
   const [interestRate, setInterestRate] = useState("6.75");
@@ -137,6 +137,8 @@ export function HouseLoanExpenseForm({ dispatch, onClose }) {
       payload: houseLoanExpense,
     });
 
+    onToast(name, "added");
+    
     if (onClose) onClose();
   };
 
@@ -256,7 +258,7 @@ export function HouseLoanExpenseForm({ dispatch, onClose }) {
   );
 }
 
-export function CarLoanExpenseForm({ dispatch, onClose }) {
+export function CarLoanExpenseForm({ dispatch, onClose, onToast }) {
   const [name, setName] = useState("Car Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState("");
   const [interestRate, setInterestRate] = useState("7.5");
@@ -287,6 +289,8 @@ export function CarLoanExpenseForm({ dispatch, onClose }) {
       type: "ADD_EXPENSE",
       payload: carLoanExpense,
     });
+
+    onToast(name, "added");
 
     if (onClose) onClose();
   };
@@ -385,7 +389,7 @@ export function CarLoanExpenseForm({ dispatch, onClose }) {
   );
 }
 
-export function LivingExpensesForm({ dispatch }) {
+export function LivingExpensesForm({ dispatch, onToast }) {
   const [name, setName] = useState("Living Expenses");
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("3");
@@ -408,6 +412,8 @@ export function LivingExpensesForm({ dispatch }) {
         expense_growth: Number(growth) / 100,
       },
     });
+
+    onToast(name, "added");
 
     setName("Living Expense");
     setAmount("");
@@ -500,7 +506,7 @@ export function LivingExpensesForm({ dispatch }) {
   );
 }
 
-export function DebtExpenseForm({ dispatch }) {
+export function DebtExpenseForm({ dispatch, onToast }) {
   const [name, setName] = useState("Debt Expense");
   const [debtAmount, setDebtAmount] = useState("");
   const [monthlyPayment, setMonthlyPayment] = useState("");
@@ -525,6 +531,8 @@ export function DebtExpenseForm({ dispatch }) {
         interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
       },
     });
+
+    onToast(name, "added");
 
     setName("Debt Expense");
     setDebtAmount("");
@@ -631,7 +639,7 @@ export function DebtExpenseForm({ dispatch }) {
   );
 }
 
-export function RentExpenseForm({ dispatch }) {
+export function RentExpenseForm({ dispatch, onToast }) {
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("3");
   const [startYear, setStartYear] = useState("");
@@ -653,6 +661,8 @@ export function RentExpenseForm({ dispatch }) {
         expense_growth: Number(growth) / 100,
       },
     });
+
+    onToast("Rent", "added");
 
     setAmount("");
     setGrowth("");
@@ -743,7 +753,7 @@ export function RentExpenseForm({ dispatch }) {
 
 /* -------------------- EDIT EXPENSE FORMS -------------------- */
 
-export function EditCarLoanExpenseForm({ item, dispatch, onClose }) {
+export function EditCarLoanExpenseForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name || "Car Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "");
   const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
@@ -771,6 +781,8 @@ export function EditCarLoanExpenseForm({ item, dispatch, onClose }) {
         loan_term_years: Number(loanTermYears),
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -862,7 +874,7 @@ export function EditCarLoanExpenseForm({ item, dispatch, onClose }) {
   );
 }
 
-export function EditHouseLoanExpenseForm({ item, dispatch, onClose }) {
+export function EditHouseLoanExpenseForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "");
   const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
@@ -893,6 +905,8 @@ export function EditHouseLoanExpenseForm({ item, dispatch, onClose }) {
         extra_monthly_payment: extraMonthlyPayment === "" ? null : Number(extraMonthlyPayment),
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -1006,7 +1020,7 @@ export function EditHouseLoanExpenseForm({ item, dispatch, onClose }) {
   );
 }
 
-export function EditLivingExpensesForm({ item, dispatch, onClose }) {
+export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [amount, setAmount] = useState(item.monthly_expense.toString());
   const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
@@ -1028,6 +1042,8 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
         expense_growth: Number(growth) / 100,
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -1119,7 +1135,7 @@ export function EditLivingExpensesForm({ item, dispatch, onClose }) {
   );
 }
 
-export function EditRentExpenseForm({ item, dispatch, onClose }) {
+export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
   const [amount, setAmount] = useState(item.monthly_expense.toString());
   const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
   const [startYear, setStartYear] = useState(item.start_year.toString());
@@ -1141,6 +1157,8 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
         expense_growth: Number(growth) / 100,
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };
@@ -1227,7 +1245,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose }) {
   );
 }
 
-export function EditDebtExpenseForm({ item, dispatch, onClose }) {
+export function EditDebtExpenseForm({ item, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [debtAmount, setDebtAmount] = useState(item.debt_amount.toString());
   const [monthlyPayment, setMonthlyPayment] = useState(item.monthly_expense.toString());
@@ -1251,6 +1269,8 @@ export function EditDebtExpenseForm({ item, dispatch, onClose }) {
         interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
       },
     });
+
+    onToast(name, "edited");
 
     onClose();
   };

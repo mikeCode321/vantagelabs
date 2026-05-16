@@ -7,8 +7,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from config.settings import ENV
 from logger import Logger
 # from dependencies import limiter
-# from routers import finance, tax
-from routers import tax
+from routers import finance, tax
 
 log = Logger(location='main.py')
 log.info(f"Starting server on - {ENV}")
@@ -16,7 +15,7 @@ log.info(f"Starting server on - {ENV}")
 app = FastAPI()
 
 app.include_router(tax.router)
-# app.include_router(finance.router)
+app.include_router(finance.router)
 
 app.add_middleware(
     CORSMiddleware,

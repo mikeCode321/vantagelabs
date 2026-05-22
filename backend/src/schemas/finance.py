@@ -54,14 +54,32 @@ class TaxableInvestmentAccount(BaseModel):
     starting_balance: float = Field(..., ge=0)
 
     contribution_mode: Literal["dollar", "percentage"] = "dollar"
+
     monthly_contribution: float = Field(default=0, ge=0)
-    contribution_percentage: float | None = Field(default=None, ge=0, le=1)
 
-    expected_return: float = Field(default=0.07, ge=-1, le=1)
-    dividend_yield: float = Field(default=0.02, ge=0, le=1)
-    dividend_reinvestment: Literal["drip", "cash_out"] = "drip"
+    contribution_percentage: float | None = Field(
+        default=None,
+        ge=0,
+        le=1,
+    )
 
-    cash_out_account_id: str | None = None
+    expected_return: float = Field(
+        default=0.07,
+        ge=-1,
+        le=1,
+    )
+
+    dividend_yield: float = Field(
+        default=0.02,
+        ge=0,
+        le=1,
+    )
+
+    dividend_reinvestment: Literal[
+        "drip",
+        "cash_out",
+    ] = "drip"
+
     linked_income_id: str | None = None
 
 
@@ -78,11 +96,37 @@ class EmployerRetirementAccount(BaseModel):
     starting_balance: float = Field(..., ge=0)
 
     contribution_mode: Literal["dollar", "percentage"] = "dollar"
-    monthly_contribution: float = Field(default=0, ge=0)
-    contribution_percentage: float | None = Field(default=None, ge=0, le=1)
 
-    expected_return: float = Field(default=0.07, ge=-1, le=1)
-    employer_match: float = Field(default=0.05, ge=0, le=1)
+    monthly_contribution: float = Field(default=0, ge=0)
+
+    contribution_percentage: float | None = Field(
+        default=None,
+        ge=0,
+        le=1,
+    )
+
+    expected_return: float = Field(
+        default=0.07,
+        ge=-1,
+        le=1,
+    )
+
+    dividend_yield: float = Field(
+        default=0.02,
+        ge=0,
+        le=1,
+    )
+
+    dividend_reinvestment: Literal[
+        "drip",
+        "cash_out",
+    ] = "drip"
+
+    employer_match: float = Field(
+        default=0.05,
+        ge=0,
+        le=1,
+    )
 
     linked_income_id: str | None = None
 
@@ -108,7 +152,12 @@ class SalaryIncome(BaseModel):
     end_age: int = Field(..., ge=0, le=150)
 
     gross_income: float = Field(..., gt=0)
-    income_growth: float = Field(default=0.02, ge=-1, le=1)
+
+    income_growth: float = Field(
+        default=0.02,
+        ge=-1,
+        le=1,
+    )
 
     linked_401k_id: str | None = None
 
@@ -124,11 +173,30 @@ class HourlyWageIncome(BaseModel):
     end_age: int = Field(..., ge=0, le=150)
 
     hourly_rate: float = Field(..., gt=0)
-    hours_per_week: float = Field(..., gt=0, le=168)
-    gross_income: float  # Calculated from hourly_rate * hours_per_week * 52
-    income_growth: float = Field(default=0.02, ge=-1, le=1)
+
+    hours_per_week: float = Field(
+        ...,
+        gt=0,
+        le=168,
+    )
+
+    gross_income: float | None = None
+
+    income_growth: float = Field(
+        default=0.02,
+        ge=-1,
+        le=1,
+    )
 
     linked_401k_id: str | None = None
+
+    def model_post_init(self, __context):
+        if self.gross_income is None:
+            self.gross_income = (
+                self.hourly_rate
+                * self.hours_per_week
+                * 52
+            )
 
 
 class SideHustleIncome(BaseModel):
@@ -142,10 +210,22 @@ class SideHustleIncome(BaseModel):
     end_age: int = Field(..., ge=0, le=150)
 
     gross_income: float = Field(..., gt=0)
-    variability: float = Field(default=0.2, ge=0, le=1)  # std dev
-    frequency: str = Field(default="monthly")  # "monthly", "quarterly", etc.
-    average_income_per_period: float = Field(..., gt=0)
 
+    income_growth: float = Field(
+        default=0.02,
+        ge=-1,
+        le=1,
+    )
+
+    variability: float = Field(
+        default=0.2,
+        ge=0,
+        le=1,
+    )
+
+    frequency: str = Field(default="monthly")
+
+    average_income_per_period: float = Field(..., gt=0)
 
 IncomeSource = Union[SalaryIncome, HourlyWageIncome, SideHustleIncome]
 
@@ -284,6 +364,69 @@ class CarAsset(BaseModel):
 
 AssetSource = Union[HouseAsset, CarAsset]
 
+# ─────────────────────────────────────────────
+# PAYLOAD GROUPING TYPES
+# ─────────────────────────────────────────────
+
+class AccountsPayload(BaseModel):
+    checking: list[CheckingAccount] = Field(
+        default_factory=list
+    )
+
+    taxable_investments: list[
+        TaxableInvestmentAccount
+    ] = Field(default_factory=list)
+
+    employer_retirement: list[
+        EmployerRetirementAccount
+    ] = Field(default_factory=list)
+
+
+class IncomesPayload(BaseModel):
+    salary: list[SalaryIncome] = Field(
+        default_factory=list
+    )
+
+    hourly: list[HourlyWageIncome] = Field(
+        default_factory=list
+    )
+
+    side: list[SideHustleIncome] = Field(
+        default_factory=list
+    )
+
+
+class ExpensesPayload(BaseModel):
+    living: list[LivingExpense] = Field(
+        default_factory=list
+    )
+
+    rent: list[RentExpense] = Field(
+        default_factory=list
+    )
+
+    house_loan: list[HouseLoanExpense] = Field(
+        default_factory=list
+    )
+
+    car_loan: list[CarLoanExpense] = Field(
+        default_factory=list
+    )
+
+    debt: list[DebtExpense] = Field(
+        default_factory=list
+    )
+
+
+class AssetsPayload(BaseModel):
+    house: list[HouseAsset] = Field(
+        default_factory=list
+    )
+
+    car: list[CarAsset] = Field(
+        default_factory=list
+    )
+
 
 # ─────────────────────────────────────────────
 # REQUEST
@@ -291,51 +434,62 @@ AssetSource = Union[HouseAsset, CarAsset]
 
 
 class SimulateRequest(BaseModel):
-    user_start_age: int = Field(..., ge=0, le=150)
-    user_end_age: int = Field(..., ge=0, le=150)
-    filing_status: Literal["single", "married_filing_jointly", "head_of_household"]
-    state: str | None
-
-    accounts: dict[str, list[LiquidAccount]] = Field(
-        default_factory=lambda: {
-            "checking": [],
-            "taxable_investments": [],
-            "employer_retirement": [],
-        }
+    user_start_age: int = Field(
+        ...,
+        ge=0,
+        le=150,
     )
 
-    incomes: dict[str, list[IncomeSource]] = Field(
-        default_factory=lambda: {
-            "salary": [],
-            "hourly": [],
-            "side": [],
-        }
+    user_end_age: int = Field(
+        ...,
+        ge=0,
+        le=150,
     )
 
-    expenses: dict[str, list[ExpenseSource]] = Field(
-        default_factory=lambda: {
-            "living": [],
-            "rent": [],
-            "debt": [],
-            "house_loan": [],
-            "car_loan": [],
-        }
+    start_year: int = Field(
+        default_factory=lambda: datetime.now().year
     )
 
-    assets: dict[str, list[AssetSource]] = Field(
-        default_factory=lambda: {
-            "house": [],
-            "car": [],
-        }
+    filing_status: Literal[
+        "single",
+        "married_filing_jointly",
+        "head_of_household",
+    ]
+
+    state: str | None = None
+
+    accounts: AccountsPayload = Field(
+        default_factory=AccountsPayload
+    )
+
+    incomes: IncomesPayload = Field(
+        default_factory=IncomesPayload
+    )
+
+    expenses: ExpensesPayload = Field(
+        default_factory=ExpensesPayload
+    )
+
+    assets: AssetsPayload = Field(
+        default_factory=AssetsPayload
     )
 
     @field_validator("user_end_age")
-    def end_age_must_be_after_start(cls, v, info):
-        if "user_start_age" in info.data and v < info.data["user_start_age"]:
-            raise ValueError("user_end_age must be >= user_start_age")
+    def end_age_must_be_after_start(
+        cls,
+        v,
+        info,
+    ):
+        if (
+            "user_start_age" in info.data
+            and v < info.data["user_start_age"]
+        ):
+            raise ValueError(
+                "user_end_age must be >= user_start_age"
+            )
+
         return v
-
-
+    
 # ─────────────────────────────────────────────
 # RESPONSE TYPES
 # ─────────────────────────────────────────────
@@ -348,7 +502,6 @@ class AccountSnapshot(BaseModel):
 
     balance: float
     annual_interest_earned: float
-    growth_rate: float
 
     balance_history: list[float] = Field(default_factory=list)
     interest_history: list[float] = Field(default_factory=list)
@@ -369,7 +522,7 @@ class IncomeSnapshot(BaseModel):
 
     growth_rate: float
     start_value: float
-    end_value: float
+    current_income: float
 
     is_active: bool
 

@@ -1,0 +1,667 @@
+{
+  "request": {
+    "user_start_age": 27,
+    "user_end_age": 30,
+    "start_year": 2026,
+    "filing_status": "single",
+    "state": "MI",
+    "accounts": {
+      "checking": [
+        {
+          "source_type": "liquid",
+          "variant": "checking",
+          "id": "chk_1",
+          "name": "Checking",
+          "start_age": 27,
+          "end_age": 30,
+          "starting_balance": 12000,
+          "interest_tiers": []
+        }
+      ],
+      "taxable_investments": [
+        {
+          "source_type": "liquid",
+          "variant": "taxable_investments",
+          "id": "tax_1",
+          "name": "Vanguard Brokerage",
+          "start_age": 27,
+          "end_age": 30,
+          "starting_balance": 25000,
+          "contribution_mode": "dollar",
+          "monthly_contribution": 1000,
+          "contribution_percentage": null,
+          "expected_return": 0.08,
+          "dividend_yield": 0.02,
+          "dividend_reinvestment": "drip",
+          "linked_income_id": "salary_1"
+        }
+      ],
+      "employer_retirement": [
+        {
+          "source_type": "liquid",
+          "variant": "employer_retirement",
+          "id": "ret_1",
+          "name": "401k",
+          "start_age": 27,
+          "end_age": 30,
+          "starting_balance": 18000,
+          "contribution_mode": "percentage",
+          "monthly_contribution": 0,
+          "contribution_percentage": 0.1,
+          "expected_return": 0.07,
+          "dividend_yield": 0.02,
+          "dividend_reinvestment": "drip",
+          "employer_match": 0.05,
+          "linked_income_id": "salary_1"
+        }
+      ]
+    },
+    "incomes": {
+      "salary": [
+        {
+          "source_type": "income",
+          "variant": "salary",
+          "id": "salary_1",
+          "name": "Senior SWE",
+          "start_age": 27,
+          "end_age": 30,
+          "gross_income": 145000,
+          "income_growth": 0.04,
+          "linked_401k_id": "ret_1"
+        }
+      ],
+      "hourly": [],
+      "side": []
+    },
+    "expenses": {
+      "living": [
+        {
+          "source_type": "expense",
+          "variant": "living",
+          "id": "living_1",
+          "name": "General Living",
+          "start_age": 27,
+          "end_age": 30,
+          "monthly_expense": 3200,
+          "expense_growth": 0.025
+        }
+      ],
+      "rent": [
+        {
+          "source_type": "expense",
+          "variant": "rent",
+          "id": "rent_1",
+          "name": "Apartment",
+          "start_age": 27,
+          "end_age": 30,
+          "monthly_expense": 2200,
+          "rent_growth": 0.04
+        }
+      ],
+      "house_loan": [],
+      "car_loan": [],
+      "debt": []
+    },
+    "assets": {
+      "house": [],
+      "car": []
+    }
+  },
+  "metrics": {
+    "total_years": 4,
+    "starting_net_worth": 55000,
+    "ending_net_worth": 266197.8,
+    "peak_net_worth": 266197.8,
+    "peak_net_worth_age": 30,
+    "total_income_lifetime": 640366.77,
+    "total_expenses_lifetime": -271563.25,
+    "net_lifetime_cashflow": 709982.84,
+    "years_with_negative_cashflow": 0,
+    "lowest_cash_balance_year": 2026,
+    "lowest_cash_balance": 99825.52
+  },
+  "years": [
+    {
+      "year": 2026, // 2027
+      "age": 27, // 28
+      "net_worth": 99825.52,
+      "net_worth_change": 44825.52,
+      "net_worth_change_percent": 81.5,
+      "total_cash": 99825.52,
+      "total_assets": 0,
+      "total_income": 150800, // after increases
+      "total_expenses": -64800, // before increases 
+      "net_cashflow": 168678, 
+      "total_taxes_paid": 41122,
+      "total_federal_tax": 23867,
+      "total_fica_tax": 11092.5,
+      "total_state_tax": 6162.5,
+      "effective_tax_rate": 27.27,
+      "accounts_summary": {
+        "total_balance": 99825.51983735814,
+        "total_interest_earned": 4537.49,
+        "by_variant": {
+          "checking": 23853,
+          "taxable_investments": 40292.68,
+          "employer_retirement": 35679.84
+        },
+        "accounts": [
+          {
+            "id": "chk_1",
+            "name": "Checking",
+            "variant": "checking",
+            "balance": 23853,
+            "annual_interest_earned": 0,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          },
+          {
+            "id": "tax_1",
+            "name": "Vanguard Brokerage",
+            "variant": "taxable_investments",
+            "balance": 40292.68,
+            "annual_interest_earned": 2630.64,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          },
+          {
+            "id": "ret_1",
+            "name": "401k",
+            "variant": "employer_retirement",
+            "balance": 35679.84, // not correct this is based on post tax contributions but should be based on pre tax contributions
+            "annual_interest_earned": 1906.85,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_annual_income": 150800,
+        "total_cashflow": 103878,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 150800,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_1",
+            "name": "Senior SWE",
+            "variant": "salary",
+            "gross_annual": 150800, // income at the start of 2027 
+            "federal_tax": 23867,
+            "fica_tax": 11092.5,
+            "state_tax": 6162.5,
+            "total_tax": 41122,
+            "net_annual": 103878,
+            "growth_rate": 0.04,
+            "start_value": 145000, // income at the start of 2027 
+            "end_value": 150800, // next_year income start of 2028 
+            "is_active": true
+          }
+        ]
+      },
+      "expenses_summary": {
+        "total_annual_expenses": 64800,
+        "total_cashflow": 64800, // this is pre incrase 
+        "by_variant": {
+          "living": 38400,
+          "rent": 26400,
+          "debt": 0,
+          "house_loan": 0,
+          "car_loan": 0
+        },
+        "expenses": [
+          {
+            "id": "living_1",
+            "name": "General Living",
+            "variant": "living",
+            "annual_expense": 39360,
+            "annual_cashflow": 38400,
+            "growth_rate": 0.025,
+            "start_value": 38400,
+            "end_value": 39360,
+            "remaining_balance": null,
+            "interest_paid": null
+          },
+          {
+            "id": "rent_1",
+            "name": "Apartment",
+            "variant": "rent",
+            "annual_expense": 27456,
+            "annual_cashflow": 26400,
+            "growth_rate": 0.04,
+            "start_value": 26400,
+            "end_value": 27456,
+            "remaining_balance": null,
+            "interest_paid": null
+          }
+        ]
+      },
+      "assets_summary": {
+        "total_asset_value": 0,
+        "total_appreciation_rate": 0,
+        "liquidated_count": 0,
+        "assets": []
+      }
+    },
+    {
+      "year": 2027,
+      "age": 28,
+      "net_worth": 149647.71,
+      "net_worth_change": 49822.19,
+      "net_worth_change_percent": 49.91,
+      "total_cash": 149647.71,
+      "total_assets": 0,
+      "total_income": 156832,
+      "total_expenses": -66816,
+      "net_cashflow": 174411.8,
+      "total_taxes_paid": 43204.2,
+      "total_federal_tax": 25259,
+      "total_fica_tax": 11536.2,
+      "total_state_tax": 6409,
+      "effective_tax_rate": 27.55,
+      "accounts_summary": {
+        "total_balance": 149647.70893834875,
+        "total_interest_earned": 7132.38,
+        "by_variant": {
+          "checking": 36798.8,
+          "taxable_investments": 57188.94,
+          "employer_retirement": 55659.97
+        },
+        "accounts": [
+          {
+            "id": "chk_1",
+            "name": "Checking",
+            "variant": "checking",
+            "balance": 36798.8,
+            "annual_interest_earned": 0,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          },
+          {
+            "id": "tax_1",
+            "name": "Vanguard Brokerage",
+            "variant": "taxable_investments",
+            "balance": 57188.94,
+            "annual_interest_earned": 3911.79,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          },
+          {
+            "id": "ret_1",
+            "name": "401k",
+            "variant": "employer_retirement",
+            "balance": 55659.97,
+            "annual_interest_earned": 3220.59,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_annual_income": 156832,
+        "total_cashflow": 107595.8,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 156832,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_1",
+            "name": "Senior SWE",
+            "variant": "salary",
+            "gross_annual": 156832,
+            "federal_tax": 25259,
+            "fica_tax": 11536.2,
+            "state_tax": 6409,
+            "total_tax": 43204.2,
+            "net_annual": 107595.8,
+            "growth_rate": 0.04,
+            "start_value": 150800,
+            "end_value": 156832,
+            "is_active": true
+          }
+        ]
+      },
+      "expenses_summary": {
+        "total_annual_expenses": 66816,
+        "total_cashflow": 66816,
+        "by_variant": {
+          "living": 39360,
+          "rent": 27456,
+          "debt": 0,
+          "house_loan": 0,
+          "car_loan": 0
+        },
+        "expenses": [
+          {
+            "id": "living_1",
+            "name": "General Living",
+            "variant": "living",
+            "annual_expense": 40344,
+            "annual_cashflow": 39360,
+            "growth_rate": 0.025,
+            "start_value": 39360,
+            "end_value": 40344,
+            "remaining_balance": null,
+            "interest_paid": null
+          },
+          {
+            "id": "rent_1",
+            "name": "Apartment",
+            "variant": "rent",
+            "annual_expense": 28554.24,
+            "annual_cashflow": 27456,
+            "growth_rate": 0.04,
+            "start_value": 27456,
+            "end_value": 28554.24,
+            "remaining_balance": null,
+            "interest_paid": null
+          }
+        ]
+      },
+      "assets_summary": {
+        "total_asset_value": 0,
+        "total_appreciation_rate": 0,
+        "liquidated_count": 0,
+        "assets": []
+      }
+    },
+    {
+      "year": 2028,
+      "age": 29,
+      "net_worth": 204934.48,
+      "net_worth_change": 55286.77,
+      "net_worth_change_percent": 36.94,
+      "total_cash": 204934.48,
+      "total_assets": 0,
+      "total_income": 163105.28,
+      "total_expenses": -68898.24,
+      "net_cashflow": 180360.55,
+      "total_taxes_paid": 45369.69,
+      "total_federal_tax": 26706.68,
+      "total_fica_tax": 11997.65,
+      "total_state_tax": 6665.36,
+      "effective_tax_rate": 27.82,
+      "accounts_summary": {
+        "total_balance": 204934.48414584837,
+        "total_interest_earned": 10030.42,
+        "by_variant": {
+          "checking": 50895.51,
+          "taxable_investments": 75856.93,
+          "employer_retirement": 78182.05
+        },
+        "accounts": [
+          {
+            "id": "chk_1",
+            "name": "Checking",
+            "variant": "checking",
+            "balance": 50895.51,
+            "annual_interest_earned": 0,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          },
+          {
+            "id": "tax_1",
+            "name": "Vanguard Brokerage",
+            "variant": "taxable_investments",
+            "balance": 75856.93,
+            "annual_interest_earned": 5327.29,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          },
+          {
+            "id": "ret_1",
+            "name": "401k",
+            "variant": "employer_retirement",
+            "balance": 78182.05,
+            "annual_interest_earned": 4703.13,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_annual_income": 163105.28,
+        "total_cashflow": 111462.31,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 163105.28,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_1",
+            "name": "Senior SWE",
+            "variant": "salary",
+            "gross_annual": 163105.28,
+            "federal_tax": 26706.68,
+            "fica_tax": 11997.65,
+            "state_tax": 6665.36,
+            "total_tax": 45369.69,
+            "net_annual": 111462.31,
+            "growth_rate": 0.04,
+            "start_value": 156832,
+            "end_value": 163105.28,
+            "is_active": true
+          }
+        ]
+      },
+      "expenses_summary": {
+        "total_annual_expenses": 68898.24,
+        "total_cashflow": 68898.24,
+        "by_variant": {
+          "living": 40344,
+          "rent": 28554.24,
+          "debt": 0,
+          "house_loan": 0,
+          "car_loan": 0
+        },
+        "expenses": [
+          {
+            "id": "living_1",
+            "name": "General Living",
+            "variant": "living",
+            "annual_expense": 41352.6,
+            "annual_cashflow": 40344,
+            "growth_rate": 0.025,
+            "start_value": 40344,
+            "end_value": 41352.6,
+            "remaining_balance": null,
+            "interest_paid": null
+          },
+          {
+            "id": "rent_1",
+            "name": "Apartment",
+            "variant": "rent",
+            "annual_expense": 29696.41,
+            "annual_cashflow": 28554.24,
+            "growth_rate": 0.04,
+            "start_value": 28554.24,
+            "end_value": 29696.41,
+            "remaining_balance": null,
+            "interest_paid": null
+          }
+        ]
+      },
+      "assets_summary": {
+        "total_asset_value": 0,
+        "total_appreciation_rate": 0,
+        "liquidated_count": 0,
+        "assets": []
+      }
+    },
+    {
+      "year": 2029,
+      "age": 30,
+      "net_worth": 266197.8,
+      "net_worth_change": 61263.32,
+      "net_worth_change_percent": 29.89,
+      "total_cash": 266197.8,
+      "total_assets": 0,
+      "total_income": 169629.49,
+      "total_expenses": -71049.01,
+      "net_cashflow": 186532.49,
+      "total_taxes_paid": 47621.8,
+      "total_federal_tax": 28212.27,
+      "total_fica_tax": 12477.55,
+      "total_state_tax": 6931.97,
+      "effective_tax_rate": 28.07,
+      "accounts_summary": {
+        "total_balance": 266197.80295424745,
+        "total_interest_earned": 13263.34,
+        "by_variant": {
+          "checking": 66203.93,
+          "taxable_investments": 96482.42,
+          "employer_retirement": 103511.45
+        },
+        "accounts": [
+          {
+            "id": "chk_1",
+            "name": "Checking",
+            "variant": "checking",
+            "balance": 66203.93,
+            "annual_interest_earned": 0,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          },
+          {
+            "id": "tax_1",
+            "name": "Vanguard Brokerage",
+            "variant": "taxable_investments",
+            "balance": 96482.42,
+            "annual_interest_earned": 6891.21,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          },
+          {
+            "id": "ret_1",
+            "name": "401k",
+            "variant": "employer_retirement",
+            "balance": 103511.45,
+            "annual_interest_earned": 6372.13,
+            "growth_rate": 0.05,
+            "balance_history": [],
+            "interest_history": []
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_annual_income": 169629.49,
+        "total_cashflow": 115483.48,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 169629.49,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_1",
+            "name": "Senior SWE",
+            "variant": "salary",
+            "gross_annual": 169629.49,
+            "federal_tax": 28212.27,
+            "fica_tax": 12477.55,
+            "state_tax": 6931.97,
+            "total_tax": 47621.8,
+            "net_annual": 115483.48,
+            "growth_rate": 0.04,
+            "start_value": 163105.28,
+            "end_value": 169629.49,
+            "is_active": true
+          }
+        ]
+      },
+      "expenses_summary": {
+        "total_annual_expenses": 71049.01,
+        "total_cashflow": 71049.01,
+        "by_variant": {
+          "living": 41352.6,
+          "rent": 29696.41,
+          "debt": 0,
+          "house_loan": 0,
+          "car_loan": 0
+        },
+        "expenses": [
+          {
+            "id": "living_1",
+            "name": "General Living",
+            "variant": "living",
+            "annual_expense": 42386.41,
+            "annual_cashflow": 41352.6,
+            "growth_rate": 0.025,
+            "start_value": 41352.6,
+            "end_value": 42386.41,
+            "remaining_balance": null,
+            "interest_paid": null
+          },
+          {
+            "id": "rent_1",
+            "name": "Apartment",
+            "variant": "rent",
+            "annual_expense": 30884.27,
+            "annual_cashflow": 29696.41,
+            "growth_rate": 0.04,
+            "start_value": 29696.41,
+            "end_value": 30884.27,
+            "remaining_balance": null,
+            "interest_paid": null
+          }
+        ]
+      },
+      "assets_summary": {
+        "total_asset_value": 0,
+        "total_appreciation_rate": 0,
+        "liquidated_count": 0,
+        "assets": []
+      }
+    }
+  ],
+  "net_worth_trend": [
+    99825.52,
+    149647.71,
+    204934.48,
+    266197.8
+  ],
+  "cash_trend": [
+    99825.52,
+    149647.71,
+    204934.48,
+    266197.8
+  ],
+  "assets_trend": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "annual_income_trend": [
+    150800,
+    156832,
+    163105.28,
+    169629.49
+  ],
+  "annual_expenses_trend": [
+    -64800,
+    -66816,
+    -68898.24,
+    -71049.01
+  ]
+}

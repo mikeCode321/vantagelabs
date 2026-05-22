@@ -1,12 +1,14 @@
-# from typing import List
+"""
+routes/finance.py - API endpoints
+"""
 
-# from fastapi import APIRouter
+from fastapi import APIRouter
+from schemas.finance import SimulateRequest, SimulationResult
+from services.finance import simulate
 
-# from schemas.finance import SimulateRequest, SimYearResult
-# from services.finance import simulate
+router = APIRouter(prefix="/api/finance", tags=["Finance"])
 
-# router = APIRouter(prefix="/api/finance", tags=["Finance"])
-
-# @router.post("/simulate", response_model=List[SimYearResult])
-# def run_simulation(req: SimulateRequest) -> List[SimYearResult]:
-#     return simulate(req)
+# @router.post("/simulate", response_model=SimulationResult)
+@router.post("/simulate")
+def run_simulation(req: SimulateRequest) :
+    return simulate(req)

@@ -14,4 +14,3 @@ class TaxBreakdown(BaseModel):
     fica: float
     state: float
     total: float
-    net: float

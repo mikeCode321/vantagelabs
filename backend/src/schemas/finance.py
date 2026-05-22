@@ -502,7 +502,6 @@ class AccountSnapshot(BaseModel):
 
     balance: float
     annual_interest_earned: float
-    growth_rate: float
 
     balance_history: list[float] = Field(default_factory=list)
     interest_history: list[float] = Field(default_factory=list)
@@ -523,7 +522,7 @@ class IncomeSnapshot(BaseModel):
 
     growth_rate: float
     start_value: float
-    end_value: float
+    current_income: float
 
     is_active: bool
 

@@ -600,7 +600,8 @@ class SimulationState:
         return None
 
 
-def simulate(req):
+def simulate(req: SimulateRequest):
+    req = req.model_dump()
     state = SimulationState()
 
     for acc in req["accounts"]["checking"]:
@@ -632,7 +633,7 @@ def simulate(req):
     starting_net_worth = sum(acc.get_balance() for acc in state.get_all_accounts())
 
     for year_offset in range(1, req["user_end_age"] - req["user_start_age"] + 1):
-        print(year_offset)
+        # print(year_offset)
 
         current_age = req["user_start_age"] + year_offset
         calendar_year = 2025 + year_offset
@@ -672,7 +673,7 @@ def simulate(req):
         total_cash = sum(acc.get_balance() for acc in active_checking)
         total_net_worth = sum(acc.get_balance() for acc in active_checking + active_retirement) # TODO: subtract liabilities
         
-        print(round(year_federal_tax, 2), round(year_fica_tax, 2), round(year_state_tax, 2), round(year_taxes_paid, 2))
+        # print(round(year_federal_tax, 2), round(year_fica_tax, 2), round(year_state_tax, 2), round(year_taxes_paid, 2))
     
         account_snapshots = [acc.snapshot() for acc in active_checking + active_retirement]
         income_snapshots = [sim.snapshot() for sim in active_salaries]
@@ -761,16 +762,16 @@ def simulate(req):
     annual_income_trend = [r["total_income"] for r in results]
     # annual_expenses_trend = [r["total_expenses"] for r in results]
 
-    print(json.dumps({
-        "total_years_simulated": req["user_end_age"] - req["user_start_age"],
-        "request": req,
-        "metrics": metrics,
-        "year_results": results,
-        "net_worth_trend": net_worth_trend,
-        "cash_trend": cash_trend,
-        "annual_income_trend": annual_income_trend,
-    },indent=2))
-    return
+    # print(json.dumps({
+    #     "total_years_simulated": req["user_end_age"] - req["user_start_age"],
+    #     "request": req,
+    #     "metrics": metrics,
+    #     "year_results": results,
+    #     "net_worth_trend": net_worth_trend,
+    #     "cash_trend": cash_trend,
+    #     "annual_income_trend": annual_income_trend,
+    # },indent=2))
+    # return
     return {
         "total_years_simulated": req["user_end_age"] - req["user_start_age"],
         "request": req,
@@ -787,7 +788,7 @@ def simulate(req):
 # EXAMPLE USAGE
 # ═══════════════════════════════════════════════════════════════════════════
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     req = {
         "user_start_age": 25,
         "user_end_age": 27,

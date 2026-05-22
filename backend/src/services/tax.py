@@ -92,6 +92,7 @@ class TaxService:
     def calculate_income_taxes(self, gross_income, pre_tax_deductions) -> TaxBreakdown:
         deduction = STANDARD_DEDUCTION.get(self.filing_status, 15750)
         deduction += pre_tax_deductions
+        
         taxable_income = max(0.0, gross_income - deduction)
 
         federal = self.calculate_federal_tax(taxable_income)

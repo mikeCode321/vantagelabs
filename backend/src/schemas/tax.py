@@ -4,7 +4,7 @@ from typing import Optional, Literal
 
 class TaxRequest(BaseModel):
     gross_income: float
-    year: int = 2025
+    deductions: int = 0
     filing_status: Literal["single", "married_filing_jointly", "head_of_household",] = "single" 
     state: Optional[str] = None
 

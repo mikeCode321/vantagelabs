@@ -8,6 +8,7 @@ from services.finance import simulate
 
 router = APIRouter(prefix="/api/finance", tags=["Finance"])
 
-@router.post("/simulate", response_model=SimulationResult)
-def run_simulation(req: SimulateRequest) -> SimulationResult:
+# @router.post("/simulate", response_model=SimulationResult)
+@router.post("/simulate")
+def run_simulation(req: SimulateRequest) :
     return simulate(req)

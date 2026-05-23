@@ -122,8 +122,12 @@ class EmployerRetirementAccount(BaseModel):
         "cash_out",
     ] = "drip"
 
-    employer_match: float = Field(
-        default=0.05,
+    employer_match_rate: float = Field(
+        ge=0,
+        le=1,
+    )
+
+    employer_match_limit: float = Field(
         ge=0,
         le=1,
     )

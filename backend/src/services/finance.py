@@ -14,7 +14,7 @@ from schemas.finance import (
     SimulationResult,
 )
 from services.tax import TaxService
-
+from datetime import datetime 
 # ═══════════════════════════════════════════════════════════════════════════
 # PROTOCOLS & INTERFACES
 # ═══════════════════════════════════════════════════════════════════════════
@@ -56,6 +56,8 @@ class AccountSimulator(ABC):
         """
         pass
 
+    # add end of year abstract method
+
     @abstractmethod
     def get_balance(self) -> float:
         """Current account balance"""
@@ -81,19 +83,19 @@ class AccountSimulator(ABC):
         return self.start_age <= age <= self.end_age
 
 
-@dataclass
-class CashflowResult:
-    """Results from processing income for a pay period"""
-    gross_amount: float
-    pre_tax_deductions: float  # 401k contributions
-    taxable_income: float
-    taxes_paid: float
-    net_income: float  # What hits checking account
+# @dataclass
+# class CashflowResult:
+#     """Results from processing income for a pay period"""
+#     gross_amount: float
+#     pre_tax_deductions: float  # 401k contributions
+#     taxable_income: float
+#     taxes_paid: float
+#     net_income: float  # What hits checking account
 
-    # Tax breakdown
-    federal_tax: float = 0.0
-    fica_tax: float = 0.0
-    state_tax: float = 0.0
+#     # Tax breakdown
+#     federal_tax: float = 0.0
+#     fica_tax: float = 0.0
+#     state_tax: float = 0.0
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -107,7 +109,7 @@ class InterestCalculator:
     def __init__(self, tiers: List[Tier]):
         self.tiers = tiers
 
-    def calculate_monthly_interest(self, balance: float) -> float:
+    def calculate_tiered_monthly_interest(self, balance: float) -> float:
         """Calculate interest for one month"""
         if balance <= 0 or not self.tiers:
             return 0.0
@@ -139,8 +141,7 @@ class InterestCalculator:
         return interest
 
     @staticmethod
-    def calculate_monthly_return(balance: float,
-                                 annual_return: float) -> float:
+    def calculate_simple_monthly_return(balance: float, annual_return: float) -> float:
         """Simple monthly compounding"""
         monthly_rate = annual_return / 12
         return balance * monthly_rate
@@ -168,7 +169,7 @@ class CheckingAccountSim(AccountSimulator):
         self.interest_calculator = InterestCalculator(account["interest_tiers"])
 
         # History tracking
-        self.total_interest_earned = 0.0
+        self.total_year_interest_earned = 0.0
         self.monthly_balance_history: List[float] = []
         self.monthly_interest_history: List[float] = []
 
@@ -188,26 +189,24 @@ class CheckingAccountSim(AccountSimulator):
 
     def process_month_end(self):
         """Apply monthly interest and record history"""
-        interest = self.interest_calculator.calculate_monthly_interest(self.balance)
-        interest = round(interest, 2)
+        interest = self.interest_calculator.calculate_tiered_monthly_interest(self.balance)
 
         self.balance += interest
-        self.total_interest_earned += interest
+        self.total_year_interest_earned += interest
 
         # Record history
         self.monthly_interest_history.append(interest)
-        self.monthly_balance_history.append(round(self.balance, 2))
+        self.monthly_balance_history.append(self.balance)
 
-        # return MonthlyGrowth(interest_earned=interest)
         return {
             "balance": self.balance,
-            "interest_earned": self.total_interest_earned,
+            "interest_earned": self.total_year_interest_earned,
             "monthly_balance_history": self.monthly_balance_history,
             "monthly_interest_history": self.monthly_interest_history
         }
 
     def process_year_end(self):
-        self.total_interest_earned = 0.0
+        self.total_year_interest_earned = 0.0
         self.monthly_balance_history = []
         self.monthly_interest_history = []
 
@@ -220,47 +219,10 @@ class CheckingAccountSim(AccountSimulator):
             "name": self.name,
             "variant": self.variant,
             "balance": round(self.balance, 2),
-            "annual_interest_earned": round(self.total_interest_earned, 2),
+            "annual_interest_earned": round(self.total_year_interest_earned, 2),
             "balance_history": self.monthly_balance_history,
             "interest_history": self.monthly_interest_history,
         }
-
-
-checking_acc = {
-    "source_type":
-    "liquid",
-    "variant":
-    "checking",
-    "id":
-    "chk_1",
-    "name":
-    "Checking",
-    "start_age":
-    27,
-    "end_age":
-    30,
-    "starting_balance":
-    12000,
-    "interest_tiers": [{
-        "threshold": 15000,
-        "annual_rate": 0.00
-    }, {
-        "threshold": 100000,
-        "annual_rate": 0.03
-    }, {
-        "threshold": 300000,
-        "annual_rate": 0.04
-    }]
-}
-import json
-# sim = CheckingAccountSim(CheckingAccount(**checking_acc))
-# for month in range(12):
-#     sim.deposit(1000)
-#     res = sim.process_month_end()
-#     if month == 11:
-#         print(json.dumps(res, indent=2))
-# print(json.dumps(sim.snapshot(), indent=2))
-
 
 class EmployerRetirementAccountSim(AccountSimulator):
     """401k/403b with employer match and investment returns"""
@@ -284,9 +246,9 @@ class EmployerRetirementAccountSim(AccountSimulator):
         self.linked_income_id = account["linked_income_id"]
 
         # Tracking
-        self.total_interest_earned = 0.0
-        self.total_employee_contributions = 0.0
-        self.total_employer_contributions = 0.0
+        self.total_yearly_interest_earned = 0.0
+        self.total_yearly_employee_contributions = 0.0
+        self.total_yearly_employer_contributions = 0.0
         self.monthly_balance_history: List[float] = []
         self.monthly_interest_history: List[float] = []
 
@@ -309,38 +271,37 @@ class EmployerRetirementAccountSim(AccountSimulator):
 
     def contribute_employee(self, amount: float):
         self.deposit(amount)
-        self.total_employee_contributions += amount
+        self.total_yearly_employee_contributions += amount
 
     def contribute_employer(self, employee_amount: float):
         match_amount = employee_amount * self.employer_match
         self.deposit(match_amount)
-        self.total_employer_contributions += match_amount
+        self.total_yearly_employer_contributions += match_amount
 
     def withdraw(self, amount: float):
         self.balance = max(0, self.balance - amount)
 
     def process_month_end(self):
-        interest = round(InterestCalculator.calculate_monthly_return(self.balance, self.expected_return), 2)
+        interest = InterestCalculator.calculate_simple_monthly_return(self.balance, self.expected_return)
 
         self.balance += interest
-        self.total_interest_earned += interest
+        self.total_yearly_interest_earned += interest
 
         # Record history
         self.monthly_interest_history.append(interest)
-        self.monthly_balance_history.append(round(self.balance, 2))
+        self.monthly_balance_history.append(self.balance)
 
-        # return MonthlyGrowth(interest_earned=interest)
         return {
             "balance": round(self.balance, 2),
-            "interest_earned": self.total_interest_earned,
+            "interest_earned": round(self.total_yearly_interest_earned, 2),
             "monthly_balance_history": self.monthly_balance_history,
             "monthly_interest_history": self.monthly_interest_history,
         }
     
     def process_year_end(self):
-        self.total_interest_earned = 0.0
-        self.total_employee_contributions = 0.0
-        self.total_employer_contributions = 0.0
+        self.total_yearly_interest_earned = 0.0
+        self.total_yearly_employee_contributions = 0.0
+        self.total_yearly_employer_contributions = 0.0
         self.monthly_balance_history = []
         self.monthly_interest_history = []
 
@@ -353,49 +314,16 @@ class EmployerRetirementAccountSim(AccountSimulator):
             "name": self.name,
             "variant": self.variant,
             "balance": round(self.balance, 2),
-            "annual_interest_earned": round(self.total_interest_earned, 2),
-            "total_employee_contributions": round(self.total_employee_contributions, 2),
-            "total_employer_contributions": round(self.total_employer_contributions, 2),
+            "annual_interest_earned": round(self.total_yearly_interest_earned, 2),
+            "total_employee_contributions": round(self.total_yearly_employee_contributions, 2),
+            "total_employer_contributions": round(self.total_yearly_employer_contributions, 2),
             "balance_history": self.monthly_balance_history,
             "interest_history": self.monthly_interest_history,
         }
 
-
-# acc_401k = {
-#     "source_type": "liquid",
-#     "variant": "employer_retirement",
-#     "id": "ret_1",
-#     "name": "401k",
-#     "start_age": 27,
-#     "end_age": 30,
-#     "starting_balance": 18000,
-#     "contribution_mode": "percentage",
-#     "monthly_contribution": 0,
-#     "contribution_percentage": 0.1,
-#     "expected_return": 0.07,
-#     "dividend_yield": 0.02,
-#     "dividend_reinvestment": "drip",
-#     "employer_match": 0.05,
-#     "linked_income_id": "salary_1"
-# }
-
-# acc_sim = EmployerRetirementAccountSim(EmployerRetirementAccount(**acc_401k))
-
-# monthly_employee_contribution = acc_sim.calculate_employee_contribution(145000) / 12
-# print("Employee contr: ", monthly_employee_contribution)
-# for month in range(12):
-#     acc_sim.contribute_employee(monthly_employee_contribution)
-#     acc_sim.contribute_employer(monthly_employee_contribution)
-#     res = acc_sim.process_month_end()
-#     if month == 11:
-#         print(json.dumps(res, indent=2))
-# print(json.dumps(acc_sim.snapshot(), indent=2))
-
 # ═══════════════════════════════════════════════════════════════════════════
 # INCOME SIMULATORS
 # ═══════════════════════════════════════════════════════════════════════════
-
-
 class SalaryIncomeSim:
 
     def __init__(self, income: SalaryIncome, retirement_account: EmployerRetirementAccountSim = None):
@@ -416,10 +344,6 @@ class SalaryIncomeSim:
         # State tracking
         self.current_gross_annual = self.gross_annual
         self.current_net_annual = self._calculate_net_annual_income()
-        self.total_gross_earned = 0.0
-        self.total_taxes_paid = 0.0
-        self.total_net_received = 0.0
-
         # Annual tax tracking (reset each year)
         self.annual_federal_tax = 0.0
         self.annual_fica_tax = 0.0
@@ -448,10 +372,7 @@ class SalaryIncomeSim:
         return self.current_gross_annual / 12
 
     def _calculate_monthly_taxes(self, annual_401k):
-        taxes = self.tax_service.calculate_income_taxes(
-            gross_income=self.current_gross_annual,
-            pre_tax_deductions=annual_401k,
-        )
+        taxes = self.tax_service.calculate_income_taxes(gross_income=self.current_gross_annual, pre_tax_deductions=annual_401k)
 
         return {
             "federal": taxes.federal / 12,
@@ -476,31 +397,28 @@ class SalaryIncomeSim:
         return self.retirement_account.calculate_employee_contribution(monthly_gross)
 
     def process_monthly_payroll(self) -> dict:
+        # TODO: Maybe this should be done once outside the monthly 
+        # TODO: this fucntion should just contirbute to 401k 
         monthly_gross = self._calculate_monthly_gross()
-        retirement_contribution = self._calculate_retirement_contribution(monthly_gross)
-        self._apply_retirement_contribution(retirement_contribution)
-        taxes = self._calculate_monthly_taxes(annual_401k=retirement_contribution * 12)
+        monthly_retirement_contribution = self._calculate_retirement_contribution(monthly_gross)
+        self._apply_retirement_contribution(monthly_retirement_contribution)
+        taxes = self._calculate_monthly_taxes(annual_401k=monthly_retirement_contribution * 12)
 
         # TODO: add to other helper functions 
-        taxable_income = monthly_gross - retirement_contribution
-        monthly_net = taxable_income - taxes["total"]
-
-        self.total_gross_earned += monthly_gross
-        self.total_net_received += monthly_net
-        self.total_taxes_paid += taxes["total"]
+        monthly_taxable_income = monthly_gross - monthly_retirement_contribution
+        monthly_net = monthly_taxable_income - taxes["total"]
 
         self.annual_federal_tax += taxes["federal"]
-        self.annual_fica_tax += taxes["fica"]
-        self.annual_state_tax += taxes["state"]
+        self.annual_fica_tax += taxes["fica"] # TODO: this could prob be calculated on year end and constructor 
+        self.annual_state_tax += taxes["state"] 
 
         return {
             "gross_income": round(monthly_gross, 2),
-            "taxable_income": round(taxable_income, 2),
-            "retirement_contribution": round(retirement_contribution, 2),
+            "taxable_income": round(monthly_taxable_income, 2),
+            "retirement_contribution": round(monthly_retirement_contribution, 2),
             "net_income": round(monthly_net, 2),
             "taxes": taxes,
         }
-        # return CashflowResult()
 
     def apply_growth(self) -> None:
         """Apply annual salary increase for the next year"""
@@ -579,7 +497,6 @@ class SalaryIncomeSim:
 # SIMULATION COORDINATOR
 # ═══════════════════════════════════════════════════════════════════════════
 
-
 class SimulationState:
     """Organized simulation state with typed collections"""
 
@@ -624,61 +541,68 @@ def simulate(req: SimulateRequest):
         if income["linked_401k_id"]:
             linked_retirement = retirement_by_id.get(income["linked_401k_id"])
 
-        salary_sim = SalaryIncomeSim(income=income,
-                                     retirement_account=linked_retirement)
+        salary_sim = SalaryIncomeSim(income=income, retirement_account=linked_retirement)
         state.salary_incomes.append(salary_sim)
 
     # ── SIMULATION LOOP ───────────────────────────────────────────────────────
     results = []
-    starting_net_worth = sum(acc.get_balance() for acc in state.get_all_accounts())
+    starting_net_worth = sum(acc.get_balance() for acc in state.get_all_accounts()) # TODO: sub liabilites
 
     for year_offset in range(1, req["user_end_age"] - req["user_start_age"] + 1):
-        # print(year_offset)
 
         current_age = req["user_start_age"] + year_offset
-        calendar_year = 2025 + year_offset
+        calendar_year = datetime.now().year + year_offset
 
         # active entities for this year
         active_checking = [ a for a in state.checking_accounts if a.is_active(current_age) ]
         active_retirement = [ a for a in state.retirement_accounts if a.is_active(current_age) ]
         active_salaries = [ i for i in state.salary_incomes if i.is_active(current_age) ]
 
-        year_taxes_paid = 0.0
-        year_federal_tax = 0.0
-        year_fica_tax = 0.0
-        year_state_tax = 0.0
+        total_year_taxes_paid_salary = 0.0
+        year_federal_tax_salary = 0.0 # TODO: possible rename cumulative 
+        year_fica_tax_salary = 0.0
+        year_state_tax_salary = 0.0
 
         for month in range(12):
             for salary_sim in active_salaries:
-                cashflow = salary_sim.process_monthly_payroll()
+                cashflow = salary_sim.process_monthly_payroll() # sub deductions 401k
                 # print(json.dumps(cashflow, indent=2))
                 state.primary_checking.deposit(cashflow["net_income"])
 
+            # for all one time purchases like a house would need special logic 
+                # if start year of an asset or liability (car) matches we withdraw that chunk payment from checking 
+            
+            # for all sales like a house or car
+                # if end year matches we sell that asset and deposit to checking 
+
+            # for all loans
+                # withdraw that monthly payment from the checking and pay loan 
+                # simulation will calculate principal, interest, equity, amortizaiton
+
+            # for all expenses
+                # withdraw that monthly expense from the checking
+             
             # monthly compounding for all accounts
-            for account in active_checking + active_retirement:
+            for account in active_checking + active_retirement: # loans and investments and assets 
                 growth = account.process_month_end()
                 # Could track growth here if needed
 
-        # Apply income growth BEFORE capturing year result (to show next year's starting values)
-        for salary_sim in active_salaries:
-            salary_sim.apply_growth()
+        checking_account_snapshots = [acc.snapshot() for acc in active_checking]
+        retirement_account_snapshots = [acc.snapshot() for acc in active_retirement]
+        salary_snapshots = [sim.snapshot() for sim in active_salaries]  
 
-        # Capture year-end values (with accumulated taxes and next year's income)
-        total_gross_income = sum(sim.current_gross_annual for sim in active_salaries)
-        year_federal_tax = round(sum(salary.snapshot()["taxes"]["federal"] for salary in active_salaries), 2)
-        year_fica_tax = round(sum(salary.snapshot()["taxes"]["fica"] for salary in active_salaries), 2)
-        year_state_tax = round(sum(salary.snapshot()["taxes"]["state"] for salary in active_salaries), 2)
-        year_taxes_paid = round(year_federal_tax + year_fica_tax + year_state_tax, 2)
-        
-        total_cash = sum(acc.get_balance() for acc in active_checking)
-        total_net_worth = sum(acc.get_balance() for acc in active_checking + active_retirement) # TODO: subtract liabilities
-        
-        # print(round(year_federal_tax, 2), round(year_fica_tax, 2), round(year_state_tax, 2), round(year_taxes_paid, 2))
-    
-        account_snapshots = [acc.snapshot() for acc in active_checking + active_retirement]
-        income_snapshots = [sim.snapshot() for sim in active_salaries]
+        total_gross_salary_income = sum(salary["gross_annual"] for salary in salary_snapshots)  
+        total_net_salary_income = sum(salary["net_annual"] for salary in salary_snapshots)
 
-        # Net worth change
+        year_federal_tax_salary = round(sum(salary["taxes"]["federal"] for salary in salary_snapshots), 2)
+        year_fica_tax_salary = round(sum(salary["taxes"]["fica"] for salary in salary_snapshots), 2)
+        year_state_tax_salary = round(sum(salary["taxes"]["state"] for salary in salary_snapshots), 2)
+        total_year_taxes_paid_salary = round(year_federal_tax_salary + year_fica_tax_salary + year_state_tax_salary, 2)
+        effective_tax_rate = (total_year_taxes_paid_salary / total_gross_salary_income * 100) if total_gross_salary_income > 0 else 0
+
+        total_cash = sum(acc.get_balance() for acc in active_checking + active_retirement)
+        total_net_worth = sum(acc.get_balance() for acc in active_checking + active_retirement) # TODO: later - subtract liabilities
+
         if results:
             prev_year_net_worth = results[-1]["net_worth"]
             net_worth_change = total_net_worth - prev_year_net_worth
@@ -687,30 +611,33 @@ def simulate(req: SimulateRequest):
             net_worth_change = total_net_worth - starting_net_worth
             net_worth_change_pct = (net_worth_change / starting_net_worth * 100) if starting_net_worth != 0 else 0
 
-        effective_tax_rate = (year_taxes_paid / total_gross_income * 100) if total_gross_income > 0 else 0
 
         accounts_summary = {
             "total_balance": total_cash,
-            "total_interest_earned": sum( s.get("annual_interest_earned", 0) for s in account_snapshots ),
+            "total_interest_earned": sum(acc["annual_interest_earned"] for acc in checking_account_snapshots + retirement_account_snapshots),#this works for now bc both return types contain "annual_interest_earned" keys
             "by_variant": {
-                "checking": sum(checking_acc.snapshot()["balance"] for checking_acc in active_checking), # Store snapshots for all variants instead of calling .snapshot() multiple times print(json.dumps(sum([acc['balance'] for acc in account_snapshots]),indent=2))
-                "employer_retirement": sum(retirement_acc.snapshot()["balance"] for retirement_acc in active_retirement),
+                "checking": sum(acc["balance"] for acc in checking_account_snapshots),
+                "employer_retirement": sum(acc["balance"] for acc in retirement_account_snapshots),
                 "taxable_investments": 0.0,
             },
-            "accounts": account_snapshots,
+            "accounts": checking_account_snapshots + retirement_account_snapshots,
         }
 
         incomes_summary = {
-            "total_annual_income": total_gross_income,
-            "total_cashflow": sum(s["net_annual"] for s in income_snapshots),
+            "total_gross_income": total_gross_salary_income,
+            "total_net_income": sum(s["net_annual"] for s in salary_snapshots),
             "active_sources": len(active_salaries),
             "by_variant": {
-                "salary": sum(salary.snapshot()["gross_annual"] for salary in active_salaries),
+                "salary": total_gross_salary_income,
                 "hourly": 0.0,
                 "side": 0.0,
             },
-            "incomes": income_snapshots,
+            "incomes": salary_snapshots,
         }
+
+        # Apply salary growth
+        for salary_sim in active_salaries:
+            salary_sim.apply_growth()
 
         year_result = {
             "year": calendar_year,
@@ -719,12 +646,16 @@ def simulate(req: SimulateRequest):
             "net_worth_change": round(net_worth_change, 2),
             "net_worth_change_percent": round(net_worth_change_pct, 2),
             "total_cash": round(total_cash, 2),
-            "total_income": round(total_gross_income, 2),
-            "total_taxes_paid": round(year_taxes_paid, 2),
-            "total_federal_tax": round(year_federal_tax, 2),
-            "total_fica_tax": round(year_fica_tax, 2),
-            "total_state_tax": round(year_state_tax, 2),
-            "effective_tax_rate": round(effective_tax_rate, 2),
+            "income_earned": {
+                "gross": round(total_gross_salary_income, 2),
+                "net": round(total_net_salary_income, 2),
+                "taxes_paid": round(total_year_taxes_paid_salary, 2),
+                "federal_tax": round(year_federal_tax_salary, 2),
+                "fica_tax": round(year_fica_tax_salary, 2),
+                "state_tax": round(year_state_tax_salary, 2),
+                "effective_tax_rate": round(effective_tax_rate, 2),
+            },
+            "current_gross_income": sum(salary.current_gross_annual for salary in active_salaries),
             "accounts_summary": accounts_summary,
             "incomes_summary": incomes_summary,
         }
@@ -748,7 +679,7 @@ def simulate(req: SimulateRequest):
         "ending_net_worth": round(results[-1]["net_worth"] if results else 0, 2),
         "peak_net_worth": round( max(r["net_worth"] for r in results) if results else 0, 2),
         "peak_net_worth_age": results[max(range(len(results)), key = lambda i: results[i]["net_worth"])]["age"] if results else 0,
-        "total_income_lifetime": round(sum(r["total_income"] for r in results), 2),
+        "total_income_lifetime": round(sum(r["income_earned"]["gross"] for r in results), 2),
         # "total_expenses_lifetime": round(sum(r["total_expenses"] for r in results), 2),
         # "net_lifetime_cashflow": round(sum(r["net_income"] for r in results), 2),
         # "years_with_negative_cashflow": sum(1 for r in results if r["net_income"] < 0),
@@ -759,19 +690,9 @@ def simulate(req: SimulateRequest):
     net_worth_trend = [r["net_worth"] for r in results]
     cash_trend = [r["total_cash"] for r in results]
     # assets_trend = [r["total_assets"] for r in results]
-    annual_income_trend = [r["total_income"] for r in results]
+    annual_income_trend = [r["current_gross_income"] for r in results]
     # annual_expenses_trend = [r["total_expenses"] for r in results]
 
-    # print(json.dumps({
-    #     "total_years_simulated": req["user_end_age"] - req["user_start_age"],
-    #     "request": req,
-    #     "metrics": metrics,
-    #     "year_results": results,
-    #     "net_worth_trend": net_worth_trend,
-    #     "cash_trend": cash_trend,
-    #     "annual_income_trend": annual_income_trend,
-    # },indent=2))
-    # return
     return {
         "total_years_simulated": req["user_end_age"] - req["user_start_age"],
         "request": req,
@@ -784,88 +705,84 @@ def simulate(req: SimulateRequest):
 
 
 
-# ═══════════════════════════════════════════════════════════════════════════
-# EXAMPLE USAGE
-# ═══════════════════════════════════════════════════════════════════════════
-
 # if __name__ == "__main__":
-    req = {
-        "user_start_age": 25,
-        "user_end_age": 27,
-        "filing_status": "single",
-        "state": "MI",
-        "accounts": {
-            "checking": [{
-                "source_type":
-                "liquid",
-                "variant":
-                "checking",
-                "id":
-                "acc_1",
-                "name":
-                "Checking Account",
-                "start_age":
-                25,
-                "end_age":
-                27,
-                "starting_balance":
-                10000,
-                "interest_tiers": [{
-                    "threshold": 15000,
-                    "annual_rate": 0.0
-                }, {
-                    "threshold": 100000,
-                    "annual_rate": 0.03
-                }, {
-                    "threshold": 300000,
-                    "annual_rate": 0.04
-                }]
-            }],
-            "taxable_investments": [],
-            "employer_retirement": [{
-                "source_type": "liquid",
-                "variant": "employer_retirement",
-                "id": "401k_1",
-                "name": "salary 401",
-                "start_age": 25,
-                "end_age": 27,
-                "starting_balance": 0,
-                "contribution_mode": "percentage",
-                "monthly_contribution": 833.33,
-                "contribution_percentage": 0.10,
-                "expected_return": 0.1,
-                "employer_match": 0.05,
-                "linked_income_id": "salary_1"
-            }]
-        },
-        "incomes": {
-            "salary": [{
-                "id": "salary_1",
-                "source_type": "income",
-                "variant": "salary",
-                "name": "Software Engineer",
-                "start_age": 25,
-                "end_age": 27,
-                "gross_income": 100000,
-                "income_growth": 0.03,
-                "linked_401k_id": "401k_1",
-            }],
-            "hourly": [],
-            "side": []
-        },
-        "expenses": {
-            "living": [],
-            "rent": [],
-            "house_loan": [],
-            "car_loan": [],
-            "debt": []
-        },
-        "assets": {
-            "house": [],
-            "car": []
-        }
-    }
+    # req = {
+    #     "user_start_age": 25,
+    #     "user_end_age": 27,
+    #     "filing_status": "single",
+    #     "state": "MI",
+    #     "accounts": {
+    #         "checking": [{
+    #             "source_type":
+    #             "liquid",
+    #             "variant":
+    #             "checking",
+    #             "id":
+    #             "acc_1",
+    #             "name":
+    #             "Checking Account",
+    #             "start_age":
+    #             25,
+    #             "end_age":
+    #             27,
+    #             "starting_balance":
+    #             10000,
+    #             "interest_tiers": [{
+    #                 "threshold": 15000,
+    #                 "annual_rate": 0.0
+    #             }, {
+    #                 "threshold": 100000,
+    #                 "annual_rate": 0.03
+    #             }, {
+    #                 "threshold": 300000,
+    #                 "annual_rate": 0.04
+    #             }]
+    #         }],
+    #         "taxable_investments": [],
+    #         "employer_retirement": [{
+    #             "source_type": "liquid",
+    #             "variant": "employer_retirement",
+    #             "id": "401k_1",
+    #             "name": "salary 401",
+    #             "start_age": 25,
+    #             "end_age": 27,
+    #             "starting_balance": 0,
+    #             "contribution_mode": "percentage",
+    #             "monthly_contribution": 833.33,
+    #             "contribution_percentage": 0.10,
+    #             "expected_return": 0.1,
+    #             "employer_match": 0.05,
+    #             "linked_income_id": "salary_1"
+    #         }]
+    #     },
+    #     "incomes": {
+    #         "salary": [{
+    #             "id": "salary_1",
+    #             "source_type": "income",
+    #             "variant": "salary",
+    #             "name": "Software Engineer",
+    #             "start_age": 25,
+    #             "end_age": 27,
+    #             "gross_income": 100000,
+    #             "income_growth": 0.03,
+    #             "linked_401k_id": "401k_1",
+    #         }],
+    #         "hourly": [],
+    #         "side": []
+    #     },
+    #     "expenses": {
+    #         "living": [],
+    #         "rent": [],
+    #         "house_loan": [],
+    #         "car_loan": [],
+    #         "debt": []
+    #     },
+    #     "assets": {
+    #         "house": [],
+    #         "car": []
+    #     }
+    # }
 
-    result = simulate(req)
-    # print(json.dumps(result, indent=2))
-    # print(f"Simulation complete: {result['total_years_simulated']} years")
+    # result = simulate(req)
+    # # print(json.dumps(result, indent=2))
+    # # print(f"Simulation complete: {result['total_years_simulated']} years")

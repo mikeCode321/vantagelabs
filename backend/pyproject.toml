@@ -11,8 +11,3 @@ dependencies = [
     "python-dotenv",
     "alembic",
 ]
-
-
-[style]
-based_on_style = yapf
-column_limit = 520

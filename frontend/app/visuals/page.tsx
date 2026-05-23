@@ -15,6 +15,8 @@ import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewe
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
+import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
+
 type SimRequest = {
   user_start_age: number;
   user_end_age: number;
@@ -836,7 +838,7 @@ export default function Dashboard() {
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
 
         <SimulationControls state={state} setSimResult={setSimResult} />
-        <NetWorthStackedChart simResult={simResult} />
+        <IncomeGrowthChart />
         <SimResultViewer simResult={simResult} />
 
         <ToastBanner toasts={toasts} setToasts={setToasts} />

@@ -65,7 +65,7 @@ class AccountSimulator(ABC):
 
     def is_active(self, age: int) -> bool:
         """Check if account is active at given age"""
-        return self.start_age <= age <= self.end_age
+        return self.start_age <= age < self.end_age
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -348,7 +348,7 @@ class SalaryIncomeSim:
         self.current_net_annual = self.current_gross_annual - self.annual_401k_contributions - self.annual_total_tax
 
     def is_active(self, age: int) -> bool:
-        return self.start_age <= age <= self.end_age
+        return self.start_age <= age < self.end_age
     
     def _apply_retirement_contribution(self, contribution, monthly_gross):
         if not self.retirement_account:
@@ -497,15 +497,15 @@ def simulate(req: SimulateRequest):
     # ── SIMULATION LOOP ───────────────────────────────────────────────────────
     results = []
     starting_net_worth = sum(acc.get_balance() for acc in state.get_all_accounts()) # TODO: sub liabilites
-
-    for year_offset in range(1, req["user_end_age"] - req["user_start_age"] + 1):
-        current_age = req["user_start_age"] + year_offset
-        calendar_year = datetime.now().year + year_offset
+    
+    for year_offset in range(0, req["user_end_age"] - req["user_start_age"]):
+        current_age = req["user_start_age"] + year_offset # 25 + 0,1,2 = 25,26,27
+        calendar_year = datetime.now().year + year_offset # 2026 + 0,1,2 = 2026,2027,2028
 
         # active entities for this year
-        active_checking = [ a for a in state.checking_accounts if a.is_active(current_age) ]
-        active_retirement = [ a for a in state.retirement_accounts if a.is_active(current_age) ]
-        active_salaries = [ i for i in state.salary_incomes if i.is_active(current_age) ]
+        active_checking = [a for a in state.checking_accounts if a.is_active(current_age)]
+        active_retirement = [a for a in state.retirement_accounts if a.is_active(current_age)]
+        active_salaries = [i for i in state.salary_incomes if i.is_active(current_age)]
 
         for month in range(12):
             for salary_sim in active_salaries:

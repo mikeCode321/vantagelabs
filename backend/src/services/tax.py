@@ -7,6 +7,10 @@ STANDARD_DEDUCTION = {
     "head_of_household": 23625,
 }
 
+SOCIAL_SECURITY_WAGE_BASE = 176_100
+SOCIAL_SECURITY_RATE = 0.062
+MEDICARE_RATE = 0.0145
+
 
 class TaxService:
 
@@ -15,7 +19,10 @@ class TaxService:
         self.state = state
 
     def calculate_fica(self, income) -> float:
-        return income * 0.0765
+        ss_taxable = min(income, SOCIAL_SECURITY_WAGE_BASE)
+        ss_tax = ss_taxable * SOCIAL_SECURITY_RATE
+        medicare_tax = income * MEDICARE_RATE
+        return ss_tax + medicare_tax
 
     def calculate_state_tax(self, income) -> float:
         state_rates = {

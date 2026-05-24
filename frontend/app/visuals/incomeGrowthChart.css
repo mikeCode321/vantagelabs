@@ -159,6 +159,12 @@
   gap: 4px;
 }
 
+.income-chart-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
 .income-pill-group-label {
   font-size: 10px;
   font-weight: 600;

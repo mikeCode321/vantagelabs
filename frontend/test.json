@@ -1,0 +1,502 @@
+{
+  "total_years_simulated": 3,
+  "request": {
+    "user_start_age": 25,
+    "user_end_age": 28,
+    "start_year": 2026,
+    "filing_status": "single",
+    "state": "MI",
+    "accounts": {
+      "checking": [
+        {
+          "source_type": "liquid",
+          "variant": "checking",
+          "id": "acc_1",
+          "name": "Checking Account",
+          "start_age": 25,
+          "end_age": 28,
+          "starting_balance": 10000,
+          "interest_tiers": [
+            {
+              "threshold": 15000,
+              "annual_rate": 0
+            },
+            {
+              "threshold": 100000,
+              "annual_rate": 0.03
+            },
+            {
+              "threshold": 300000,
+              "annual_rate": 0.04
+            }
+          ]
+        }
+      ],
+      "taxable_investments": [],
+      "employer_retirement": [
+        {
+          "source_type": "liquid",
+          "variant": "employer_retirement",
+          "id": "401k_1",
+          "name": "salary 401",
+          "start_age": 25,
+          "end_age": 28,
+          "starting_balance": 0,
+          "contribution_mode": "percentage",
+          "monthly_contribution": 0,
+          "contribution_percentage": 0.5,
+          "expected_return": 0.1,
+          "dividend_yield": 0.02,
+          "dividend_reinvestment": "drip",
+          "employer_match_rate": 0.5,
+          "employer_match_limit": 0.1,
+          "linked_income_id": "salary_1"
+        }
+      ]
+    },
+    "incomes": {
+      "salary": [
+        {
+          "source_type": "income",
+          "variant": "salary",
+          "id": "salary_1",
+          "name": "Software Engineer",
+          "start_age": 25,
+          "end_age": 26,
+          "gross_income": 100000,
+          "income_growth": 0.03,
+          "linked_401k_id": "401k_1"
+        },
+        {
+          "source_type": "income",
+          "variant": "salary",
+          "id": "salary_2",
+          "name": "Software Engineer 2",
+          "start_age": 26,
+          "end_age": 28,
+          "gross_income": 400000,
+          "income_growth": 0.03,
+          "linked_401k_id": ""
+        }
+      ],
+      "hourly": [],
+      "side": []
+    },
+    "expenses": {
+      "living": [],
+      "rent": [],
+      "house_loan": [],
+      "car_loan": [],
+      "debt": []
+    },
+    "assets": {
+      "house": [],
+      "car": []
+    }
+  },
+  "metrics": {
+    "total_years": 3,
+    "starting_net_worth": 10000,
+    "ending_net_worth": 660580.62,
+    "peak_net_worth": 660580.62,
+    "peak_net_worth_age": 28,
+    "total_income_lifetime": 912000,
+    "lowest_cash_balance_year": 2027,
+    "lowest_cash_balance": 97185.32
+  },
+  "year_results": [
+    {
+      "year": 2027,
+      "age": 26,
+      "net_worth": 97185.32,
+      "net_worth_change": 87185.32,
+      "net_worth_change_percent": 871.85,
+      "total_cash": 97185.32,
+      "income_earned": {
+        "gross": 100000,
+        "net": 56321,
+        "taxes_paid": 20179,
+        "federal_tax": 8279,
+        "fica_tax": 7650,
+        "state_tax": 4250,
+        "effective_tax_rate": 20.18
+      },
+      "current_gross_income": 103000,
+      "accounts_summary": {
+        "total_balance": 97185.32482349777,
+        "total_interest_earned": 2364.29,
+        "by_variant": {
+          "checking": 67093.41,
+          "employer_retirement": 30091.92,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 67093.41,
+            "annual_interest_earned": 772.37,
+            "balance_history": [
+              14693.42,
+              19397.8071,
+              24113.955167750002,
+              28841.89360566938,
+              33581.65188968355,
+              38333.25956940775,
+              43096.74626833127,
+              47872.1416840021,
+              52659.4755882121,
+              57458.77782718263,
+              62270.07832175059,
+              67093.40706755497
+            ],
+            "interest_history": [
+              0,
+              10.9671,
+              22.728067750000008,
+              34.51843791937501,
+              46.33828401417344,
+              58.18767972420886,
+              70.06669892351938,
+              81.97541567082817,
+              93.91390421000524,
+              105.88223897053025,
+              117.88049456795657,
+              129.90874580437648
+            ]
+          },
+          {
+            "id": "401k_1",
+            "name": "salary 401",
+            "variant": "employer_retirement",
+            "balance": 30091.92,
+            "annual_interest_earned": 1591.92,
+            "total_employee_contributions": 23500,
+            "total_employer_contributions": 5000,
+            "balance_history": [
+              2394.7916666666665,
+              4809.539930555556,
+              7244.411096643518,
+              9699.572855782215,
+              12175.194296247068,
+              14671.44591538246,
+              17188.49963134398,
+              19726.528794938513,
+              22285.708201563,
+              24866.21410324269,
+              27468.224220769713,
+              30091.917755942795
+            ],
+            "interest_history": [
+              19.791666666666668,
+              39.74826388888889,
+              59.87116608796296,
+              80.16175913869598,
+              100.62144046485179,
+              121.25161913539223,
+              142.0537159615205,
+              163.02916359453317,
+              184.1794066244876,
+              205.50590167969168,
+              227.01011752702243,
+              248.69353517308093
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 100000,
+        "total_net_income": 56321,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 100000,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_1",
+            "name": "Software Engineer",
+            "variant": "salary",
+            "gross_annual": 100000,
+            "net_annual": 56321,
+            "annual_401k_contributions": 23500,
+            "taxes": {
+              "federal": 8279,
+              "fica": 7650,
+              "state": 4250
+            }
+          }
+        ]
+      }
+    },
+    {
+      "year": 2028,
+      "age": 27,
+      "net_worth": 369601.59,
+      "net_worth_change": 272416.27,
+      "net_worth_change_percent": 280.31,
+      "total_cash": 369601.59,
+      "income_earned": {
+        "gross": 400000,
+        "net": 262247.05,
+        "taxes_paid": 137752.95,
+        "federal_tax": 104034.75,
+        "fica_tax": 16718.2,
+        "state_tax": 17000,
+        "effective_tax_rate": 34.44
+      },
+      "current_gross_income": 412000,
+      "accounts_summary": {
+        "total_balance": 369601.59210976807,
+        "total_interest_earned": 10169.23,
+        "by_variant": {
+          "checking": 336358.66,
+          "employer_retirement": 33242.93,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 336358.66,
+            "annual_interest_earned": 7018.21,
+            "balance_history": [
+              89132.19538522387,
+              111235.23576984128,
+              133411.95295574074,
+              155662.59253225985,
+              177987.40090736738,
+              200386.62531039194,
+              222860.5137947599,
+              245409.31524074243,
+              268033.2793582116,
+              290732.6566894056,
+              313507.69861170364,
+              336358.6573404093
+            ],
+            "interest_history": [
+              184.86831766888744,
+              249.12038461741287,
+              322.79718589947095,
+              396.7195765191358,
+              470.8883751075329,
+              545.304403024558,
+              619.9684843679731,
+              694.881445982533,
+              770.0441174691415,
+              845.4573311940387,
+              921.1219222980187,
+              997.0387287056789
+            ]
+          },
+          {
+            "id": "401k_1",
+            "name": "salary 401",
+            "variant": "employer_retirement",
+            "balance": 33242.93,
+            "annual_interest_earned": 3151.02,
+            "total_employee_contributions": 0,
+            "total_employer_contributions": 0,
+            "balance_history": [
+              30342.683737242318,
+              30595.53943505267,
+              30850.502263678107,
+              31107.58978254209,
+              31366.819697396608,
+              31628.209861541578,
+              31891.778277054425,
+              32157.54309602988,
+              32425.52262183013,
+              32695.73531034538,
+              32968.199771264924,
+              33242.9347693588
+            ],
+            "interest_history": [
+              250.7659812995233,
+              252.85569781035264,
+              254.9628286254389,
+              257.0875188639842,
+              259.2299148545174,
+              261.3901641449717,
+              263.56841551284646,
+              265.7648189754535,
+              267.979525800249,
+              270.21268851525105,
+              272.4644609195448,
+              274.73499809387437
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 400000,
+        "total_net_income": 262247.05,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 400000,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_2",
+            "name": "Software Engineer",
+            "variant": "salary",
+            "gross_annual": 400000,
+            "net_annual": 262247.05,
+            "annual_401k_contributions": 0,
+            "taxes": {
+              "federal": 104034.75,
+              "fica": 16718.2,
+              "state": 17000
+            }
+          }
+        ]
+      }
+    },
+    {
+      "year": 2029,
+      "age": 28,
+      "net_worth": 660580.62,
+      "net_worth_change": 290979.03,
+      "net_worth_change_percent": 78.73,
+      "total_cash": 660580.62,
+      "income_earned": {
+        "gross": 412000,
+        "net": 269363.05,
+        "taxes_paid": 142636.95,
+        "federal_tax": 108234.75,
+        "fica_tax": 16892.2,
+        "state_tax": 17510,
+        "effective_tax_rate": 34.62
+      },
+      "current_gross_income": 424360,
+      "accounts_summary": {
+        "total_balance": 660580.6200575758,
+        "total_interest_earned": 21615.99,
+        "by_variant": {
+          "checking": 623856.72,
+          "employer_retirement": 36723.9,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 623856.72,
+            "annual_interest_earned": 18135.02,
+            "balance_history": [
+              359880.76259821065,
+              383481.274873538,
+              407160.45552311646,
+              430918.56677486014,
+              454755.8717307763,
+              478672.6343698789,
+              502669.1195511118,
+              526745.5930162822,
+              550902.3213930032,
+              575139.5721976466,
+              599457.6138383055,
+              623856.7156177665
+            ],
+            "interest_history": [
+              1075.1852578013643,
+              1153.592275327369,
+              1232.26064957846,
+              1311.1912517437215,
+              1390.3849559162004,
+              1469.8426391025878,
+              1549.5651812329297,
+              1629.5534651703729,
+              1709.808376720941,
+              1790.3308046433444,
+              1871.1216406588223,
+              1952.1817794610186
+            ]
+          },
+          {
+            "id": "401k_1",
+            "name": "salary 401",
+            "variant": "employer_retirement",
+            "balance": 36723.9,
+            "annual_interest_earned": 3480.97,
+            "total_employee_contributions": 0,
+            "total_employer_contributions": 0,
+            "balance_history": [
+              33519.95922577012,
+              33799.29221931821,
+              34080.952987812525,
+              34364.96092937763,
+              34651.33560378911,
+              34940.09673382069,
+              35231.26420660253,
+              35524.85807499089,
+              35820.89855894914,
+              36119.406046940385,
+              36420.40109733155,
+              36723.90443980932
+            ],
+            "interest_history": [
+              277.02445641132334,
+              279.33299354808435,
+              281.6607684943184,
+              284.0079415651044,
+              286.37467441148027,
+              288.76113003157593,
+              291.1674727818391,
+              293.5938683883544,
+              296.04048395825737,
+              298.50748799124284,
+              300.99505039116985,
+              303.50334247776294
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 412000,
+        "total_net_income": 269363.05,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 412000,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_2",
+            "name": "Software Engineer",
+            "variant": "salary",
+            "gross_annual": 412000,
+            "net_annual": 269363.05,
+            "annual_401k_contributions": 0,
+            "taxes": {
+              "federal": 108234.75,
+              "fica": 16892.2,
+              "state": 17510
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "net_worth_trend": [
+    97185.32,
+    369601.59,
+    660580.62
+  ],
+  "cash_trend": [
+    97185.32,
+    369601.59,
+    660580.62
+  ],
+  "annual_income_trend": [
+    103000,
+    412000,
+    424360
+  ]
+}

@@ -146,6 +146,26 @@
     color: #6b7280;
     font-size: 0.82rem;
   }
+
+  .income-chart-pill-groups {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+
+.income-pill-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.income-pill-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9CA3AF;
+}
   
   @media (max-width: 900px) {
     .income-chart-header {

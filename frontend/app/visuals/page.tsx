@@ -932,6 +932,7 @@ export default function Dashboard() {
   const [simResult, setSimResult] = useState<SimYearResult[]>([]);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
     const id = crypto.randomUUID();
@@ -1014,28 +1015,45 @@ export default function Dashboard() {
 
   return (
     <div className="dash-root">
-      <aside className="dash-sidebar">
+      <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
         <div className="dash-sidebar-inner">
-          <div className="dash-logo">
-            <Image
-              src="/vantage_logo_transparent.svg"
-              alt="Vantage"
-              width={120}
-              height={40}
-              className="dash-logo-img"
-              priority
-            />
+
+          <div className="dash-sidebar-header">
+            <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
+              <Image
+                src="/vantage_logo_transparent.svg"
+                alt="Vantage"
+                width={120}
+                height={40}
+                className="dash-logo-img"
+                priority
+              />
+            </div>
+            <button
+              type="button"
+              className="dash-collapse-btn"
+              onClick={() => setSidebarCollapsed(c => !c)}
+              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <svg
+                className={`dash-collapse-icon${sidebarCollapsed ? " dash-collapse-icon--flipped" : ""}`}
+                width="16" height="16" viewBox="0 0 16 16" fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </div>
 
           <nav className="dash-nav" aria-label="Dashboard navigation">
-            <a href="/testing" className="dash-nav-item">
+            <a href="/testing" className="dash-nav-item" title="Testing Grounds">
               <span className="dash-nav-icon">▦</span>
-              <span>Testing Grounds</span>
+              <span className="dash-nav-label">Testing Grounds</span>
             </a>
 
-            <a href="#" className="dash-nav-item">
+            <a href="#" className="dash-nav-item" title="Testing Visuals">
               <span className="dash-nav-icon">◔</span>
-              <span>Testing Visuals</span>
+              <span className="dash-nav-label">Testing Visuals</span>
             </a>
           </nav>
 
@@ -1043,6 +1061,7 @@ export default function Dashboard() {
             type="button"
             className="dash-feedback-card"
             onClick={() => setIsFeedbackOpen(true)}
+            title="Leave feedback"
           >
             <span className="dash-feedback-icon">✦</span>
             <span className="dash-feedback-copy">

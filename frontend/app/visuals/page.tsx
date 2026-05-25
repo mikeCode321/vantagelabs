@@ -18,6 +18,8 @@ import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewe
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
+import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
+
 import {
   FinancialOverviewCards,
   OverviewCard,
@@ -1061,8 +1063,14 @@ export default function Dashboard() {
 
         <SimulationControls state={state} setSimResult={setSimResult} />
 
-        <IncomeGrowthChart />
-        <SimResultViewer simResult={simResult} />
+        <section className="simulation-results-grid">
+          <div className="simulation-results-grid__main">
+            <IncomeGrowthChart />
+            <SimResultViewer simResult={simResult} />
+          </div>
+
+          <SimulationHighlights data={testData} />
+        </section>
 
         <ToastBanner toasts={toasts} setToasts={setToasts} />
       </main>

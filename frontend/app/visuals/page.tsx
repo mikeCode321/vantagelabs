@@ -261,6 +261,7 @@ const INITIAL_STATE: SimRequest = {
 };
 // our sim_request
 const LOCAL_STORAGE_KEY = "sim_request";
+const ENABLE_LOCAL_STORAGE_PERSISTENCE = true;
 
 // ENTITY DATA:
 const ENTITY_CONFIG = {
@@ -1024,6 +1025,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     try {
+      if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) {
+        return;
+      }
       const savedRequest = localStorage.getItem(LOCAL_STORAGE_KEY);
   
       if (savedRequest) {
@@ -1043,6 +1047,7 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return;
     if (!hasHydrated) return;
   
     try {

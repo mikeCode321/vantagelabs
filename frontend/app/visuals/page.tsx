@@ -60,6 +60,7 @@ type SimRequest = {
 };
 
 type Action =
+  | { type: "HYDRATE_FROM_LOCAL_STORAGE"; payload: SimRequest }
   | { type: "ADD_ACCOUNT"; payload: LiquidAccount }
   | { type: "UPDATE_ACCOUNT"; payload: LiquidAccount }
   | { type: "DELETE_ACCOUNT"; payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" } }
@@ -76,6 +77,9 @@ type Action =
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
+    case "HYDRATE_FROM_LOCAL_STORAGE": {
+      return action.payload;
+    }
     case "ADD_ACCOUNT": {
       const account = action.payload;
       const variant: "checking" | "taxable_investments" | "employer_retirement" = account.variant;
@@ -255,6 +259,8 @@ const INITIAL_STATE: SimRequest = {
     car: [],
   },
 };
+// our sim_request
+const LOCAL_STORAGE_KEY = "sim_request";
 
 // ENTITY DATA:
 const ENTITY_CONFIG = {
@@ -931,6 +937,7 @@ export function FinancialEntities({ state, dispatch, onToast }) {
 export default function Dashboard() {
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
+  const [hasHydrated, setHasHydrated] = useState(false);
   const [simResult, setSimResult] = useState<SimYearResult[]>([]);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -1014,6 +1021,36 @@ export default function Dashboard() {
       direction: "neutral",
     },
   ];
+
+  useEffect(() => {
+    try {
+      const savedRequest = localStorage.getItem(LOCAL_STORAGE_KEY);
+  
+      if (savedRequest) {
+        const parsedRequest = JSON.parse(savedRequest) as SimRequest;
+  
+        dispatch({
+          type: "HYDRATE_FROM_LOCAL_STORAGE",
+          payload: parsedRequest,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load saved simulation request:", error);
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    } finally {
+      setHasHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydrated) return;
+  
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {
+      console.error("Failed to save simulation request:", error);
+    }
+  }, [state, hasHydrated]);
 
   return (
     <div className="dash-root">

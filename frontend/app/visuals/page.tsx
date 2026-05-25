@@ -1,6 +1,9 @@
 "use client";
 import "./dashboard.css";
 import { SIM_MAX } from "@/app/testing/constants";
+
+import testData from "@/test.json";
+
 import { useState, useReducer, useEffect, useRef } from "react";
 
 import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/accounts";
@@ -778,6 +781,84 @@ export function FinancialEntities({ state, dispatch, onToast }) {
   );
 }
 
+type OverviewCardTone = "purple" | "green" | "blue" | "orange";
+
+type OverviewCard = {
+  id: string;
+  label: string;
+  value: string;
+  change: string;
+  changeLabel: string;
+  meta: string;
+  icon: string;
+  tone: OverviewCardTone;
+};
+
+function FinancialOverviewCard({ card }: { card: OverviewCard }) {
+  return (
+    <article className={`overview-card overview-card--${card.tone}`}>
+      <div className="overview-card__top">
+        <div className="overview-card__icon">{card.icon}</div>
+
+        <div className="overview-card__content">
+          <p className="overview-card__label">{card.label}</p>
+          <div className="overview-card__value-row">
+            <h3 className="overview-card__value">{card.value}</h3>
+            <div className="overview-card__change">
+              <span>{card.change}</span>
+              <small>{card.changeLabel}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="overview-card__divider" />
+
+      <p className="overview-card__meta">{card.meta}</p>
+    </article>
+  );
+}
+
+function FinancialOverviewCards({ cards }: { cards: OverviewCard[] }) {
+  return (
+    <section className="overview-cards">
+      {cards.map((card) => (
+        <FinancialOverviewCard key={card.id} card={card} />
+      ))}
+    </section>
+  );
+}
+
+
+//helper functions for the Financial Overview cards
+
+function formatCompactMoney(value: number) {
+  const abs = Math.abs(value);
+
+  if (abs >= 1_000_000) {
+    return `$${(value / 1_000_000).toFixed(2)}M`;
+  }
+
+  if (abs >= 1_000) {
+    return `$${(value / 1_000).toFixed(2)}K`;
+  }
+
+  return `$${value.toFixed(2)}`;
+}
+
+function formatSignedPercent(value: number) {
+  const sign = value >= 0 ? "+" : "";
+  return `${sign}${value.toFixed(1)}%`;
+}
+
+function getPercentChange(start: number, end: number) {
+  if (!start) return 0;
+  return ((end - start) / start) * 100;
+}
+
+
+
+
 export default function Dashboard() {
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
@@ -795,6 +876,68 @@ export default function Dashboard() {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 7000);
   };
+
+
+  const firstYear = testData.year_results[0];
+  const lastYear = testData.year_results[testData.year_results.length - 1];
+
+  const startingNetWorth = testData.metrics.starting_net_worth;
+  const endingNetWorth = testData.metrics.ending_net_worth;
+
+  const totalAssets =
+    0;
+
+  const totalLiabilities = 0;
+
+  const annualCashFlow =
+    lastYear.income_earned.net - totalLiabilities;
+
+  const overviewCards: OverviewCard[] = [
+    {
+      id: "net-worth",
+      label: "Net Worth",
+      value: formatCompactMoney(endingNetWorth),
+      change: formatSignedPercent(getPercentChange(startingNetWorth, endingNetWorth)),
+      changeLabel: "vs start",
+      meta: "lol",
+      icon: "⌁",
+      tone: "purple",
+    },
+    {
+      id: "cash-flow",
+      label: "Cash Flow (Annual)",
+      value: formatCompactMoney(annualCashFlow),
+      change: formatSignedPercent(
+        getPercentChange(firstYear.income_earned.net, lastYear.income_earned.net)
+      ),
+      changeLabel: "vs first year",
+      meta: `Inflows ${formatCompactMoney(lastYear.income_earned.gross)} · Taxes ${formatCompactMoney(
+        lastYear.income_earned.taxes_paid
+      )}`,
+      icon: "$",
+      tone: "green",
+    },
+    {
+      id: "total-assets",
+      label: "Total Assets",
+      value: formatCompactMoney(totalAssets),
+      change: '0',// formatSignedPercent(getPercentChange(startingNetWorth, totalAssets)),
+      changeLabel: "vs start",
+      meta: `${lastYear.accounts_summary.accounts.length} accounts`,
+      icon: "◔",
+      tone: "blue",
+    },
+    {
+      id: "total-liabilities",
+      label: "Total Liabilities",
+      value: formatCompactMoney(totalLiabilities),
+      change: "+0.0%",
+      changeLabel: "vs start",
+      meta: "0 liabilities",
+      icon: "▭",
+      tone: "orange",
+    },
+  ];
 
   return (
     <div className="dash-root">
@@ -824,26 +967,31 @@ export default function Dashboard() {
             <h1 className="dash-page-title">Financial Overview</h1>
             <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
           </div>
+
           <div className="dash-topbar-right">
             <span className="dash-sim-badge">Sim: 30 yr</span>
           </div>
         </header>
 
-        <div style={{ display: "flex", justifyContent: "space-between"}}>
-          <pre>{JSON.stringify(state, null, 2)}</pre>
-          <UserAgeForm state={state} dispatch={dispatch} />
-        </div>
-        
+        <FinancialOverviewCards cards={overviewCards} />
+
+        <section className="simulation-section-header">
+          <h2>Simulation Inputs</h2>
+          <p>Define the components of your financial plan for the simulation.</p>
+        </section>
 
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
 
+        <div className="simulation-input-row">
+          <UserAgeForm state={state} dispatch={dispatch} />
+        </div>
+
         <SimulationControls state={state} setSimResult={setSimResult} />
+
         <IncomeGrowthChart />
         <SimResultViewer simResult={simResult} />
 
         <ToastBanner toasts={toasts} setToasts={setToasts} />
-        {/* {sim.error && <div className="dash-error">{sim.error}</div>} */}
-
       </main>
     </div>
   );

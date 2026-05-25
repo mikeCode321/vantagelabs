@@ -1100,14 +1100,10 @@ export default function Dashboard() {
         <SimulationControls state={state} setSimResult={setSimResult} />
 
         <section className="simulation-results-grid">
-          <div className="simulation-results-grid__main">
-            <IncomeGrowthChart />
-            <SimResultViewer simResult={simResult} />
-          </div>
-
+          <IncomeGrowthChart />
           <SimulationHighlights data={testData} />
         </section>
-
+        <SimResultViewer simResult={simResult} />
         <ToastBanner toasts={toasts} setToasts={setToasts} />
       </main>
     </div>

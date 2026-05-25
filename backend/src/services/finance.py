@@ -292,6 +292,150 @@ class EmployerRetirementAccountSim(AccountSimulator):
             "balance_history": self.monthly_balance_history,
             "interest_history": self.monthly_interest_history,
         }
+    
+    QUALIFIED_DIVIDEND_TAX_RATE = 0.15
+
+class TaxableInvestmentSim(AccountSimulator):
+
+    def __init__(self, account, filing_status: str = "single", state: str = "MI"):
+        self._id = account["id"]
+        self._variant = account["variant"]
+        self.name = account["name"]
+        self.start_age = account["start_age"]
+        self.end_age = account["end_age"]
+
+        # Config
+        self.expected_return = account["expected_return"]
+        self.dividend_yield = account["dividend_yield"]
+        self.dividend_reinvestment = account["dividend_reinvestment"]  # "drip" | "cash_out"
+        self.contribution_mode = account["contribution_mode"]          # "dollar" | "percentage"
+        self.monthly_contribution_fixed = account["monthly_contribution"]
+        self.contribution_percentage = account.get("contribution_percentage", 0.0) / 100  # convert 10 → 0.10
+
+        self.linked_income_id = account.get("linked_income_id")
+        self.lot_method = account.get("lot_method", "hifo")
+        self.filing_status = filing_status
+
+        # Core state
+        self.balance = account["starting_balance"]
+        self.cost_basis = account["starting_balance"]
+
+        # Tax lots: {"month_index": int, "cost": float}
+        # month_index is absolute (year * 12 + month) for holding period math
+        self.tax_lots: list[dict] = []
+        if account["starting_balance"] > 0:
+            self.tax_lots.append({"month_index": -13, "cost": account["starting_balance"]})
+
+        # Annual trackers (reset each year_end)
+        self.annual_appreciation_earned = 0.0
+        self.annual_dividends_earned = 0.0
+        self.annual_capital_gains_realized = 0.0
+
+        # History
+        self.monthly_balance_history: list[float] = []
+        self.monthly_return_history: list[float] = []
+
+        # Absolute month counter for holding period tracking
+        self._month_index = 0
+
+    @property
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def variant(self) -> str:
+        return self._variant
+
+    def calculate_contribution(self, monthly_gross: float = 0.0) -> float:
+        if self.contribution_mode == "percentage":
+            return monthly_gross * self.contribution_percentage
+        return self.monthly_contribution_fixed
+
+    def deposit(self, amount: float) -> None:
+        """Contribution deposit — increases cost basis and opens a new tax lot."""
+        if amount <= 0:
+            return
+        self.balance += amount
+        self.cost_basis += amount
+        self.tax_lots.append({"month_index": self._month_index, "cost": amount})
+
+    def _drip_deposit(self, amount: float) -> None:
+        """DRIP dividend — increases cost basis like a contribution but tracked separately."""
+        if amount <= 0:
+            return
+        self.balance += amount
+        self.cost_basis += amount
+        self.tax_lots.append({"month_index": self._month_index, "cost": amount})
+
+    def withdraw(self, amount: float) -> None:
+        """Placeholder — full sell logic comes in a later phase."""
+        self.balance = max(0.0, self.balance - amount)
+
+    def process_month_end(self) -> float:
+        """
+        Apply appreciation and dividends.
+        Returns cash dividend amount to deposit to checking (0.0 if DRIP).
+        """
+        # 1. Price appreciation
+        monthly_rate = self.expected_return / 12
+        appreciation = self.balance * monthly_rate
+        self.balance += appreciation
+        self.annual_appreciation_earned += appreciation
+
+        # 2. Dividends (on post-appreciation balance)
+        dividend = self.balance * (self.dividend_yield / 12)
+        self.annual_dividends_earned += dividend
+
+        cash_dividend_out = 0.0
+        if self.dividend_reinvestment == "drip":
+            self._drip_deposit(dividend)
+        else:
+            cash_dividend_out = dividend
+
+        # 3. History
+        self.monthly_balance_history.append(round(self.balance, 2))
+        self.monthly_return_history.append(round(appreciation, 2))
+        self._month_index += 1
+
+        return cash_dividend_out
+
+    def process_year_end(self) -> float:
+        """
+        Calculate taxes owed on dividends (and any realized gains).
+        Returns total taxes owed — caller withdraws from checking.
+        """
+        dividend_tax = self.annual_dividends_earned * QUALIFIED_DIVIDEND_TAX_RATE
+        capital_gains_tax = self.annual_capital_gains_realized * QUALIFIED_DIVIDEND_TAX_RATE  # all long-term for now
+
+        taxes_owed = dividend_tax + capital_gains_tax
+
+        # Reset annual trackers
+        self.annual_appreciation_earned = 0.0
+        self.annual_dividends_earned = 0.0
+        self.annual_capital_gains_realized = 0.0
+        self.monthly_balance_history = []
+        self.monthly_return_history = []
+
+        return round(taxes_owed, 2)
+
+    def get_balance(self) -> float:
+        return self.balance
+
+    def snapshot(self) -> dict:
+        unrealized_gain = self.balance - self.cost_basis
+        return {
+            "id": self.id,
+            "name": self.name,
+            "variant": self.variant,
+            "balance": round(self.balance, 2),
+            "cost_basis": round(self.cost_basis, 2),
+            "unrealized_gain": round(unrealized_gain, 2),
+            "annual_appreciation_earned": round(self.annual_appreciation_earned, 2),
+            "annual_dividends_earned": round(self.annual_dividends_earned, 2),
+            "annual_capital_gains_realized": round(self.annual_capital_gains_realized, 2),
+            "balance_history": self.monthly_balance_history,
+            "return_history": self.monthly_return_history,
+        }
 
 # ═══════════════════════════════════════════════════════════════════════════
 # INCOME SIMULATORS
@@ -723,11 +867,12 @@ class SimulationState:
         self.salary_incomes: List[SalaryIncomeSim] = []
         self.hourly_incomes: List[HourlyIncomeSim] = []
         self.side_hustle_incomes: List[SideHustleIncomeSim] = []
+        self.taxable_investment_accounts: List[TaxableInvestmentSim] = []
 
         self.primary_checking: CheckingAccountSim | None = None
 
     def get_all_accounts(self) -> List[AccountSimulator]:
-        return (self.checking_accounts + self.retirement_accounts)
+        return (self.checking_accounts + self.retirement_accounts + self.taxable_investment_accounts)
 
     def get_account_by_id(self, account_id: str) -> AccountSimulator | None:
         for account in self.get_all_accounts():
@@ -754,6 +899,10 @@ def simulate(req: SimulateRequest):
         state.retirement_accounts.append(retirement_sim)
         retirement_by_id[acc["id"]] = retirement_sim
 
+    for acc in req["accounts"]["taxable_investments"]:
+        inv_sim = TaxableInvestmentSim(acc, filing_status=filing_status, state=state_code)
+        state.taxable_investment_accounts.append(inv_sim)
+
     for income in req["incomes"]["salary"]:
         linked_retirement = retirement_by_id.get(income["linked_401k_id"]) if income.get("linked_401k_id") else None
         salary_sim = SalaryIncomeSim(income=income, retirement_account=linked_retirement, filing_status=filing_status, state=state_code)
@@ -778,6 +927,8 @@ def simulate(req: SimulateRequest):
 
         active_checking = [a for a in state.checking_accounts if a.is_active(current_age)]
         active_retirement = [a for a in state.retirement_accounts if a.is_active(current_age)]
+        active_taxable = [a for a in state.taxable_investment_accounts if a.is_active(current_age)]
+
         active_salaries = [i for i in state.salary_incomes if i.is_active(current_age)]
         active_hourlies = [i for i in state.hourly_incomes if i.is_active(current_age)]
         active_side = [i for i in state.side_hustle_incomes if i.is_active(current_age)]
@@ -813,14 +964,40 @@ def simulate(req: SimulateRequest):
             # for all sales like a house or car
                 # if end year matches we sell that asset and deposit to checking 
 
+
+            monthly_gross_by_id = {}
+            for s in active_salaries:
+                monthly_gross_by_id[s.id] = s.current_gross_annual / 12
+            for h in active_hourlies:
+                monthly_gross_by_id[h.id] = h.current_gross_annual / 12
+
+            for inv_sim in active_taxable:
+                linked_gross = monthly_gross_by_id.get(inv_sim.linked_income_id, 0.0)
+                # if percentage mode but linked income isn't active, fall back to fixed
+                if inv_sim.contribution_mode == "percentage" and linked_gross == 0.0:
+                    contribution = inv_sim.monthly_contribution_fixed
+                else:
+                    contribution = inv_sim.calculate_contribution(linked_gross)
+                state.primary_checking.withdraw(contribution)
+                inv_sim.deposit(contribution)
+
             # monthly compounding for all accounts
-            for account in active_checking + active_retirement: # loans and investments and assets 
-                growth = account.process_month_end()
+            # for account in active_checking + active_retirement: # loans and investments and assets 
+            #     growth = account.process_month_end()
                 # Could track growth here if needed
+            for account in active_checking + active_retirement + active_taxable:
+                if account.variant == "taxable_investments":
+                    cash_dividend = account.process_month_end()
+                    if cash_dividend:
+                        state.primary_checking.deposit(cash_dividend)
+                else:
+                    growth = account.process_month_end()
 
         # ── SNAPSHOTS (before year_end) ───────────────────────────────────────
         checking_account_snapshots = [acc.snapshot() for acc in active_checking]
         retirement_account_snapshots = [acc.snapshot() for acc in active_retirement]
+        taxable_snapshots = [acc.snapshot() for acc in active_taxable]
+
         salary_snapshots = [sim.snapshot() for sim in active_salaries]
         hourly_snapshots = [sim.snapshot() for sim in active_hourlies]
         side_snapshots = [sim.snapshot() for sim in active_side]
@@ -857,9 +1034,14 @@ def simulate(req: SimulateRequest):
 
         for acc_sim in active_retirement:
             acc_sim.process_year_end()
+        
+        for inv_sim in active_taxable:
+            taxes_owed = inv_sim.process_year_end()
+            if taxes_owed and state.primary_checking:
+                state.primary_checking.withdraw(taxes_owed)
 
         # ── AGGREGATE ─────────────────────────────────────────────────────────
-        total_cash = sum(acc.get_balance() for acc in active_checking + active_retirement)
+        total_cash = sum(acc.get_balance() for acc in active_checking + active_retirement + active_taxable)
         total_net_worth = total_cash  # TODO: subtract liabilities
 
         if results:
@@ -876,7 +1058,7 @@ def simulate(req: SimulateRequest):
             "by_variant": {
                 "checking": sum(acc["balance"] for acc in checking_account_snapshots),
                 "employer_retirement": sum(acc["balance"] for acc in retirement_account_snapshots),
-                "taxable_investments": 0.0,
+                "taxable_investments": sum(acc["balance"] for acc in taxable_snapshots),
             },
             "accounts": checking_account_snapshots + retirement_account_snapshots,
         }

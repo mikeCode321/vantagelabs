@@ -73,8 +73,8 @@
           "variant": "side",
           "id": "f2d6dd44-5a38-4bb3-8571-3a738d282ac7",
           "name": "freelance",
-          "start_age": 26,
-          "end_age": 28,
+          "start_age": 25,
+          "end_age": 26,
           "gross_income": 13000,
           "income_growth": 0.02,
           "variability": 0.1,
@@ -98,36 +98,36 @@
   "metrics": {
     "total_years": 3,
     "starting_net_worth": 10000,
-    "ending_net_worth": 122458.31,
-    "peak_net_worth": 122458.31,
+    "ending_net_worth": 112567.83,
+    "peak_net_worth": 112567.83,
     "peak_net_worth_age": 28,
-    "total_income_lifetime": 125369.48,
+    "total_income_lifetime": 113078.37,
     "lowest_cash_balance_year": 2027,
-    "lowest_cash_balance": 93633.16
+    "lowest_cash_balance": 104526.52
   },
   "year_results": [
     {
       "year": 2027,
       "age": 26,
-      "net_worth": 93633.16,
-      "net_worth_change": 83633.16,
-      "net_worth_change_percent": 836.33,
-      "total_cash": 93633.16,
+      "net_worth": 104526.52,
+      "net_worth_change": 94526.52,
+      "net_worth_change_percent": 945.27,
+      "total_cash": 104526.52,
       "income_earned": {
-        "gross": 100000,
-        "net": 66851,
-        "taxes_paid": 23149,
+        "gross": 113078.37,
+        "net": 77525.62,
+        "taxes_paid": 25552.74,
         "federal_tax": 11249,
-        "fica_tax": 7650,
-        "state_tax": 4250,
-        "effective_tax_rate": 23.15
+        "fica_tax": 9497.91,
+        "state_tax": 4805.83,
+        "effective_tax_rate": 22.6
       },
-      "current_gross_income": 106090,
+      "current_gross_income": 103000,
       "accounts_summary": {
-        "total_balance": 93633.16160405574,
-        "total_interest_earned": 1782.12,
+        "total_balance": 104526.51803569385,
+        "total_interest_earned": 2000.87,
         "by_variant": {
-          "checking": 77795.31,
+          "checking": 91092.42,
           "employer_retirement": 15837.85,
           "taxable_investments": 0
         },
@@ -136,35 +136,35 @@
             "id": "acc_1",
             "name": "Checking Account",
             "variant": "checking",
-            "balance": 77795.31,
-            "annual_interest_earned": 944.27,
+            "balance": 91092.42,
+            "annual_interest_earned": 1163.02,
             "balance_history": [
-              15572.3473,
-              21158.62546825,
-              26758.869331920625,
-              32373.11380525043,
-              38001.39388976356,
-              43643.74467448796,
-              49300.201336174185,
-              54970.79913951462,
-              60655.573437363404,
-              66354.5596709568,
-              72067.7933701342,
-              77795.31015355953
+              16839.5474,
+              23583.6630435,
+              30161.863176108753,
+              36994.52235904902,
+              43722.29903994664,
+              50415.567162546504,
+              57230.620430452866,
+              63979.74443152899,
+              70743.69614260782,
+              77393.52095796434,
+              84212.18993535925,
+              91092.41658519764
             ],
             "interest_history": [
-              1.4273000000000002,
-              15.358168249999999,
-              29.323863670625,
-              43.32447332980157,
-              57.360084513126075,
-              71.4307847244089,
-              85.5366616862199,
-              99.67780334043546,
-              113.85429784878654,
-              128.0662335934085,
-              142.313699177392,
-              156.5967834253355
+              4.587399999999998,
+              21.405643500000007,
+              37.81013260875001,
+              54.849182940271874,
+              71.62668089762256,
+              88.3181225998666,
+              105.31326790636626,
+              122.14400107613216,
+              139.0117110788225,
+              155.59481535651955,
+              172.59897739491083,
+              189.75664983839812
             ]
           },
           {
@@ -207,13 +207,13 @@
         ]
       },
       "incomes_summary": {
-        "total_gross_income": 100000,
-        "total_net_income": 66851,
-        "active_sources": 1,
+        "total_gross_income": 113078.37,
+        "total_net_income": 77525.62,
+        "active_sources": 2,
         "by_variant": {
           "salary": 100000,
           "hourly": 0,
-          "side": 0
+          "side": 13078.37
         },
         "incomes": [
           {
@@ -228,6 +228,20 @@
               "fica": 7650,
               "state": 4250
             }
+          },
+          {
+            "id": "f2d6dd44-5a38-4bb3-8571-3a738d282ac7",
+            "name": "freelance",
+            "variant": "side",
+            "gross_annual": 13078.37,
+            "net_annual": 10674.62,
+            "annual_401k_contributions": 0,
+            "taxes": {
+              "total": 2403.75,
+              "federal": 0,
+              "fica": 1847.91,
+              "state": 555.83
+            }
           }
         ]
       }
@@ -235,25 +249,25 @@
     {
       "year": 2028,
       "age": 27,
-      "net_worth": 107976.97,
-      "net_worth_change": 14343.81,
-      "net_worth_change_percent": 15.32,
-      "total_cash": 107976.97,
+      "net_worth": 108426.26,
+      "net_worth_change": 3899.74,
+      "net_worth_change_percent": 3.73,
+      "total_cash": 108426.26,
       "income_earned": {
-        "gross": 12946.94,
-        "net": 10567.35,
-        "taxes_paid": 2379.58,
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
         "federal_tax": 0,
-        "fica_tax": 1829.34,
-        "state_tax": 550.24,
-        "effective_tax_rate": 18.38
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
       },
       "current_gross_income": 0,
       "accounts_summary": {
-        "total_balance": 107976.97297290279,
-        "total_interest_earned": 3776.46,
+        "total_balance": 108426.25935062411,
+        "total_interest_earned": 3899.74,
         "by_variant": {
-          "checking": 92860.28,
+          "checking": 90929.98,
           "employer_retirement": 17496.28,
           "taxable_investments": 0
         },
@@ -262,35 +276,35 @@
             "id": "acc_1",
             "name": "Checking Account",
             "variant": "checking",
-            "balance": 92860.28,
-            "annual_interest_earned": 2118.03,
+            "balance": 90929.98,
+            "annual_interest_earned": 2241.31,
             "balance_history": [
-              79058.62735394343,
-              80206.02589732829,
-              81415.60083707162,
-              82689.43241416429,
-              83792.0937701997,
-              85152.0565546252,
-              86318.23752101178,
-              87499.6346148143,
-              88889.64807635134,
-              90012.35129654221,
-              91436.58622478356,
-              92860.28151534552
+              88872.88825166064,
+              89057.5704722898,
+              89242.71439847052,
+              89428.3211844667,
+              89614.39198742787,
+              89800.92796739643,
+              89987.93028731493,
+              90175.40011303322,
+              90363.3386133158,
+              90551.7469598491,
+              90740.62632724873,
+              90929.97789306685
             ],
             "interest_history": [
-              159.74720038389884,
-              162.60854338485856,
-              165.6249397433207,
-              168.80157709267903,
-              171.55135603541072,
-              174.94278442549927,
-              177.85096638656302,
-              180.79709380252945,
-              184.26346153703577,
-              187.06322019087835,
-              190.61492824135553,
-              194.1652905619589
+              184.2216664629941,
+              184.6822206291516,
+              185.1439261807245,
+              185.60678599617628,
+              186.07080296116675,
+              186.53597996856968,
+              187.00231991849108,
+              187.46982571828732,
+              187.93850028258305,
+              188.40834653328952,
+              188.87936739962277,
+              189.35156581812183
             ]
           },
           {
@@ -333,54 +347,39 @@
         ]
       },
       "incomes_summary": {
-        "total_gross_income": 12946.94,
-        "total_net_income": 10567.35,
-        "active_sources": 1,
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
         "by_variant": {
           "salary": 0,
           "hourly": 0,
-          "side": 12946.94
+          "side": 0
         },
-        "incomes": [
-          {
-            "id": "f2d6dd44-5a38-4bb3-8571-3a738d282ac7",
-            "name": "freelance",
-            "variant": "side",
-            "gross_annual": 12946.94,
-            "net_annual": 10567.35,
-            "annual_401k_contributions": 0,
-            "taxes": {
-              "total": 2379.59,
-              "federal": 0,
-              "fica": 1829.34,
-              "state": 550.24
-            }
-          }
-        ]
+        "incomes": []
       }
     },
     {
       "year": 2029,
       "age": 28,
-      "net_worth": 122458.31,
-      "net_worth_change": 14481.34,
-      "net_worth_change_percent": 13.41,
-      "total_cash": 122458.31,
+      "net_worth": 112567.83,
+      "net_worth_change": 4141.57,
+      "net_worth_change_percent": 3.82,
+      "total_cash": 112567.83,
       "income_earned": {
-        "gross": 12422.54,
-        "net": 10139.33,
-        "taxes_paid": 2283.21,
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
         "federal_tax": 0,
-        "fica_tax": 1755.25,
-        "state_tax": 527.96,
-        "effective_tax_rate": 18.38
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
       },
       "current_gross_income": 0,
       "accounts_summary": {
-        "total_balance": 122458.30956404147,
-        "total_interest_earned": 4342,
+        "total_balance": 112567.83158690033,
+        "total_interest_earned": 4141.57,
         "by_variant": {
-          "checking": 105413.15,
+          "checking": 93239.46,
           "employer_retirement": 19328.37,
           "taxable_investments": 0
         },
@@ -389,35 +388,35 @@
             "id": "acc_1",
             "name": "Checking Account",
             "variant": "checking",
-            "balance": 105413.15,
-            "annual_interest_earned": 2509.91,
+            "balance": 93239.46,
+            "annual_interest_earned": 2309.48,
             "balance_history": [
-              91721.15609413388,
-              92890.80750936922,
-              94026.28052814264,
-              95338.275354463,
-              96802.52166784916,
-              97916.93707201877,
-              99172.34316469882,
-              100312.36494191448,
-              101445.52135838753,
-              102897.64209624882,
-              104161.26090323631,
-              105413.1488062471
+              91119.80283779952,
+              91310.10234489403,
+              91500.87760075626,
+              91692.12979475815,
+              91883.86011924504,
+              92076.06976954316,
+              92268.75994396702,
+              92461.93184382694,
+              92655.58667343651,
+              92849.7256401201,
+              93044.34995422041,
+              93239.46082910596
             ],
             "interest_history": [
-              191.3245787883638,
-              194.24141523533473,
-              197.07301877342303,
-              200.3448263203566,
-              203.99631338615748,
-              206.7754041696229,
-              209.90609268004692,
-              212.83177721566273,
-              216.59641647304827,
-              221.42073786129177,
-              225.61880698749607,
-              229.7779030107877
+              189.82494473266715,
+              190.2995070944988,
+              190.77525586223507,
+              191.25219400189064,
+              191.73032448689537,
+              192.20965029811262,
+              192.6901744238579,
+              193.17189985991754,
+              193.65482960956734,
+              194.1389666835913,
+              194.62431410030027,
+              195.11087488555103
             ]
           },
           {
@@ -460,45 +459,30 @@
         ]
       },
       "incomes_summary": {
-        "total_gross_income": 12422.54,
-        "total_net_income": 10139.33,
-        "active_sources": 1,
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
         "by_variant": {
           "salary": 0,
           "hourly": 0,
-          "side": 12422.54
+          "side": 0
         },
-        "incomes": [
-          {
-            "id": "f2d6dd44-5a38-4bb3-8571-3a738d282ac7",
-            "name": "freelance",
-            "variant": "side",
-            "gross_annual": 12422.54,
-            "net_annual": 10139.33,
-            "annual_401k_contributions": 0,
-            "taxes": {
-              "total": 2283.21,
-              "federal": 0,
-              "fica": 1755.25,
-              "state": 527.96
-            }
-          }
-        ]
+        "incomes": []
       }
     }
   ],
   "net_worth_trend": [
-    93633.16,
-    107976.97,
-    122458.31
+    104526.52,
+    108426.26,
+    112567.83
   ],
   "cash_trend": [
-    93633.16,
-    107976.97,
-    122458.31
+    104526.52,
+    108426.26,
+    112567.83
   ],
   "annual_income_trend": [
-    106090,
+    103000,
     0,
     0
   ]

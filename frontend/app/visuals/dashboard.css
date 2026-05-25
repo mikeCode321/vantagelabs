@@ -16,28 +16,37 @@ body, html {
   font-family: 'DM Mono', monospace;
 }
 
-.dash-sidebar {
-  width: 200px;
-  height: 100dvh;
-  overflow-y: auto;
-  background: var(--primary);
+.dash-logo {
   display: flex;
-  flex-direction: column;
-  padding: 28px 0;
-  position: sticky;
-  top: 0;
-  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #f0edf8;
+  margin-bottom: 18px;
 }
 
+.dash-logo-img {
+  width: 100%;
+  max-width: 120px;
+  height: auto;
+  object-fit: contain;
+  /* width: clamp(130px, 11vw, 170px); */
+  display: block;
+}
 
+.dash-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  flex: 1;
+}
 
+.dash-nav-item:hover .dash-nav-icon {
+  opacity: 1;
+}
 
-
-
-
-.dash-nav-item:hover {
-  color: #ffffffcc;
-  background: #ffffff08;
+.dash-nav-active .dash-nav-icon {
+  opacity: 1;
 }
 
 .dash-sidebar-footer {
@@ -1282,9 +1291,8 @@ tbody tr:hover {
 }
 
 /* ═════════════════════════════════════════
-   SIDEBARRR
+   SIDEBAR
 ═════════════════════════════════════════ */
-
 .dash-sidebar {
   width: clamp(220px, 15vw, 270px);
   height: 100dvh;
@@ -1302,31 +1310,8 @@ tbody tr:hover {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 22px 14px;
+  padding: 8px 10px;
   box-sizing: border-box;
-}
-
-.dash-logo {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 2px 10px 26px;
-  border-bottom: 1px solid #f0edf8;
-  margin-bottom: 18px;
-}
-
-.dash-logo-img {
-  width: clamp(130px, 11vw, 170px);
-  height: auto;
-  display: block;
-}
-
-.dash-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0;
-  flex: 1;
 }
 
 .dash-nav-item {
@@ -1430,11 +1415,12 @@ tbody tr:hover {
   line-height: 1.2;
 }
 
-.dash-feedback-copy small {
+.dash-feedback-copy p {
   color: #766f86;
   font-size: 11px;
   font-weight: 600;
   line-height: 1.3;
+  font-size: 8px;
 }
 
 .dash-feedback-arrow {

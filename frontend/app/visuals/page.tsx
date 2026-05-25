@@ -1,5 +1,6 @@
 "use client";
 import "./dashboard.css";
+import Image from "next/image";
 import { SIM_MAX } from "@/app/testing/constants";
 
 import testData from "@/test.json";
@@ -1018,15 +1019,18 @@ export default function Dashboard() {
       <aside className="dash-sidebar">
         <div className="dash-sidebar-inner">
           <div className="dash-logo">
-            <img
+            <Image
               src="/vantage_logo_transparent.svg"
               alt="Vantage"
+              width={120}
+              height={40}
               className="dash-logo-img"
+              priority
             />
           </div>
 
           <nav className="dash-nav" aria-label="Dashboard navigation">
-            <a href="/testing" className="dash-nav-item dash-nav-active">
+            <a href="/testing" className="dash-nav-item">
               <span className="dash-nav-icon">▦</span>
               <span>Testing Grounds</span>
             </a>
@@ -1045,9 +1049,8 @@ export default function Dashboard() {
             <span className="dash-feedback-icon">✦</span>
             <span className="dash-feedback-copy">
               <strong>Leave feedback</strong>
-              <small>Help us improve Vantage</small>
+              <p>Help us improve Vantage</p>
             </span>
-            <span className="dash-feedback-arrow">→</span>
           </button>
         </div>
       </aside>

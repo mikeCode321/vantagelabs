@@ -882,21 +882,40 @@ export default function Dashboard() {
   return (
     <div className="dash-root">
       <aside className="dash-sidebar">
-        <div className="dash-logo">
-          <span className="dash-logo-mark">VL</span>
-          <span className="dash-logo-text">VantageLabs</span>
+        <div className="dash-sidebar-inner">
+          <div className="dash-logo">
+            <img
+              src="/vantage_logo_transparent.svg"
+              alt="Vantage"
+              className="dash-logo-img"
+            />
+          </div>
+
+          <nav className="dash-nav" aria-label="Dashboard navigation">
+            <a href="/testing" className="dash-nav-item dash-nav-active">
+              <span className="dash-nav-icon">▦</span>
+              <span>Testing Grounds</span>
+            </a>
+
+            <a href="#" className="dash-nav-item">
+              <span className="dash-nav-icon">◔</span>
+              <span>Testing Visuals</span>
+            </a>
+          </nav>
+
+          <button
+            type="button"
+            className="dash-feedback-card"
+            onClick={() => setIsFeedbackOpen(true)}
+          >
+            <span className="dash-feedback-icon">✦</span>
+            <span className="dash-feedback-copy">
+              <strong>Leave feedback</strong>
+              <small>Help us improve Vantage</small>
+            </span>
+            <span className="dash-feedback-arrow">→</span>
+          </button>
         </div>
-        <nav className="dash-nav">
-          <a href="/testing" className="dash-nav-item dash-nav-active">
-            TESTING GROUNDS
-          </a>
-          <a href="#" className="dash-nav-item dash-nav-active">
-            TESTING VISUALS
-          </a>
-        </nav>
-        <button type="button" className="dash-nav-item feedback-nav-btn" onClick={() => setIsFeedbackOpen(true)}>
-          LEAVE FEEDBACK
-        </button>
       </aside>
 
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />

@@ -649,34 +649,11 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
   
     return `${start}–${end}`;
   }
-  
-  function getEntityRowIcon(item) {
-    const icons = {
-      checking: "🏦",
-      taxable_investments: "📈",
-      employer_retirement: "🏢",
-      salary: "💼",
-      hourly: "⏱️",
-      side: "🚀",
-      living: "🧾",
-      rent: "🏠",
-      debt: "💳",
-      house_loan: "🏡",
-      car_loan: "🚗",
-      house: "🏡",
-      car: "🚗",
-    };
-  
-    return icons[item.variant] ?? "•";
-  }
 
   return (
     <div className="entity-row">
       <div className="entity-row__left">
-        <div className={`entity-row__icon entity-row__icon--${category}`}>
-          {getEntityRowIcon(item)}
-        </div>
-  
+
         <div className="entity-row__main">
           <div className="entity-row__topline">
             <p className="entity-row__name">{item.name}</p>

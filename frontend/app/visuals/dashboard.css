@@ -1003,18 +1003,31 @@ tbody tr:hover {
 
 .entity-card__rows {
   display: grid;
-  gap: 10px;
-  margin-top: 18px;
+  gap: 2px;
+  margin-top: 14px;
 }
 
 .entity-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 14px 16px;
-  border-bottom: 1px solid #5FA7AB18;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
   min-width: 0;
+  transition: background 0.12s ease;
+}
+
+.entity-row:hover {
+  background: rgba(95, 167, 171, 0.05);
+}
+
+.entity-row__left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
 
 .entity-row__main {
@@ -1022,25 +1035,50 @@ tbody tr:hover {
   flex: 1;
 }
 
+.entity-row__topline {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 3px;
+  min-width: 0;
+}
+
 .entity-row__name {
-  margin: 0 0 4px;
-  font-size: 0.82rem;
+  margin: 0;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.entity-row__linked-pill {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #1677ff;
+  background: rgba(22, 119, 255, 0.1);
+  border-radius: 999px;
+  padding: 2px 7px;
+  line-height: 1.5;
 }
 
 .entity-row__meta {
   margin: 0;
-  font-size: 0.64rem;
-  letter-spacing: 0.03em;
+  font-size: 0.63rem;
+  letter-spacing: 0.02em;
   color: var(--teal);
   display: flex;
-  gap: 8px;
+  gap: 5px;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   min-width: 0;
 }
 
@@ -1051,49 +1089,58 @@ tbody tr:hover {
 .entity-row__actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   flex-shrink: 0;
 }
 
 .entity-row__btn-edit,
 .entity-row__btn-delete {
   font-family: inherit;
-  font-size: 0.58rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.13s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .entity-row__btn-edit {
-  border: 1px solid #5FA7AB44;
-  background: var(--white);
+  font-size: 0.6rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  font-weight: 600;
+  border: 1px solid #5FA7AB55;
+  background: transparent;
   color: var(--primary);
   border-radius: 999px;
-  padding: 6px 10px;
+  padding: 0 10px;
+  height: 26px;
+}
+
+.entity-row__btn-edit:hover {
+  background: rgba(95, 167, 171, 0.08);
+  border-color: #5FA7AB99;
 }
 
 .entity-row__btn-delete {
   border: 1px solid #B46D6D44;
-  background: var(--white);
+  background: transparent;
   color: #B46D6D;
   border-radius: 999px;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
   padding: 0;
-  display: grid;
-  place-items: center;
+}
+
+.entity-row__btn-delete:hover {
+  background: rgba(180, 109, 109, 0.08);
+  border-color: #B46D6D88;
 }
 
 @media (max-width: 520px) {
   .entity-row {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .entity-row__actions {
-    width: 100%;
-    justify-content: flex-end;
+    padding: 8px 10px;
   }
 }
 /* Carousel arrows only needed on smaller widths */
@@ -1162,16 +1209,6 @@ tbody tr:hover {
 
   .entity-card__desc {
     max-width: none;
-  }
-
-  .entity-row {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .entity-row__actions {
-    width: 100%;
-    justify-content: flex-end;
   }
 }
 
@@ -1665,61 +1702,43 @@ tbody tr:hover {
 .overview-card__change {
   display: inline-flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1px;
+  align-items: flex-end;
+  gap: 3px;
   white-space: nowrap;
   flex-shrink: 0;
-  padding: 4px 8px;
-  border-radius: 20px;
 }
 
+/* The pill wraps only the percent number */
 .overview-card__change span {
   font-size: 12px;
   font-weight: 800;
   line-height: 1.2;
+  padding: 3px 8px;
+  border-radius: 20px;
 }
 
+/* The "vs start" label sits beneath the pill, unstyled */
 .overview-card__change small {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
-  opacity: 0.75;
-}
-
-.overview-card__change--up {
-  background: rgba(22, 163, 74, 0.12);
+  color: #9198ac;
+  padding: 0 2px;
 }
 
 .overview-card__change--up span {
   color: #15803d;
-}
-
-.overview-card__change--up small {
-  color: #15803d;
-}
-
-.overview-card__change--down {
-  background: rgba(220, 38, 38, 0.11);
+  background: rgba(22, 163, 74, 0.12);
 }
 
 .overview-card__change--down span {
   color: #b91c1c;
-}
-
-.overview-card__change--down small {
-  color: #b91c1c;
-}
-
-.overview-card__change--neutral {
-  background: rgba(100, 116, 139, 0.10);
+  background: rgba(220, 38, 38, 0.11);
 }
 
 .overview-card__change--neutral span {
   color: #475569;
-}
-
-.overview-card__change--neutral small {
-  color: #475569;
+  background: rgba(100, 116, 139, 0.10);
 }
 
 .overview-card__divider {

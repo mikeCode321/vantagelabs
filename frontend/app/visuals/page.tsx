@@ -649,6 +649,26 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
   
     return `${start}–${end}`;
   }
+  
+  function getEntityRowIcon(item) {
+    const icons = {
+      checking: "🏦",
+      taxable_investments: "📈",
+      employer_retirement: "🏢",
+      salary: "💼",
+      hourly: "⏱️",
+      side: "🚀",
+      living: "🧾",
+      rent: "🏠",
+      debt: "💳",
+      house_loan: "🏡",
+      car_loan: "🚗",
+      house: "🏡",
+      car: "🚗",
+    };
+  
+    return icons[item.variant] ?? "•";
+  }
 
   return (
     <div className="entity-row">
@@ -931,6 +951,7 @@ export default function Dashboard() {
   const [simResult, setSimResult] = useState<SimYearResult[]>([]);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
     const id = crypto.randomUUID();
@@ -1012,22 +1033,42 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="dash-root">
-      <aside className="dash-sidebar">
-        <div className="dash-logo">
-          <span className="dash-logo-mark">VL</span>
-          <span className="dash-logo-text">VantageLabs</span>
+    <div className={`dash-root${isSidebarOpen ? "" : " dash-root--collapsed"}`}>
+      <aside className={`dash-sidebar${isSidebarOpen ? "" : " dash-sidebar--collapsed"}`}>
+        <div className="dash-sidebar-top">
+          <div className="dash-logo">
+            <span className="dash-logo-mark">V</span>
+            {isSidebarOpen && <span className="dash-logo-text">Vantage</span>}
+          </div>
+          <button
+            type="button"
+            className="dash-collapse-btn"
+            onClick={() => setIsSidebarOpen(o => !o)}
+            aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+          >
+            {isSidebarOpen ? "←" : "→"}
+          </button>
         </div>
+
         <nav className="dash-nav">
-          <a href="/testing" className="dash-nav-item dash-nav-active">
-            TESTING GROUNDS
+          <a href="/testing" className="dash-nav-item dash-nav-active" title="Testing Grounds">
+            <span className="dash-nav-icon">⚗</span>
+            {isSidebarOpen && <span className="dash-nav-label">Testing Grounds</span>}
           </a>
-          <a href="#" className="dash-nav-item dash-nav-active">
-            TESTING VISUALS
+          <a href="#" className="dash-nav-item dash-nav-active" title="Testing Visuals">
+            <span className="dash-nav-icon">◈</span>
+            {isSidebarOpen && <span className="dash-nav-label">Testing Visuals</span>}
           </a>
         </nav>
-        <button type="button" className="dash-nav-item feedback-nav-btn" onClick={() => setIsFeedbackOpen(true)}>
-          LEAVE FEEDBACK
+
+        <button
+          type="button"
+          className="dash-nav-item feedback-nav-btn"
+          onClick={() => setIsFeedbackOpen(true)}
+          title="Leave Feedback"
+        >
+          <span className="dash-nav-icon">✦</span>
+          {isSidebarOpen && <span className="dash-nav-label">Leave Feedback</span>}
         </button>
       </aside>
 
@@ -1035,9 +1076,11 @@ export default function Dashboard() {
 
       <main className="dash-main">
         <header className="dash-topbar">
-          <div>
-            <h1 className="dash-page-title">Financial Overview</h1>
-            <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            <div>
+              <h1 className="dash-page-title">Financial Overview</h1>
+              <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
+            </div>
           </div>
 
           <div className="dash-topbar-right">

@@ -1,5 +1,6 @@
 "use client";
 import "./dashboard.css";
+import Image from "next/image";
 import { SIM_MAX } from "@/app/testing/constants";
 
 import testData from "@/test.json";
@@ -619,33 +620,111 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
     onToast(item.name, "deleted");
   };
 
+  function getEntityAmount(item) {
+    if (item.starting_balance != null) {
+      return `$${formatNumberWithCommas(item.starting_balance.toString())}`;
+    }
+  
+    if (item.gross_income != null) {
+      return `$${formatNumberWithCommas(item.gross_income.toString())}`;
+    }
+  
+    if (item.monthly_expense != null) {
+      return `$${formatNumberWithCommas(item.monthly_expense.toString())}/mo`;
+    }
+  
+    if (item.asset_value != null) {
+      return `$${formatNumberWithCommas(item.asset_value.toString())}`;
+    }
+  
+    return "No amount";
+  }
+  
+  function getEntityYears(item) {
+    const start = item.start_year ?? item.start_age;
+    const end = item.end_year ?? item.end_age;
+  
+    if (start == null && end == null) return "No timeline";
+    if (start != null && end == null) return `Starts ${start}`;
+    if (start == null && end != null) return `Ends ${end}`;
+  
+    return `${start}–${end}`;
+  }
+
   return (
     <div className="entity-row">
-      <div className="entity-row__main">
-        <p className="entity-row__name">{item.name}</p>
-        <div className="entity-row__meta">
-          {item.starting_balance != null && <span>${formatNumberWithCommas(item.starting_balance.toString())}</span>}
-          {item.gross_income != null && <span>${formatNumberWithCommas(item.gross_income.toString())}</span>}
-          {item.monthly_expense != null && <span>${formatNumberWithCommas(item.monthly_expense.toString())}</span>}
-          {item.asset_value != null && <span>${formatNumberWithCommas(item.asset_value.toString())}</span>}
-          <span>
-            {item.start_year}–{item.end_year}
-          </span>
+      <div className="entity-row__left">
+
+        <div className="entity-row__main">
+          <div className="entity-row__topline">
+            <p className="entity-row__name">{item.name}</p>
+  
+            {item.linked_401k_id || item.linked_income_id || item.linked_asset_id || item.linked_loan_id ? (
+              <span className="entity-row__linked-pill">Linked</span>
+            ) : null}
+          </div>
+  
+          <div className="entity-row__meta">
+            <span>{getEntityAmount(item)}</span>
+            <span>•</span>
+            <span>{getEntityYears(item)}</span>
+          </div>
         </div>
       </div>
-
+  
       <div className="entity-row__actions">
-        <button className="entity-row__btn-edit" onClick={() => onEdit(item, item.variant)}>
+        <button
+          type="button"
+          className="entity-row__btn entity-row__btn-edit"
+          onClick={() => onEdit(item, item.variant)}
+        >
           Edit
         </button>
-        <button className="entity-row__btn-delete" onClick={handleDelete}>
-          ✕
+  
+        <button
+          type="button"
+          className="entity-row__btn entity-row__btn-delete"
+          onClick={handleDelete}
+          aria-label={`Delete ${item.name}`}
+        >
+          ×
         </button>
       </div>
     </div>
   );
 }
 /* -------------------- Financial Entity Card -------------------- */
+
+const ENTITY_CARD_COPY = {
+  account: {
+    title: "Accounts",
+    description: "Add your bank, investment, and other accounts.",
+    icon: "🏛️",
+    emptyText: "0 accounts added",
+    itemText: "accounts added",
+  },
+  income: {
+    title: "Income",
+    description: "Add salary, side income, and other inflows.",
+    icon: "💼",
+    emptyText: "0 income sources",
+    itemText: "income sources",
+  },
+  expense: {
+    title: "Expenses",
+    description: "Add living expenses, bills, and other outflows.",
+    icon: "🧾",
+    emptyText: "0 expense items",
+    itemText: "expense items",
+  },
+  asset: {
+    title: "Assets",
+    description: "Add real estate, vehicles, and other assets.",
+    icon: "◔",
+    emptyText: "0 assets added",
+    itemText: "assets added",
+  },
+};
 
 export function Entity({ state, entityName, category, dispatch, onToast }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -662,6 +741,8 @@ export function Entity({ state, entityName, category, dispatch, onToast }) {
   };
 
   const config = ENTITY_CONFIG[category];
+  const cardCopy = ENTITY_CARD_COPY[category];
+
   const data = Object.keys(config).map((key) => {
     const v = config[key as keyof typeof config];
     return {
@@ -674,11 +755,21 @@ export function Entity({ state, entityName, category, dispatch, onToast }) {
   const getItems = () => {
     switch (category) {
       case "account":
-        return [...state.accounts.checking, ...state.accounts.taxable_investments, ...state.accounts.employer_retirement];
+        return [
+          ...state.accounts.checking,
+          ...state.accounts.taxable_investments,
+          ...state.accounts.employer_retirement,
+        ];
       case "income":
         return [...state.incomes.salary, ...state.incomes.hourly, ...state.incomes.side];
       case "expense":
-        return [...state.expenses.living, ...state.expenses.rent, ...state.expenses.debt, ...state.expenses.house_loan, ...state.expenses.car_loan];
+        return [
+          ...state.expenses.living,
+          ...state.expenses.rent,
+          ...state.expenses.debt,
+          ...state.expenses.house_loan,
+          ...state.expenses.car_loan,
+        ];
       case "asset":
         return [...state.assets.house, ...state.assets.car];
       default:
@@ -686,23 +777,65 @@ export function Entity({ state, entityName, category, dispatch, onToast }) {
     }
   };
 
+  const items = getItems();
+
   return (
     <>
-      <div className="entity-card">
-        <div className="entity-card__header">
-          <h1 className="entity-card__title">{entityName}</h1>
+      <div className={`entity-card entity-card--${category}`}>
+        <div className="entity-card__top">
+          <div className={`entity-card__icon entity-card__icon--${category}`}>
+            {cardCopy.icon}
+          </div>
 
-          <button className="entity-card__add-btn" onClick={() => setIsModalOpen(true)}>
+          <div className="entity-card__copy">
+            <h3 className="entity-card__title">{cardCopy.title}</h3>
+            <p className="entity-card__desc">{cardCopy.description}</p>
+          </div>
+
+          <button
+            type="button"
+            className="entity-card__add-btn"
+            onClick={() => setIsModalOpen(true)}
+            aria-label={`Add ${cardCopy.title}`}
+          >
             +
           </button>
         </div>
 
-        {getItems().map((item) => (
-          <EntityRow key={item.id} item={item} category={category} dispatch={dispatch} onEdit={handleEdit} state={state} onToast={onToast} />
-        ))}
+        {items.length > 0 && (
+          <div className="entity-card__rows">
+            {items.map((item) => (
+              <EntityRow
+                key={item.id}
+                item={item}
+                category={category}
+                dispatch={dispatch}
+                onEdit={handleEdit}
+                state={state}
+                onToast={onToast}
+              />
+            ))}
+          </div>
+        )}
+
+        <div className="entity-card__divider" />
+
+        <p className="entity-card__footer">
+          {items.length === 0 ? cardCopy.emptyText : `${items.length} ${cardCopy.itemText}`}
+        </p>
       </div>
 
-      {isModalOpen && <Modal state={state} setIsModalOpen={handleCloseModal} data={data} category={category} dispatch={dispatch} variantBeingEdited={variantBeingEdited} onToast={onToast} />}
+      {isModalOpen && (
+        <Modal
+          state={state}
+          setIsModalOpen={handleCloseModal}
+          data={data}
+          category={category}
+          dispatch={dispatch}
+          variantBeingEdited={variantBeingEdited}
+          onToast={onToast}
+        />
+      )}
     </>
   );
 }
@@ -799,6 +932,7 @@ export default function Dashboard() {
   const [simResult, setSimResult] = useState<SimYearResult[]>([]);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
     const id = crypto.randomUUID();
@@ -881,22 +1015,61 @@ export default function Dashboard() {
 
   return (
     <div className="dash-root">
-      <aside className="dash-sidebar">
-        <div className="dash-logo">
-          <span className="dash-logo-mark">VL</span>
-          <span className="dash-logo-text">VantageLabs</span>
+      <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
+        <div className="dash-sidebar-inner">
+
+          <div className="dash-sidebar-header">
+            <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
+              <Image
+                src="/vantage_logo_transparent.svg"
+                alt="Vantage"
+                width={120}
+                height={40}
+                className="dash-logo-img"
+                priority
+              />
+            </div>
+            <button
+              type="button"
+              className="dash-collapse-btn"
+              onClick={() => setSidebarCollapsed(c => !c)}
+              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <svg
+                className={`dash-collapse-icon${sidebarCollapsed ? " dash-collapse-icon--flipped" : ""}`}
+                width="16" height="16" viewBox="0 0 16 16" fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <nav className="dash-nav" aria-label="Dashboard navigation">
+            <a href="/testing" className="dash-nav-item" title="Testing Grounds">
+              <span className="dash-nav-icon">▦</span>
+              <span className="dash-nav-label">Testing Grounds</span>
+            </a>
+
+            <a href="#" className="dash-nav-item" title="Testing Visuals">
+              <span className="dash-nav-icon">◔</span>
+              <span className="dash-nav-label">Testing Visuals</span>
+            </a>
+          </nav>
+
+          <button
+            type="button"
+            className="dash-feedback-card"
+            onClick={() => setIsFeedbackOpen(true)}
+            title="Leave feedback"
+          >
+            <span className="dash-feedback-icon">✦</span>
+            <span className="dash-feedback-copy">
+              <strong>Leave feedback</strong>
+              <p>Help us improve Vantage</p>
+            </span>
+          </button>
         </div>
-        <nav className="dash-nav">
-          <a href="/testing" className="dash-nav-item dash-nav-active">
-            TESTING GROUNDS
-          </a>
-          <a href="#" className="dash-nav-item dash-nav-active">
-            TESTING VISUALS
-          </a>
-        </nav>
-        <button type="button" className="dash-nav-item feedback-nav-btn" onClick={() => setIsFeedbackOpen(true)}>
-          LEAVE FEEDBACK
-        </button>
       </aside>
 
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />

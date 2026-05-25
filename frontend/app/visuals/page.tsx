@@ -18,6 +18,11 @@ import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewe
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
+import {
+  FinancialOverviewCards,
+  OverviewCard,
+} from "@/app/visuals/FinancialOverviewCards";
+
 import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
 
 type SimRequest = {
@@ -781,54 +786,6 @@ export function FinancialEntities({ state, dispatch, onToast }) {
   );
 }
 
-type OverviewCardTone = "purple" | "green" | "blue" | "orange";
-
-type OverviewCard = {
-  id: string;
-  label: string;
-  value: string;
-  change: string;
-  changeLabel: string;
-  meta: string;
-  icon: string;
-  tone: OverviewCardTone;
-};
-
-function FinancialOverviewCard({ card }: { card: OverviewCard }) {
-  return (
-    <article className={`overview-card overview-card--${card.tone}`}>
-      <div className="overview-card__top">
-        <div className="overview-card__icon">{card.icon}</div>
-
-        <div className="overview-card__content">
-          <p className="overview-card__label">{card.label}</p>
-          <div className="overview-card__value-row">
-            <h3 className="overview-card__value">{card.value}</h3>
-            <div className="overview-card__change">
-              <span>{card.change}</span>
-              <small>{card.changeLabel}</small>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="overview-card__divider" />
-
-      <p className="overview-card__meta">{card.meta}</p>
-    </article>
-  );
-}
-
-function FinancialOverviewCards({ cards }: { cards: OverviewCard[] }) {
-  return (
-    <section className="overview-cards">
-      {cards.map((card) => (
-        <FinancialOverviewCard key={card.id} card={card} />
-      ))}
-    </section>
-  );
-}
-
 
 //helper functions for the Financial Overview cards
 
@@ -854,6 +811,19 @@ function formatSignedPercent(value: number) {
 function getPercentChange(start: number, end: number) {
   if (!start) return 0;
   return ((end - start) / start) * 100;
+}
+
+
+function getChangeDirection(start: number, end: number): "up" | "down" | "neutral" {
+  if (end > start) return "up";
+  if (end < start) return "down";
+  return "neutral";
+}
+
+function getReadableTrend(start: number, end: number, label: string) {
+  if (end > start) return `${label} increased over the simulation`;
+  if (end < start) return `${label} decreased over the simulation`;
+  return `${label} stayed flat over the simulation`;
 }
 
 
@@ -884,48 +854,53 @@ export default function Dashboard() {
   const startingNetWorth = testData.metrics.starting_net_worth;
   const endingNetWorth = testData.metrics.ending_net_worth;
 
-  const totalAssets =
-    0;
+  const startingCashFlow = firstYear.income_earned.net;
+  const endingCashFlow = lastYear.income_earned.net;
 
+  const totalAssets = 0;//lastYear.accounts_summary.total_balance;
   const totalLiabilities = 0;
 
-  const annualCashFlow =
-    lastYear.income_earned.net - totalLiabilities;
+  const annualCashFlow = endingCashFlow - totalLiabilities;
+
+  const netWorthChange = getPercentChange(startingNetWorth, endingNetWorth);
+  const cashFlowChange = getPercentChange(startingCashFlow, endingCashFlow);
+  const assetChange = getPercentChange(startingNetWorth, totalAssets);
 
   const overviewCards: OverviewCard[] = [
     {
       id: "net-worth",
       label: "Net Worth",
       value: formatCompactMoney(endingNetWorth),
-      change: formatSignedPercent(getPercentChange(startingNetWorth, endingNetWorth)),
+      change: formatSignedPercent(netWorthChange),
       changeLabel: "vs start",
-      meta: "lol",
+      meta: getReadableTrend(startingNetWorth, endingNetWorth, "Net worth"),
       icon: "⌁",
       tone: "purple",
+      direction: getChangeDirection(startingNetWorth, endingNetWorth),
     },
     {
       id: "cash-flow",
       label: "Cash Flow (Annual)",
       value: formatCompactMoney(annualCashFlow),
-      change: formatSignedPercent(
-        getPercentChange(firstYear.income_earned.net, lastYear.income_earned.net)
-      ),
+      change: formatSignedPercent(cashFlowChange),
       changeLabel: "vs first year",
       meta: `Inflows ${formatCompactMoney(lastYear.income_earned.gross)} · Taxes ${formatCompactMoney(
         lastYear.income_earned.taxes_paid
       )}`,
       icon: "$",
       tone: "green",
+      direction: getChangeDirection(startingCashFlow, endingCashFlow),
     },
     {
       id: "total-assets",
       label: "Total Assets",
       value: formatCompactMoney(totalAssets),
-      change: '0',// formatSignedPercent(getPercentChange(startingNetWorth, totalAssets)),
+      change: formatSignedPercent(assetChange),
       changeLabel: "vs start",
-      meta: `${lastYear.accounts_summary.accounts.length} accounts`,
+      meta: '0 accounts',//`${lastYear.accounts_summary.accounts.length} accounts`,
       icon: "◔",
       tone: "blue",
+      direction: getChangeDirection(startingNetWorth, totalAssets),
     },
     {
       id: "total-liabilities",
@@ -936,6 +911,7 @@ export default function Dashboard() {
       meta: "0 liabilities",
       icon: "▭",
       tone: "orange",
+      direction: "neutral",
     },
   ];
 
@@ -972,6 +948,11 @@ export default function Dashboard() {
             <span className="dash-sim-badge">Sim: 30 yr</span>
           </div>
         </header>
+
+        <div style={{ display: "flex", justifyContent: "space-between"}}>
+          <pre>{JSON.stringify(state, null, 2)}</pre>
+          <UserAgeForm state={state} dispatch={dispatch} />
+        </div>
 
         <FinancialOverviewCards cards={overviewCards} />
 

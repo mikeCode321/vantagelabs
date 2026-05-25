@@ -1,6 +1,9 @@
 "use client";
 import "./dashboard.css";
 import { SIM_MAX } from "@/app/testing/constants";
+
+import testData from "@/test.json";
+
 import { useState, useReducer, useEffect, useRef } from "react";
 
 import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/accounts";
@@ -14,6 +17,16 @@ import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHo
 import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
+
+import {
+  FinancialOverviewCards,
+  OverviewCard,
+  formatCompactMoney,
+  formatSignedPercent,
+  getPercentChange,
+  getChangeDirection,
+  getReadableTrend,
+} from "@/app/visuals/FinancialOverviewCards";
 
 import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
 
@@ -778,6 +791,8 @@ export function FinancialEntities({ state, dispatch, onToast }) {
   );
 }
 
+
+
 export default function Dashboard() {
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
@@ -795,6 +810,74 @@ export default function Dashboard() {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 7000);
   };
+
+
+  const firstYear = testData.year_results[0];
+  const lastYear = testData.year_results[testData.year_results.length - 1];
+
+  const startingNetWorth = testData.metrics.starting_net_worth;
+  const endingNetWorth = testData.metrics.ending_net_worth;
+
+  const startingCashFlow = firstYear.income_earned.net;
+  const endingCashFlow = lastYear.income_earned.net;
+
+  const totalAssets = 0;//lastYear.accounts_summary.total_balance;
+  const totalLiabilities = 0;
+
+  const annualCashFlow = endingCashFlow - totalLiabilities;
+
+  const netWorthChange = getPercentChange(startingNetWorth, endingNetWorth);
+  const cashFlowChange = getPercentChange(startingCashFlow, endingCashFlow);
+  const assetChange = getPercentChange(startingNetWorth, totalAssets);
+
+  const overviewCards: OverviewCard[] = [
+    {
+      id: "net-worth",
+      label: "Net Worth",
+      value: formatCompactMoney(endingNetWorth),
+      change: formatSignedPercent(netWorthChange),
+      changeLabel: "vs start",
+      meta: getReadableTrend(startingNetWorth, endingNetWorth, "Net worth"),
+      icon: "⌁",
+      tone: "purple",
+      direction: getChangeDirection(startingNetWorth, endingNetWorth),
+    },
+    {
+      id: "cash-flow",
+      label: "Cash Flow (Annual)",
+      value: formatCompactMoney(annualCashFlow),
+      change: formatSignedPercent(cashFlowChange),
+      changeLabel: "vs first year",
+      meta: `Inflows ${formatCompactMoney(lastYear.income_earned.gross)} · Taxes ${formatCompactMoney(
+        lastYear.income_earned.taxes_paid
+      )}`,
+      icon: "$",
+      tone: "green",
+      direction: getChangeDirection(startingCashFlow, endingCashFlow),
+    },
+    {
+      id: "total-assets",
+      label: "Total Assets",
+      value: formatCompactMoney(totalAssets),
+      change: formatSignedPercent(assetChange),
+      changeLabel: "vs start",
+      meta: '0 accounts',//`${lastYear.accounts_summary.accounts.length} accounts`,
+      icon: "◔",
+      tone: "blue",
+      direction: getChangeDirection(startingNetWorth, totalAssets),
+    },
+    {
+      id: "total-liabilities",
+      label: "Total Liabilities",
+      value: formatCompactMoney(totalLiabilities),
+      change: "+0.0%",
+      changeLabel: "vs start",
+      meta: "0 liabilities",
+      icon: "▭",
+      tone: "orange",
+      direction: "neutral",
+    },
+  ];
 
   return (
     <div className="dash-root">
@@ -824,6 +907,7 @@ export default function Dashboard() {
             <h1 className="dash-page-title">Financial Overview</h1>
             <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
           </div>
+
           <div className="dash-topbar-right">
             <span className="dash-sim-badge">Sim: 30 yr</span>
           </div>
@@ -833,17 +917,22 @@ export default function Dashboard() {
           <pre>{JSON.stringify(state, null, 2)}</pre>
           <UserAgeForm state={state} dispatch={dispatch} />
         </div>
-        
+
+        <FinancialOverviewCards cards={overviewCards} />
+
+        <section className="simulation-section-header">
+          <h2>Simulation Inputs</h2>
+          <p>Define the components of your financial plan for the simulation.</p>
+        </section>
 
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
 
         <SimulationControls state={state} setSimResult={setSimResult} />
+
         <IncomeGrowthChart />
         <SimResultViewer simResult={simResult} />
 
         <ToastBanner toasts={toasts} setToasts={setToasts} />
-        {/* {sim.error && <div className="dash-error">{sim.error}</div>} */}
-
       </main>
     </div>
   );

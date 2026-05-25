@@ -8,6 +8,10 @@ class TaxRequest(BaseModel):
     filing_status: Literal["single", "married_filing_jointly", "head_of_household",] = "single" 
     state: Optional[str] = None
 
+class SETaxRequest(BaseModel):
+    gross_income: float
+    filing_status: Literal["single", "married_filing_jointly", "head_of_household",] = "single" 
+    state: Optional[str] = None
 
 class TaxBreakdown(BaseModel):
     federal: float

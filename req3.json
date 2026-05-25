@@ -1,0 +1,91 @@
+{
+  "user_start_age": 25,
+  "user_end_age": 28,
+  "accounts": {
+    "checking": [
+        {
+        "source_type": "liquid",
+        "variant": "checking",
+        "id": "acc_1",
+        "name": "Checking Account",
+        "start_age": 25,
+        "end_age": 28,
+        "starting_balance": 10000,
+        "interest_tiers": [
+          {
+            "threshold": 15000,
+            "annual_rate": 0.0
+          },
+          {
+            "threshold": 100000,
+            "annual_rate": 0.03
+          },
+          {
+            "threshold": 300000,
+            "annual_rate": 0.04
+          }
+        ]
+      }
+    ],
+    "taxable_investments": [],
+    "employer_retirement": [
+      {
+        "source_type": "liquid",
+        "variant": "employer_retirement",
+        "id": "401k_1",
+        "name": "Salary 401k",
+        "start_age": 25,
+        "end_age": 36,
+        "starting_balance": 0,
+        "contribution_mode": "percentage",
+        "monthly_contribution": 833.3333333333335,
+        "contribution_percentage": 0.10,
+        "expected_return": 0.1,
+        "employer_match_rate": 0.50,
+        "employer_match_limit": 0.10,
+        "linked_income_id": "salary_1"
+      }
+    ]
+  },
+  "incomes": {
+    "salary": [
+      {
+        "source_type": "income",
+        "variant": "salary",
+        "id": "salary_1",
+        "name": "swe",
+        "start_age": 25,
+        "end_age": 26,
+        "gross_income": 100000,
+        "income_growth": 0.03,
+        "linked_401k_id": "401k_1"
+      }
+    ],
+    "hourly": [],
+    "side": [
+      {
+        "source_type": "income",
+        "variant": "side",
+        "id": "f2d6dd44-5a38-4bb3-8571-3a738d282ac7",
+        "name": "freelance",
+        "start_age": 25,
+        "end_age": 26,
+        "gross_income": 13000,
+        "variability": 0.1,
+        "frequency": "biweekly",
+        "average_income_per_period": 500
+      }
+    ]
+  },
+  "expenses": {
+    "living": [],
+    "rent": [],
+    "house_loan": [],
+    "car_loan": [],
+    "debt": []
+  },
+  "assets": {
+    "house": [],
+    "car": []
+  }
+}

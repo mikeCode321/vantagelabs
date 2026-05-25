@@ -454,13 +454,13 @@ class SimulateRequest(BaseModel):
         default_factory=lambda: datetime.now().year
     )
 
-    filing_status: Literal[
-        "single",
-        "married_filing_jointly",
-        "head_of_household",
-    ]
+    # filing_status: Literal[
+    #     "single",
+    #     "married_filing_jointly",
+    #     "head_of_household",
+    # ]
 
-    state: str | None = None
+    # state: str | None = None
 
     accounts: AccountsPayload = Field(
         default_factory=AccountsPayload

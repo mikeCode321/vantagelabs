@@ -1078,11 +1078,6 @@ export default function Dashboard() {
         <header className="dash-topbar">
           <div>
             <h1 className="dash-page-title">Financial Overview</h1>
-            <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
-          </div>
-
-          <div className="dash-topbar-right">
-            <span className="dash-sim-badge">Sim: 30 yr</span>
           </div>
         </header>
 

@@ -16,76 +16,37 @@ body, html {
   font-family: 'DM Mono', monospace;
 }
 
-.dash-sidebar {
-  width: 200px;
-  height: 100dvh;
-  overflow-y: auto;
-  background: var(--primary);
-  display: flex;
-  flex-direction: column;
-  padding: 28px 0;
-  position: sticky;
-  top: 0;
-  flex-shrink: 0;
-}
-
 .dash-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 20px 28px;
-  border-bottom: 1px solid #ffffff11;
-}
-
-.dash-logo-mark {
-  background: var(--accent);
-  color: var(--primary);
-  font-family: 'Playfair Display', serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  border-radius: 2px;
-  flex-shrink: 0;
+  border-bottom: 1px solid #f0edf8;
+  margin-bottom: 18px;
 }
 
-.dash-logo-text {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #ffffff88;
+.dash-logo-img {
+  width: 100%;
+  max-width: 120px;
+  height: auto;
+  object-fit: contain;
+  /* width: clamp(130px, 11vw, 170px); */
+  display: block;
 }
 
 .dash-nav {
   display: flex;
   flex-direction: column;
-  padding: 20px 0;
+  gap: 8px;
+  padding: 0;
   flex: 1;
 }
 
-.dash-nav-item {
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #ffffff55;
-  text-decoration: none;
-  padding: 10px 20px;
-  transition: all 0.15s;
-  border-left: 2px solid transparent;
+.dash-nav-item:hover .dash-nav-icon {
+  opacity: 1;
 }
 
-.dash-nav-item:hover {
-  color: #ffffffcc;
-  background: #ffffff08;
-}
-
-.dash-nav-active {
-  color: var(--white);
-  border-left-color: var(--accent);
-  background: #ffffff0a;
+.dash-nav-active .dash-nav-icon {
+  opacity: 1;
 }
 
 .dash-sidebar-footer {
@@ -184,16 +145,7 @@ body, html {
     overflow: visible;
   }
 
-  .dash-sidebar {
-    width: 100%;
-    height: auto;
-    min-height: auto;
-    overflow: visible;
-    flex-direction: row;
-    align-items: center;
-    padding: 12px 16px;
-    position: static;
-  }
+  
 
   .dash-main {
     height: auto;
@@ -1338,15 +1290,239 @@ tbody tr:hover {
   letter-spacing: -0.02em;
 }
 
-/* Feedback trigger in the sidebar nav */
-.feedback-nav-btn {
-  border: none;
-  background: transparent;
+/* ═════════════════════════════════════════
+   SIDEBAR
+═════════════════════════════════════════ */
+.dash-sidebar {
+  width: clamp(220px, 15vw, 270px);
+  height: 100dvh;
+  flex-shrink: 0;
+  background:
+    radial-gradient(circle at top left, rgba(124, 58, 237, 0.08), transparent 34%),
+    #ffffff;
+  border-right: 1px solid #ebeaf3;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+}
+
+.dash-sidebar-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  box-sizing: border-box;
+}
+
+.dash-nav-item {
   width: 100%;
-  text-align: left;
+  min-height: 46px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #596174;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.dash-nav-item:hover {
+  color: #6d28d9;
+  background: #f7f2ff;
+  border-color: rgba(109, 40, 217, 0.1);
+}
+
+.dash-nav-active {
+  color: #6d28d9;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(124, 58, 237, 0.05));
+  border-color: rgba(109, 40, 217, 0.12);
+  box-shadow: 0 10px 24px rgba(109, 40, 217, 0.08);
+}
+
+.dash-nav-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #6d28d9;
+  background: rgba(109, 40, 217, 0.08);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.dash-feedback-card {
+  width: 100%;
+  border: 1px solid rgba(109, 40, 217, 0.12);
+  background:
+    linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(255, 255, 255, 0.92));
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   cursor: pointer;
   font-family: inherit;
-  margin-top: 512px;
+  color: #211633;
+  box-shadow: 0 12px 30px rgba(20, 18, 35, 0.045);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.dash-feedback-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(109, 40, 217, 0.24);
+  box-shadow: 0 16px 34px rgba(20, 18, 35, 0.075);
+}
+
+.dash-feedback-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #6d28d9;
+  background: rgba(109, 40, 217, 0.1);
+  flex-shrink: 0;
+}
+
+.dash-feedback-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  flex: 1;
+}
+
+.dash-feedback-copy strong {
+  color: #161225;
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1.2;
+}
+
+.dash-feedback-copy p {
+  color: #766f86;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  font-size: 8px;
+}
+
+.dash-feedback-arrow {
+  color: #6d28d9;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+/* Tablet/mobile sidebar */
+@media (max-width: 860px) {
+  .dash-root {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .dash-sidebar {
+    width: 100%;
+    height: auto;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-right: none;
+    border-bottom: 1px solid #ebeaf3;
+  }
+
+  .dash-sidebar-inner {
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .dash-logo {
+    padding: 0;
+    margin: 0;
+    border-bottom: none;
+  }
+
+  .dash-logo-img {
+    width: 120px;
+    height: 42px;
+  }
+
+  .dash-nav {
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    min-width: 0;
+  }
+
+  .dash-nav-item {
+    min-height: 38px;
+    white-space: nowrap;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  .dash-nav-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .dash-feedback-card {
+    width: auto;
+    padding: 9px 11px;
+    border-radius: 14px;
+  }
+
+  .dash-feedback-copy small {
+    display: none;
+  }
+
+  .dash-feedback-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .dash-sidebar-inner {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .dash-logo-img {
+    width: 132px;
+  }
+
+  .dash-nav {
+    width: 100%;
+  }
+
+  .dash-nav-item {
+    flex: 1 0 auto;
+  }
+
+  .dash-feedback-card {
+    width: 100%;
+  }
 }
 
 

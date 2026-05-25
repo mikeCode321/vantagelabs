@@ -795,19 +795,24 @@ def simulate(req: SimulateRequest):
                 cashflow = side_sim.process_monthly_payroll()
                 state.primary_checking.deposit(cashflow["net_income"])
 
+            # for all expenses
+                # withdraw that monthly expense from the checking
+
+            
+            # for all loans
+                # withdraw that monthly payment from the checking and pay loan 
+                # simulation will calculate principal, interest, equity, amortizaiton
+
+            # for all taxable investments 
+                # withdraw that from checking and contribute to the taxable investment acc
+                # simulate the growth of the acc at process_month_end()
+
             # for all one time purchases like a house would need special logic 
                 # if start year of an asset or liability (car) matches we withdraw that chunk payment from checking 
             
             # for all sales like a house or car
                 # if end year matches we sell that asset and deposit to checking 
 
-            # for all loans
-                # withdraw that monthly payment from the checking and pay loan 
-                # simulation will calculate principal, interest, equity, amortizaiton
-
-            # for all expenses
-                # withdraw that monthly expense from the checking
-             
             # monthly compounding for all accounts
             for account in active_checking + active_retirement: # loans and investments and assets 
                 growth = account.process_month_end()

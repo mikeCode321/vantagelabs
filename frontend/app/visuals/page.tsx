@@ -19,6 +19,8 @@ import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewe
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
+import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
+
 import {
   FinancialOverviewCards,
   OverviewCard,
@@ -1078,11 +1080,6 @@ export default function Dashboard() {
         <header className="dash-topbar">
           <div>
             <h1 className="dash-page-title">Financial Overview</h1>
-            <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
-          </div>
-
-          <div className="dash-topbar-right">
-            <span className="dash-sim-badge">Sim: 30 yr</span>
           </div>
         </header>
 
@@ -1102,9 +1099,11 @@ export default function Dashboard() {
 
         <SimulationControls state={state} setSimResult={setSimResult} />
 
-        <IncomeGrowthChart />
+        <section className="simulation-results-grid">
+          <IncomeGrowthChart />
+          <SimulationHighlights data={testData} />
+        </section>
         <SimResultViewer simResult={simResult} />
-
         <ToastBanner toasts={toasts} setToasts={setToasts} />
       </main>
     </div>

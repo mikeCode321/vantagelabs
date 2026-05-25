@@ -1318,16 +1318,6 @@ tbody tr:hover {
 }
 
 /* ========================================
-   DARK MODE SUPPORT (OPTIONAL)
-   ======================================== */
-
-@media (prefers-color-scheme: dark) {
-  .toast-item {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  }
-}
-
-/* ========================================
    ACCESSIBILITY
    ======================================== */
 
@@ -1455,71 +1445,10 @@ tbody tr:hover {
    FINANCIAL OVERVIEW SECTION
 ───────────────────────────────────────────────── */
 
-
-/* ─────────────────────────────────────────────
-   FINANCIAL OVERVIEW SECTION
-───────────────────────────────────────────────── */
-
-.request-debug-section,
-.overview-cards,
-.simulation-section-header,
-.simulation-input-row {
-  width: min(100%, 1480px);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.request-debug-section {
-  margin-top: 22px;
-  margin-bottom: 22px;
-  background: #ffffff;
-  border: 1px solid #ebeaf3;
-  border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(20, 18, 35, 0.045);
-  overflow: hidden;
-}
-
-.request-debug-header {
-  padding: 18px 22px;
-  border-bottom: 1px solid #ebeaf3;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.request-debug-header h2 {
-  margin: 0 0 6px;
-  color: #111426;
-  font-size: 18px;
-  font-weight: 850;
-  letter-spacing: -0.02em;
-}
-
-.request-debug-header p {
-  margin: 0;
-  color: #697287;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.request-debug-box {
-  margin: 0;
-  padding: 18px 22px;
-  max-height: 300px;
-  overflow: auto;
-  background: #fbfaff;
-  color: #27213a;
-  font-size: 12px;
-  line-height: 1.55;
-  font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
 .overview-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 18px;
+  gap: 12px;
   margin-top: 22px;
   margin-bottom: 28px;
 }
@@ -1528,16 +1457,16 @@ tbody tr:hover {
   background: #ffffff;
   border: 1px solid #ebeaf3;
   border-radius: 16px;
-  padding: 20px 22px 16px;
+  padding: 20px 10px 16px;
   box-shadow: 0 12px 30px rgba(20, 18, 35, 0.045);
-  min-height: 128px;
+  /* Removed min-height so cards can grow naturally with content */
   min-width: 0;
 }
 
 .overview-card__top {
   display: flex;
-  align-items: center;
-  gap: 18px;
+  align-items: flex-start; /* was center — flex-start keeps icon anchored when content wraps */
+  gap: 10px;
   min-width: 0;
 }
 
@@ -1549,7 +1478,7 @@ tbody tr:hover {
   place-items: center;
   font-size: 24px;
   font-weight: 800;
-  flex: 0 0 54px;
+  flex: 0 0 54px; /* never shrink the icon */
 }
 
 .overview-card__content {
@@ -1566,53 +1495,85 @@ tbody tr:hover {
 
 .overview-card__value-row {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 14px;
+  align-items: center;
+  gap: 10px;
   min-width: 0;
+  flex-wrap: nowrap;
+  justify-content: space-between;
 }
 
 .overview-card__value {
   margin: 0;
   color: #101426;
-  font-size: clamp(22px, 2vw, 28px);
+  font-size: clamp(17px, 1.6vw, 22px);
   line-height: 1;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.03em;
   font-weight: 850;
   white-space: nowrap;
+  overflow: hidden;
+  /* text-overflow: ellipsis; */
   min-width: 0;
+  flex-shrink: 1;
 }
 
 .overview-card__change {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+  align-items: center;
+  gap: 1px;
   white-space: nowrap;
   flex-shrink: 0;
+  padding: 4px 8px;
+  border-radius: 20px;
 }
 
 .overview-card__change span {
-  font-size: 14px;
-  font-weight: 850;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .overview-card__change small {
-  color: #7b8499;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
+  line-height: 1;
+  opacity: 0.75;
+}
+
+.overview-card__change--up {
+  background: rgba(22, 163, 74, 0.12);
 }
 
 .overview-card__change--up span {
-  color: #16a34a;
+  color: #15803d;
+}
+
+.overview-card__change--up small {
+  color: #15803d;
+}
+
+.overview-card__change--down {
+  background: rgba(220, 38, 38, 0.11);
 }
 
 .overview-card__change--down span {
-  color: #dc2626;
+  color: #b91c1c;
+}
+
+.overview-card__change--down small {
+  color: #b91c1c;
+}
+
+.overview-card__change--neutral {
+  background: rgba(100, 116, 139, 0.10);
 }
 
 .overview-card__change--neutral span {
-  color: #64748b;
+  color: #475569;
+}
+
+.overview-card__change--neutral small {
+  color: #475569;
 }
 
 .overview-card__divider {
@@ -1627,6 +1588,8 @@ tbody tr:hover {
   font-size: 13px;
   font-weight: 600;
 }
+
+/* ── Tone icon backgrounds ── */
 
 .overview-card--purple .overview-card__icon {
   color: #6d28d9;
@@ -1647,6 +1610,8 @@ tbody tr:hover {
   color: #ea6a12;
   background: linear-gradient(135deg, rgba(234, 106, 18, 0.14), rgba(234, 106, 18, 0.06));
 }
+
+/* ── Simulation section ── */
 
 .simulation-section-header {
   margin-top: 4px;
@@ -1673,17 +1638,7 @@ tbody tr:hover {
   justify-content: flex-end;
 }
 
-@media (max-width: 900px) {
-  .overview-card__value-row {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .overview-card__change {
-    align-items: flex-start;
-  }
-}
+/* ── Responsive ── */
 
 @media (max-width: 640px) {
   .request-debug-section,
@@ -1703,7 +1658,7 @@ tbody tr:hover {
   }
 
   .overview-card {
-    padding: 18px;
+    padding: 12px;
   }
 
   .overview-card__top {

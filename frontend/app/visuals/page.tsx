@@ -21,6 +21,11 @@ import { formatNumberWithCommas } from "@/app/visuals/utils";
 import {
   FinancialOverviewCards,
   OverviewCard,
+  formatCompactMoney,
+  formatSignedPercent,
+  getPercentChange,
+  getChangeDirection,
+  getReadableTrend,
 } from "@/app/visuals/FinancialOverviewCards";
 
 import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
@@ -787,47 +792,6 @@ export function FinancialEntities({ state, dispatch, onToast }) {
 }
 
 
-//helper functions for the Financial Overview cards
-
-function formatCompactMoney(value: number) {
-  const abs = Math.abs(value);
-
-  if (abs >= 1_000_000) {
-    return `$${(value / 1_000_000).toFixed(2)}M`;
-  }
-
-  if (abs >= 1_000) {
-    return `$${(value / 1_000).toFixed(2)}K`;
-  }
-
-  return `$${value.toFixed(2)}`;
-}
-
-function formatSignedPercent(value: number) {
-  const sign = value >= 0 ? "+" : "";
-  return `${sign}${value.toFixed(1)}%`;
-}
-
-function getPercentChange(start: number, end: number) {
-  if (!start) return 0;
-  return ((end - start) / start) * 100;
-}
-
-
-function getChangeDirection(start: number, end: number): "up" | "down" | "neutral" {
-  if (end > start) return "up";
-  if (end < start) return "down";
-  return "neutral";
-}
-
-function getReadableTrend(start: number, end: number, label: string) {
-  if (end > start) return `${label} increased over the simulation`;
-  if (end < start) return `${label} decreased over the simulation`;
-  return `${label} stayed flat over the simulation`;
-}
-
-
-
 
 export default function Dashboard() {
   // const sim = useSimulation();
@@ -962,10 +926,6 @@ export default function Dashboard() {
         </section>
 
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
-
-        <div className="simulation-input-row">
-          <UserAgeForm state={state} dispatch={dispatch} />
-        </div>
 
         <SimulationControls state={state} setSimResult={setSimResult} />
 

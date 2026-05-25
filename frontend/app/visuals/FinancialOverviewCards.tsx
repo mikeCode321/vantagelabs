@@ -1,3 +1,5 @@
+// ─── Types ───────────────────────────────────────────────────────────────────
+
 type OverviewCardTone = "purple" | "green" | "blue" | "orange";
 type OverviewCardDirection = "up" | "down" | "neutral";
 
@@ -13,11 +15,46 @@ export type OverviewCard = {
   direction?: OverviewCardDirection;
 };
 
+// ─── Helpers (moved from page.tsx) ───────────────────────────────────────────
+
+export function formatCompactMoney(value: number) {
+  const abs = Math.abs(value);
+  if (abs >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+  if (abs >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+  return `$${value.toFixed(2)}`;
+}
+
+export function formatSignedPercent(value: number) {
+  const sign = value >= 0 ? "+" : "";
+  return `${sign}${value.toFixed(1)}%`;
+}
+
+export function getPercentChange(start: number, end: number) {
+  if (!start) return 0;
+  return ((end - start) / start) * 100;
+}
+
+export function getChangeDirection(start: number, end: number): OverviewCardDirection {
+  if (end > start) return "up";
+  if (end < start) return "down";
+  return "neutral";
+}
+
+export function getReadableTrend(start: number, end: number, label: string) {
+  if (end > start) return `${label} increased over the simulation`;
+  if (end < start) return `${label} decreased over the simulation`;
+  return `${label} stayed flat over the simulation`;
+}
+
+// ─── Internal helpers ─────────────────────────────────────────────────────────
+
 function getDirectionArrow(direction?: OverviewCardDirection) {
   if (direction === "up") return "↗";
   if (direction === "down") return "↘";
   return "→";
 }
+
+// ─── Components ───────────────────────────────────────────────────────────────
 
 function FinancialOverviewCard({ card }: { card: OverviewCard }) {
   const direction = card.direction ?? "neutral";

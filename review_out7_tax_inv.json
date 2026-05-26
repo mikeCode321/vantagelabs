@@ -1,0 +1,465 @@
+{
+  "total_years_simulated": 3,
+  "request": {
+    "user_start_age": 25,
+    "user_end_age": 28,
+    "start_year": 2026,
+    "accounts": {
+      "checking": [
+        {
+          "source_type": "liquid",
+          "variant": "checking",
+          "id": "acc_1",
+          "name": "Checking Account",
+          "start_age": 25,
+          "end_age": 28,
+          "starting_balance": 10000,
+          "interest_tiers": [
+            {
+              "threshold": 15000,
+              "annual_rate": 0
+            },
+            {
+              "threshold": 100000,
+              "annual_rate": 0.03
+            },
+            {
+              "threshold": 300000,
+              "annual_rate": 0.04
+            }
+          ]
+        }
+      ],
+      "taxable_investments": [
+        {
+          "source_type": "liquid",
+          "variant": "taxable_investments",
+          "id": "a5ddec88-5f6f-46b8-9b60-92b14b719be9",
+          "name": "Taxable Investments",
+          "start_age": 25,
+          "end_age": 28,
+          "starting_balance": 0,
+          "contribution_mode": "dollar",
+          "monthly_contribution": 1000,
+          "contribution_percentage": null,
+          "expected_return": 0.1,
+          "dividend_yield": 0.02,
+          "dividend_reinvestment": "drip",
+          "linked_income_id": null
+        }
+      ],
+      "employer_retirement": []
+    },
+    "incomes": {
+      "salary": [
+        {
+          "source_type": "income",
+          "variant": "salary",
+          "id": "salary_1",
+          "name": "swe",
+          "start_age": 25,
+          "end_age": 26,
+          "gross_income": 100000,
+          "income_growth": 0.03,
+          "linked_401k_id": "401k_1"
+        }
+      ],
+      "hourly": [],
+      "side": []
+    },
+    "expenses": {
+      "living": [],
+      "rent": [],
+      "house_loan": [],
+      "car_loan": [],
+      "debt": []
+    },
+    "assets": {
+      "house": [],
+      "car": []
+    }
+  },
+  "metrics": {
+    "total_years": 3,
+    "starting_net_worth": 10000,
+    "ending_net_worth": 95703.23,
+    "peak_net_worth": 95703.23,
+    "peak_net_worth_age": 28,
+    "total_income_lifetime": 100000,
+    "lowest_cash_balance_year": 2027,
+    "lowest_cash_balance": 86316.52
+  },
+  "year_results": [
+    {
+      "year": 2027,
+      "age": 26,
+      "net_worth": 86316.52,
+      "net_worth_change": 76316.52,
+      "net_worth_change_percent": 763.17,
+      "total_cash": 86316.52,
+      "income_earned": {
+        "gross": 100000,
+        "net": 74651,
+        "taxes_paid": 25349,
+        "federal_tax": 13449,
+        "fica_tax": 7650,
+        "state_tax": 4250,
+        "effective_tax_rate": 25.35
+      },
+      "current_gross_income": 103000,
+      "accounts_summary": {
+        "total_balance": 86316.52453319011,
+        "total_interest_earned": 875.39,
+        "by_variant": {
+          "checking": 73526.43,
+          "employer_retirement": 0,
+          "taxable_investments": 12810.49
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 73526.43,
+            "annual_interest_earned": 875.39,
+            "balance_history": [
+              15221.4723,
+              20455.99828075,
+              25703.610576451872,
+              30964.341902893,
+              36238.225057650234,
+              41525.292920294356,
+              46825.57845259509,
+              52139.114698726575,
+              57465.934785473386,
+              62806.07192243707,
+              68159.55940224316,
+              73526.43060074876
+            ],
+            "interest_history": [
+              0.5523000000000002,
+              13.605980749999999,
+              26.692295701874993,
+              39.81132644112968,
+              52.963154757232495,
+              66.14786264412558,
+              79.3655323007359,
+              92.61624613148771,
+              105.90008674681644,
+              119.21713696368346,
+              132.56747980609268,
+              145.9511985056079
+            ]
+          },
+          {
+            "id": "a5ddec88-5f6f-46b8-9b60-92b14b719be9",
+            "name": "Taxable Investments",
+            "variant": "taxable_investments",
+            "balance": 12810.49,
+            "cost_basis": 12136.02,
+            "unrealized_gain": 674.47,
+            "annual_appreciation_earned": 674.47,
+            "annual_dividends_earned": 136.02,
+            "annual_capital_gains_realized": 0,
+            "balance_history": [
+              1010.01,
+              2030.14,
+              3060.49,
+              4101.15,
+              5152.23,
+              6213.84,
+              7286.08,
+              8369.05,
+              9462.87,
+              10567.65,
+              11683.48,
+              12810.49
+            ],
+            "return_history": [
+              8.33,
+              16.75,
+              25.25,
+              33.84,
+              42.51,
+              51.27,
+              60.12,
+              69.05,
+              78.08,
+              87.19,
+              96.4,
+              105.7
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 100000,
+        "total_net_income": 74651,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 100000,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_1",
+            "name": "swe",
+            "variant": "salary",
+            "gross_annual": 100000,
+            "net_annual": 74651,
+            "annual_401k_contributions": 0,
+            "taxes": {
+              "federal": 13449,
+              "fica": 7650,
+              "state": 4250
+            }
+          }
+        ]
+      }
+    },
+    {
+      "year": 2028,
+      "age": 27,
+      "net_worth": 90275.45,
+      "net_worth_change": 3958.93,
+      "net_worth_change_percent": 4.59,
+      "total_cash": 90275.45,
+      "income_earned": {
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
+        "federal_tax": 0,
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
+      },
+      "current_gross_income": 0,
+      "accounts_summary": {
+        "total_balance": 90275.45015216761,
+        "total_interest_earned": 1582.72,
+        "by_variant": {
+          "checking": 63088.75,
+          "employer_retirement": 0,
+          "taxable_investments": 27248.06
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 63088.75,
+            "annual_interest_earned": 1582.72,
+            "balance_history": [
+              72649.79567725064,
+              71791.42016644377,
+              70930.89871685988,
+              70068.22596365203,
+              69203.39652856116,
+              68336.40501988257,
+              67467.24603243227,
+              66595.91414751335,
+              65722.40393288214,
+              64846.70994271434,
+              63968.82671757112,
+              63088.74878436505
+            ],
+            "interest_history": [
+              143.76507650187193,
+              141.6244891931266,
+              139.47855041610944,
+              137.3272467921497,
+              135.1705649091301,
+              133.00849132140291,
+              130.84101254970642,
+              128.66811508108069,
+              126.48978536878339,
+              124.30600983220535,
+              122.11677485678585,
+              119.92206679392781
+            ]
+          },
+          {
+            "id": "a5ddec88-5f6f-46b8-9b60-92b14b719be9",
+            "name": "Taxable Investments",
+            "variant": "taxable_investments",
+            "balance": 27248.06,
+            "cost_basis": 24545.1,
+            "unrealized_gain": 2702.96,
+            "annual_appreciation_earned": 2028.49,
+            "annual_dividends_earned": 409.08,
+            "annual_capital_gains_realized": 0,
+            "balance_history": [
+              13948.79,
+              15098.49,
+              16259.69,
+              17432.53,
+              18617.11,
+              19813.56,
+              21021.98,
+              22242.51,
+              23475.25,
+              24720.35,
+              25977.91,
+              27248.06
+            ],
+            "return_history": [
+              115.09,
+              124.57,
+              134.15,
+              143.83,
+              153.6,
+              163.48,
+              173.45,
+              183.52,
+              193.69,
+              203.96,
+              214.34,
+              224.82
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
+        "by_variant": {
+          "salary": 0,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": []
+      }
+    },
+    {
+      "year": 2029,
+      "age": 28,
+      "net_worth": 95703.23,
+      "net_worth_change": 5427.78,
+      "net_worth_change_percent": 6.01,
+      "total_cash": 95703.23,
+      "income_earned": {
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
+        "federal_tax": 0,
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
+      },
+      "current_gross_income": 0,
+      "accounts_summary": {
+        "total_balance": 95703.22757071804,
+        "total_interest_earned": 1264,
+        "by_variant": {
+          "checking": 52291.39,
+          "employer_retirement": 0,
+          "taxable_investments": 43519.36
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 52291.39,
+            "annual_interest_earned": 1264,
+            "balance_history": [
+              62144.957256325964,
+              61260.31964946678,
+              60373.470448590444,
+              59484.40412471192,
+              58593.1151350237,
+              57699.597922861256,
+              56803.84691766841,
+              55905.85653496258,
+              55005.62117629999,
+              54103.13522924074,
+              53198.39306731384,
+              52291.38904998212
+            ],
+            "interest_history": [
+              117.56847196091263,
+              115.36239314081492,
+              113.15079912366696,
+              110.93367612147611,
+              108.71101031177979,
+              106.48278783755924,
+              104.24899480715314,
+              102.00961729417102,
+              99.76464133740645,
+              97.51405294074998,
+              95.25783807310185,
+              92.9959826682846
+            ]
+          },
+          {
+            "id": "a5ddec88-5f6f-46b8-9b60-92b14b719be9",
+            "name": "Taxable Investments",
+            "variant": "taxable_investments",
+            "balance": 43519.36,
+            "cost_basis": 37261.92,
+            "unrealized_gain": 6257.44,
+            "annual_appreciation_earned": 3554.48,
+            "annual_dividends_earned": 716.82,
+            "annual_capital_gains_realized": 0,
+            "balance_history": [
+              28530.93,
+              29826.65,
+              31135.35,
+              32457.15,
+              33792.18,
+              35140.59,
+              36502.5,
+              37878.04,
+              39267.36,
+              40670.6,
+              42087.88,
+              43519.36
+            ],
+            "return_history": [
+              235.4,
+              246.09,
+              256.89,
+              267.79,
+              278.81,
+              289.93,
+              301.17,
+              312.52,
+              323.98,
+              335.56,
+              347.25,
+              359.07
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
+        "by_variant": {
+          "salary": 0,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": []
+      }
+    }
+  ],
+  "net_worth_trend": [
+    86316.52,
+    90275.45,
+    95703.23
+  ],
+  "cash_trend": [
+    86316.52,
+    90275.45,
+    95703.23
+  ],
+  "annual_income_trend": [
+    103000,
+    0,
+    0
+  ]
+}

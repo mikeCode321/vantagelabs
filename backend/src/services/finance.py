@@ -293,7 +293,7 @@ class EmployerRetirementAccountSim(AccountSimulator):
             "interest_history": self.monthly_interest_history,
         }
     
-    QUALIFIED_DIVIDEND_TAX_RATE = 0.15
+QUALIFIED_DIVIDEND_TAX_RATE = 0.15
 
 class TaxableInvestmentSim(AccountSimulator):
 
@@ -310,13 +310,12 @@ class TaxableInvestmentSim(AccountSimulator):
         self.dividend_reinvestment = account["dividend_reinvestment"]  # "drip" | "cash_out"
         self.contribution_mode = account["contribution_mode"]          # "dollar" | "percentage"
         self.monthly_contribution_fixed = account["monthly_contribution"]
-        self.contribution_percentage = account.get("contribution_percentage", 0.0) / 100  # convert 10 → 0.10
+        self.contribution_percentage = (account.get("contribution_percentage") or 0.0) / 100 # TODO: fix the frontend to send a decimal 
 
         self.linked_income_id = account.get("linked_income_id")
         self.lot_method = account.get("lot_method", "hifo")
         self.filing_status = filing_status
 
-        # Core state
         self.balance = account["starting_balance"]
         self.cost_basis = account["starting_balance"]
 
@@ -326,16 +325,13 @@ class TaxableInvestmentSim(AccountSimulator):
         if account["starting_balance"] > 0:
             self.tax_lots.append({"month_index": -13, "cost": account["starting_balance"]})
 
-        # Annual trackers (reset each year_end)
         self.annual_appreciation_earned = 0.0
         self.annual_dividends_earned = 0.0
         self.annual_capital_gains_realized = 0.0
 
-        # History
         self.monthly_balance_history: list[float] = []
         self.monthly_return_history: list[float] = []
 
-        # Absolute month counter for holding period tracking
         self._month_index = 0
 
     @property
@@ -376,13 +372,11 @@ class TaxableInvestmentSim(AccountSimulator):
         Apply appreciation and dividends.
         Returns cash dividend amount to deposit to checking (0.0 if DRIP).
         """
-        # 1. Price appreciation
         monthly_rate = self.expected_return / 12
         appreciation = self.balance * monthly_rate
         self.balance += appreciation
         self.annual_appreciation_earned += appreciation
 
-        # 2. Dividends (on post-appreciation balance)
         dividend = self.balance * (self.dividend_yield / 12)
         self.annual_dividends_earned += dividend
 
@@ -392,7 +386,6 @@ class TaxableInvestmentSim(AccountSimulator):
         else:
             cash_dividend_out = dividend
 
-        # 3. History
         self.monthly_balance_history.append(round(self.balance, 2))
         self.monthly_return_history.append(round(appreciation, 2))
         self._month_index += 1
@@ -409,7 +402,6 @@ class TaxableInvestmentSim(AccountSimulator):
 
         taxes_owed = dividend_tax + capital_gains_tax
 
-        # Reset annual trackers
         self.annual_appreciation_earned = 0.0
         self.annual_dividends_earned = 0.0
         self.annual_capital_gains_realized = 0.0
@@ -1060,7 +1052,7 @@ def simulate(req: SimulateRequest):
                 "employer_retirement": sum(acc["balance"] for acc in retirement_account_snapshots),
                 "taxable_investments": sum(acc["balance"] for acc in taxable_snapshots),
             },
-            "accounts": checking_account_snapshots + retirement_account_snapshots,
+            "accounts": checking_account_snapshots + retirement_account_snapshots + taxable_snapshots,
         }
 
         incomes_summary = {

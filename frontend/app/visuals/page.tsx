@@ -1,6 +1,7 @@
 "use client";
 import "./dashboard.css";
 import Image from "next/image";
+import { Audio } from "react-loader-spinner";
 import { SIM_MAX } from "@/app/testing/constants";
 
 import testData from "@/test.json";
@@ -77,9 +78,11 @@ type Action =
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
+
     case "HYDRATE_FROM_LOCAL_STORAGE": {
-      return action.payload;
+      return action.payload
     }
+
     case "ADD_ACCOUNT": {
       const account = action.payload;
       const variant: "checking" | "taxable_investments" | "employer_retirement" = account.variant;
@@ -262,6 +265,28 @@ const INITIAL_STATE: SimRequest = {
 // our sim_request
 const LOCAL_STORAGE_KEY = "sim_request";
 const ENABLE_LOCAL_STORAGE_PERSISTENCE = true;
+
+function loadState(){
+  if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return null;
+  if (typeof window === "undefined") return null;
+  try {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return saved ? (JSON.parse(saved) as SimRequest) : null;
+  } catch {
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    return null;
+  }
+}
+
+function saveState(state: SimRequest) {
+  if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return;
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+  } catch (error) {
+    console.error("Failed to save simulation request:", error);
+  }
+}
 
 // ENTITY DATA:
 const ENTITY_CONFIG = {
@@ -938,11 +963,11 @@ export function FinancialEntities({ state, dispatch, onToast }) {
 export default function Dashboard() {
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
-  const [hasHydrated, setHasHydrated] = useState(false);
   const [simResult, setSimResult] = useState<SimYearResult[]>([]);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isSimLoading, setIsSimLoading] = useState(true);
 
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
     const id = crypto.randomUUID();
@@ -1024,41 +1049,27 @@ export default function Dashboard() {
   ];
 
   useEffect(() => {
-    try {
-      if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) {
-        return;
-      }
-      const savedRequest = localStorage.getItem(LOCAL_STORAGE_KEY);
-  
-      if (savedRequest) {
-        const parsedRequest = JSON.parse(savedRequest) as SimRequest;
-  
-        dispatch({
-          type: "HYDRATE_FROM_LOCAL_STORAGE",
-          payload: parsedRequest,
-        });
-      }
-    } catch (error) {
-      console.error("Failed to load saved simulation request:", error);
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-    } finally {
-      setHasHydrated(true);
+    const timer = setTimeout(() => setIsSimLoading(false), 2000);
+    const saved = loadState();
+    if (saved) {
+      dispatch({ type: "HYDRATE_FROM_LOCAL_STORAGE", payload: saved });
     }
+
+    return () => clearTimeout(timer);
+
   }, []);
 
   useEffect(() => {
-    if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return;
-    if (!hasHydrated) return;
-  
-    try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
-    } catch (error) {
-      console.error("Failed to save simulation request:", error);
-    }
-  }, [state, hasHydrated]);
+    saveState(state);
+  }, [state]);
 
   return (
     <div className="dash-root">
+      {isSimLoading && (
+        <div className="dash-loading-overlay">
+          <Audio height="100" width="100" color="#6d28d9" ariaLabel="audio-loading" visible={true} />
+        </div>
+      )}
       <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
         <div className="dash-sidebar-inner">
 
@@ -1115,10 +1126,10 @@ export default function Dashboard() {
           </button>
         </div>
       </aside>
-
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
       <main className="dash-main">
+
         <header className="dash-topbar">
           <div>
             <h1 className="dash-page-title">Financial Overview</h1>
@@ -1126,7 +1137,7 @@ export default function Dashboard() {
         </header>
 
         <div style={{ display: "flex", justifyContent: "space-between"}}>
-          <pre>{JSON.stringify(state, null, 2)}</pre>
+          <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
           <UserAgeForm state={state} dispatch={dispatch} />
         </div>
 

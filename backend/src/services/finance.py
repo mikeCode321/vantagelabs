@@ -845,6 +845,238 @@ side = {
 # side_sim.process_year_end()
 # salary_sim.process_year_end()
 
+# ═══════════════════════════════════════════════════════════════════════════
+# Expenses
+# ═══════════════════════════════════════════════════════════════════════════
+
+class ExpenseSimulator(ABC):
+
+    @abstractmethod
+    def is_active(self, age: int) -> bool: pass
+
+    @abstractmethod
+    def process_monthly_payment(self) -> dict: pass
+
+    @abstractmethod
+    def process_year_end(self) -> None: pass
+
+    @abstractmethod
+    def snapshot(self) -> dict: pass
+
+    @property
+    @abstractmethod
+    def id(self) -> str: pass
+
+    @property
+    @abstractmethod
+    def variant(self) -> str: pass
+
+
+class HouseLoanSim(ExpenseSimulator):
+
+    def __init__(self, loan: dict):
+        self._id = loan["id"]
+        self._variant = loan["variant"]
+        self.name = loan["name"]
+        self.start_age = loan["start_age"]
+        self.linked_asset_id = loan.get("linked_asset_id")
+
+        # Config
+        self.original_principal = loan["original_principal"]
+        self.interest_rate = loan["interest_rate"]
+        self.loan_term_years = loan["loan_term_years"]
+        self.extra_monthly_payment = loan.get("extra_monthly_payment") or 0.0
+
+        # Recalculate monthly payment from first principles — don't trust frontend value
+        r = self.interest_rate / 12
+        n = self.loan_term_years * 12
+        self.monthly_payment = self.original_principal * (r * (1 + r) ** n) / ((1 + r) ** n - 1)
+
+        # Live state
+        self.remaining_balance = float(self.original_principal)
+        self.is_paid_off = False
+
+        # Lifetime accumulators (never reset)
+        self._lifetime_total_paid = 0.0
+        self.principal_paid = 0.0
+        self.interest_paid_lifetime = 0.0
+
+        # Annual trackers (reset each year_end)
+        self.annual_principal_paid = 0.0
+        self.annual_interest_paid = 0.0
+
+        # Yearly history (one entry per year, never reset)
+        self.monthly_balance_history: list[float] = []
+        self.monthly_principal_history: list[float] = []
+        self.monthly_interest_history: list[float] = []
+        self.monthly_total_paid_history: list[float] = []
+
+    @property
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def variant(self) -> str:
+        return self._variant
+
+    def is_active(self, age: int) -> bool:
+        return self.start_age <= age and not self.is_paid_off
+
+    def process_monthly_payment(self) -> dict:
+        if self.is_paid_off or self.remaining_balance <= 0:
+            return {"payment": 0.0, "principal": 0.0, "interest": 0.0, "remaining_balance": 0.0}
+
+        monthly_rate = self.interest_rate / 12
+        interest_portion = self.remaining_balance * monthly_rate
+
+        # Last payment may be smaller than monthly_payment
+        principal_portion = min(self.monthly_payment - interest_portion, self.remaining_balance)
+        extra = min(self.extra_monthly_payment, self.remaining_balance - principal_portion)
+        total_principal = principal_portion + extra
+        total_paid = total_principal + interest_portion
+
+        self.remaining_balance -= total_principal
+        self.remaining_balance = max(0.0, self.remaining_balance)
+
+        # Accumulate
+        self.principal_paid += total_principal
+        self.interest_paid_lifetime += interest_portion
+        self.annual_principal_paid += total_principal
+        self.annual_interest_paid += interest_portion
+        self._lifetime_total_paid += total_paid
+
+        if self.remaining_balance == 0.0:
+            self.is_paid_off = True
+
+        self.monthly_balance_history.append(round(self.remaining_balance, 2))
+        self.monthly_principal_history.append(round(total_principal, 2))
+        self.monthly_interest_history.append(round(interest_portion, 2))
+        self.monthly_total_paid_history.append(round(self._lifetime_total_paid, 2))
+
+        return {
+            "payment": round(total_paid, 2),
+            "principal": round(total_principal, 2),
+            "interest": round(interest_portion, 2),
+            "remaining_balance": round(self.remaining_balance, 2),
+        }
+
+    def terminate_on_sale(self) -> float:
+        """
+        Called when the linked house asset is sold.
+        Returns net proceeds (positive = profit to checking, negative = deficiency from checking).
+        Loan balance is cleared — handled by HouseAssetSim passing in sale price.
+        """
+        self.is_paid_off = True
+        payoff_amount = self.remaining_balance
+        self.remaining_balance = 0.0
+        return payoff_amount
+
+    def process_year_end(self) -> None:
+        self.monthly_balance_history = []
+        self.monthly_principal_history = []
+        self.monthly_interest_history = []
+        self.monthly_total_paid_history = []
+
+        self.annual_principal_paid = 0.0
+        self.annual_interest_paid = 0.0
+
+    def snapshot(self) -> dict:
+        if self.remaining_balance > 0:
+            r = self.interest_rate / 12
+            # Remaining months at current payment rate
+            import math
+            remaining_term_months = math.ceil(
+                -math.log(1 - (self.remaining_balance * r) / self.monthly_payment) / math.log(1 + r)
+            ) if self.monthly_payment > self.remaining_balance * r else 0
+        else:
+            remaining_term_months = 0
+
+        return {
+            "id": self.id,
+            "name": self.name,
+            "variant": self.variant,
+            "remaining_balance": round(self.remaining_balance, 2),
+            "original_principal": self.original_principal,
+            "principal_paid": round(self.principal_paid, 2),
+            "interest_paid_lifetime": round(self.interest_paid_lifetime, 2),
+            "monthly_payment": round(self.monthly_payment, 2),
+            "extra_monthly_payment": self.extra_monthly_payment,
+            "effective_interest_rate": self.interest_rate,
+            "remaining_term_months": remaining_term_months,
+            "annual_principal_paid": round(self.annual_principal_paid, 2),
+            "annual_interest_paid": round(self.annual_interest_paid, 2),
+            "balance_history": self.monthly_balance_history,
+            "principal_history": self.monthly_principal_history,
+            "interest_history": self.monthly_interest_history,
+            "total_paid_history": self.monthly_total_paid_history,
+        }
+    
+# ═══════════════════════════════════════════════════════════════════════════
+# Assets
+# ═══════════════════════════════════════════════════════════════════════════
+
+class HouseAssetSim:
+
+    def __init__(self, asset: dict, linked_loan: HouseLoanSim | None = None):
+        self._id = asset["id"]
+        self._variant = asset["variant"]
+        self.name = asset["name"]
+        self.start_age = asset["start_age"]
+        self.end_age = asset["end_age"]
+        self.annual_appreciation = asset["annual_appreciation"]
+        self.down_payment = asset["down_payment"]
+        self.linked_loan = linked_loan
+
+        self.current_value = float(asset["asset_value"])
+        self.is_sold = False
+
+        # Yearly history
+        self.yearly_value_history: list[float] = []
+        self.yearly_equity_history: list[float] = []
+
+    @property
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def variant(self) -> str:
+        return self._variant
+
+    def is_active(self, age: int) -> bool:
+        return self.start_age <= age and not self.is_sold
+
+    def get_equity(self) -> float:
+        loan_balance = self.linked_loan.remaining_balance if self.linked_loan else 0.0
+        return self.current_value - loan_balance
+
+    def process_year_end(self) -> None:
+        self.current_value *= (1 + self.annual_appreciation)
+        self.yearly_value_history.append(round(self.current_value, 2))
+        self.yearly_equity_history.append(round(self.get_equity(), 2))
+
+    def process_sale(self) -> float:
+        """
+        Sells the house. Pays off the loan. Returns net proceeds to caller.
+        Positive = deposit to checking. Negative = withdraw from checking.
+        """
+        sale_price = self.current_value
+        loan_payoff = self.linked_loan.terminate_on_sale() if self.linked_loan else 0.0
+        net_proceeds = sale_price - loan_payoff
+        self.is_sold = True
+        return net_proceeds
+
+    def snapshot(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "variant": self.variant,
+            "current_value": round(self.current_value, 2),
+            "equity": round(self.get_equity(), 2),
+            "down_payment": self.down_payment,
+            "annual_appreciation": self.annual_appreciation,
+            "value_history": self.yearly_value_history,
+            "equity_history": self.yearly_equity_history,
+        }
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SIMULATION COORDINATOR
@@ -860,6 +1092,9 @@ class SimulationState:
         self.hourly_incomes: List[HourlyIncomeSim] = []
         self.side_hustle_incomes: List[SideHustleIncomeSim] = []
         self.taxable_investment_accounts: List[TaxableInvestmentSim] = []
+
+        self.house_loans: List[HouseLoanSim] = []
+        self.house_assets: List[HouseAssetSim] = []
 
         self.primary_checking: CheckingAccountSim | None = None
 
@@ -895,6 +1130,17 @@ def simulate(req: SimulateRequest):
         inv_sim = TaxableInvestmentSim(acc, filing_status=filing_status, state=state_code)
         state.taxable_investment_accounts.append(inv_sim)
 
+    house_loan_by_id: dict[str, HouseLoanSim] = {}
+    for loan in req["expenses"].get("house_loan", []):
+        loan_sim = HouseLoanSim(loan)
+        state.house_loans.append(loan_sim)
+        house_loan_by_id[loan["id"]] = loan_sim
+
+    for asset in req["assets"].get("house", []):
+        linked_loan = house_loan_by_id.get(asset["linked_loan_id"])
+        asset_sim = HouseAssetSim(asset, linked_loan)
+        state.house_assets.append(asset_sim)
+
     for income in req["incomes"]["salary"]:
         linked_retirement = retirement_by_id.get(income["linked_401k_id"]) if income.get("linked_401k_id") else None
         salary_sim = SalaryIncomeSim(income=income, retirement_account=linked_retirement, filing_status=filing_status, state=state_code)
@@ -924,6 +1170,10 @@ def simulate(req: SimulateRequest):
         active_salaries = [i for i in state.salary_incomes if i.is_active(current_age)]
         active_hourlies = [i for i in state.hourly_incomes if i.is_active(current_age)]
         active_side = [i for i in state.side_hustle_incomes if i.is_active(current_age)]
+
+        active_house_loans = [l for l in state.house_loans if l.is_active(current_age)]
+
+        active_house_assets = [a for a in state.house_assets if a.is_active(current_age)]
 
         for month in range(12):
             for salary_sim in active_salaries:
@@ -960,6 +1210,7 @@ def simulate(req: SimulateRequest):
             monthly_gross_by_id = {}
             for s in active_salaries:
                 monthly_gross_by_id[s.id] = s.current_gross_annual / 12
+
             for h in active_hourlies:
                 monthly_gross_by_id[h.id] = h.current_gross_annual / 12
 
@@ -972,6 +1223,10 @@ def simulate(req: SimulateRequest):
                     contribution = inv_sim.calculate_contribution(linked_gross)
                 state.primary_checking.withdraw(contribution)
                 inv_sim.deposit(contribution)
+            
+            for loan_sim in active_house_loans:
+                payment = loan_sim.process_monthly_payment()
+                state.primary_checking.withdraw(payment["payment"])
 
             # monthly compounding for all accounts
             # for account in active_checking + active_retirement: # loans and investments and assets 
@@ -995,6 +1250,9 @@ def simulate(req: SimulateRequest):
         side_snapshots = [sim.snapshot() for sim in active_side]
 
         all_income_snapshots = salary_snapshots + hourly_snapshots + side_snapshots
+
+        house_loan_snapshots = [l.snapshot() for l in active_house_loans]
+        house_asset_snapshots = [a.snapshot() for a in active_house_assets]
 
         total_gross_income = sum(s["gross_annual"] for s in all_income_snapshots)
         total_net_income = sum(s["net_annual"] for s in all_income_snapshots)
@@ -1032,9 +1290,23 @@ def simulate(req: SimulateRequest):
             if taxes_owed and state.primary_checking:
                 state.primary_checking.withdraw(taxes_owed)
 
+        for asset_sim in active_house_assets:
+            asset_sim.process_year_end()
+
+            if current_age + 1 == asset_sim.end_age:
+                net_proceeds = asset_sim.process_sale()
+                if net_proceeds >= 0:
+                    state.primary_checking.deposit(net_proceeds)
+                else:
+                    state.primary_checking.withdraw(abs(net_proceeds))
+
+        for loan_sim in active_house_loans:
+            loan_sim.process_year_end()
+
         # ── AGGREGATE ─────────────────────────────────────────────────────────
         total_cash = sum(acc.get_balance() for acc in active_checking + active_retirement + active_taxable)
-        total_net_worth = total_cash  # TODO: subtract liabilities
+        total_home_equity = sum(a.get_equity() for a in active_house_assets)
+        total_net_worth = total_cash + total_home_equity  # TODO: subtract liabilities
 
         if results:
             prev_year_net_worth = results[-1]["net_worth"]
@@ -1067,6 +1339,28 @@ def simulate(req: SimulateRequest):
             "incomes": all_income_snapshots,
         }
 
+        expenses_summary = {
+            "total_monthly": sum(l["monthly_payment"] for l in house_loan_snapshots),
+            "total_interest_paid_lifetime": sum(l["interest_paid_lifetime"] for l in house_loan_snapshots),
+            "by_variant": {
+                "house_loan": sum(l["monthly_payment"] for l in house_loan_snapshots),
+                "car_loan": 0.0,
+                "rent": 0.0,
+                "debt": 0.0,
+            },
+            "expenses": house_loan_snapshots,
+        }
+
+        assets_summary = {
+            "total_value": sum(a["current_value"] for a in house_asset_snapshots),
+            "total_equity": round(total_home_equity, 2),
+            "by_variant": {
+                "house": sum(a["current_value"] for a in house_asset_snapshots),
+                "car": 0.0,
+            },
+            "assets": house_asset_snapshots,
+        }
+
         year_result = {
             "year": calendar_year + 1,
             "age": current_age + 1,
@@ -1086,6 +1380,8 @@ def simulate(req: SimulateRequest):
             "current_gross_income": next_gross_income,  # side hustle excluded — no stable forward gross
             "accounts_summary": accounts_summary,
             "incomes_summary": incomes_summary,
+            "expenses": expenses_summary,
+            "assets": assets_summary,
         }
 
         results.append(year_result)

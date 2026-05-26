@@ -171,7 +171,7 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.785);
+  background: rgba(0, 0, 0, 0.891);
   backdrop-filter: blur(2px);
 }
 

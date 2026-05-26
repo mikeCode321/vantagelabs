@@ -27,7 +27,7 @@
         ]
       }
     ],
-    "taxable_investments": [{
+    "taxable_investments": [
         {
         "source_type": "liquid",
         "variant": "taxable_investments",
@@ -42,7 +42,7 @@
         "dividend_yield": 0.02,
         "dividend_reinvestment": "drip"
       }
-    }],
+    ],
     "employer_retirement": [
       {
         "source_type": "liquid",

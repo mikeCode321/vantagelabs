@@ -1,0 +1,91 @@
+{
+  "user_start_age": 25,
+  "user_end_age": 28,
+  "accounts": {
+    "checking": [
+        {
+        "source_type": "liquid",
+        "variant": "checking",
+        "id": "acc_1",
+        "name": "Checking Account",
+        "start_age": 25,
+        "end_age": 28,
+        "starting_balance": 10000,
+        "interest_tiers": [
+          {
+            "threshold": 15000,
+            "annual_rate": 0.0
+          },
+          {
+            "threshold": 100000,
+            "annual_rate": 0.03
+          },
+          {
+            "threshold": 300000,
+            "annual_rate": 0.04
+          }
+        ]
+      }
+    ],
+    "taxable_investments": [
+    ],
+    "employer_retirement": [
+    ]
+  },
+  "incomes": {
+    "salary": [
+      {
+        "source_type": "income",
+        "variant": "salary",
+        "id": "salary_1",
+        "name": "swe",
+        "start_age": 25,
+        "end_age": 26,
+        "gross_income": 100000,
+        "income_growth": 0.03,
+        "linked_401k_id": "401k_1"
+      }
+    ],
+    "hourly": [],
+    "side": []
+  },
+  "expenses": {
+    "living": [],
+    "rent": [],
+    "house_loan": [
+        {
+        "source_type": "expense",
+        "variant": "house_loan",
+        "id": "5bb4d8e8-a541-419e-ad82-191f0859d9fe",
+        "name": "House Loan",
+        "start_age": 25,
+        "end_age": 55,
+        "linked_asset_id": "ed73a8a8-455f-4a6a-9f84-3ec8b3cf9ebb",
+        "monthly_expense": 536.8216230121398,
+        "original_principal": 100000,
+        "interest_rate": 0.05,
+        "loan_term_years": 30,
+        "extra_monthly_payment": null
+      }
+    ],
+    "car_loan": [],
+    "debt": []
+  },
+  "assets": {
+    "house": [
+        {
+        "source_type": "asset",
+        "variant": "house",
+        "id": "ed73a8a8-455f-4a6a-9f84-3ec8b3cf9ebb",
+        "name": "House",
+        "start_age": 25,
+        "end_age": null,
+        "asset_value": 150000,
+        "annual_appreciation": 0.03,
+        "down_payment": 50000,
+        "linked_loan_id": "5bb4d8e8-a541-419e-ad82-191f0859d9fe"
+      }
+    ],
+    "car": []
+  }
+}

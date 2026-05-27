@@ -1,0 +1,694 @@
+{
+  "total_years_simulated": 3,
+  "request": {
+    "user_start_age": 25,
+    "user_end_age": 28,
+    "start_year": 2026,
+    "accounts": {
+      "checking": [
+        {
+          "source_type": "liquid",
+          "variant": "checking",
+          "id": "acc_1",
+          "name": "Checking Account",
+          "start_age": 25,
+          "end_age": 28,
+          "starting_balance": 10000,
+          "interest_tiers": [
+            {
+              "threshold": 15000,
+              "annual_rate": 0
+            },
+            {
+              "threshold": 100000,
+              "annual_rate": 0.03
+            },
+            {
+              "threshold": 300000,
+              "annual_rate": 0.04
+            }
+          ]
+        }
+      ],
+      "taxable_investments": [],
+      "employer_retirement": []
+    },
+    "incomes": {
+      "salary": [
+        {
+          "source_type": "income",
+          "variant": "salary",
+          "id": "salary_1",
+          "name": "swe",
+          "start_age": 25,
+          "end_age": 26,
+          "gross_income": 100000,
+          "income_growth": 0.03,
+          "linked_401k_id": "401k_1"
+        }
+      ],
+      "hourly": [],
+      "side": []
+    },
+    "expenses": {
+      "living": [],
+      "rent": [],
+      "house_loan": [
+        {
+          "source_type": "expense",
+          "variant": "house_loan",
+          "id": "5bb4d8e8-a541-419e-ad82-191f0859d9fe",
+          "name": "House Loan",
+          "start_age": 25,
+          "end_age": 55,
+          "linked_asset_id": "ed73a8a8-455f-4a6a-9f84-3ec8b3cf9ebb",
+          "monthly_expense": 536.8216230121398,
+          "original_principal": 100000,
+          "interest_rate": 0.05,
+          "loan_term_years": 30
+        }
+      ],
+      "car_loan": [],
+      "debt": []
+    },
+    "assets": {
+      "house": [
+        {
+          "source_type": "asset",
+          "variant": "house",
+          "id": "ed73a8a8-455f-4a6a-9f84-3ec8b3cf9ebb",
+          "name": "House",
+          "start_age": 25,
+          "end_age": null,
+          "asset_value": 150000,
+          "annual_appreciation": 0.03,
+          "down_payment": 50000,
+          "linked_loan_id": "5bb4d8e8-a541-419e-ad82-191f0859d9fe"
+        }
+      ],
+      "car": []
+    }
+  },
+  "metrics": {
+    "total_years": 3,
+    "starting_net_worth": 10000,
+    "ending_net_worth": 138410.38,
+    "peak_net_worth": 138410.38,
+    "peak_net_worth_age": 28,
+    "total_income_lifetime": 100000,
+    "lowest_cash_balance_year": 2029,
+    "lowest_cash_balance": 69844.93
+  },
+  "year_results": [
+    {
+      "year": 2027,
+      "age": 26,
+      "net_worth": 135151.11,
+      "net_worth_change": 125151.11,
+      "net_worth_change_percent": 1251.51,
+      "total_cash": 79175.74,
+      "income_earned": {
+        "gross": 100000,
+        "net": 74651,
+        "taxes_paid": 25349,
+        "federal_tax": 13449,
+        "fica_tax": 7650,
+        "state_tax": 4250,
+        "effective_tax_rate": 25.35
+      },
+      "current_gross_income": 103000,
+      "accounts_summary": {
+        "total_balance": 79175.74383295128,
+        "total_interest_earned": 966.54,
+        "by_variant": {
+          "checking": 79175.74,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 79175.74,
+            "annual_interest_earned": 966.54,
+            "balance_history": [
+              15685.81025,
+              21385.835025625,
+              27100.109863189067,
+              32828.67038784704,
+              38571.55231381666,
+              44328.7914446012,
+              50100.4236732127,
+              55886.484982395734,
+              61687.01144485172,
+              67502.03922346384,
+              73331.60457152249,
+              79175.74383295128
+            ],
+            "interest_history": [
+              1.710250000000001,
+              15.924775625000002,
+              30.17483756406251,
+              44.46052465797268,
+              58.7819259696176,
+              73.13913078454165,
+              87.532228611503,
+              101.96130918303176,
+              116.42646245598934,
+              130.9277786121293,
+              145.4653480586596,
+              160.0392614288062
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 100000,
+        "total_net_income": 74651,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 100000,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_1",
+            "name": "swe",
+            "variant": "salary",
+            "gross_annual": 100000,
+            "net_annual": 74651,
+            "annual_401k_contributions": 0,
+            "taxes": {
+              "federal": 13449,
+              "fica": 7650,
+              "state": 4250
+            }
+          }
+        ]
+      },
+      "expenses": {
+        "total_monthly": 536.82,
+        "total_interest_paid_lifetime": 4966.49,
+        "by_variant": {
+          "house_loan": 536.82,
+          "car_loan": 0,
+          "rent": 0,
+          "debt": 0
+        },
+        "expenses": [
+          {
+            "id": "5bb4d8e8-a541-419e-ad82-191f0859d9fe",
+            "name": "House Loan",
+            "variant": "house_loan",
+            "remaining_balance": 98524.63,
+            "original_principal": 100000,
+            "principal_paid": 1475.37,
+            "interest_paid_lifetime": 4966.49,
+            "monthly_payment": 536.82,
+            "extra_monthly_payment": 0,
+            "effective_interest_rate": 0.05,
+            "remaining_term_months": 348,
+            "annual_principal_paid": 1475.37,
+            "annual_interest_paid": 4966.49,
+            "balance_history": [
+              99879.85,
+              99759.19,
+              99638.03,
+              99516.37,
+              99394.2,
+              99271.52,
+              99148.33,
+              99024.62,
+              98900.41,
+              98775.67,
+              98650.41,
+              98524.63
+            ],
+            "principal_history": [
+              120.15,
+              120.66,
+              121.16,
+              121.66,
+              122.17,
+              122.68,
+              123.19,
+              123.7,
+              124.22,
+              124.74,
+              125.26,
+              125.78
+            ],
+            "interest_history": [
+              416.67,
+              416.17,
+              415.66,
+              415.16,
+              414.65,
+              414.14,
+              413.63,
+              413.12,
+              412.6,
+              412.09,
+              411.57,
+              411.04
+            ],
+            "total_paid_history": [
+              536.82,
+              1073.64,
+              1610.46,
+              2147.29,
+              2684.11,
+              3220.93,
+              3757.75,
+              4294.57,
+              4831.39,
+              5368.22,
+              5905.04,
+              6441.86
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 150000,
+        "total_equity": 55975.37,
+        "by_variant": {
+          "house": 150000,
+          "car": 0
+        },
+        "assets": [
+          {
+            "id": "ed73a8a8-455f-4a6a-9f84-3ec8b3cf9ebb",
+            "name": "House",
+            "variant": "house",
+            "current_value": 150000,
+            "equity": 51475.37,
+            "down_payment": 50000,
+            "annual_appreciation": 0.03,
+            "value_history": [
+              154500,
+              159135,
+              163909.05
+            ],
+            "equity_history": [
+              55975.37,
+              62161.21,
+              68565.46
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "year": 2028,
+      "age": 27,
+      "net_worth": 136741.44,
+      "net_worth_change": 1590.33,
+      "net_worth_change_percent": 1.18,
+      "total_cash": 74580.23,
+      "income_earned": {
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
+        "federal_tax": 0,
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
+      },
+      "current_gross_income": 0,
+      "accounts_summary": {
+        "total_balance": 74580.22500215258,
+        "total_interest_earned": 1846.32,
+        "by_variant": {
+          "checking": 74580.23,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 74580.23,
+            "annual_interest_earned": 1846.32,
+            "balance_history": [
+              78798.02114253365,
+              78419.35414538997,
+              78039.74048075343,
+              77659.17778195531,
+              77277.66367641019,
+              76895.1957856012,
+              76511.77172506519,
+              76127.38910437784,
+              75742.04552713878,
+              75355.73859095662,
+              74968.46588743401,
+              74580.22500215258
+            ],
+            "interest_history": [
+              159.0973095823782,
+              158.1530028563341,
+              157.2063353634749,
+              156.25730120188356,
+              155.30589445488826,
+              154.35210919102545,
+              153.395939464003,
+              152.43737931266296,
+              151.4764227609446,
+              150.51306381784693,
+              149.54729647739154,
+              148.579114718585
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
+        "by_variant": {
+          "salary": 0,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": []
+      },
+      "expenses": {
+        "total_monthly": 536.82,
+        "total_interest_paid_lifetime": 9857.51,
+        "by_variant": {
+          "house_loan": 536.82,
+          "car_loan": 0,
+          "rent": 0,
+          "debt": 0
+        },
+        "expenses": [
+          {
+            "id": "5bb4d8e8-a541-419e-ad82-191f0859d9fe",
+            "name": "House Loan",
+            "variant": "house_loan",
+            "remaining_balance": 96973.79,
+            "original_principal": 100000,
+            "principal_paid": 3026.21,
+            "interest_paid_lifetime": 9857.51,
+            "monthly_payment": 536.82,
+            "extra_monthly_payment": 0,
+            "effective_interest_rate": 0.05,
+            "remaining_term_months": 336,
+            "annual_principal_paid": 1550.85,
+            "annual_interest_paid": 4891.01,
+            "balance_history": [
+              98398.33,
+              98271.5,
+              98144.15,
+              98016.26,
+              97887.84,
+              97758.88,
+              97629.39,
+              97499.36,
+              97368.78,
+              97237.66,
+              97106,
+              96973.79
+            ],
+            "principal_history": [
+              126.3,
+              126.83,
+              127.36,
+              127.89,
+              128.42,
+              128.96,
+              129.49,
+              130.03,
+              130.57,
+              131.12,
+              131.66,
+              132.21
+            ],
+            "interest_history": [
+              410.52,
+              409.99,
+              409.46,
+              408.93,
+              408.4,
+              407.87,
+              407.33,
+              406.79,
+              406.25,
+              405.7,
+              405.16,
+              404.61
+            ],
+            "total_paid_history": [
+              6978.68,
+              7515.5,
+              8052.32,
+              8589.15,
+              9125.97,
+              9662.79,
+              10199.61,
+              10736.43,
+              11273.25,
+              11810.08,
+              12346.9,
+              12883.72
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 154500,
+        "total_equity": 62161.21,
+        "by_variant": {
+          "house": 154500,
+          "car": 0
+        },
+        "assets": [
+          {
+            "id": "ed73a8a8-455f-4a6a-9f84-3ec8b3cf9ebb",
+            "name": "House",
+            "variant": "house",
+            "current_value": 154500,
+            "equity": 57526.21,
+            "down_payment": 50000,
+            "annual_appreciation": 0.03,
+            "value_history": [
+              154500,
+              159135,
+              163909.05
+            ],
+            "equity_history": [
+              55975.37,
+              62161.21,
+              68565.46
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "year": 2029,
+      "age": 28,
+      "net_worth": 138410.38,
+      "net_worth_change": 1668.94,
+      "net_worth_change_percent": 1.22,
+      "total_cash": 69844.93,
+      "income_earned": {
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
+        "federal_tax": 0,
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
+      },
+      "current_gross_income": 0,
+      "accounts_summary": {
+        "total_balance": 69844.92906860112,
+        "total_interest_earned": 1706.54,
+        "by_variant": {
+          "checking": 69844.93,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 69844.93,
+            "annual_interest_earned": 1706.54,
+            "balance_history": [
+              74191.01351465796,
+              73800.82899844459,
+              73409.6690209407,
+              73017.53114349303,
+              72624.41292135176,
+              72230.31190365514,
+              71835.22563341427,
+              71439.1516474978,
+              71042.08747661654,
+              70644.03064530807,
+              70244.97867192133,
+              69844.92906860112
+            ],
+            "interest_history": [
+              147.60851250538144,
+              146.63548378664487,
+              145.66002249611145,
+              144.68212255235173,
+              143.70177785873258,
+              142.7189823033794,
+              141.73372975913782,
+              140.74601408353567,
+              139.7558291187445,
+              138.76316869154132,
+              137.76802661327017,
+              136.7703966798033
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
+        "by_variant": {
+          "salary": 0,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": []
+      },
+      "expenses": {
+        "total_monthly": 536.82,
+        "total_interest_paid_lifetime": 14669.17,
+        "by_variant": {
+          "house_loan": 536.82,
+          "car_loan": 0,
+          "rent": 0,
+          "debt": 0
+        },
+        "expenses": [
+          {
+            "id": "5bb4d8e8-a541-419e-ad82-191f0859d9fe",
+            "name": "House Loan",
+            "variant": "house_loan",
+            "remaining_balance": 95343.59,
+            "original_principal": 100000,
+            "principal_paid": 4656.41,
+            "interest_paid_lifetime": 14669.17,
+            "monthly_payment": 536.82,
+            "extra_monthly_payment": 0,
+            "effective_interest_rate": 0.05,
+            "remaining_term_months": 324,
+            "annual_principal_paid": 1630.19,
+            "annual_interest_paid": 4811.67,
+            "balance_history": [
+              96841.02,
+              96707.71,
+              96573.83,
+              96439.4,
+              96304.41,
+              96168.86,
+              96032.74,
+              95896.05,
+              95758.8,
+              95620.97,
+              95482.57,
+              95343.59
+            ],
+            "principal_history": [
+              132.76,
+              133.32,
+              133.87,
+              134.43,
+              134.99,
+              135.55,
+              136.12,
+              136.69,
+              137.25,
+              137.83,
+              138.4,
+              138.98
+            ],
+            "interest_history": [
+              404.06,
+              403.5,
+              402.95,
+              402.39,
+              401.83,
+              401.27,
+              400.7,
+              400.14,
+              399.57,
+              398.99,
+              398.42,
+              397.84
+            ],
+            "total_paid_history": [
+              13420.54,
+              13957.36,
+              14494.18,
+              15031.01,
+              15567.83,
+              16104.65,
+              16641.47,
+              17178.29,
+              17715.11,
+              18251.94,
+              18788.76,
+              19325.58
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 159135,
+        "total_equity": 68565.46,
+        "by_variant": {
+          "house": 159135,
+          "car": 0
+        },
+        "assets": [
+          {
+            "id": "ed73a8a8-455f-4a6a-9f84-3ec8b3cf9ebb",
+            "name": "House",
+            "variant": "house",
+            "current_value": 159135,
+            "equity": 63791.41,
+            "down_payment": 50000,
+            "annual_appreciation": 0.03,
+            "value_history": [
+              154500,
+              159135,
+              163909.05
+            ],
+            "equity_history": [
+              55975.37,
+              62161.21,
+              68565.46
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "net_worth_trend": [
+    135151.11,
+    136741.44,
+    138410.38
+  ],
+  "cash_trend": [
+    79175.74,
+    74580.23,
+    69844.93
+  ],
+  "annual_income_trend": [
+    103000,
+    0,
+    0
+  ]
+}

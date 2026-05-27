@@ -264,7 +264,7 @@ const INITIAL_STATE: SimRequest = {
 };
 // our sim_request
 const LOCAL_STORAGE_KEY = "sim_request";
-const ENABLE_LOCAL_STORAGE_PERSISTENCE = true;
+const ENABLE_LOCAL_STORAGE_PERSISTENCE = false;
 
 function loadState(){
   if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return null;
@@ -1065,7 +1065,7 @@ export default function Dashboard() {
 
   return (
     <div className="dash-root">
-      {isSimLoading && (
+      {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
         <div className="dash-loading-overlay">
           <Audio height="100" width="100" color="#6d28d9" ariaLabel="audio-loading" visible={true} />
         </div>

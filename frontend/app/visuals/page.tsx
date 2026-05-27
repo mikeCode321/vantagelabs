@@ -1142,6 +1142,10 @@ export default function Dashboard() {
         </div>
 
         <FinancialOverviewCards cards={overviewCards} />
+        <section className="simulation-results-grid">
+          <IncomeGrowthChart />
+          <SimulationHighlights data={testData} />
+        </section>
 
         <section className="simulation-section-header">
           <h2>Simulation Inputs</h2>
@@ -1150,13 +1154,9 @@ export default function Dashboard() {
 
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
 
-        <SimulationControls state={state} setSimResult={setSimResult} />
+        {/* <SimulationControls state={state} setSimResult={setSimResult} /> */}
 
-        <section className="simulation-results-grid">
-          <IncomeGrowthChart />
-          <SimulationHighlights data={testData} />
-        </section>
-        <SimResultViewer simResult={simResult} />
+        {/* <SimResultViewer simResult={simResult} /> */}
         <ToastBanner toasts={toasts} setToasts={setToasts} />
       </main>
     </div>

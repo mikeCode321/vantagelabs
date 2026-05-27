@@ -6,7 +6,7 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: var(--font-dm-mono), monospace;
+  font-family: var(--font-primary), monospace;
 }
 
 .dash-root {
@@ -14,7 +14,7 @@ body, html {
   height: 100dvh;
   overflow: hidden;
   background: radial-gradient(circle at 0 0,#0000, #7c3aed14 150%), #fff;
-  font-family: var(--font-dm-mono), monospace;
+  font-family: var(--font-primary), monospace;
 }
 
 .dash-logo {
@@ -84,7 +84,7 @@ body, html {
 }
 
 .dash-page-title {
-  font-family: var(--font-dm-mono), monospace;
+  font-family: var(--font-primary), monospace;
   font-size: 1.3rem;
   font-weight: 700;
   color: #300d6b;
@@ -262,7 +262,7 @@ tbody tr:hover {
 
 /* Outer wrapper for every form panel */
 .form-panel {
-  font-family: var(--font-dm-mono), monospace;
+  font-family: var(--font-primary), monospace;
   margin: 25px;
   max-height: 85vh;
   overflow-y: auto;
@@ -367,7 +367,7 @@ tbody tr:hover {
   color: var(--primary);
   border-radius: 3px;
   padding: 10px 12px;
-  font-family: var(--font-dm-mono), monospace;
+  font-family: var(--font-primary), monospace;
   font-size: 0.72rem;
   outline: none;
   transition: all 0.15s;
@@ -460,7 +460,7 @@ tbody tr:hover {
   border: 1px solid var(--teal);
   border-radius: 3px;
   padding: 10px 16px;
-  font-family: var(--font-dm-mono), monospace;
+  font-family: var(--font-primary), monospace;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -476,7 +476,7 @@ tbody tr:hover {
   border: 1px solid #5FA7AB44;
   border-radius: 3px;
   padding: 10px 16px;
-  font-family: var(--font-dm-mono), monospace;
+  font-family: var(--font-primary), monospace;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -522,7 +522,7 @@ tbody tr:hover {
   border: 1px solid var(--teal);
   border-radius: 3px;
   padding: 5px 10px;
-  font-family: var(--font-dm-mono), monospace;
+  font-family: var(--font-primary), monospace;
   font-size: 0.62rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -556,7 +556,7 @@ tbody tr:hover {
   border: 1px solid #B46D6D44;
   border-radius: 3px;
   padding: 8px 10px;
-  font-family: var(--font-dm-mono), monospace;
+  font-family: var(--font-primary), monospace;
   font-size: 0.62rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -921,9 +921,7 @@ tbody tr:hover {
 .entity-card__desc {
   margin: 0;
   color: #697287;
-  font-size: 13px;
-  line-height: 1.45;
-  font-weight: 500;
+  font-size: 10px;
   max-width: 240px;
 }
 
@@ -1911,8 +1909,8 @@ tbody tr:hover {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 12px;
-  margin-top: 22px;
-  margin-bottom: 28px;
+  margin-top: 12px;
+  margin-bottom: 10px;
 }
 
 .overview-card {
@@ -2058,21 +2056,21 @@ tbody tr:hover {
 /* ── Simulation section ── */
 
 .simulation-section-header {
-  margin-top: 4px;
-  margin-bottom: 16px;
+  margin-top: 2px;
+  margin-bottom: 10px;
 }
 
 .simulation-section-header h2 {
   margin: 0 0 8px;
   color: #111426;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 850;
 }
 
 .simulation-section-header p {
   margin: 0;
   color: #697287;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
 }
 

@@ -1,0 +1,580 @@
+{
+  "total_years_simulated": 3,
+  "request": {
+    "user_start_age": 25,
+    "user_end_age": 28,
+    "start_year": 2026,
+    "accounts": {
+      "checking": [
+        {
+          "source_type": "liquid",
+          "variant": "checking",
+          "id": "acc_1",
+          "name": "Checking Account",
+          "start_age": 25,
+          "end_age": 28,
+          "starting_balance": 10000,
+          "interest_tiers": [
+            {
+              "threshold": 15000,
+              "annual_rate": 0
+            },
+            {
+              "threshold": 100000,
+              "annual_rate": 0.03
+            },
+            {
+              "threshold": 300000,
+              "annual_rate": 0.04
+            }
+          ]
+        }
+      ],
+      "taxable_investments": [],
+      "employer_retirement": []
+    },
+    "incomes": {
+      "salary": [
+        {
+          "source_type": "income",
+          "variant": "salary",
+          "id": "salary_1",
+          "name": "swe",
+          "start_age": 25,
+          "end_age": 26,
+          "gross_income": 100000,
+          "income_growth": 0.03,
+          "linked_401k_id": "401k_1"
+        }
+      ],
+      "hourly": [],
+      "side": []
+    },
+    "expenses": {
+      "living": [],
+      "rent": [],
+      "house_loan": [],
+      "car_loan": [
+        {
+          "source_type": "expense",
+          "variant": "car_loan",
+          "id": "8a2d01c0-21b8-44a4-bb88-11b4910240b5",
+          "name": "Toyota Loan",
+          "start_age": 25,
+          "end_age": 27,
+          "linked_asset_id": "104cb774-dfc3-4848-a4b3-2cdb7775a533",
+          "monthly_expense": 239.76717683732443,
+          "original_principal": 8000,
+          "interest_rate": 0.05,
+          "loan_term_years": 3
+        }
+      ],
+      "debt": []
+    },
+    "assets": {
+      "house": [],
+      "car": [
+        {
+          "source_type": "asset",
+          "variant": "car",
+          "id": "104cb774-dfc3-4848-a4b3-2cdb7775a533",
+          "name": "toyota",
+          "start_age": 25,
+          "end_age": 27,
+          "asset_value": 10000,
+          "annual_depreciation": 0.07,
+          "down_payment": 2000,
+          "linked_loan_id": "8a2d01c0-21b8-44a4-bb88-11b4910240b5"
+        }
+      ]
+    }
+  },
+  "metrics": {
+    "total_years": 3,
+    "starting_net_worth": 10000,
+    "ending_net_worth": 88484.06,
+    "peak_net_worth": 88484.06,
+    "peak_net_worth_age": 28,
+    "total_income_lifetime": 100000,
+    "lowest_cash_balance_year": 2028,
+    "lowest_cash_balance": 79815.73
+  },
+  "year_results": [
+    {
+      "year": 2027,
+      "age": 26,
+      "net_worth": 85275.36,
+      "net_worth_change": 75275.36,
+      "net_worth_change_percent": 752.75,
+      "total_cash": 80740.59,
+      "income_earned": {
+        "gross": 100000,
+        "net": 74651,
+        "taxes_paid": 25349,
+        "federal_tax": 13449,
+        "fica_tax": 7650,
+        "state_tax": 4250,
+        "effective_tax_rate": 25.35
+      },
+      "current_gross_income": 103000,
+      "accounts_summary": {
+        "total_balance": 80740.59,
+        "total_interest_earned": 966.79,
+        "by_variant": {
+          "checking": 80740.59,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 80740.59,
+            "annual_interest_earned": 966.79,
+            "balance_history": [
+              13981.15,
+              19974.70575,
+              25983.245389375,
+              32006.806377848436,
+              38045.42626879306,
+              44099.14270946504,
+              50167.99344123871,
+              56252.01629984181,
+              62351.249215591415,
+              68465.73021363039,
+              74595.49741416446,
+              80740.58903269986
+            ],
+            "interest_history": [
+              0,
+              12.405749999999998,
+              27.389639374999998,
+              42.41098847343749,
+              57.46989094462109,
+              72.56644067198266,
+              87.70073177366261,
+              102.87285860309677,
+              118.08291574960452,
+              133.33099803897855,
+              148.61720053407598,
+              163.94161853541115
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 100000,
+        "total_net_income": 74651,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 100000,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_1",
+            "name": "swe",
+            "variant": "salary",
+            "gross_annual": 100000,
+            "net_annual": 74651,
+            "annual_401k_contributions": 0,
+            "taxes": {
+              "federal": 13449,
+              "fica": 7650,
+              "state": 4250
+            }
+          }
+        ]
+      },
+      "expenses": {
+        "total_monthly": 239.77,
+        "total_interest_paid_lifetime": 342.43,
+        "by_variant": {
+          "house_loan": 0,
+          "car_loan": 239.77,
+          "rent": 0,
+          "debt": 0
+        },
+        "expenses": [
+          {
+            "id": "8a2d01c0-21b8-44a4-bb88-11b4910240b5",
+            "name": "Toyota Loan",
+            "variant": "car_loan",
+            "remaining_balance": 5465.23,
+            "original_principal": 8000,
+            "principal_paid": 2534.77,
+            "interest_paid_lifetime": 342.43,
+            "monthly_payment": 239.77,
+            "effective_interest_rate": 0.05,
+            "remaining_term_months": 24,
+            "annual_principal_paid": 2534.77,
+            "annual_interest_paid": 342.43,
+            "balance_history": [
+              7793.57,
+              7586.27,
+              7378.11,
+              7169.09,
+              6959.19,
+              6748.42,
+              6536.77,
+              6324.24,
+              6110.83,
+              5896.52,
+              5681.32,
+              5465.23
+            ],
+            "principal_history": [
+              206.43,
+              207.29,
+              208.16,
+              209.03,
+              209.9,
+              210.77,
+              211.65,
+              212.53,
+              213.42,
+              214.31,
+              215.2,
+              216.09
+            ],
+            "interest_history": [
+              33.33,
+              32.47,
+              31.61,
+              30.74,
+              29.87,
+              29,
+              28.12,
+              27.24,
+              26.35,
+              25.46,
+              24.57,
+              23.67
+            ],
+            "total_paid_history": [
+              239.77,
+              479.53,
+              719.3,
+              959.07,
+              1198.84,
+              1438.6,
+              1678.37,
+              1918.14,
+              2157.9,
+              2397.67,
+              2637.44,
+              2877.21
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 10000,
+        "total_equity": 4534.77,
+        "by_variant": {
+          "house": 0,
+          "car": 10000
+        },
+        "assets": [
+          {
+            "id": "104cb774-dfc3-4848-a4b3-2cdb7775a533",
+            "name": "toyota",
+            "variant": "car",
+            "current_value": 10000,
+            "equity": 4534.77,
+            "down_payment": 2000,
+            "annual_depreciation": 0.07
+          }
+        ]
+      }
+    },
+    {
+      "year": 2028,
+      "age": 27,
+      "net_worth": 86314.96,
+      "net_worth_change": 1039.6,
+      "net_worth_change_percent": 1.22,
+      "total_cash": 79815.73,
+      "income_earned": {
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
+        "federal_tax": 0,
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
+      },
+      "current_gross_income": 0,
+      "accounts_summary": {
+        "total_balance": 79815.73,
+        "total_interest_earned": 1952.38,
+        "by_variant": {
+          "checking": 79815.73,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 79815.73,
+            "annual_interest_earned": 1952.38,
+            "balance_history": [
+              80664.5710802816,
+              80588.36308298231,
+              80511.96456568976,
+              80435.37505210398,
+              80358.59406473424,
+              80281.62112489606,
+              80204.4557527083,
+              80127.09746709006,
+              80049.54578575779,
+              79971.80022522218,
+              79893.86030078524,
+              79815.7255265372
+            ],
+            "interest_history": [
+              163.75204758174965,
+              163.562002700704,
+              163.37148270745575,
+              163.1804864142244,
+              162.98901263025994,
+              162.7970601618356,
+              162.60462781224015,
+              162.41171438177074,
+              162.21831866772516,
+              162.02443946439445,
+              161.83007556305543,
+              161.63522575196308
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
+        "by_variant": {
+          "salary": 0,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": []
+      },
+      "expenses": {
+        "total_monthly": 239.77,
+        "total_interest_paid_lifetime": 555.19,
+        "by_variant": {
+          "house_loan": 0,
+          "car_loan": 239.77,
+          "rent": 0,
+          "debt": 0
+        },
+        "expenses": [
+          {
+            "id": "8a2d01c0-21b8-44a4-bb88-11b4910240b5",
+            "name": "Toyota Loan",
+            "variant": "car_loan",
+            "remaining_balance": 2800.77,
+            "original_principal": 8000,
+            "principal_paid": 5199.23,
+            "interest_paid_lifetime": 555.19,
+            "monthly_payment": 239.77,
+            "effective_interest_rate": 0.05,
+            "remaining_term_months": 12,
+            "annual_principal_paid": 2664.46,
+            "annual_interest_paid": 212.75,
+            "balance_history": [
+              5248.23,
+              5030.33,
+              4811.53,
+              4591.81,
+              4371.17,
+              4149.62,
+              3927.14,
+              3703.74,
+              3479.4,
+              3254.13,
+              3027.92,
+              2800.77
+            ],
+            "principal_history": [
+              217,
+              217.9,
+              218.81,
+              219.72,
+              220.63,
+              221.55,
+              222.48,
+              223.4,
+              224.33,
+              225.27,
+              226.21,
+              227.15
+            ],
+            "interest_history": [
+              22.77,
+              21.87,
+              20.96,
+              20.05,
+              19.13,
+              18.21,
+              17.29,
+              16.36,
+              15.43,
+              14.5,
+              13.56,
+              12.62
+            ],
+            "total_paid_history": [
+              3116.97,
+              3356.74,
+              3596.51,
+              3836.27,
+              4076.04,
+              4315.81,
+              4555.58,
+              4795.34,
+              5035.11,
+              5274.88,
+              5514.65,
+              5754.41
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 9300,
+        "total_equity": 6499.23,
+        "by_variant": {
+          "house": 0,
+          "car": 9300
+        },
+        "assets": [
+          {
+            "id": "104cb774-dfc3-4848-a4b3-2cdb7775a533",
+            "name": "toyota",
+            "variant": "car",
+            "current_value": 9300,
+            "equity": 6499.23,
+            "down_payment": 2000,
+            "annual_depreciation": 0.07
+          }
+        ]
+      }
+    },
+    {
+      "year": 2029,
+      "age": 28,
+      "net_worth": 88484.06,
+      "net_worth_change": 2169.1,
+      "net_worth_change_percent": 2.51,
+      "total_cash": 88484.06,
+      "income_earned": {
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
+        "federal_tax": 0,
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
+      },
+      "current_gross_income": 0,
+      "accounts_summary": {
+        "total_balance": 88484.06,
+        "total_interest_earned": 2169.11,
+        "by_variant": {
+          "checking": 88484.06,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 88484.06,
+            "annual_interest_earned": 2169.11,
+            "balance_history": [
+              86493.23928431798,
+              86671.97238252878,
+              86851.1523134851,
+              87030.78019426881,
+              87210.85714475448,
+              87391.38428761637,
+              87572.3627483354,
+              87753.79365520625,
+              87935.67813934427,
+              88118.01733469263,
+              88300.81237802937,
+              88484.06440897445
+            ],
+            "interest_history": [
+              178.2873797613915,
+              178.73309821079496,
+              179.17993095632195,
+              179.62788078371275,
+              180.07695048567203,
+              180.5271428618862,
+              180.97846071904092,
+              181.43090687083853,
+              181.8844841380156,
+              182.33919534836068,
+              182.7950433367316,
+              183.25203094507341
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
+        "by_variant": {
+          "salary": 0,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": []
+      },
+      "expenses": {
+        "total_monthly": 0,
+        "total_interest_paid_lifetime": 0,
+        "by_variant": {
+          "house_loan": 0,
+          "car_loan": 0,
+          "rent": 0,
+          "debt": 0
+        },
+        "expenses": []
+      },
+      "assets": {
+        "total_value": 0,
+        "total_equity": 0,
+        "by_variant": {
+          "house": 0,
+          "car": 0
+        },
+        "assets": []
+      }
+    }
+  ],
+  "net_worth_trend": [
+    85275.36,
+    86314.96,
+    88484.06
+  ],
+  "cash_trend": [
+    80740.59,
+    79815.73,
+    88484.06
+  ],
+  "annual_income_trend": [
+    103000,
+    0,
+    0
+  ]
+}

@@ -80,9 +80,9 @@ function FinancialOverviewCard({ card }: { card: OverviewCard }) {
         </div>
       </div>
 
-      <div className="overview-card__divider" />
+      {/* <div className="overview-card__divider" /> */}
 
-      <p className="overview-card__meta">{card.meta}</p>
+      {/* <p className="overview-card__meta">{card.meta}</p> */}
     </article>
   );
 }

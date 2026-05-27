@@ -1,0 +1,90 @@
+{
+  "user_start_age": 25,
+  "user_end_age": 28,
+  "accounts": {
+    "checking": [
+        {
+        "source_type": "liquid",
+        "variant": "checking",
+        "id": "acc_1",
+        "name": "Checking Account",
+        "start_age": 25,
+        "end_age": 28,
+        "starting_balance": 10000,
+        "interest_tiers": [
+          {
+            "threshold": 15000,
+            "annual_rate": 0.0
+          },
+          {
+            "threshold": 100000,
+            "annual_rate": 0.03
+          },
+          {
+            "threshold": 300000,
+            "annual_rate": 0.04
+          }
+        ]
+      }
+    ],
+    "taxable_investments": [
+    ],
+    "employer_retirement": [
+    ]
+  },
+  "incomes": {
+    "salary": [
+      {
+        "source_type": "income",
+        "variant": "salary",
+        "id": "salary_1",
+        "name": "swe",
+        "start_age": 25,
+        "end_age": 26,
+        "gross_income": 100000,
+        "income_growth": 0.03,
+        "linked_401k_id": "401k_1"
+      }
+    ],
+    "hourly": [],
+    "side": []
+  },
+  "expenses": {
+    "living": [],
+    "rent": [],
+    "house_loan": [
+    ],
+    "car_loan": [
+      {
+        "source_type": "expense",
+        "variant": "car_loan",
+        "id": "8a2d01c0-21b8-44a4-bb88-11b4910240b5",
+        "name": "Toyota Loan",
+        "start_age": 25,
+        "end_age": 27,
+        "linked_asset_id": "104cb774-dfc3-4848-a4b3-2cdb7775a533",
+        "monthly_expense": 239.76717683732443,
+        "original_principal": 8000,
+        "interest_rate": 0.05,
+        "loan_term_years": 3
+      }
+    ],
+    "debt": []
+  },
+  "assets": {
+    "house": [
+    ],
+    "car": [{
+        "source_type": "asset",
+        "variant": "car",
+        "id": "104cb774-dfc3-4848-a4b3-2cdb7775a533",
+        "name": "toyota",
+        "start_age": 25,
+        "end_age": 27,
+        "asset_value": 10000,
+        "annual_depreciation": 0.07,
+        "down_payment": 2000,
+        "linked_loan_id": "8a2d01c0-21b8-44a4-bb88-11b4910240b5"
+      }]
+  }
+}

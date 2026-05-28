@@ -1016,6 +1016,7 @@ tbody tr:hover {
   text-overflow: ellipsis;
   min-width: 0;
   flex-shrink: 1;
+  text-transform: capitalize;
 }
 
 .entity-row__linked-pill {

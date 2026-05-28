@@ -1133,9 +1133,8 @@ export default function Dashboard() {
               user_start_age: profile.current_age,
               user_end_age: profile.retirement_age,
             }});
-            // store filing_status + state_of_residence however you want
             if (mode === "skipped") handleTutorialComplete();
-            else handleTutorialNext(); // advance to step 1 of guided walkthrough
+            else handleTutorialNext(); 
           }}
         />
       )}

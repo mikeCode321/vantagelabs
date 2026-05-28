@@ -522,6 +522,7 @@ export function TutorialOnboarding({
     onSkip,
     onToast,
   }: CheckingAccountTutorialStepProps) {
+    const existingCheckingAccount = state.accounts.checking[0];
     return (
       <div className="ts-modal ts-modal--split-step">
         <TutorialStepPanel
@@ -546,12 +547,22 @@ export function TutorialOnboarding({
         />
   
         <section className="ts-tutorial-form">
+        {existingCheckingAccount ? (
+          <EditCheckingAccountForm
+            item={existingCheckingAccount}
+            state={state}
+            dispatch={dispatch}
+            onClose={onNext}
+            onToast={onToast}
+          />
+        ) : (
           <CheckingAccountForm
             state={state}
             dispatch={dispatch}
             onClose={onNext}
             onToast={onToast}
           />
+        )}
         </section>
       </div>
     );
@@ -580,6 +591,8 @@ export function TutorialOnboarding({
     onSkip,
     onToast,
   }: SalaryIncomeTutorialStepProps) {
+    const existingSalaryIncome = state.incomes.salary[0];
+  
     return (
       <div className="ts-modal ts-modal--split-step">
         <TutorialStepPanel
@@ -587,7 +600,6 @@ export function TutorialOnboarding({
           totalSteps={totalSteps}
           title={step.title}
           description={step.description}
-          //image="/tutorial-income.png"
           onBack={onBack}
           onNext={onNext}
           onSkip={onSkip}
@@ -596,17 +608,26 @@ export function TutorialOnboarding({
         />
   
         <section className="ts-tutorial-form">
-          <SalaryForm
-            state={state}
-            dispatch={dispatch}
-            onClose={onNext}
-            onToast={onToast}
-          />
+          {existingSalaryIncome ? (
+            <EditSalaryForm
+              item={existingSalaryIncome}
+              state={state}
+              dispatch={dispatch}
+              onClose={onNext}
+              onToast={onToast}
+            />
+          ) : (
+            <SalaryForm
+              state={state}
+              dispatch={dispatch}
+              onClose={onNext}
+              onToast={onToast}
+            />
+          )}
         </section>
       </div>
     );
   }
-
   export type TutorialStepId = "welcome" | "profile" | "checking" | "salary";
 
   export type TutorialStep = {

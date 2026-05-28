@@ -43,7 +43,8 @@ export const tutorialSteps: TutorialStep[] = [
       bullets: [
         "Name your account",
         "Set your starting balance",
-        "Define your start and end age",
+        "Define your start and end age (When you open and close the account)",
+        "You do not have to close an account so you can leave end year empty ifyou plan to keep this",
       ],
       meta: "Interest tiers are optional for advanced detail.",
       icon: "🏦",
@@ -53,7 +54,7 @@ export const tutorialSteps: TutorialStep[] = [
       eyebrow: "Step 3 of 6",
       title: "Add your income",
       description:
-        "Add a salary, hourly wage, or side hustle so we can project the money flowing into your plan.",
+        "Add a salary, hourly wage, or side hustle to project the money flowing into your simulation.",
       bullets: [
         "Choose the income type",
         "Enter gross income",
@@ -84,8 +85,9 @@ export const tutorialSteps: TutorialStep[] = [
       bullets: [
         "Expenses represent money going out",
         "Assets represent things you own",
-        "Some assets can be linked to loans",
+        "cars and houses can be linked to loans just like salary and 401k",
       ],
+      meta: "The end year for an asset is the year you sell the asset",
       icon: "🏠",
     },
     {

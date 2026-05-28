@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import "./TutorialSteps.css";
-import { CheckingAccountForm } from "@/app/visuals/accounts";
-import { SalaryForm } from "@/app/visuals/incomes";
+import { CheckingAccountForm , EditCheckingAccountForm} from "@/app/visuals/accounts";
+import { SalaryForm , EditSalaryForm} from "@/app/visuals/incomes";
 
 export type FilingStatus =
   | "single"
@@ -481,10 +481,35 @@ export function TutorialOnboarding({
             onToast={onToast}
           />
         )}
+      
+      
+      {step.id === "salary" && (
+        <SalaryIncomeTutorialStep
+          step={step}
+          currentStepIndex={currentStepIndex}
+          totalSteps={steps.length}
+          state={state}
+          dispatch={dispatch}
+          onBack={onBack}
+          onNext={isLastStep ? onFinish : onNext}
+          onSkip={onSkip}
+          onToast={onToast}
+        />
+      )}
       </div>
-    );
-  }
+  )};
 
+  type CheckingAccountTutorialStepProps = {
+    step: TutorialStep;
+    currentStepIndex: number;
+    totalSteps: number;
+    state: any;
+    dispatch: React.Dispatch<any>;
+    onBack: () => void;
+    onNext: () => void;
+    onSkip: () => void;
+    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
+  };
 
   function CheckingAccountTutorialStep({
     step,
@@ -498,7 +523,7 @@ export function TutorialOnboarding({
     onToast,
   }: CheckingAccountTutorialStepProps) {
     return (
-      <div className="ts-modal ts-modal--checking-step">
+      <div className="ts-modal ts-modal--split-step">
         <TutorialStepPanel
           currentStepIndex={currentStepIndex}
           totalSteps={totalSteps}
@@ -532,7 +557,57 @@ export function TutorialOnboarding({
     );
   }
 
-  export type TutorialStepId = "welcome" | "profile" | "checking";
+  type SalaryIncomeTutorialStepProps = {
+    step: TutorialStep;
+    currentStepIndex: number;
+    totalSteps: number;
+    state: any;
+    dispatch: React.Dispatch<any>;
+    onBack: () => void;
+    onNext: () => void;
+    onSkip: () => void;
+    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
+  };
+  
+  function SalaryIncomeTutorialStep({
+    step,
+    currentStepIndex,
+    totalSteps,
+    state,
+    dispatch,
+    onBack,
+    onNext,
+    onSkip,
+    onToast,
+  }: SalaryIncomeTutorialStepProps) {
+    return (
+      <div className="ts-modal ts-modal--split-step">
+        <TutorialStepPanel
+          currentStepIndex={currentStepIndex}
+          totalSteps={totalSteps}
+          title={step.title}
+          description={step.description}
+          //image="/tutorial-income.png"
+          onBack={onBack}
+          onNext={onNext}
+          onSkip={onSkip}
+          nextLabel="Next"
+          showSkip={true}
+        />
+  
+        <section className="ts-tutorial-form">
+          <SalaryForm
+            state={state}
+            dispatch={dispatch}
+            onClose={onNext}
+            onToast={onToast}
+          />
+        </section>
+      </div>
+    );
+  }
+
+  export type TutorialStepId = "welcome" | "profile" | "checking" | "salary";
 
   export type TutorialStep = {
     id: TutorialStepId;
@@ -559,6 +634,13 @@ export function TutorialOnboarding({
       description:
         "Add your first account to capture your starting cash balance and timeline.",
       targetSelector: "[data-tutorial='account-card']",
+    },
+    {
+        id: "salary",
+        title: "Add your income",
+        description:
+          "Add a salary, hourly wage, or side hustle so Vantage can project the money flowing into your plan.",
+        targetSelector: "[data-tutorial='income-card']",
     },
   ];
 

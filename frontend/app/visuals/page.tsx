@@ -1120,8 +1120,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* {showTutorial && ENABLE_TUTORIAL && ( */}
-      {(
+      {showTutorial && ENABLE_TUTORIAL && (
         <TutorialStepsShell
           steps={tutorialSteps}
           currentStepIndex={tutorialStepIndex}

@@ -50,7 +50,7 @@ const FILING_STATUS_OPTIONS: { value: FilingStatus; label: string; description: 
 
 
 
-function WelcomeScreen({ onSkip, onGetStarted }) {
+function WelcomeScreen({ onGetStarted }) {
   return (
     <div className="ts-welcome">
       <div className="ts-welcome__badge">NEW TO VANTAGE</div>
@@ -68,7 +68,7 @@ function WelcomeScreen({ onSkip, onGetStarted }) {
       <p className="ts-welcome__body">
         Vantage models your financial life from today through retirement —
         accounts, income, expenses, and assets — and projects where you will end up.
-        Lets set things up so your simulation reflects your real situation.
+        Let's set things up so your simulation reflects your real situation.
       </p>
 
       <div className="ts-welcome__features">
@@ -96,13 +96,6 @@ function WelcomeScreen({ onSkip, onGetStarted }) {
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-        </button>
-        <button
-          type="button"
-          className="ts-btn ts-btn--ghost"
-          onClick={onSkip}
-        >
-          Skip for now
         </button>
       </div>
     </div>
@@ -322,9 +315,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
           </button>
         )}
         <p className="ts-profile__skip-note">
-          {mode === "skipped"
-            ? "You can always update these in Settings."
-            : "Your data stays local — nothing is sent to a server."}
+          Your data stays local — nothing is sent to a server.
         </p>
       </div>
     </div>
@@ -332,23 +323,8 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
 }
 type TutorialScreen = "welcome" | "profile";
 
-export function TutorialOnboarding({ onSkip, onProfileComplete }) {
+export function TutorialOnboarding({ onProfileComplete }) {
   const [screen, setScreen] = useState<TutorialScreen>("welcome");
-  const [tutorialMode, setTutorialMode] = useState<TutorialMode>("full");
-
-  const handleGetStarted = () => {
-    setTutorialMode("full");
-    setScreen("profile");
-  };
-
-  const handleSkip = () => {
-    setTutorialMode("skipped");
-    setScreen("profile");
-  };
-
-  const handleProfileComplete = (profile: UserProfile, mode: TutorialMode) => {
-    onProfileComplete(profile, mode);
-  };
 
   return (
     <div className="ts-overlay">
@@ -358,16 +334,15 @@ export function TutorialOnboarding({ onSkip, onProfileComplete }) {
 
         {screen === "welcome" && (
           <WelcomeScreen
-            onSkip={handleSkip}
-            onGetStarted={handleGetStarted}
+            onGetStarted={() => setScreen("profile")}
           />
         )}
 
         {screen === "profile" && (
           <ProfileSetupScreen
             onBack={() => setScreen("welcome")}
-            onComplete={handleProfileComplete}
-            mode={tutorialMode}
+            onComplete={(profile) => onProfileComplete(profile, "full")}
+            mode="full"
           />
         )}
       </div>
@@ -400,19 +375,11 @@ type TutorialStepsShellProps = {
   onProfileComplete: (profile: UserProfile, mode: TutorialMode) => void;
 };
 
-export function TutorialStepsShell({ onSkip, onFinish, }: TutorialStepsShellProps) {
-  const handleProfileComplete = (_profile: UserProfile, mode: TutorialMode) => {
-    if (mode === "skipped") {
-      onSkip();
-    } else {
-      onFinish();
-    }
-  };
-
+/** Thin shell retained for existing page.tsx bindings. Renders the full onboarding flow. */
+export function TutorialStepsShell({ onFinish }: TutorialStepsShellProps) {
   return (
     <TutorialOnboarding
-      onSkip={onSkip}
-      onProfileComplete={handleProfileComplete}
+      onProfileComplete={(_profile: UserProfile) => onFinish()}
     />
   );
 }

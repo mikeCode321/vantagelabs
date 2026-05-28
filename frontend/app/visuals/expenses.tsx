@@ -139,11 +139,15 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
       setName(`${selectedHouse.name} Loan`);
       setStartAge(selectedHouse.start_age.toString());
 
-      const principal =
-        Number(selectedHouse.asset_value || 0) -
-        Number(selectedHouse.down_payment || 0);
+      const principal = Number(selectedHouse.asset_value || 0) - Number(selectedHouse.down_payment || 0);
 
       setOriginalPrincipal(principal.toString());
+
+      if (selectedHouse.end_age && selectedHouse.start_age) {
+        const lifeYears = selectedHouse.end_age - selectedHouse.start_age;
+        setLoanTermYears(lifeYears.toString());
+      }
+
     }
   };
 
@@ -426,11 +430,13 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
       setName(`${selectedCar.name} Loan`);
       setStartAge(selectedCar.start_age.toString());
 
-      const principal =
-        Number(selectedCar.asset_value || 0) -
-        Number(selectedCar.down_payment || 0);
-
+      const principal = Number(selectedCar.asset_value || 0) - Number(selectedCar.down_payment || 0);
       setOriginalPrincipal(principal.toString());
+
+      if (selectedCar.end_age && selectedCar.start_age) {
+        const lifeYears = selectedCar.end_age - selectedCar.start_age;
+        setLoanTermYears(lifeYears.toString());
+      }
     }
   };
 
@@ -1058,6 +1064,10 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
       setStartAge(selectedCar.start_age.toString());
       const principal = Number(selectedCar.asset_value || 0) - Number(selectedCar.down_payment || 0);
       setOriginalPrincipal(principal.toString());
+
+      if (selectedCar.end_age && selectedCar.start_age) {
+        setLoanTermYears((selectedCar.end_age - selectedCar.start_age).toString());
+      }
     }
   };
 
@@ -1295,11 +1305,13 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
       setName(`${selectedHouse.name} Loan`);
       setStartAge(selectedHouse.start_age.toString());
 
-      const principal =
-        Number(selectedHouse.asset_value || 0) -
-        Number(selectedHouse.down_payment || 0);
+      const principal = Number(selectedHouse.asset_value || 0) - Number(selectedHouse.down_payment || 0);
 
       setOriginalPrincipal(principal.toString());
+
+      if (selectedHouse.end_age && selectedHouse.start_age) {
+        setLoanTermYears((selectedHouse.end_age - selectedHouse.start_age).toString());
+      }
     }
   };
 

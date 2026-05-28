@@ -32,6 +32,11 @@ import {
   getReadableTrend,
 } from "@/app/visuals/FinancialOverviewCards";
 
+import {
+  TutorialStepsShell,
+  tutorialSteps,
+} from "@/app/visuals/TutorialSteps";
+
 import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
 
 type SimRequest = {
@@ -990,7 +995,9 @@ export default function Dashboard() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isSimLoading, setIsSimLoading] = useState(true);
+  //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
 
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
     const id = crypto.randomUUID();
@@ -1071,6 +1078,22 @@ export default function Dashboard() {
     },
   ];
 
+  const handleTutorialNext = () => {
+    setTutorialStepIndex((current) =>
+      Math.min(current + 1, tutorialSteps.length - 1)
+    );
+  };
+  
+  const handleTutorialBack = () => {
+    setTutorialStepIndex((current) => Math.max(current - 1, 0));
+  };
+  
+  const handleTutorialComplete = () => {
+    saveTutorialCompleted();
+    setShowTutorial(false);
+    setTutorialStepIndex(0);
+  };
+
   useEffect(() => {
     const saved = loadState();
     if (saved) {
@@ -1101,39 +1124,14 @@ export default function Dashboard() {
       )}
 
       {showTutorial && ENABLE_TUTORIAL && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 99999,
-            background: "rgba(15, 12, 30, 0.45)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div
-            style={{
-              background: "white",
-              borderRadius: "20px",
-              padding: "28px",
-              width: "420px",
-              boxShadow: "0 24px 80px rgba(31, 18, 74, 0.24)",
-            }}
-          >
-            <h2>Hello tutorial</h2>
-            <p>This means the tutorial feature flag and localStorage check are working.</p>
-
-            <button
-              onClick={() => {
-                saveTutorialCompleted();
-                setShowTutorial(false);
-              }}
-            >
-              Finish / Don&apos;t show again
-            </button>
-          </div>
-        </div>
+        <TutorialStepsShell
+          steps={tutorialSteps}
+          currentStepIndex={tutorialStepIndex}
+          onNext={handleTutorialNext}
+          onBack={handleTutorialBack}
+          onSkip={handleTutorialComplete}
+          onFinish={handleTutorialComplete}
+        />
       )}
       <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
         <div className="dash-sidebar-inner">

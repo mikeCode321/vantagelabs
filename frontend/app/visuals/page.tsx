@@ -21,6 +21,7 @@ import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewe
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
+import { TutorialStepsShell, tutorialSteps } from "@/app/visuals/TutorialSteps";
 
 import {
   FinancialOverviewCards,
@@ -32,10 +33,6 @@ import {
   getReadableTrend,
 } from "@/app/visuals/FinancialOverviewCards";
 
-import {
-  TutorialStepsShell,
-  tutorialSteps,
-} from "@/app/visuals/TutorialSteps";
 
 import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
 
@@ -1131,8 +1128,18 @@ export default function Dashboard() {
           onBack={handleTutorialBack}
           onSkip={handleTutorialComplete}
           onFinish={handleTutorialComplete}
+          onProfileComplete={(profile, mode) => {
+            dispatch({ type: "UPDATE_SIMULATION_BOUNDS", payload: {
+              user_start_age: profile.current_age,
+              user_end_age: profile.retirement_age,
+            }});
+            // store filing_status + state_of_residence however you want
+            if (mode === "skipped") handleTutorialComplete();
+            else handleTutorialNext(); // advance to step 1 of guided walkthrough
+          }}
         />
       )}
+
       <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
         <div className="dash-sidebar-inner">
 

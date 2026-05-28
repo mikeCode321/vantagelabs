@@ -264,7 +264,32 @@ const INITIAL_STATE: SimRequest = {
 };
 // our sim_request
 const LOCAL_STORAGE_KEY = "sim_request";
-const ENABLE_LOCAL_STORAGE_PERSISTENCE = false;
+const ENABLE_LOCAL_STORAGE_PERSISTENCE = true;
+ // tutorial feature flag
+
+const ENABLE_TUTORIAL = true;
+const TUTORIAL_COMPLETED_KEY = "tutorial_completed";
+
+function loadTutorialCompleted() {
+  if (!ENABLE_TUTORIAL) return true;
+  if (typeof window === "undefined") return true;
+
+  try {
+    const saved = localStorage.getItem(TUTORIAL_COMPLETED_KEY);
+    return saved === "true";
+  } catch {
+    localStorage.removeItem(TUTORIAL_COMPLETED_KEY);
+    return false;
+  }
+}
+
+function saveTutorialCompleted() {
+  if (!ENABLE_TUTORIAL) return;
+  if (typeof window === "undefined") return;
+
+  localStorage.setItem(TUTORIAL_COMPLETED_KEY, "true");
+}
+
 
 function loadState(){
   if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return null;
@@ -968,6 +993,7 @@ export default function Dashboard() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isSimLoading, setIsSimLoading] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
     const id = crypto.randomUUID();
@@ -1055,6 +1081,12 @@ export default function Dashboard() {
       dispatch({ type: "HYDRATE_FROM_LOCAL_STORAGE", payload: saved });
     }
 
+    const tutorialCompleted = loadTutorialCompleted();
+
+    if (ENABLE_TUTORIAL && !tutorialCompleted) {
+      setShowTutorial(true);
+    }
+
     return () => clearTimeout(timer);
 
   }, []);
@@ -1068,6 +1100,42 @@ export default function Dashboard() {
       {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
         <div className="dash-loading-overlay">
           <Audio height="100" width="100" color="#6d28d9" ariaLabel="audio-loading" visible={true} />
+        </div>
+      )}
+
+      {showTutorial && ENABLE_TUTORIAL && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 99999,
+            background: "rgba(15, 12, 30, 0.45)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              borderRadius: "20px",
+              padding: "28px",
+              width: "420px",
+              boxShadow: "0 24px 80px rgba(31, 18, 74, 0.24)",
+            }}
+          >
+            <h2>Hello tutorial</h2>
+            <p>This means the tutorial feature flag and localStorage check are working.</p>
+
+            <button
+              onClick={() => {
+                saveTutorialCompleted();
+                setShowTutorial(false);
+              }}
+            >
+              Finish / Don&apos;t show again
+            </button>
+          </div>
         </div>
       )}
       <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>

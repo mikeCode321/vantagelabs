@@ -13,6 +13,7 @@ export type Toast = {
 };
 
 export function ToastBanner({ toasts, setToasts }) {
+  
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };

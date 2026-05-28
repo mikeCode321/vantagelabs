@@ -1514,8 +1514,8 @@ def simulate(req: SimulateRequest):
         }
 
         year_result = {
-            "year": calendar_year + 1,
-            "age": current_age + 1,
+            "year": calendar_year,
+            "age": current_age,
             "net_worth": total_net_worth,
             "net_worth_change": round(net_worth_change, 2),
             "net_worth_change_percent": net_worth_change_pct,

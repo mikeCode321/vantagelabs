@@ -94,15 +94,15 @@
     "starting_net_worth": 10000,
     "ending_net_worth": 88484.06,
     "peak_net_worth": 88484.06,
-    "peak_net_worth_age": 28,
+    "peak_net_worth_age": 27,
     "total_income_lifetime": 100000,
-    "lowest_cash_balance_year": 2028,
+    "lowest_cash_balance_year": 2027,
     "lowest_cash_balance": 79815.73
   },
   "year_results": [
     {
-      "year": 2027,
-      "age": 26,
+      "year": 2026,
+      "age": 25,
       "net_worth": 85275.36,
       "net_worth_change": 75275.36,
       "net_worth_change_percent": 752.75,
@@ -291,8 +291,8 @@
       }
     },
     {
-      "year": 2028,
-      "age": 27,
+      "year": 2027,
+      "age": 26,
       "net_worth": 86314.96,
       "net_worth_change": 1039.6,
       "net_worth_change_percent": 1.22,
@@ -467,8 +467,8 @@
       }
     },
     {
-      "year": 2029,
-      "age": 28,
+      "year": 2028,
+      "age": 27,
       "net_worth": 88484.06,
       "net_worth_change": 2169.1,
       "net_worth_change_percent": 2.51,

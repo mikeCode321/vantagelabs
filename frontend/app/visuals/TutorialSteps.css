@@ -556,3 +556,193 @@
     gap: 12px;
   }
 }
+
+
+
+.ts-modal--tutorial-flow {
+  width: min(1120px, calc(100vw - 48px));
+  min-height: 560px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.ts-checking-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  min-height: 560px;
+}
+
+.ts-step-panel {
+  padding: 48px 36px;
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+  background:
+    radial-gradient(circle at top left, rgba(109, 40, 217, 0.08), transparent 34%),
+    rgba(255, 255, 255, 0.94);
+}
+
+.ts-step-count {
+  margin: 0 0 18px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #6d28d9;
+}
+
+.ts-step-count span {
+  color: #6d28d9;
+}
+
+.ts-step-title {
+  margin: 0;
+  max-width: 260px;
+  font-size: 28px;
+  line-height: 1.05;
+  font-weight: 800;
+  color: #111827;
+}
+
+.ts-step-description {
+  margin: 18px 0 28px;
+  max-width: 260px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: #4b5563;
+}
+
+.ts-step-list {
+  display: grid;
+  gap: 16px;
+  margin: 0 0 36px;
+}
+
+.ts-step-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #374151;
+}
+
+.ts-step-list-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(109, 40, 217, 0.1);
+  color: #6d28d9;
+  flex: 0 0 auto;
+}
+
+.ts-step-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: auto;
+}
+
+.ts-step-skip {
+  display: block;
+  width: fit-content;
+  margin: 18px auto 0;
+  border: 0;
+  background: transparent;
+  color: #6d28d9;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ts-form-panel {
+  padding: 36px;
+  background: #ffffff;
+}
+
+.ts-modal--checking-step {
+  width: min(1120px, calc(100vw - 48px));
+  min-height: 560px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  overflow: hidden;
+}
+
+.ts-tutorial-side {
+  padding: 48px 36px;
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+  background:
+    radial-gradient(circle at top left, rgba(109, 40, 217, 0.08), transparent 34%),
+    rgba(255, 255, 255, 0.96);
+}
+
+.ts-step-count {
+  margin: 0 0 18px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #6d28d9;
+}
+
+.ts-step-title {
+  margin: 0;
+  max-width: 260px;
+  font-size: 28px;
+  line-height: 1.05;
+  font-weight: 800;
+  color: #111827;
+}
+
+.ts-step-description {
+  margin: 18px 0 28px;
+  max-width: 260px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: #4b5563;
+}
+
+.ts-step-list {
+  display: grid;
+  gap: 16px;
+  margin: 0 0 36px;
+}
+
+.ts-step-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #374151;
+}
+
+.ts-step-list-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(109, 40, 217, 0.1);
+  color: #6d28d9;
+  flex: 0 0 auto;
+}
+
+.ts-step-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.ts-step-skip {
+  display: block;
+  width: fit-content;
+  margin: 18px auto 0;
+  border: 0;
+  background: transparent;
+  color: #6d28d9;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ts-tutorial-form {
+  padding: 36px;
+  background: #ffffff;
+}

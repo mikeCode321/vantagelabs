@@ -52,8 +52,7 @@
   "expenses": {
     "living": [],
     "rent": [],
-    "house_loan": [
-    ],
+    "house_loan": [ ],
     "car_loan": [
       {
         "source_type": "expense",

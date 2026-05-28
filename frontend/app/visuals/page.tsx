@@ -48,15 +48,15 @@ type SimRequest = {
     side: SideHustleIncome[];
   };
   expenses: {
-    living: LivingExpense[]; // TODO: expenses will need to be updated
+    living: LivingExpense[]; 
     rent: RentExpense[];
     car_loan: CarLoanExpense[];
     house_loan: HouseLoanExpense[];
     debt: DebtExpense[];
   };
   assets: {
-    house: HouseAsset[]; // TODO: Replace with HouseAsset[] when implemented
-    car: CarAsset[]; // TODO: Replace with CarAsset[] when implemented
+    house: HouseAsset[];
+    car: CarAsset[];
   };
 };
 
@@ -359,7 +359,6 @@ const ENTITY_CONFIG = {
       editFormComponent: EditSideHustleForm,
     },
   },
-  //TODO: implement expenses and asset below uncomment each form once its implemented
   expense: {
     living: {
       id: "living",
@@ -451,7 +450,7 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
   return (
     <div className="modal-overlay">
       <div className="modal">
-        {/* ENTITY PICKER HEADER */}
+
         {!selectedVariant && !variantBeingEdited && (
           <div className="modal-header">
             <button className="modal-close" onClick={closeModal}>
@@ -460,7 +459,6 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
           </div>
         )}
 
-        {/* ADD FORM HEADER */}
         {selectedVariant && !variantBeingEdited && (
           <div className="modal-header">
             <button onClick={goBack}>← Back</button>
@@ -501,6 +499,7 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
 /* -------------------- Row Styles -------------------- */
 
 function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
+
   const handleDeleteHouseAsset = (asset, state, dispatch) => {
     if (asset.linked_loan_id) {
       const linkedLoan = state.expenses.house_loan.find((loan) => loan.id === asset.linked_loan_id);
@@ -1014,7 +1013,7 @@ export default function Dashboard() {
   const startingCashFlow = firstYear.income_earned.net;
   const endingCashFlow = lastYear.income_earned.net;
 
-  const totalAssets = 0;//lastYear.accounts_summary.total_balance;
+  const totalAssets = 0; //lastYear.accounts_summary.total_balance;
   const totalLiabilities = 0;
 
   const annualCashFlow = endingCashFlow - totalLiabilities;

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import "./TutorialSteps.css";
 import { CheckingAccountForm } from "@/app/visuals/accounts";
+import { SalaryForm } from "@/app/visuals/incomes";
 
 export type FilingStatus =
   | "single"
@@ -48,6 +49,91 @@ const FILING_STATUS_OPTIONS: { value: FilingStatus; label: string; description: 
     description: "Unmarried with qualifying dependents",
   },
 ];
+
+function TutorialProgress({ currentStepIndex, totalSteps }) {
+    return (
+      <div className="ts-step-progress">
+        {Array.from({ length: totalSteps }).map((_, index) => (
+          <span
+            key={index}
+            className={
+              index === currentStepIndex
+                ? "ts-step-progress-dot ts-step-progress-dot--active"
+                : "ts-step-progress-dot"
+            }
+          />
+        ))}
+      </div>
+    );
+  }
+
+function TutorialStepPanel({
+  currentStepIndex,
+  totalSteps,
+  title,
+  description,
+  image,
+  items,
+  onBack,
+  onNext,
+  onSkip,
+  nextLabel = "Next",
+  showSkip = true,
+}) {
+  return (
+    <aside className="ts-step-panel">
+      <button type="button" className="ts-step-close" onClick={onSkip}>
+        ×
+      </button>
+
+      <TutorialProgress
+        currentStepIndex={currentStepIndex}
+        totalSteps={totalSteps}
+      />
+
+      <p className="ts-step-count">
+        Step {currentStepIndex + 1} of {totalSteps}
+      </p>
+
+      <h2 className="ts-step-title">{title}</h2>
+
+      <p className="ts-step-description">{description}</p>
+
+      {image && (
+        <div className="ts-step-image-wrap">
+          <img src={image} alt="" className="ts-step-image" />
+        </div>
+      )}
+
+      {items && (
+        <div className="ts-step-list">
+          {items.map((item) => (
+            <div className="ts-step-list-item" key={item.label}>
+              <span className="ts-step-list-icon">{item.icon}</span>
+              <span>{item.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="ts-step-actions">
+        <button type="button" className="ts-btn ts-btn--secondary" onClick={onBack}>
+          Back
+        </button>
+
+        <button type="button" className="ts-btn ts-btn--primary" onClick={onNext}>
+          {nextLabel}
+        </button>
+      </div>
+
+      {showSkip && (
+        <button type="button" className="ts-step-skip" onClick={onSkip}>
+          Skip
+        </button>
+      )}
+    </aside>
+  );
+}
 
 
 
@@ -323,10 +409,8 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
   );
 }
 
-type TutorialScreen= "welcome" | "profile" | "checking";
 
-
-  type TutorialOnboardingProps = {
+type TutorialOnboardingProps = {
     steps: TutorialStep[];
     currentStepIndex: number;
     state: any;
@@ -339,7 +423,7 @@ type TutorialScreen= "welcome" | "profile" | "checking";
     onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
   };
   
-  export function TutorialOnboarding({
+export function TutorialOnboarding({
     steps,
     currentStepIndex,
     state,
@@ -402,18 +486,6 @@ type TutorialScreen= "welcome" | "profile" | "checking";
   }
 
 
-  type CheckingAccountTutorialStepProps = {
-    step: TutorialStep;
-    currentStepIndex: number;
-    totalSteps: number;
-    state: any;
-    dispatch: React.Dispatch<any>;
-    onBack: () => void;
-    onNext: () => void;
-    onSkip: () => void;
-    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
-  };
-  
   function CheckingAccountTutorialStep({
     step,
     currentStepIndex,
@@ -427,59 +499,26 @@ type TutorialScreen= "welcome" | "profile" | "checking";
   }: CheckingAccountTutorialStepProps) {
     return (
       <div className="ts-modal ts-modal--checking-step">
-        <aside className="ts-tutorial-side">
-          <p className="ts-step-count">
-            <span>Step {currentStepIndex + 1}</span> of {totalSteps}
-          </p>
-  
-          <h2 className="ts-step-title">{step.title}</h2>
-  
-          <p className="ts-step-description">{step.description}</p>
-  
-          <div className="ts-step-list">
-            <div className="ts-step-list-item">
-              <span className="ts-step-list-icon">🏦</span>
-              <span>Name your account</span>
-            </div>
-  
-            <div className="ts-step-list-item">
-              <span className="ts-step-list-icon">💰</span>
-              <span>Set your starting balance</span>
-            </div>
-  
-            <div className="ts-step-list-item">
-              <span className="ts-step-list-icon">📅</span>
-              <span>Define your timeline</span>
-            </div>
-  
-            <div className="ts-step-list-item">
-              <span className="ts-step-list-icon">⌁</span>
-              <span>Interest tiers are optional for advanced detail.</span>
-            </div>
-          </div>
-  
-          <div className="ts-step-actions">
-            <button
-              type="button"
-              className="ts-btn ts-btn--secondary"
-              onClick={onBack}
-            >
-              Back
-            </button>
-  
-            <button
-              type="button"
-              className="ts-btn ts-btn--primary"
-              onClick={onNext}
-            >
-              Next
-            </button>
-          </div>
-  
-          <button type="button" className="ts-step-skip" onClick={onSkip}>
-            Skip for now
-          </button>
-        </aside>
+        <TutorialStepPanel
+          currentStepIndex={currentStepIndex}
+          totalSteps={totalSteps}
+          title={step.title}
+          description={step.description}
+          items={[
+            { icon: "🏦", label: "Name your account" },
+            { icon: "💰", label: "Set your starting balance" },
+            { icon: "📅", label: "Define your timeline" },
+            {
+              icon: "⌁",
+              label: "Interest tiers are optional for advanced detail.",
+            },
+          ]}
+          onBack={onBack}
+          onNext={onNext}
+          onSkip={onSkip}
+          nextLabel="Next"
+          showSkip={true}
+        />
   
         <section className="ts-tutorial-form">
           <CheckingAccountForm

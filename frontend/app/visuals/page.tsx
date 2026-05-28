@@ -268,17 +268,15 @@ const ENABLE_LOCAL_STORAGE_PERSISTENCE = true;
  // tutorial feature flag
 
 const ENABLE_TUTORIAL = true;
-const TUTORIAL_COMPLETED_KEY = "tutorial_completed";
+const TUTORIAL_COMPLETED_KEY = "tutorial_v1_completed";
 
 function loadTutorialCompleted() {
-  if (!ENABLE_TUTORIAL) return true;
   if (typeof window === "undefined") return true;
 
   try {
     const saved = localStorage.getItem(TUTORIAL_COMPLETED_KEY);
     return saved === "true";
   } catch {
-    localStorage.removeItem(TUTORIAL_COMPLETED_KEY);
     return false;
   }
 }
@@ -1075,20 +1073,20 @@ export default function Dashboard() {
   ];
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsSimLoading(false), 2000);
     const saved = loadState();
     if (saved) {
       dispatch({ type: "HYDRATE_FROM_LOCAL_STORAGE", payload: saved });
     }
 
-    const tutorialCompleted = loadTutorialCompleted();
-
-    if (ENABLE_TUTORIAL && !tutorialCompleted) {
-      setShowTutorial(true);
-    }
+    const timer = setTimeout(() => {
+      setIsSimLoading(false);
+      const tutorialCompleted = loadTutorialCompleted();
+      if (ENABLE_TUTORIAL && !tutorialCompleted) {
+        setShowTutorial(true);
+      }
+    }, 2000);
 
     return () => clearTimeout(timer);
-
   }, []);
 
   useEffect(() => {

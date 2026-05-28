@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import "./TutorialSteps.css";
-import { CheckingAccountForm , EditCheckingAccountForm} from "@/app/visuals/accounts";
+import { CheckingAccountForm , EditCheckingAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm} from "@/app/visuals/accounts";
 import { SalaryForm , EditSalaryForm} from "@/app/visuals/incomes";
 
 export type FilingStatus =
@@ -79,9 +79,10 @@ function TutorialStepPanel({
   onSkip,
   nextLabel = "Next",
   showSkip = true,
+  className = '',
 }) {
   return (
-    <aside className="ts-step-panel">
+    <aside className={`ts-step-panel ${className}`}>
       <button type="button" className="ts-step-close" onClick={onSkip}>
         ×
       </button>
@@ -480,6 +481,8 @@ export function TutorialOnboarding({
             onSkip={onSkip}
             onToast={onToast}
           />
+
+          
         )}
       
       
@@ -496,6 +499,20 @@ export function TutorialOnboarding({
           onToast={onToast}
         />
       )}
+
+        {step.id === "retirement" && (
+        <EmployerRetirementTutorialStep
+            step={step}
+            currentStepIndex={currentStepIndex}
+            totalSteps={steps.length}
+            state={state}
+            dispatch={dispatch}
+            onBack={onBack}
+            onNext={isLastStep ? onFinish : onNext}
+            onSkip={onSkip}
+            onToast={onToast}
+        />
+        )}
       </div>
   )};
 
@@ -628,7 +645,84 @@ export function TutorialOnboarding({
       </div>
     );
   }
-  export type TutorialStepId = "welcome" | "profile" | "checking" | "salary";
+
+  type EmployerRetirementTutorialStepProps = {
+    step: TutorialStep;
+    currentStepIndex: number;
+    totalSteps: number;
+    state: any;
+    dispatch: React.Dispatch<any>;
+    onBack: () => void;
+    onNext: () => void;
+    onSkip: () => void;
+    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
+  };
+  
+  function EmployerRetirementTutorialStep({
+    step,
+    currentStepIndex,
+    totalSteps,
+    state,
+    dispatch,
+    onBack,
+    onNext,
+    onSkip,
+    onToast,
+  }: EmployerRetirementTutorialStepProps) {
+    const existingRetirementAccount = state.accounts.employer_retirement[0];
+  
+    return (
+      <div className="ts-detached-step">
+        <section className="ts-detached-form-card">
+          {existingRetirementAccount ? (
+            <EditEmployerRetirementAccountForm
+              item={existingRetirementAccount}
+              state={state}
+              dispatch={dispatch}
+              onClose={onNext}
+              onToast={onToast}
+            />
+          ) : (
+            <EmployerRetirementAccountForm
+              state={state}
+              dispatch={dispatch}
+              onClose={onNext}
+              onToast={onToast}
+            />
+          )}
+        </section>
+  
+        <TutorialStepPanel
+          className="ts-step-panel--floating"
+          currentStepIndex={currentStepIndex}
+          totalSteps={totalSteps}
+          title={step.title}
+          description={step.description}
+          items={[
+            {
+              icon: "🔗",
+              label: "Connect retirement accounts to jobs.",
+            },
+            {
+              icon: "💼",
+              label: "Keep contribution assumptions tied to income.",
+            },
+            {
+              icon: "⌁",
+              label: "The same idea applies to other linked simulator items.",
+            },
+          ]}
+          onBack={onBack}
+          onNext={onNext}
+          onSkip={onSkip}
+          nextLabel="Next"
+          showSkip={true}
+        />
+      </div>
+    );
+  }
+  
+  export type TutorialStepId = "welcome" | "profile" | "checking" | "salary" | "retirement";
 
   export type TutorialStep = {
     id: TutorialStepId;
@@ -663,6 +757,13 @@ export function TutorialOnboarding({
           "Add a salary, hourly wage, or side hustle so Vantage can project the money flowing into your plan.",
         targetSelector: "[data-tutorial='income-card']",
     },
+    {
+        id: "retirement",
+        title: "Link related items",
+        description:
+          "Link jobs to retirement accounts so contributions and assumptions stay in sync.",
+        targetSelector: "[data-tutorial='account-card']",
+      },
   ];
 
   type TutorialStepsShellProps = {

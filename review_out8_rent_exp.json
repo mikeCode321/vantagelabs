@@ -1,0 +1,477 @@
+{
+  "total_years_simulated": 3,
+  "request": {
+    "user_start_age": 25,
+    "user_end_age": 28,
+    "start_year": 2026,
+    "accounts": {
+      "checking": [
+        {
+          "source_type": "liquid",
+          "variant": "checking",
+          "id": "acc_1",
+          "name": "Checking Account",
+          "start_age": 25,
+          "end_age": 28,
+          "starting_balance": 10000,
+          "interest_tiers": [
+            {
+              "threshold": 15000,
+              "annual_rate": 0
+            },
+            {
+              "threshold": 100000,
+              "annual_rate": 0.03
+            },
+            {
+              "threshold": 300000,
+              "annual_rate": 0.04
+            }
+          ]
+        }
+      ],
+      "taxable_investments": [],
+      "employer_retirement": []
+    },
+    "incomes": {
+      "salary": [
+        {
+          "source_type": "income",
+          "variant": "salary",
+          "id": "salary_1",
+          "name": "swe",
+          "start_age": 25,
+          "end_age": 26,
+          "gross_income": 100000,
+          "income_growth": 0.03,
+          "linked_401k_id": "401k_1"
+        }
+      ],
+      "hourly": [],
+      "side": []
+    },
+    "expenses": {
+      "living": [],
+      "rent": [
+        {
+          "source_type": "expense",
+          "variant": "rent",
+          "id": "bf7d34eb-1f90-484a-acaf-a7aef3264090",
+          "name": "Rent",
+          "start_age": 25,
+          "end_age": 28,
+          "monthly_expense": 1000,
+          "rent_growth": 0.03
+        }
+      ],
+      "house_loan": [],
+      "car_loan": [],
+      "debt": []
+    },
+    "assets": {
+      "house": [],
+      "car": []
+    }
+  },
+  "metrics": {
+    "total_years": 3,
+    "starting_net_worth": 10000,
+    "ending_net_worth": 52376.28,
+    "peak_net_worth": 73526.43,
+    "peak_net_worth_age": 25,
+    "total_income_lifetime": 100000,
+    "lowest_cash_balance_year": 2028,
+    "lowest_cash_balance": 52376.28
+  },
+  "year_results": [
+    {
+      "year": 2026,
+      "age": 25,
+      "net_worth": 73526.43,
+      "net_worth_change": 63526.43,
+      "net_worth_change_percent": 635.26,
+      "total_cash": 73526.43,
+      "income_earned": {
+        "gross": 100000,
+        "net": 74651,
+        "taxes_paid": 25349,
+        "federal_tax": 13449,
+        "fica_tax": 7650,
+        "state_tax": 4250,
+        "effective_tax_rate": 25.35
+      },
+      "current_gross_income": 103000,
+      "accounts_summary": {
+        "total_balance": 73526.43,
+        "total_interest_earned": 875.39,
+        "by_variant": {
+          "checking": 73526.43,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 73526.43,
+            "annual_interest_earned": 875.39,
+            "balance_history": [
+              15221.4723,
+              20455.99828075,
+              25703.610576451872,
+              30964.341902893,
+              36238.225057650234,
+              41525.292920294356,
+              46825.57845259509,
+              52139.114698726575,
+              57465.934785473386,
+              62806.07192243707,
+              68159.55940224316,
+              73526.43060074876
+            ],
+            "interest_history": [
+              0.5523000000000002,
+              13.605980749999999,
+              26.692295701874993,
+              39.81132644112968,
+              52.963154757232495,
+              66.14786264412558,
+              79.3655323007359,
+              92.61624613148771,
+              105.90008674681644,
+              119.21713696368346,
+              132.56747980609268,
+              145.9511985056079
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 100000,
+        "total_net_income": 74651,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 100000,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_1",
+            "name": "swe",
+            "variant": "salary",
+            "gross_annual": 100000,
+            "net_annual": 74651,
+            "annual_401k_contributions": 0,
+            "taxes": {
+              "federal": 13449,
+              "fica": 7650,
+              "state": 4250
+            }
+          }
+        ]
+      },
+      "expenses": {
+        "total_monthly": 1000,
+        "total_interest_paid_lifetime": 0,
+        "by_variant": {
+          "house_loan": 0,
+          "car_loan": 0,
+          "living": 0,
+          "rent": 1000,
+          "debt": 0
+        },
+        "expenses": [
+          {
+            "id": "bf7d34eb-1f90-484a-acaf-a7aef3264090",
+            "name": "Rent",
+            "variant": "rent",
+            "monthly_payment": 1000,
+            "annual_total_paid": 12000,
+            "interest_paid_lifetime": 0,
+            "expense_growth": 0,
+            "payment_history": [
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 0,
+        "total_equity": 0,
+        "by_variant": {
+          "house": 0,
+          "car": 0
+        },
+        "assets": []
+      }
+    },
+    {
+      "year": 2027,
+      "age": 26,
+      "net_worth": 63109.77,
+      "net_worth_change": -10416.66,
+      "net_worth_change_percent": -14.17,
+      "total_cash": 63109.77,
+      "income_earned": {
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
+        "federal_tax": 0,
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
+      },
+      "current_gross_income": 0,
+      "accounts_summary": {
+        "total_balance": 63109.77,
+        "total_interest_earned": 1583.34,
+        "by_variant": {
+          "checking": 63109.77,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 63109.77,
+            "annual_interest_earned": 1583.34,
+            "balance_history": [
+              72670.24667725063,
+              71811.92229394376,
+              70951.45209967862,
+              70088.83072992781,
+              69224.05280675263,
+              68357.11293876951,
+              67488.00572111644,
+              66616.72573541923,
+              65743.26754975777,
+              64867.62571863217,
+              63989.794782928744,
+              63109.76926988606
+            ],
+            "interest_history": [
+              143.81607650187192,
+              141.67561669312659,
+              139.5298057348594,
+              137.37863024919653,
+              135.22207682481954,
+              133.0601320168816,
+              130.89278234692378,
+              128.7200143027911,
+              126.54181433854806,
+              124.35816887439444,
+              122.16906429658042,
+              119.97448695732186
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
+        "by_variant": {
+          "salary": 0,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": []
+      },
+      "expenses": {
+        "total_monthly": 1000,
+        "total_interest_paid_lifetime": 0,
+        "by_variant": {
+          "house_loan": 0,
+          "car_loan": 0,
+          "living": 0,
+          "rent": 1000,
+          "debt": 0
+        },
+        "expenses": [
+          {
+            "id": "bf7d34eb-1f90-484a-acaf-a7aef3264090",
+            "name": "Rent",
+            "variant": "rent",
+            "monthly_payment": 1000,
+            "annual_total_paid": 12000,
+            "interest_paid_lifetime": 0,
+            "expense_growth": 0,
+            "payment_history": [
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 0,
+        "total_equity": 0,
+        "by_variant": {
+          "house": 0,
+          "car": 0
+        },
+        "assets": []
+      }
+    },
+    {
+      "year": 2028,
+      "age": 27,
+      "net_worth": 52376.28,
+      "net_worth_change": -10733.49,
+      "net_worth_change_percent": -17.01,
+      "total_cash": 52376.28,
+      "income_earned": {
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
+        "federal_tax": 0,
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
+      },
+      "current_gross_income": 0,
+      "accounts_summary": {
+        "total_balance": 52376.28,
+        "total_interest_earned": 1266.51,
+        "by_variant": {
+          "checking": 52376.28,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 52376.28,
+            "annual_interest_earned": 1266.51,
+            "balance_history": [
+              62227.543693060776,
+              61343.11255229343,
+              60456.470333674166,
+              59567.61150950835,
+              58676.530538282124,
+              57783.22186462783,
+              56887.679919289396,
+              55989.89911908762,
+              55089.87386688534,
+              54187.59855155255,
+              53283.06754793144,
+              52376.27521680127
+            ],
+            "interest_history": [
+              117.77442317471515,
+              115.56885923265195,
+              113.35778138073358,
+              111.14117583418542,
+              108.91902877377088,
+              106.6913263457053,
+              104.45805466156958,
+              102.21919979822349,
+              99.97474779771905,
+              97.72468466721335,
+              95.46899637888139,
+              93.2076688698286
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
+        "by_variant": {
+          "salary": 0,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": []
+      },
+      "expenses": {
+        "total_monthly": 1000,
+        "total_interest_paid_lifetime": 0,
+        "by_variant": {
+          "house_loan": 0,
+          "car_loan": 0,
+          "living": 0,
+          "rent": 1000,
+          "debt": 0
+        },
+        "expenses": [
+          {
+            "id": "bf7d34eb-1f90-484a-acaf-a7aef3264090",
+            "name": "Rent",
+            "variant": "rent",
+            "monthly_payment": 1000,
+            "annual_total_paid": 12000,
+            "interest_paid_lifetime": 0,
+            "expense_growth": 0,
+            "payment_history": [
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000,
+              1000
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 0,
+        "total_equity": 0,
+        "by_variant": {
+          "house": 0,
+          "car": 0
+        },
+        "assets": []
+      }
+    }
+  ],
+  "net_worth_trend": [
+    73526.43,
+    63109.77,
+    52376.28
+  ],
+  "cash_trend": [
+    73526.43,
+    63109.77,
+    52376.28
+  ],
+  "annual_income_trend": [
+    103000,
+    0,
+    0
+  ]
+}

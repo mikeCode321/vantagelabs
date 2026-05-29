@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { BarChart, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer, Bar } from "recharts";
-
+import { simulate } from "@/app/visuals/simulate"
 import React from "react";
 
 /* -------------------- Toast Banner -------------------- */
@@ -161,19 +161,19 @@ export type SourceSnapshot = {
   start_value?: number; // what the source was worth at year start
   end_value?: number; // after growth applied
 };
+// not in use and out of sync 
+// export type SimYearResult = {
+//   year: number;
+//   net_worth: number; // total_cash + all asset values
+//   total_cash: number; // sum across all liquid accounts
+//   total_income: number; // sum of all income source cashflows
+//   total_expenses: number; // sum of all expense source cashflows
+//   // WIP: return interest earned on cash/liquid accounts separately in the future
+//   // WIP: return appreciation/asset growth separately in the future
+//   sources: SourceSnapshot[];
+// };
 
-export type SimYearResult = {
-  year: number;
-  net_worth: number; // total_cash + all asset values
-  total_cash: number; // sum across all liquid accounts
-  total_income: number; // sum of all income source cashflows
-  total_expenses: number; // sum of all expense source cashflows
-  // WIP: return interest earned on cash/liquid accounts separately in the future
-  // WIP: return appreciation/asset growth separately in the future
-  sources: SourceSnapshot[];
-};
-
-function transformData(simResult: SimYearResult[]) {
+function transformData(simResult) {
   return simResult.map((year) => {
     const totalAssets = year.sources.reduce((sum, src) => {
       if (src.source_type === "rental" || src.source_type === "stock") {
@@ -232,15 +232,17 @@ export function SimulationControls({ state, setSimResult }) {
 
   async function runSimulation() {
     try {
-      const API = "http://localhost:8000/api/finance/simulate";
+      // const API = "http://localhost:8000/api/finance/simulate";
 
-      const response = await fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(state),
-      });
+      // const response = await fetch(API, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(state),
+      // });
 
-      const data = await response.json();
+      // const data = await response.json();
+
+      const data = simulate(state)
 
       console.log(data);
       setSimResult(data);
@@ -265,31 +267,7 @@ export function SimulationControls({ state, setSimResult }) {
   );
 }
 
-// function generateMockResults(years = 20, sourcesPerYear = 2): SimYearResult[] {
-//   return Array.from({ length: years }, (_, i) => {
-//     const year = 1 + i;
-
-//     return {
-//       year,
-//       net_worth: 500000 + i * 25000,
-//       total_cash: 50000 + i * 5000,
-//       total_income: 120000 + i * 3000,
-//       total_expenses: 80000 + i * 2000,
-
-//       sources: Array.from({ length: sourcesPerYear }, (_, j) => ({
-//         id: `${year}-${j}`,
-//         name: `Asset ${j + 1}`,
-//         source_type: j % 2 === 0 ? "investment" : "property",
-//         asset_value: 100000 + j * 10000,
-//         annual_cashflow: 5000 + j * 500,
-//         start_value: 80000 + j * 8000,
-//         end_value: 120000 + j * 12000,
-//       })),
-//     };
-//   });
-// }
-
-export function SimResultViewer({ simResult }: { simResult: SimYearResult[] }) {
+export function SimResultViewer({ simResult }) {
   const [openYears, setOpenYears] = useState<number[]>([]);
 
   const toggleYear = (year: number) => {

@@ -988,12 +988,12 @@ export function FinancialEntities({ state, dispatch, onToast }) {
 export default function Dashboard() {
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
-  // const [simResult, setSimResult] = useState<SimYearResult[]>([]);
   const [simResult, setSimResult] = useState([]);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isSimLoading, setIsSimLoading] = useState(true);
+
   //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
@@ -1009,24 +1009,29 @@ export default function Dashboard() {
     }, 7000);
   };
 
+  const simData = Array.isArray(simResult) ? null : simResult;
 
-  const firstYear = testData.year_results[0];
-  const lastYear = testData.year_results[testData.year_results.length - 1];
+  const firstYear = simData?.year_results[0];
+  const lastYear  = simData?.year_results[simData.year_results.length - 1];
 
-  const startingNetWorth = testData.metrics.starting_net_worth;
-  const endingNetWorth = testData.metrics.ending_net_worth;
+  const startingNetWorth = simData?.metrics.starting_net_worth ?? 0;
+  const endingNetWorth   = simData?.metrics.ending_net_worth   ?? 0;
 
-  const startingCashFlow = firstYear.income_earned.net;
-  const endingCashFlow = lastYear.income_earned.net;
+  const startingCashFlow = firstYear?.income_earned.net ?? 0;
+  const endingCashFlow   = lastYear?.income_earned.net  ?? 0;
 
-  const totalAssets = 0; //lastYear.accounts_summary.total_balance;
-  const totalLiabilities = 0;
+  const startingAssets   = firstYear?.assets.total_value ?? 0;
+  const totalAssets      = lastYear?.assets.total_value  ?? 0;
+
+  const startingLiabilities = (firstYear?.expenses.total_monthly ?? 0) * 12;
+  const totalLiabilities    = (lastYear?.expenses.total_monthly  ?? 0) * 12;
 
   const annualCashFlow = endingCashFlow - totalLiabilities;
 
-  const netWorthChange = getPercentChange(startingNetWorth, endingNetWorth);
-  const cashFlowChange = getPercentChange(startingCashFlow, endingCashFlow);
-  const assetChange = getPercentChange(startingNetWorth, totalAssets);
+  const netWorthChange  = getPercentChange(startingNetWorth,   endingNetWorth);
+  const cashFlowChange  = getPercentChange(startingCashFlow,   endingCashFlow);
+  const assetChange     = getPercentChange(startingAssets,     totalAssets);
+  const liabilityChange = getPercentChange(startingLiabilities, totalLiabilities);
 
   const overviewCards: OverviewCard[] = [
     {
@@ -1046,9 +1051,9 @@ export default function Dashboard() {
       value: formatCompactMoney(annualCashFlow),
       change: formatSignedPercent(cashFlowChange),
       changeLabel: "vs first year",
-      meta: `Inflows ${formatCompactMoney(lastYear.income_earned.gross)} · Taxes ${formatCompactMoney(
-        lastYear.income_earned.taxes_paid
-      )}`,
+      meta: lastYear
+        ? `Inflows ${formatCompactMoney(lastYear.income_earned.gross)} · Taxes ${formatCompactMoney(lastYear.income_earned.taxes_paid)}`
+        : "Run simulation to see data",
       icon: "$",
       tone: "green",
       direction: getChangeDirection(startingCashFlow, endingCashFlow),
@@ -1059,27 +1064,29 @@ export default function Dashboard() {
       value: formatCompactMoney(totalAssets),
       change: formatSignedPercent(assetChange),
       changeLabel: "vs start",
-      meta: '0 accounts',//`${lastYear.accounts_summary.accounts.length} accounts`,
+      meta: lastYear
+        ? `${lastYear.assets.assets.length} assets`
+        : "Run simulation to see data",
       icon: "◔",
       tone: "blue",
-      direction: getChangeDirection(startingNetWorth, totalAssets),
+      direction: getChangeDirection(startingAssets, totalAssets),
     },
     {
       id: "total-liabilities",
       label: "Total Liabilities",
       value: formatCompactMoney(totalLiabilities),
-      change: "+0.0%",
+      change: formatSignedPercent(liabilityChange),
       changeLabel: "vs start",
-      meta: "0 liabilities",
+      meta: lastYear
+        ? `${lastYear.expenses.expenses.length} liabilities`
+        : "Run simulation to see data",
       icon: "▭",
       tone: "orange",
-      direction: "neutral",
+      direction: getChangeDirection(startingLiabilities, totalLiabilities),
     },
   ];
 
-  const activeTutorialStep = showTutorial
-  ? tutorialSteps[tutorialStepIndex]
-  : null;
+  const activeTutorialStep = showTutorial ? tutorialSteps[tutorialStepIndex] : null;
 
   const handleTutorialNext = () => {
     setTutorialStepIndex((current) =>
@@ -1119,10 +1126,7 @@ export default function Dashboard() {
   }, [state]);
 
   return (
-    <div
-     className="dash-root"
-     data-active-tutorial-step={activeTutorialStep?.id ?? ""}
-     >
+    <div className="dash-root" data-active-tutorial-step={activeTutorialStep?.id ?? ""}>
       {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
         <div className="dash-loading-overlay">
           <Audio height="100" width="100" color="#6d28d9" ariaLabel="audio-loading" visible={true} />
@@ -1224,13 +1228,14 @@ export default function Dashboard() {
 
         <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
-          <JsonView
+          
+          {simResult ? <JsonView
             value={simResult}
             collapsed={2}
             displayDataTypes={false}
             displayObjectSize={false}
             shortenTextAfterLength={40}
-          />
+          />: "[]"}
           <UserAgeForm state={state} dispatch={dispatch} />
         </div>
 

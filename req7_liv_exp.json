@@ -1,11 +1,9 @@
 {
   "user_start_age": 25,
   "user_end_age": 28,
-  "filing_status": "single",
-  "state": "MI",
   "accounts": {
     "checking": [
-      {
+        {
         "source_type": "liquid",
         "variant": "checking",
         "id": "acc_1",
@@ -30,55 +28,38 @@
       }
     ],
     "taxable_investments": [],
-    "employer_retirement": [
-      {
-        "source_type": "liquid",
-        "variant": "employer_retirement",
-        "id": "401k_1",
-        "name": "salary 401",
-        "start_age": 25,
-        "end_age": 28,
-        "starting_balance": 0,
-        "contribution_mode": "percentage",
-        "monthly_contribution": 0,
-        "contribution_percentage": 0.50,
-        "expected_return": 0.10,
-        "employer_match_rate": 0.50,
-        "employer_match_limit": 0.10,
-        "linked_income_id": "salary_1"
-      }
-    ]
+    "employer_retirement": []
   },
   "incomes": {
     "salary": [
       {
-        "id": "salary_1",
         "source_type": "income",
         "variant": "salary",
-        "name": "Software Engineer",
+        "id": "salary_1",
+        "name": "swe",
         "start_age": 25,
         "end_age": 26,
         "gross_income": 100000,
         "income_growth": 0.03,
         "linked_401k_id": "401k_1"
-      },
-      {
-        "id": "salary_2",
-        "source_type": "income",
-        "variant": "salary",
-        "name": "Software Engineer",
-        "start_age": 26,
-        "end_age": 28,
-        "gross_income": 400000,
-        "income_growth": 0.03,
-        "linked_401k_id": ""
       }
     ],
     "hourly": [],
     "side": []
   },
   "expenses": {
-    "living": [],
+    "living": [
+        {
+        "source_type": "expense",
+        "variant": "living",
+        "id": "de806b8d-58ed-4b88-b75d-9b944112421b",
+        "name": "Living Expenses",
+        "start_age": 25,
+        "end_age": 28,
+        "monthly_expense": 1000,
+        "expense_growth": 0.03
+      }
+    ],
     "rent": [],
     "house_loan": [],
     "car_loan": [],

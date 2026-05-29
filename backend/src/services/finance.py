@@ -1131,6 +1131,62 @@ class CarLoanSim(ExpenseSimulator):
         }
 
 
+class LivingExpenseSim(ExpenseSimulator):
+
+    def __init__(self, expense: dict):
+        self._id = expense["id"]
+        self._variant = expense["variant"]
+        self.name = expense["name"]
+        self.start_age = expense["start_age"]
+        self.end_age = expense["end_age"]
+
+        self.current_monthly_expense = float(expense["monthly_expense"])
+        self.expense_growth = expense.get("expense_growth", 0.0)
+
+        self.annual_total_paid = 0.0
+
+        self.monthly_payment_history: list[float] = []
+
+    @property
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def variant(self) -> str:
+        return self._variant
+
+    def is_active(self, age: int) -> bool:
+        return self.start_age <= age < self.end_age
+
+    def process_monthly_payment(self) -> dict:
+        payment = self.current_monthly_expense
+        self.annual_total_paid += payment
+        self.monthly_payment_history.append(round(payment, 2))
+        return {
+            "payment": round(payment, 2),
+            "principal": 0.0,
+            "interest": 0.0,
+            "remaining_balance": 0.0,
+        }
+
+    def process_year_end(self) -> None:
+        self.current_monthly_expense *= (1 + self.expense_growth)
+        self.annual_total_paid = 0.0
+        self.monthly_payment_history = []
+
+    def snapshot(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "variant": self.variant,
+            "monthly_payment": round(self.current_monthly_expense, 2),
+            "annual_total_paid": round(self.annual_total_paid, 2),
+            "interest_paid_lifetime": 0.0,   # keeps expenses_summary aggregate happy
+            "expense_growth": self.expense_growth,
+            "payment_history": self.monthly_payment_history,
+        }
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Assets
 # ═══════════════════════════════════════════════════════════════════════════
@@ -1259,6 +1315,7 @@ class SimulationState:
 
         self.house_loans: List[HouseLoanSim] = []
         self.car_loans: List[CarLoanSim] = []
+        self.living_expenses: List[LivingExpenseSim] = []
 
         self.house_assets: List[HouseAssetSim] = []
         self.car_assets: List[CarAssetSim] = []
@@ -1328,6 +1385,10 @@ def simulate(req: SimulateRequest):
         state.car_loans.append(loan_sim)
         car_loan_by_id[loan["id"]] = loan_sim
 
+    for expense in req["expenses"].get("living", []):
+        living_sim = LivingExpenseSim(expense)
+        state.living_expenses.append(living_sim)
+
     for asset in req["assets"].get("car", []):
         linked_loan = car_loan_by_id.get(asset["linked_loan_id"])
         asset_sim = CarAssetSim(asset, linked_loan)
@@ -1351,6 +1412,7 @@ def simulate(req: SimulateRequest):
 
         active_house_loans = [l for l in state.house_loans if l.is_active(current_age)]
         active_car_loans = [l for l in state.car_loans if l.is_active(current_age)]
+        active_living = [e for e in state.living_expenses if e.is_active(current_age)]
 
         active_house_assets = [a for a in state.house_assets if a.is_active(current_age)]
         active_car_assets = [a for a in state.car_assets if a.is_active(current_age)]
@@ -1408,6 +1470,11 @@ def simulate(req: SimulateRequest):
                 payment = loan_sim.process_monthly_payment()
                 state.primary_checking.withdraw(payment["payment"])
 
+            # ── LIVING EXPENSES ───────────────────────────────────────────────
+            for living_sim in active_living:
+                payment = living_sim.process_monthly_payment()
+                state.primary_checking.withdraw(payment["payment"])
+
             # ── MONTHLY COMPOUNDING ───────────────────────────────────────────
             # for account in active_checking + active_retirement: # loans and investments and assets
             #     growth = account.process_month_end()
@@ -1434,6 +1501,7 @@ def simulate(req: SimulateRequest):
 
         house_loan_snapshots = [l.snapshot() for l in active_house_loans]
         car_loan_snapshots = [l.snapshot() for l in active_car_loans]
+        living_snapshots = [e.snapshot() for e in active_living]
         all_loan_snapshots = house_loan_snapshots + car_loan_snapshots
 
         house_asset_snapshots = [a.snapshot() for a in active_house_assets]
@@ -1492,15 +1560,19 @@ def simulate(req: SimulateRequest):
         }
 
         expenses_summary = {
-            "total_monthly": round(sum(l["monthly_payment"] for l in all_loan_snapshots), 2),
+            "total_monthly": round(
+                sum(l["monthly_payment"] for l in all_loan_snapshots) +
+                sum(e["monthly_payment"] for e in living_snapshots), 2
+            ),
             "total_interest_paid_lifetime": round(sum(l["interest_paid_lifetime"] for l in all_loan_snapshots), 2),
             "by_variant": {
                 "house_loan": round(sum(l["monthly_payment"] for l in house_loan_snapshots), 2),
                 "car_loan": round(sum(l["monthly_payment"] for l in car_loan_snapshots), 2),
+                "living": round(sum(e["monthly_payment"] for e in living_snapshots), 2),
                 "rent": 0.0,
                 "debt": 0.0,
             },
-            "expenses": all_loan_snapshots,
+            "expenses": all_loan_snapshots + living_snapshots,
         }
 
         assets_summary = {
@@ -1589,6 +1661,9 @@ def simulate(req: SimulateRequest):
 
         for loan_sim in active_car_loans:
             loan_sim.process_year_end()
+
+        for living_sim in active_living:
+            living_sim.process_year_end()
 
     # ── BUILD FINAL METRICS ───────────────────────────────────────────────────
     metrics = {

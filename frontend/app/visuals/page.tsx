@@ -988,7 +988,7 @@ export function FinancialEntities({ state, dispatch, onToast }) {
 export default function Dashboard() {
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
-  const [simResult, setSimResult] = useState([]);
+  const [simResult, setSimResult] = useState(null);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -1242,7 +1242,10 @@ export default function Dashboard() {
         <FinancialOverviewCards cards={overviewCards} />
         <section className="simulation-results-grid">
           <IncomeGrowthChart />
-          <SimulationHighlights data={testData} />
+          <div>
+            <SimulationHighlights data={simResult} />
+            <SimulationControls state={state} setSimResult={setSimResult} />
+          </div>
         </section>
 
         <section className="simulation-section-header">
@@ -1251,8 +1254,6 @@ export default function Dashboard() {
         </section>
 
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
-
-        <SimulationControls state={state} setSimResult={setSimResult} />
 
         {/* <SimResultViewer simResult={simResult} /> */}
         <ToastBanner toasts={toasts} setToasts={setToasts} />

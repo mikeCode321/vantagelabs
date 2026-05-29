@@ -510,6 +510,19 @@
   transform: translateY(0);
 }
 
+/* ADD after .ts-btn--primary:active */
+.ts-btn--secondary {
+  background: #ffffff;
+  color: #300d6b;
+  border: 1px solid #ebeaf3;
+}
+
+.ts-btn--secondary:hover {
+  border-color: #5FA7AB55;
+  background: #5FA7AB08;
+  color: #300d6b;
+}
+
 .ts-btn--ghost {
   background: transparent;
   color: #697287;
@@ -787,23 +800,26 @@
 
 .ts-step-progress {
   display: flex;
-  gap: 12px;
+  gap: 6px;
+  align-items: center;
   margin-bottom: 32px;
 }
 
 .ts-step-progress-dot {
-  width: 34px;
-  height: 8px;
+  width: 28px;
+  height: 6px;
   border-radius: 999px;
   background: rgba(109, 40, 217, 0.16);
+  flex-shrink: 0;
 }
 
 .ts-step-progress-dot--active {
-  width: 20px;
-  height: 20px;
-  margin-top: -6px;
-  border: 4px solid rgba(109, 40, 217, 0.25);
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(109, 40, 217, 0.25);
   background: #6d28d9;
+  border-radius: 999px;
+  /* no margin-top needed */
 }
 
 
@@ -838,4 +854,83 @@
 .ts-step-panel--floating .ts-step-actions {
   margin-top: 34px;
 }
+.ts-highlight-step {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  padding-left: 8%;
+}
 
+.ts-highlight-card {
+  pointer-events: auto;
+  position: relative;
+  width: min(500px, calc(100vw - 48px));
+  min-height: 260px;
+  padding: 38px 36px 26px;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow:
+    0 24px 70px rgba(15, 23, 42, 0.2),
+    0 0 0 1px rgba(15, 23, 42, 0.06);
+}
+
+.ts-highlight-logo {
+  width: 64px;
+  height: 64px;
+  font-size: 48px;
+}
+
+.ts-highlight-title {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.ts-highlight-description {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.ts-highlight-actions {
+  grid-template-columns: 1fr 110px 110px;
+  gap: 12px;
+  margin-top: 8px;
+}
+.ts-highlight-close {
+  position: absolute;
+  top: 22px;
+  right: 24px;
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+
+
+.ts-highlight-copy {
+  min-width: 0;
+}
+
+
+
+.ts-highlight-actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 132px 132px;
+  gap: 16px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.ts-highlight-skip {
+  justify-self: center;
+  margin: 0;
+}

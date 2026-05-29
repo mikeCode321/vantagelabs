@@ -2355,3 +2355,14 @@ tbody tr:hover {
     font-size: 13px;
   }
 }
+
+.dash-root[data-active-tutorial-step="expenses-assets"]
+  [data-tutorial="expense-card"],
+.dash-root[data-active-tutorial-step="expenses-assets"]
+  [data-tutorial="asset-card"] {
+  position: relative;
+  z-index: 1300;
+  box-shadow:
+    0 0 0 3px rgba(109, 40, 217, 0.45),
+    0 20px 60px rgba(109, 40, 217, 0.2);
+}

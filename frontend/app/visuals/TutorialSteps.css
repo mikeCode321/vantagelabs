@@ -746,3 +746,60 @@
   padding: 36px;
   background: #ffffff;
 }
+
+.ts-modal--split-step {
+  width: min(1120px, calc(100vw - 48px));
+  min-height: 560px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  overflow: hidden;
+}
+
+.ts-step-panel {
+  position: relative;
+  padding: 48px 36px;
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+  background:
+    radial-gradient(circle at top left, rgba(109, 40, 217, 0.08), transparent 34%),
+    rgba(255, 255, 255, 0.96);
+}
+
+.ts-tutorial-form {
+  padding: 36px;
+  background: #ffffff;
+}
+
+.ts-step-image-wrap {
+  margin: 36px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.ts-step-image {
+  max-width: 260px;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.ts-step-progress {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.ts-step-progress-dot {
+  width: 34px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(109, 40, 217, 0.16);
+}
+
+.ts-step-progress-dot--active {
+  width: 20px;
+  height: 20px;
+  margin-top: -6px;
+  border: 4px solid rgba(109, 40, 217, 0.25);
+  background: #6d28d9;
+}

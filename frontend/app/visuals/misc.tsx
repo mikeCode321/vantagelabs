@@ -258,8 +258,8 @@ export function SimulationControls({ state, setSimResult }) {
   };
 
   return (
-    <div>
-      <button onClick={runSimulation}>Run Simulation</button>
+    <div style={{marginTop:"25px"}}>
+      <button style={{marginRight:"25px"}} onClick={runSimulation}>Run Simulation</button>
       <button onClick={clearSimulation} disabled={!hasResults}>
         Clear Simulation Result
       </button>

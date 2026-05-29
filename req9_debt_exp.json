@@ -1,0 +1,73 @@
+{
+  "user_start_age": 25,
+  "user_end_age": 28,
+  "accounts": {
+    "checking": [
+        {
+        "source_type": "liquid",
+        "variant": "checking",
+        "id": "acc_1",
+        "name": "Checking Account",
+        "start_age": 25,
+        "end_age": 28,
+        "starting_balance": 10000,
+        "interest_tiers": [
+          {
+            "threshold": 15000,
+            "annual_rate": 0.0
+          },
+          {
+            "threshold": 100000,
+            "annual_rate": 0.03
+          },
+          {
+            "threshold": 300000,
+            "annual_rate": 0.04
+          }
+        ]
+      }
+    ],
+    "taxable_investments": [],
+    "employer_retirement": []
+  },
+  "incomes": {
+    "salary": [
+      {
+        "source_type": "income",
+        "variant": "salary",
+        "id": "salary_1",
+        "name": "swe",
+        "start_age": 25,
+        "end_age": 26,
+        "gross_income": 100000,
+        "income_growth": 0.03,
+        "linked_401k_id": "401k_1"
+      }
+    ],
+    "hourly": [],
+    "side": []
+  },
+  "expenses": {
+    "living": [],
+    "rent": [],
+    "house_loan": [],
+    "car_loan": [],
+    "debt": [
+        {
+        "source_type": "expense",
+        "variant": "debt",
+        "id": "e1318955-7fcc-45fb-968b-3506a47e5a08",
+        "name": "Debt Expense",
+        "start_age": 25,
+        "end_age": 28,
+        "debt_amount": 10000,
+        "monthly_expense": 400,
+        "interest_rate": 0.05
+      }
+    ]
+  },
+  "assets": {
+    "house": [],
+    "car": []
+  }
+}

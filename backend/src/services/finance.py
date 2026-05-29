@@ -11,6 +11,9 @@ from services.tax import TaxService
 from datetime import datetime 
 import json
 import numpy as np
+from datetime import datetime
+import math
+
 # ═══════════════════════════════════════════════════════════════════════════
 # PROTOCOLS & INTERFACES
 # ═══════════════════════════════════════════════════════════════════════════
@@ -1190,6 +1193,183 @@ class RentSim(LivingExpenseSim):
     # NOTE: TODO: if living or rent diverge we must account for this right now they're identical
     pass
 
+class DebtSim(ExpenseSimulator):
+    """
+    Fixed-rate debt (credit card, student loan, personal loan, etc.)
+    Tracks amortization, detects negative amortization / never-pays-off.
+    Projection is recomputed on every snapshot() call against remaining_balance
+    so payoff_date stays accurate as the simulation progresses.
+    """
+ 
+    def __init__(self, expense: dict):
+        self._id = expense["id"]
+        self._variant = expense["variant"]
+        self.name = expense["name"]
+        self.start_age = expense["start_age"]
+        self.end_age = expense["end_age"]
+ 
+        self.original_balance = float(expense["debt_amount"])
+        self.monthly_payment = float(expense["monthly_expense"])
+        self.interest_rate = float(expense["interest_rate"])
+        self.monthly_rate = self.interest_rate / 12
+ 
+        # Live state
+        self.remaining_balance = self.original_balance
+        self.is_paid_off = False
+ 
+        # Lifetime accumulators (never reset)
+        self.total_interest_paid = 0.0
+        self.total_amount_paid = 0.0
+ 
+        # Annual accumulators (reset each year_end)
+        # Note: annual_principal_paid goes negative when underpaying interest —
+        # snapshot() clamps it to 0 and surfaces the growth separately via annual_balance_growth
+        self.annual_interest_paid = 0.0
+        self.annual_principal_paid = 0.0
+ 
+        # History (reset each year_end)
+        self.monthly_balance_history: list[float] = []
+        self.monthly_interest_history: list[float] = []
+        self.monthly_principal_history: list[float] = []
+ 
+    def _compute_payoff_projection(self) -> dict:
+        """
+        Recomputes payoff projection from current remaining_balance on every call.
+        Called by snapshot() so figures stay accurate mid-simulation.
+ 
+        Flags are mutually exclusive:
+          underpaying_interest  — payment doesn't even cover interest accrued this month
+          negative_amortization — payment covers interest but balance still grows (other mechanics)
+        With a plain fixed-rate debt these can't both be true at once.
+        """
+        interest_this_month = self.remaining_balance * self.monthly_rate
+        principal_this_month = self.monthly_payment - interest_this_month
+ 
+        underpaying_interest = self.monthly_payment < interest_this_month
+        # Only flag negative_amortization when the user IS covering interest but balance
+        # still somehow grows — keeps the two flags mutually exclusive
+        negative_amortization = not underpaying_interest and principal_this_month < 0
+        never_pays_off = underpaying_interest or (self.monthly_rate == 0 and self.monthly_payment <= 0)
+ 
+        payoff_months = None
+        payoff_age = None
+        payoff_date = None
+ 
+        if not never_pays_off:
+            try:
+                if self.monthly_rate == 0:
+                    payoff_months = math.ceil(self.remaining_balance / self.monthly_payment)
+                else:
+                    n = math.log(
+                        self.monthly_payment / (self.monthly_payment - self.monthly_rate * self.remaining_balance)
+                    ) / math.log(1 + self.monthly_rate)
+                    payoff_months = math.ceil(n)
+ 
+                # payoff_age: how old the user will be when debt is cleared
+                months_already_paid = round(
+                    (self.original_balance - self.remaining_balance) / max(self.monthly_payment, 0.01)
+                )
+                payoff_age = round(self.start_age + (months_already_paid + payoff_months) / 12, 1)
+ 
+                # payoff_date: calendar month/year from today
+                current = datetime.now()
+                payoff_year = current.year + (current.month - 1 + payoff_months) // 12
+                payoff_month = (current.month - 1 + payoff_months) % 12 + 1
+                payoff_date = f"{payoff_year}-{payoff_month:02d}"
+ 
+            except (ValueError, ZeroDivisionError):
+                never_pays_off = True
+ 
+        return {
+            "payoff_months": payoff_months,
+            "payoff_age": payoff_age,
+            "payoff_date": payoff_date,
+            "never_pays_off": never_pays_off,
+            "negative_amortization": negative_amortization,
+            "underpaying_interest": underpaying_interest,
+        }
+ 
+    def _minimum_payment_to_pay_off(self) -> float:
+        """Smallest monthly payment that beats current interest accrual."""
+        return round(self.remaining_balance * self.monthly_rate + 0.01, 2)
+ 
+    @property
+    def id(self) -> str:
+        return self._id
+ 
+    @property
+    def variant(self) -> str:
+        return self._variant
+ 
+    def is_active(self, age: int) -> bool:
+        return self.start_age <= age < self.end_age and not self.is_paid_off
+ 
+    def process_monthly_payment(self) -> dict:
+        if self.is_paid_off or self.remaining_balance <= 0:
+            return {"payment": 0.0, "principal": 0.0, "interest": 0.0, "remaining_balance": 0.0}
+ 
+        interest_portion = self.remaining_balance * self.monthly_rate
+        principal_portion = min(self.monthly_payment - interest_portion, self.remaining_balance)
+        actual_payment = principal_portion + interest_portion
+ 
+        self.remaining_balance -= principal_portion
+        self.remaining_balance = max(0.0, self.remaining_balance)
+ 
+        # Accumulators
+        self.total_interest_paid += interest_portion
+        self.total_amount_paid += actual_payment
+        self.annual_interest_paid += interest_portion
+        self.annual_principal_paid += principal_portion  # may go negative if underpaying
+ 
+        # History
+        self.monthly_balance_history.append(round(self.remaining_balance, 2))
+        self.monthly_interest_history.append(round(interest_portion, 2))
+        self.monthly_principal_history.append(round(principal_portion, 2))
+ 
+        if self.remaining_balance == 0.0:
+            self.is_paid_off = True
+ 
+        return {
+            "payment": round(actual_payment, 2),
+            "principal": round(principal_portion, 2),
+            "interest": round(interest_portion, 2),
+            "remaining_balance": round(self.remaining_balance, 2),
+        }
+ 
+    def process_year_end(self) -> None:
+        self.annual_interest_paid = 0.0
+        self.annual_principal_paid = 0.0
+        self.monthly_balance_history = []
+        self.monthly_interest_history = []
+        self.monthly_principal_history = []
+ 
+    def snapshot(self) -> dict:
+        projection = self._compute_payoff_projection()
+        min_payment = self._minimum_payment_to_pay_off()
+        return {
+            "id": self.id,
+            "name": self.name,
+            "variant": self.variant,
+            "monthly_payment": round(self.monthly_payment, 2),
+            "interest_paid_lifetime": round(self.total_interest_paid, 2),  # keeps aggregate sum happy
+            "remaining_balance": round(self.remaining_balance, 2),
+            "original_balance": self.original_balance,
+            "total_interest_paid": round(self.total_interest_paid, 2),
+            "total_amount_paid": round(self.total_amount_paid, 2),
+            "annual_interest_paid": round(self.annual_interest_paid, 2),
+            # Clamped to 0 when balance is growing; see annual_balance_growth for the flip side
+            "annual_principal_paid": round(max(self.annual_principal_paid, 0.0), 2),
+            # How much the balance grew this year due to underpayment (0 when paying down normally)
+            "annual_balance_growth": round(abs(min(self.annual_principal_paid, 0.0)), 2),
+            "minimum_payment_to_pay_off": min_payment,
+            "underpaying_by": round(max(min_payment - self.monthly_payment, 0.0), 2),
+            # Projection recomputed from current remaining_balance — stays accurate mid-simulation
+            **projection,
+            "balance_history": self.monthly_balance_history,
+            "interest_history": self.monthly_interest_history,
+            "principal_history": self.monthly_principal_history,
+        }
+ 
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Assets
@@ -1321,6 +1501,7 @@ class SimulationState:
         self.car_loans: List[CarLoanSim] = []
         self.living_expenses: List[LivingExpenseSim] = []
         self.rent_expenses: List[RentSim] = []
+        self.debt_expenses: List[DebtSim] = []
 
         self.house_assets: List[HouseAssetSim] = []
         self.car_assets: List[CarAssetSim] = []
@@ -1398,6 +1579,10 @@ def simulate(req: SimulateRequest):
         rent_sim = RentSim(expense)
         state.rent_expenses.append(rent_sim)
 
+    for expense in req["expenses"].get("debt", []):
+        debt_sim = DebtSim(expense)
+        state.debt_expenses.append(debt_sim)
+
     for asset in req["assets"].get("car", []):
         linked_loan = car_loan_by_id.get(asset["linked_loan_id"])
         asset_sim = CarAssetSim(asset, linked_loan)
@@ -1426,6 +1611,8 @@ def simulate(req: SimulateRequest):
 
         active_house_assets = [a for a in state.house_assets if a.is_active(current_age)]
         active_car_assets = [a for a in state.car_assets if a.is_active(current_age)]
+
+        active_debt = [e for e in state.debt_expenses if e.is_active(current_age)]
 
         for month in range(12):
             # ── INCOME ────────────────────────────────────────────────────────
@@ -1477,13 +1664,17 @@ def simulate(req: SimulateRequest):
                 payment = loan_sim.process_monthly_payment()
                 state.primary_checking.withdraw(payment["payment"])
 
-            # ── LIVING EXPENSES ───────────────────────────────────────────────
+            # ── EXPENSES ───────────────────────────────────────────────
             for living_sim in active_living:
                 payment = living_sim.process_monthly_payment()
                 state.primary_checking.withdraw(payment["payment"])
 
             for rent_sim in active_rent:
                 payment = rent_sim.process_monthly_payment()
+                state.primary_checking.withdraw(payment["payment"])
+
+            for debt_sim in active_debt:
+                payment = debt_sim.process_monthly_payment()
                 state.primary_checking.withdraw(payment["payment"])
 
             # ── MONTHLY COMPOUNDING ───────────────────────────────────────────
@@ -1514,6 +1705,7 @@ def simulate(req: SimulateRequest):
         car_loan_snapshots = [l.snapshot() for l in active_car_loans]
         living_snapshots = [e.snapshot() for e in active_living]
         rent_snapshots = [e.snapshot() for e in active_rent]
+        debt_snapshots = [e.snapshot() for e in active_debt]
 
         all_loan_snapshots = house_loan_snapshots + car_loan_snapshots
 
@@ -1576,17 +1768,20 @@ def simulate(req: SimulateRequest):
             "total_monthly": round(
                 sum(l["monthly_payment"] for l in all_loan_snapshots) +
                 sum(e["monthly_payment"] for e in living_snapshots) +
-                sum(e["monthly_payment"] for e in rent_snapshots), 2
+                sum(e["monthly_payment"] for e in rent_snapshots) +
+                sum(e["monthly_payment"] for e in debt_snapshots), 2
             ),
-            "total_interest_paid_lifetime": round(sum(l["interest_paid_lifetime"] for l in all_loan_snapshots), 2),
+            "total_interest_paid_lifetime": round(
+                sum(l["interest_paid_lifetime"] for l in all_loan_snapshots) +
+                sum(e["interest_paid_lifetime"] for e in debt_snapshots), 2),
             "by_variant": {
                 "house_loan": round(sum(l["monthly_payment"] for l in house_loan_snapshots), 2),
                 "car_loan": round(sum(l["monthly_payment"] for l in car_loan_snapshots), 2),
                 "living": round(sum(e["monthly_payment"] for e in living_snapshots), 2),
                 "rent": round(sum(e["monthly_payment"] for e in rent_snapshots), 2),
-                "debt": 0.0,
+                "debt": round(sum(e["monthly_payment"] for e in debt_snapshots), 2),
             },
-            "expenses": all_loan_snapshots + living_snapshots + rent_snapshots,
+            "expenses": all_loan_snapshots + living_snapshots + rent_snapshots + debt_snapshots,
         }
 
         assets_summary = {
@@ -1681,6 +1876,9 @@ def simulate(req: SimulateRequest):
 
         for rent_sim in active_rent:
             rent_sim.process_year_end()
+        
+        for debt_sim in active_debt:
+            debt_sim.process_year_end()
             
     # ── BUILD FINAL METRICS ───────────────────────────────────────────────────
     metrics = {

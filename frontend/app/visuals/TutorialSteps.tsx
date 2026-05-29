@@ -524,6 +524,17 @@ export function TutorialOnboarding({
             onSkip={onSkip}
         />
         )}
+
+        {step.id === "results" && (
+        <ResultsTutorialStep
+            step={step}
+            currentStepIndex={currentStepIndex}
+            totalSteps={steps.length}
+            onBack={onBack}
+            onFinish={onFinish}
+            onSkip={onSkip}
+        />
+        )}
       </div>
   )};
 
@@ -729,6 +740,66 @@ export function TutorialOnboarding({
     );
   }
 
+  type ResultsTutorialStepProps = {
+    step: TutorialStep;
+    currentStepIndex: number;
+    totalSteps: number;
+    onBack: () => void;
+    onFinish: () => void;
+    onSkip: () => void;
+  };
+  
+  function ResultsTutorialStep({
+    step,
+    currentStepIndex,
+    totalSteps,
+    onBack,
+    onFinish,
+    onSkip,
+  }: ResultsTutorialStepProps) {
+    return (
+      <div className="ts-results-step">
+        <div className="ts-results-card">
+          <button type="button" className="ts-highlight-close" onClick={onSkip}>
+            ×
+          </button>
+  
+          <div className="ts-results-logo">V</div>
+  
+          <div className="ts-results-copy">
+            <p className="ts-step-count">
+              Step {currentStepIndex + 1} of {totalSteps}
+            </p>
+  
+            <h2 className="ts-results-title">{step.title}</h2>
+  
+            <p className="ts-results-description">
+              {step.description}
+            </p>
+          </div>
+  
+          <div className="ts-results-actions">
+            <button
+              type="button"
+              className="ts-btn ts-btn--secondary"
+              onClick={onBack}
+            >
+              Back
+            </button>
+  
+            <button
+              type="button"
+              className="ts-btn ts-btn--primary"
+              onClick={onFinish}
+            >
+              Finish
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   type EmployerRetirementTutorialStepProps = {
     step: TutorialStep;
     currentStepIndex: number;
@@ -805,7 +876,7 @@ export function TutorialOnboarding({
     );
   }
   
-  export type TutorialStepId = "welcome" | "profile" | "checking" | "salary" | "retirement" | "expenses-assets";
+  export type TutorialStepId = "welcome" | "profile" | "checking" | "salary" | "retirement" | "expenses-assets" | "results";
 
   export type TutorialStep = {
     id: TutorialStepId;
@@ -853,6 +924,13 @@ export function TutorialOnboarding({
         description:
           "These inputs work the same way. Add bills, debt, homes, and vehicles to model what you spend and what you own.",
         targetSelector: "[data-tutorial='expense-card'], [data-tutorial='asset-card']",
+      },
+      {
+        id: "results",
+        title: "Run your simulation and review the results",
+        description:
+          "Click Run Simulation to generate your projection, then review the overview cards, chart, and highlights to understand your outlook.",
+        targetSelector: "[data-tutorial='simulation-results'], [data-tutorial='simulation-highlights']",
       },
   ];
 

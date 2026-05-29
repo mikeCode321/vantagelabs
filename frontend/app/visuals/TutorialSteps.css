@@ -964,3 +964,68 @@
   color: #300d6b;
   background: rgba(95, 167, 171, 0.08);
 }
+
+
+
+.ts-results-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.ts-results-card {
+  pointer-events: auto;
+  position: relative;
+  width: min(620px, calc(100vw - 48px));
+  min-height: 260px;
+  padding: 44px 44px 32px;
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 28px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow:
+    0 28px 90px rgba(15, 23, 42, 0.22),
+    0 0 0 1px rgba(15, 23, 42, 0.06);
+}
+
+.ts-results-logo {
+  width: 86px;
+  height: 86px;
+  display: grid;
+  place-items: center;
+  color: #6d28d9;
+  font-size: 64px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.ts-results-copy {
+  min-width: 0;
+}
+
+.ts-results-title {
+  margin: 0 0 16px;
+  color: #111827;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.ts-results-description {
+  margin: 0;
+  color: #4b5563;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.ts-results-actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 132px 132px;
+  gap: 16px;
+  justify-content: end;
+  margin-top: 16px;
+}

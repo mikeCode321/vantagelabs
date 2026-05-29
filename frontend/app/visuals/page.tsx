@@ -1122,7 +1122,7 @@ export default function Dashboard() {
   return (
     <div
      className="dash-root"
-     data-active-tutorial-step="expenses-assets"
+     data-active-tutorial-step={activeTutorialStep?.id ?? ""}
      >
       {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
         <div className="dash-loading-overlay">

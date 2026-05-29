@@ -16,13 +16,13 @@ import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpen
 
 import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
 
-import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
+import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
 import { TutorialStepsShell, tutorialSteps } from "@/app/visuals/TutorialSteps";
-
+import JsonView from "@uiw/react-json-view";
 import {
   FinancialOverviewCards,
   OverviewCard,
@@ -985,12 +985,11 @@ export function FinancialEntities({ state, dispatch, onToast }) {
   );
 }
 
-
-
 export default function Dashboard() {
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
-  const [simResult, setSimResult] = useState<SimYearResult[]>([]);
+  // const [simResult, setSimResult] = useState<SimYearResult[]>([]);
+  const [simResult, setSimResult] = useState([]);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -1225,6 +1224,13 @@ export default function Dashboard() {
 
         <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
+          <JsonView
+            value={simResult}
+            collapsed={2}
+            displayDataTypes={false}
+            displayObjectSize={false}
+            shortenTextAfterLength={40}
+          />
           <UserAgeForm state={state} dispatch={dispatch} />
         </div>
 
@@ -1241,7 +1247,7 @@ export default function Dashboard() {
 
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
 
-        {/* <SimulationControls state={state} setSimResult={setSimResult} /> */}
+        <SimulationControls state={state} setSimResult={setSimResult} />
 
         {/* <SimResultViewer simResult={simResult} /> */}
         <ToastBanner toasts={toasts} setToasts={setToasts} />

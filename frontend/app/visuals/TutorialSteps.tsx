@@ -513,6 +513,17 @@ export function TutorialOnboarding({
             onToast={onToast}
         />
         )}
+
+        {step.id === "expenses-assets" && (
+        <ExpensesAssetsTutorialStep
+            step={step}
+            currentStepIndex={currentStepIndex}
+            totalSteps={steps.length}
+            onBack={onBack}
+            onNext={isLastStep ? onFinish : onNext}
+            onSkip={onSkip}
+        />
+        )}
       </div>
   )};
 
@@ -646,6 +657,78 @@ export function TutorialOnboarding({
     );
   }
 
+  type ExpensesAssetsTutorialStepProps = {
+    step: TutorialStep;
+    currentStepIndex: number;
+    totalSteps: number;
+    onBack: () => void;
+    onNext: () => void;
+    onSkip: () => void;
+  };
+  
+  function ExpensesAssetsTutorialStep({
+    step,
+    currentStepIndex,
+    totalSteps,
+    onBack,
+    onNext,
+    onSkip,
+  }: ExpensesAssetsTutorialStepProps) {
+    return (
+      <div className="ts-highlight-step">
+        <div className="ts-highlight-card">
+          <button type="button" className="ts-highlight-close" onClick={onSkip}>
+            ×
+          </button>
+  
+          <div className="ts-highlight-logo">V</div>
+  
+          <div className="ts-highlight-copy">
+            <p className="ts-step-count">
+              Step {currentStepIndex + 1} of {totalSteps}
+            </p>
+  
+            <h2 className="ts-highlight-title">{step.title}</h2>
+  
+            <p className="ts-highlight-description">
+              {step.description}
+            </p>
+  
+            <p className="ts-highlight-description">
+              Some assets can be linked to loans.
+            </p>
+          </div>
+  
+          <div className="ts-highlight-actions">
+            <button
+              type="button"
+              className="ts-step-skip ts-highlight-skip"
+              onClick={onSkip}
+            >
+              Skip tutorial
+            </button>
+  
+            <button
+              type="button"
+              className="ts-btn ts-btn--secondary"
+              onClick={onBack}
+            >
+              Back
+            </button>
+  
+            <button
+              type="button"
+              className="ts-btn ts-btn--primary"
+              onClick={onNext}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   type EmployerRetirementTutorialStepProps = {
     step: TutorialStep;
     currentStepIndex: number;
@@ -722,7 +805,7 @@ export function TutorialOnboarding({
     );
   }
   
-  export type TutorialStepId = "welcome" | "profile" | "checking" | "salary" | "retirement";
+  export type TutorialStepId = "welcome" | "profile" | "checking" | "salary" | "retirement" | "expenses-assets";
 
   export type TutorialStep = {
     id: TutorialStepId;
@@ -763,6 +846,13 @@ export function TutorialOnboarding({
         description:
           "Link jobs to retirement accounts so contributions and assumptions stay in sync.",
         targetSelector: "[data-tutorial='account-card']",
+      },
+      {
+        id: "expenses-assets",
+        title: "Add expenses and assets",
+        description:
+          "These inputs work the same way. Add bills, debt, homes, and vehicles to model what you spend and what you own.",
+        targetSelector: "[data-tutorial='expense-card'], [data-tutorial='asset-card']",
       },
   ];
 

@@ -839,7 +839,10 @@ export function Entity({ state, entityName, category, dispatch, onToast }) {
 
   return (
     <>
-      <div className={`entity-card entity-card--${category}`}>
+      <div 
+      className={`entity-card entity-card--${category}`}
+      data-tutorial={`${category}-card`}
+      >
         <div className="entity-card__top">
           <div className={`entity-card__icon entity-card__icon--${category}`}>
             {cardCopy.icon}
@@ -1075,6 +1078,10 @@ export default function Dashboard() {
     },
   ];
 
+  const activeTutorialStep = showTutorial
+  ? tutorialSteps[tutorialStepIndex]
+  : null;
+
   const handleTutorialNext = () => {
     setTutorialStepIndex((current) =>
       Math.min(current + 1, tutorialSteps.length - 1)
@@ -1113,7 +1120,10 @@ export default function Dashboard() {
   }, [state]);
 
   return (
-    <div className="dash-root">
+    <div
+     className="dash-root"
+     data-active-tutorial-step={activeTutorialStep?.id ?? ""}
+     >
       {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
         <div className="dash-loading-overlay">
           <Audio height="100" width="100" color="#6d28d9" ariaLabel="audio-loading" visible={true} />

@@ -1578,7 +1578,10 @@ function simulate(req) {
   }
 
   for (const asset of req.assets.house ?? []) {
-    const linkedLoan = houseLoanById[asset.linked_loan_id] ?? null;
+    const linkedLoan =
+      houseLoanById[asset.linked_loan_id] ??
+      Object.values(houseLoanById).find(l => l.linkedAssetId === asset.id) ??
+      null;
     const assetSim = new HouseAssetSim(asset, linkedLoan);
     state.houseAssets.push(assetSim);
   }
@@ -1622,16 +1625,19 @@ function simulate(req) {
   }
 
   for (const asset of req.assets.car ?? []) {
-    const linkedLoan = carLoanById[asset.linked_loan_id] ?? null;
+    const linkedLoan =
+      carLoanById[asset.linked_loan_id] ??
+      Object.values(carLoanById).find(l => l.linkedAssetId === asset.id) ??
+      null;
     state.carAssets.push(new CarAssetSim(asset, linkedLoan));
   }
 
   // ── SIMULATION LOOP ───────────────────────────────────────────────────────
   const results = [];
-  const startingNetWorth = state.getAllAccounts().reduce(
-    (sum, acc) => sum + acc.getBalance(),
-    0
-  );
+  const startingNetWorth =
+  state.getAllAccounts().reduce((sum, acc) => sum + acc.getBalance(), 0) +
+  state.houseAssets.reduce((sum, a) => sum + a.getEquity(), 0) +
+  state.carAssets.reduce((sum, a) => sum + a.getEquity(), 0);
 
   for (
     let yearOffset = 0;

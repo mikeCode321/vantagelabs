@@ -253,7 +253,7 @@ export function SimulationControls({ state, setSimResult }) {
   }
 
   const clearSimulation = () => {
-    setSimResult([]);
+    setSimResult(null);
     setHasResults(false);
   };
 

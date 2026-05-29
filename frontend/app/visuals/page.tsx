@@ -1124,17 +1124,25 @@ export default function Dashboard() {
         <TutorialStepsShell
           steps={tutorialSteps}
           currentStepIndex={tutorialStepIndex}
+          state={state}
+          dispatch={dispatch}
           onNext={handleTutorialNext}
           onBack={handleTutorialBack}
           onSkip={handleTutorialComplete}
           onFinish={handleTutorialComplete}
+          onToast={showToast}
           onProfileComplete={(profile, mode) => {
-            dispatch({ type: "UPDATE_SIMULATION_BOUNDS", payload: {
-              user_start_age: profile.current_age,
-              user_end_age: profile.retirement_age,
-            }});
-            if (mode === "skipped") handleTutorialComplete();
-            else handleTutorialNext(); 
+            dispatch({
+              type: "UPDATE_SIMULATION_BOUNDS",
+              payload: {
+                user_start_age: profile.current_age,
+                user_end_age: profile.retirement_age,
+              },
+            });
+        
+            if (mode === "skipped") {
+              handleTutorialComplete();
+            }
           }}
         />
       )}

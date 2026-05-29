@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import "./TutorialSteps.css";
+import { CheckingAccountForm } from "@/app/visuals/accounts";
 
 export type FilingStatus =
   | "single"
@@ -321,65 +322,220 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
     </div>
   );
 }
-type TutorialScreen = "welcome" | "profile";
 
-export function TutorialOnboarding({ onProfileComplete }) {
-  const [screen, setScreen] = useState<TutorialScreen>("welcome");
+type TutorialScreen= "welcome" | "profile" | "checking";
 
-  return (
-    <div className="ts-overlay">
-      <div className="ts-modal">
-        <div className="ts-modal__corner ts-modal__corner--tl" />
-        <div className="ts-modal__corner ts-modal__corner--br" />
 
-        {screen === "welcome" && (
-          <WelcomeScreen
-            onGetStarted={() => setScreen("profile")}
-          />
+  type TutorialOnboardingProps = {
+    steps: TutorialStep[];
+    currentStepIndex: number;
+    state: any;
+    dispatch: React.Dispatch<any>;
+    onNext: () => void;
+    onBack: () => void;
+    onSkip: () => void;
+    onFinish: () => void;
+    onProfileComplete: (profile: UserProfile, mode: TutorialMode) => void;
+    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
+  };
+  
+  export function TutorialOnboarding({
+    steps,
+    currentStepIndex,
+    state,
+    dispatch,
+    onNext,
+    onBack,
+    onSkip,
+    onFinish,
+    onProfileComplete,
+    onToast,
+  }: TutorialOnboardingProps) {
+    const step = steps[currentStepIndex];
+  
+    if (!step) return null;
+  
+    const isLastStep = currentStepIndex === steps.length - 1;
+  
+    return (
+      <div className="ts-overlay">
+        {step.id === "welcome" && (
+          <div className="ts-modal">
+            <div className="ts-modal__corner ts-modal__corner--tl" />
+            <div className="ts-modal__corner ts-modal__corner--br" />
+  
+            <WelcomeScreen onGetStarted={onNext} />
+          </div>
         )}
-
-        {screen === "profile" && (
-          <ProfileSetupScreen
-            onBack={() => setScreen("welcome")}
-            onComplete={(profile) => onProfileComplete(profile, "full")}
-            mode="full"
+  
+        {step.id === "profile" && (
+          <div className="ts-modal">
+            <div className="ts-modal__corner ts-modal__corner--tl" />
+            <div className="ts-modal__corner ts-modal__corner--br" />
+  
+            <ProfileSetupScreen
+              onBack={onBack}
+              onComplete={(profile) => {
+                onProfileComplete(profile, "full");
+                onNext();
+              }}
+              mode="full"
+            />
+          </div>
+        )}
+  
+        {step.id === "checking" && (
+          <CheckingAccountTutorialStep
+            step={step}
+            currentStepIndex={currentStepIndex}
+            totalSteps={steps.length}
+            state={state}
+            dispatch={dispatch}
+            onBack={onBack}
+            onNext={isLastStep ? onFinish : onNext}
+            onSkip={onSkip}
+            onToast={onToast}
           />
         )}
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-export type TutorialStep = {
-  id: string;
-  title: string;
-  description: string;
-  targetSelector?: string;
-};
 
-export const tutorialSteps: TutorialStep[] = [
-  {
-    id: "welcome",
-    title: "Welcome to Vantage",
-    description: "Let's get you set up.",
-  },
-];
+  type CheckingAccountTutorialStepProps = {
+    step: TutorialStep;
+    currentStepIndex: number;
+    totalSteps: number;
+    state: any;
+    dispatch: React.Dispatch<any>;
+    onBack: () => void;
+    onNext: () => void;
+    onSkip: () => void;
+    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
+  };
+  
+  function CheckingAccountTutorialStep({
+    step,
+    currentStepIndex,
+    totalSteps,
+    state,
+    dispatch,
+    onBack,
+    onNext,
+    onSkip,
+    onToast,
+  }: CheckingAccountTutorialStepProps) {
+    return (
+      <div className="ts-modal ts-modal--checking-step">
+        <aside className="ts-tutorial-side">
+          <p className="ts-step-count">
+            <span>Step {currentStepIndex + 1}</span> of {totalSteps}
+          </p>
+  
+          <h2 className="ts-step-title">{step.title}</h2>
+  
+          <p className="ts-step-description">{step.description}</p>
+  
+          <div className="ts-step-list">
+            <div className="ts-step-list-item">
+              <span className="ts-step-list-icon">🏦</span>
+              <span>Name your account</span>
+            </div>
+  
+            <div className="ts-step-list-item">
+              <span className="ts-step-list-icon">💰</span>
+              <span>Set your starting balance</span>
+            </div>
+  
+            <div className="ts-step-list-item">
+              <span className="ts-step-list-icon">📅</span>
+              <span>Define your timeline</span>
+            </div>
+  
+            <div className="ts-step-list-item">
+              <span className="ts-step-list-icon">⌁</span>
+              <span>Interest tiers are optional for advanced detail.</span>
+            </div>
+          </div>
+  
+          <div className="ts-step-actions">
+            <button
+              type="button"
+              className="ts-btn ts-btn--secondary"
+              onClick={onBack}
+            >
+              Back
+            </button>
+  
+            <button
+              type="button"
+              className="ts-btn ts-btn--primary"
+              onClick={onNext}
+            >
+              Next
+            </button>
+          </div>
+  
+          <button type="button" className="ts-step-skip" onClick={onSkip}>
+            Skip for now
+          </button>
+        </aside>
+  
+        <section className="ts-tutorial-form">
+          <CheckingAccountForm
+            state={state}
+            dispatch={dispatch}
+            onClose={onNext}
+            onToast={onToast}
+          />
+        </section>
+      </div>
+    );
+  }
 
-type TutorialStepsShellProps = {
-  steps: TutorialStep[];
-  currentStepIndex: number;
-  onNext: () => void;
-  onBack: () => void;
-  onSkip: () => void;
-  onFinish: () => void;
-  onProfileComplete: (profile: UserProfile, mode: TutorialMode) => void;
-};
+  export type TutorialStepId = "welcome" | "profile" | "checking";
 
-/** Thin shell retained for existing page.tsx bindings. Renders the full onboarding flow. */
-export function TutorialStepsShell({ onFinish }: TutorialStepsShellProps) {
-  return (
-    <TutorialOnboarding
-      onProfileComplete={(_profile: UserProfile) => onFinish()}
-    />
-  );
-}
+  export type TutorialStep = {
+    id: TutorialStepId;
+    title: string;
+    description: string;
+    targetSelector?: string;
+  };
+  
+  export const tutorialSteps: TutorialStep[] = [
+    {
+      id: "welcome",
+      title: "Welcome to Vantage",
+      description: "Your financial future, simulated.",
+    },
+    {
+      id: "profile",
+      title: "Tell us about yourself",
+      description:
+        "Set your age, retirement age, filing status, and state so Vantage can build your timeline.",
+    },
+    {
+      id: "checking",
+      title: "Start with a checking account",
+      description:
+        "Add your first account to capture your starting cash balance and timeline.",
+      targetSelector: "[data-tutorial='account-card']",
+    },
+  ];
+
+  type TutorialStepsShellProps = {
+    steps: TutorialStep[];
+    currentStepIndex: number;
+    state: any;
+    dispatch: React.Dispatch<any>;
+    onNext: () => void;
+    onBack: () => void;
+    onSkip: () => void;
+    onFinish: () => void;
+    onProfileComplete: (profile: UserProfile, mode: TutorialMode) => void;
+    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
+  };
+  
+  export function TutorialStepsShell(props: TutorialStepsShellProps) {
+    return <TutorialOnboarding {...props} />;
+  }

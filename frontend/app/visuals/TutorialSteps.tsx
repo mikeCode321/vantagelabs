@@ -443,7 +443,12 @@ export function TutorialOnboarding({
     const isLastStep = currentStepIndex === steps.length - 1;
   
     return (
-      <div className="ts-overlay">
+      <div
+        className={`ts-overlay ${
+          step.id === "results" || step.id === "expenses-assets" ? 
+          "ts-overlay--document-scroll" : ""
+        }`}
+      >
         {step.id === "welcome" && (
           <div className="ts-modal">
             <div className="ts-modal__corner ts-modal__corner--tl" />
@@ -758,27 +763,25 @@ export function TutorialOnboarding({
     onSkip,
   }: ResultsTutorialStepProps) {
     return (
-      <div className="ts-results-step">
-        <div className="ts-results-card">
+      <div className="ts-results-side-step">
+        <div className="ts-results-side-card">
           <button type="button" className="ts-highlight-close" onClick={onSkip}>
             ×
           </button>
   
           <div className="ts-results-logo">V</div>
   
-          <div className="ts-results-copy">
-            <p className="ts-step-count">
-              Step {currentStepIndex + 1} of {totalSteps}
-            </p>
+          <p className="ts-step-count">
+            Step {currentStepIndex + 1} of {totalSteps}
+          </p>
   
-            <h2 className="ts-results-title">{step.title}</h2>
+          <h2 className="ts-results-title">{step.title}</h2>
   
-            <p className="ts-results-description">
-              {step.description}
-            </p>
-          </div>
+          <p className="ts-results-description">
+            {step.description}
+          </p>
   
-          <div className="ts-results-actions">
+          <div className="ts-results-side-actions">
             <button
               type="button"
               className="ts-btn ts-btn--secondary"
@@ -930,7 +933,7 @@ export function TutorialOnboarding({
         title: "Run your simulation and review the results",
         description:
           "Click Run Simulation to generate your projection, then review the overview cards, chart, and highlights to understand your outlook.",
-        targetSelector: "[data-tutorial='simulation-results'], [data-tutorial='simulation-highlights']",
+        targetSelector: "[data-tutorial='income-chart'], [data-tutorial='simulation-highlights']",
       },
   ];
 

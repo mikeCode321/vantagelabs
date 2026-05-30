@@ -2370,13 +2370,13 @@ tbody tr:hover {
 
 
 .dash-root[data-active-tutorial-step="results"]
-  [data-tutorial="simulation-results"],
+  [data-tutorial="income-chart"],
 .dash-root[data-active-tutorial-step="results"]
   [data-tutorial="simulation-highlights"],
 .dash-root[data-active-tutorial-step="results"]
   [data-tutorial="run-simulation-controls"] {
   position: relative;
-  z-index: 10001;
+  z-index: 1000;
   box-shadow:
     0 0 0 3px rgba(109, 40, 217, 0.65),
     0 20px 60px rgba(109, 40, 217, 0.24);

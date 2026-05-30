@@ -1229,11 +1229,11 @@ export default function Dashboard() {
         </div>
 
         <FinancialOverviewCards cards={overviewCards} />
-        <section
-          className="simulation-results-grid"
-          data-tutorial="simulation-results"
-        >
-          <IncomeGrowthChart />
+        <section className="simulation-results-grid">
+          <div data-tutorial="income-chart">
+            <IncomeGrowthChart />
+          </div>
+
           <div data-tutorial="simulation-highlights">
             <SimulationHighlights data={testData} />
           </div>

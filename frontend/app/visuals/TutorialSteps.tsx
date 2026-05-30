@@ -80,6 +80,7 @@ function TutorialStepPanel({
   nextLabel = "Next",
   showSkip = true,
   className = '',
+  nextDisabled= false,
 }) {
   return (
     <aside className={`ts-step-panel ${className}`}>
@@ -122,7 +123,12 @@ function TutorialStepPanel({
           Back
         </button>
 
-        <button type="button" className="ts-btn ts-btn--primary" onClick={onNext}>
+        <button
+          type="button"
+          className="ts-btn ts-btn--primary"
+          onClick={onNext}
+          disabled={nextDisabled}
+        >
           {nextLabel}
         </button>
       </div>
@@ -570,8 +576,9 @@ export function TutorialOnboarding({
           onBack={onBack}
           onNext={onNext}
           onSkip={onSkip}
-          nextLabel="Next"
+          nextLabel={existingCheckingAccount ? "Next" : "Add account first"}
           showSkip={true}
+          nextDisabled={!existingCheckingAccount}
         />
   
         <section className="ts-tutorial-form">

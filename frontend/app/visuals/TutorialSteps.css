@@ -607,6 +607,18 @@
     max-height: unset;
   }
 
+  .ts-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .ts-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
   .ts-detached-step {
     grid-template-columns: 1fr;
     width: calc(100vw - 32px);

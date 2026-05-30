@@ -1,6 +1,4 @@
-/* ═════════════════════════════════════════
    Dashboard Layout
-═════════════════════════════════════════ */
 
 body, html {
   margin: 0;
@@ -30,7 +28,6 @@ body, html {
   max-width: 120px;
   height: auto;
   object-fit: contain;
-  /* width: clamp(130px, 11vw, 170px); */
   display: block;
 }
 
@@ -140,30 +137,6 @@ body, html {
   justify-content: center;
 }
 
-@media (max-width: 768px) {
-  .dash-root {
-    flex-direction: column;
-    height: auto;
-    overflow: visible;
-  }
-
-  
-
-  .dash-main {
-    height: auto;
-    overflow: visible;
-  }
-
-  .dash-nav {
-    flex-direction: row;
-    padding: 0;
-  }
-
-  .dash-sidebar-footer {
-    display: none;
-  }
-}
-
 .dash-loading-overlay {
   position: absolute;
   inset: 0;
@@ -175,10 +148,57 @@ body, html {
   backdrop-filter: blur(2px);
 }
 
+@media (max-width: 860px) {
+  .dash-main {
+    height: auto;
+    overflow: visible;
+    padding-bottom: 32px;
+  }
 
-/* ═════════════════════════════════════════
+  .dash-topbar {
+    padding: 16px 16px 12px;
+  }
+
+  .overview-cards,
+  .simulation-results-grid,
+  .simulation-section-header,
+  .entities-wrapper {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .overview-cards {
+  }
+
+  .overview-card {
+    padding: 12px 10px;
+  }
+
+  .overview-card__label {
+    font-size: 12px;
+  }
+
+  .form-two-col {
+  }
+
+  .modal {
+    width: 100vw;
+    max-width: 100vw;
+    border-radius: 16px 16px 0 0;
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    max-height: 85dvh;
+  }
+
+  .modal-overlay {
+    align-items: flex-end;
+  }
+}
+
    Tables
-═════════════════════════════════════════ */
 
 h2 {
   margin-bottom: 1rem;
@@ -256,11 +276,8 @@ tbody tr:hover {
 }
 
 
-/* ═════════════════════════════════════════
    Form — shared primitives
-═════════════════════════════════════════ */
 
-/* Outer wrapper for every form panel */
 .form-panel {
   font-family: var(--font-primary), monospace;
   margin: 25px;
@@ -268,7 +285,6 @@ tbody tr:hover {
   overflow-y: auto;
 }
 
-/* Form header row (icon + title + description) */
 .form-header {
   display: flex;
   align-items: flex-start;
@@ -305,21 +321,18 @@ tbody tr:hover {
   line-height: 1.5;
 }
 
-/* Two-column form body */
 .form-two-col {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 28px;
 }
 
-/* Left / right column inside .form-two-col */
 .form-col {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-/* Section heading inside a column (e.g. "Account Details") */
 .form-section-heading {
   margin: 0;
   font-size: 0.65rem;
@@ -331,7 +344,6 @@ tbody tr:hover {
   border-bottom: 1px solid #5FA7AB22;
 }
 
-/* Individual field wrapper */
 .form-field {
   display: flex;
   flex-direction: column;
@@ -344,7 +356,6 @@ tbody tr:hover {
   gap: 8px;
 }
 
-/* Label */
 .form-label {
   font-size: 0.72rem;
   letter-spacing: 0.12em;
@@ -359,7 +370,6 @@ tbody tr:hover {
   font-weight: 400;
 }
 
-/* Input / select / textarea */
 .form-input {
   width: 100%;
   border: 1px solid #5FA7AB33;
@@ -374,23 +384,19 @@ tbody tr:hover {
   box-sizing: border-box;
 }
 
-/* Input with leading "$" prefix */
 .form-input--prefix-dollar {
   padding-left: 22px;
 }
 
-/* Input with trailing "/mo" or "%" suffix */
 .form-input--suffix {
   padding-right: 38px;
 }
 
-/* Input with both prefix and suffix */
 .form-input--prefix-dollar.form-input--suffix {
   padding-left: 22px;
   padding-right: 38px;
 }
 
-/* Wrapper for inputs with absolute-positioned prefix/suffix glyphs */
 .form-input-wrap {
   position: relative;
 }
@@ -415,14 +421,12 @@ tbody tr:hover {
   pointer-events: none;
 }
 
-/* Year grid (Start yr / End yr side by side) */
 .form-year-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-/* Slider row — label + live value on one line, input below */
 .form-slider-header {
   display: flex;
   justify-content: space-between;
@@ -443,7 +447,6 @@ tbody tr:hover {
   cursor: pointer;
 }
 
-/* Footer row with action buttons */
 .form-footer {
   display: flex;
   justify-content: flex-end;
@@ -453,7 +456,6 @@ tbody tr:hover {
   border-top: 1px solid #5FA7AB22;
 }
 
-/* Primary submit button */
 .form-btn-submit {
   background: var(--teal);
   color: var(--white);
@@ -469,7 +471,6 @@ tbody tr:hover {
   transition: all 0.15s;
 }
 
-/* Secondary / cancel button */
 .form-btn-cancel {
   background: transparent;
   color: var(--primary);
@@ -485,15 +486,11 @@ tbody tr:hover {
   transition: all 0.15s;
 }
 
-/* Submit with top margin (standalone submit, not in a footer row) */
 .form-btn-submit--mt {
-  /* margin-top: 28px; */
 }
 
 
-/* ═════════════════════════════════════════
    Interest Tier builder
-═════════════════════════════════════════ */
 
 .tier-list {
   display: flex;
@@ -565,9 +562,7 @@ tbody tr:hover {
 }
 
 
-/* ═════════════════════════════════════════
    Preview card (annual cost / value preview)
-═════════════════════════════════════════ */
 
 .preview-card {
   border-radius: 8px;
@@ -625,9 +620,7 @@ tbody tr:hover {
 }
 
 
-/* ═════════════════════════════════════════
    Link-to-job card (employer retirement form)
-═════════════════════════════════════════ */
 
 .link-card {
   border-radius: 8px;
@@ -661,7 +654,6 @@ tbody tr:hover {
   color: var(--text-secondary);
 }
 
-/* Toggle pill */
 .toggle {
   width: 36px;
   height: 20px;
@@ -729,9 +721,7 @@ tbody tr:hover {
 }
 
 
-/* ═════════════════════════════════════════
    SimResultViewer section header
-═════════════════════════════════════════ */
 
 .section-header {
   display: flex;
@@ -740,9 +730,7 @@ tbody tr:hover {
 }
 
 
-/* ═════════════════════════════════════════
    Chart container
-═════════════════════════════════════════ */
 
 .chart-wrap {
   width: 100%;
@@ -750,9 +738,7 @@ tbody tr:hover {
 }
 
 
-/* ═════════════════════════════════════════
    Tooltip (CustomTooltip)
-═════════════════════════════════════════ */
 
 .chart-tooltip {
   background: #fff;
@@ -762,9 +748,7 @@ tbody tr:hover {
 }
 
 
-/* ═════════════════════════════════════════
    Modal overlay + shell
-═════════════════════════════════════════ */
 
 .modal-overlay {
   position: fixed;
@@ -810,9 +794,7 @@ tbody tr:hover {
 }
 
 
-/* ═════════════════════════════════════════
    Entity picker cell (inside modal)
-═════════════════════════════════════════ */
 
 .entity-cell {
   flex: 1 1 160px;
@@ -826,9 +808,7 @@ tbody tr:hover {
 }
 
 
-/* ═════════════════════════════════════════
    Financial entity card
-═════════════════════════════════════════ */
 
 .entities-wrapper {
   position: relative;
@@ -960,9 +940,7 @@ tbody tr:hover {
   font-weight: 700;
 }
 
-/* ═════════════════════════════════════════
    Entity rows inside cards
-═════════════════════════════════════════ */
 
 .entity-card__rows {
   display: grid;
@@ -1107,7 +1085,6 @@ tbody tr:hover {
     padding: 8px 10px;
   }
 }
-/* Carousel arrows only needed on smaller widths */
 .entities-arrow {
   position: absolute;
   top: 50%;
@@ -1177,9 +1154,7 @@ tbody tr:hover {
 }
 
 
-/* ═════════════════════════════════════════
    Feedback modal
-═════════════════════════════════════════ */
 
 .feedback-overlay {
   position: fixed;
@@ -1302,9 +1277,7 @@ tbody tr:hover {
   letter-spacing: -0.02em;
 }
 
-/* ═════════════════════════════════════════
    SIDEBAR
-═════════════════════════════════════════ */
 .dash-sidebar {
   width: clamp(220px, 15vw, 270px);
   height: 100dvh;
@@ -1332,7 +1305,6 @@ tbody tr:hover {
   overflow: hidden;
 }
 
-/* Header row: logo + toggle button */
 .dash-sidebar-header {
   display: flex;
   align-items: center;
@@ -1349,7 +1321,6 @@ tbody tr:hover {
   overflow: hidden;
 }
 
-/* Collapse toggle button */
 .dash-collapse-btn {
   width: 32px;
   height: 32px;
@@ -1383,7 +1354,6 @@ tbody tr:hover {
   transform: rotate(180deg);
 }
 
-/* Nav item label — fades out when collapsed */
 .dash-nav-label {
   transition: opacity 0.18s ease, width 0.26s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
@@ -1395,7 +1365,6 @@ tbody tr:hover {
   width: 0;
 }
 
-/* Feedback card text hidden when collapsed */
 .dash-sidebar--collapsed .dash-feedback-copy {
   opacity: 0;
   width: 0;
@@ -1531,7 +1500,6 @@ tbody tr:hover {
   flex-shrink: 0;
 }
 
-/* Tablet/mobile sidebar */
 @media (max-width: 860px) {
   .dash-root {
     flex-direction: column;
@@ -1628,9 +1596,7 @@ tbody tr:hover {
 }
 
 
-/* ========================================
    TOAST BANNER STYLES
-   ======================================== */
 
 .toast-banner-wrapper {
   position: fixed;
@@ -1720,10 +1686,6 @@ tbody tr:hover {
   transform: scale(0.95);
 }
 
-/* ========================================
-   TOAST VARIANTS (BY ACTION TYPE)
-   ======================================== */
-
 .toast-item--added {
   background:
     linear-gradient(
@@ -1778,10 +1740,6 @@ tbody tr:hover {
   color: #dc2626;
 }
 
-/* ========================================
-   ANIMATIONS
-   ======================================== */
-
 @keyframes slideInUp {
   from {
     opacity: 0;
@@ -1803,10 +1761,6 @@ tbody tr:hover {
     transform: translateY(20px);
   }
 }
-
-/* ========================================
-   RESPONSIVE ADJUSTMENTS
-   ======================================== */
 
 @media (max-width: 640px) {
   .toast-banner-wrapper {
@@ -1833,16 +1787,11 @@ tbody tr:hover {
   }
 }
 
-/* ========================================
-   ACCESSIBILITY
-   ======================================== */
-
 .toast-close:focus {
   outline: 2px solid rgba(255, 255, 255, 0.5);
   outline-offset: 2px;
 }
 
-/* Respects prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .toast-item {
     animation: none;
@@ -1851,10 +1800,6 @@ tbody tr:hover {
   }
 }
 
-
-/* ─────────────────────────────────────────────
-   SIMULATION SETUP SECTION
-───────────────────────────────────────────────── */
  
 .setup-section {
   background: var(--color-bg-secondary, #FFFFFF);
@@ -1957,9 +1902,6 @@ tbody tr:hover {
   color: var(--color-text-primary, #111827);
   font-weight: 600;
 }
-/* ─────────────────────────────────────────────
-   FINANCIAL OVERVIEW SECTION
-───────────────────────────────────────────────── */
 
 .overview-cards {
   display: grid;
@@ -1975,13 +1917,11 @@ tbody tr:hover {
   border-radius: 16px;
   padding: 20px 10px 16px;
   box-shadow: 0 12px 30px rgba(20, 18, 35, 0.045);
-  /* Removed min-height so cards can grow naturally with content */
   min-width: 0;
 }
 
 .overview-card__top {
   display: flex;
-  align-items: flex-start; /* was center — flex-start keeps icon anchored when content wraps */
   gap: 10px;
   min-width: 0;
 }
@@ -1994,7 +1934,6 @@ tbody tr:hover {
   place-items: center;
   font-size: 24px;
   font-weight: 800;
-  flex: 0 0 54px; /* never shrink the icon */
 }
 
 .overview-card__content {
@@ -2027,7 +1966,6 @@ tbody tr:hover {
   font-weight: 850;
   white-space: nowrap;
   overflow: hidden;
-  /* text-overflow: ellipsis; */
   min-width: 0;
   flex-shrink: 1;
 }
@@ -2041,7 +1979,6 @@ tbody tr:hover {
   flex-shrink: 0;
 }
 
-/* The pill wraps only the percent number */
 .overview-card__change span {
   font-size: 12px;
   font-weight: 800;
@@ -2050,7 +1987,6 @@ tbody tr:hover {
   border-radius: 20px;
 }
 
-/* The "vs start" label sits beneath the pill, unstyled */
 .overview-card__change small {
   font-size: 10px;
   font-weight: 500;
@@ -2087,7 +2023,6 @@ tbody tr:hover {
   font-weight: 600;
 }
 
-/* ── Tone icon backgrounds ── */
 
 .overview-card--purple .overview-card__icon {
   color: #6d28d9;
@@ -2109,7 +2044,6 @@ tbody tr:hover {
   background: linear-gradient(135deg, rgba(234, 106, 18, 0.14), rgba(234, 106, 18, 0.06));
 }
 
-/* ── Simulation section ── */
 
 .simulation-section-header {
   margin-top: 2px;
@@ -2136,7 +2070,6 @@ tbody tr:hover {
   justify-content: flex-end;
 }
 
-/* ── Responsive ── */
 
 @media (max-width: 640px) {
   .request-debug-section,
@@ -2171,14 +2104,8 @@ tbody tr:hover {
   }
 }
 
-
-/* ─────────────────────────────────────────────
-   SIMULATION RESULTS + HIGHLIGHTS
-───────────────────────────────────────────────── */
-
 .simulation-results-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
   gap: 8px;
   align-items: start;
   width: 100%;
@@ -2331,7 +2258,7 @@ tbody tr:hover {
   transform: translateY(-1px);
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 860px) {
   .simulation-results-grid {
     grid-template-columns: 1fr;
   }

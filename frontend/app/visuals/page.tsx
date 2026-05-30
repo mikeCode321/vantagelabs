@@ -993,6 +993,7 @@ export default function Dashboard() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isSimLoading, setIsSimLoading] = useState(true);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
@@ -1160,11 +1161,12 @@ export default function Dashboard() {
         />
       )}
 
-      <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
+      <aside className="dash-sidebar">
         <div className="dash-sidebar-inner">
 
+          {/* Desktop layout */}
           <div className="dash-sidebar-header">
-            <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
+            <div className="dash-logo">
               <Image
                 src="/vantage_logo_transparent.svg"
                 alt="Vantage"
@@ -1174,20 +1176,6 @@ export default function Dashboard() {
                 priority
               />
             </div>
-            <button
-              type="button"
-              className="dash-collapse-btn"
-              onClick={() => setSidebarCollapsed(c => !c)}
-              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              <svg
-                className={`dash-collapse-icon${sidebarCollapsed ? " dash-collapse-icon--flipped" : ""}`}
-                width="16" height="16" viewBox="0 0 16 16" fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
           </div>
 
           <nav className="dash-nav" aria-label="Dashboard navigation">
@@ -1195,7 +1183,6 @@ export default function Dashboard() {
               <span className="dash-nav-icon">▦</span>
               <span className="dash-nav-label">Testing Grounds</span>
             </a>
-
             <a href="#" className="dash-nav-item" title="Testing Visuals">
               <span className="dash-nav-icon">◔</span>
               <span className="dash-nav-label">Testing Visuals</span>
@@ -1215,6 +1202,54 @@ export default function Dashboard() {
             </span>
           </button>
         </div>
+
+        {/* Mobile topbar */}
+        <div className="dash-mobile-bar">
+          <Image
+            src="/vantage_logo_transparent.svg"
+            alt="Vantage"
+            width={100}
+            height={34}
+            className="dash-logo-img"
+            priority
+          />
+          <button
+            type="button"
+            className="dash-mobile-menu-btn"
+            onClick={() => setMobileNavOpen(o => !o)}
+            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileNavOpen}
+          >
+            <span className={`dash-mobile-menu-icon${mobileNavOpen ? " dash-mobile-menu-icon--open" : ""}`} />
+          </button>
+        </div>
+
+        {/* Mobile dropdown */}
+        {mobileNavOpen && (
+          <div className="dash-mobile-dropdown">
+            <nav className="dash-mobile-nav">
+              <a href="/testing" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
+                <span className="dash-nav-icon">▦</span>
+                <span className="dash-nav-label">Testing Grounds</span>
+              </a>
+              <a href="#" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
+                <span className="dash-nav-icon">◔</span>
+                <span className="dash-nav-label">Testing Visuals</span>
+              </a>
+            </nav>
+            <button
+              type="button"
+              className="dash-feedback-card"
+              onClick={() => { setIsFeedbackOpen(true); setMobileNavOpen(false); }}
+            >
+              <span className="dash-feedback-icon">✦</span>
+              <span className="dash-feedback-copy">
+                <strong>Leave feedback</strong>
+                <p>Help us improve Vantage</p>
+              </span>
+            </button>
+          </div>
+        )}
       </aside>
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
@@ -1226,7 +1261,7 @@ export default function Dashboard() {
           </div>
         </header>
 
-        <div style={{ display: "flex", justifyContent: "space-between"}}>
+        {/* <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
           
           {simResult ? <JsonView
@@ -1237,7 +1272,7 @@ export default function Dashboard() {
             shortenTextAfterLength={40}
           />: "[]"}
           <UserAgeForm state={state} dispatch={dispatch} />
-        </div>
+        </div> */}
 
         <FinancialOverviewCards cards={overviewCards} />
         <section className="simulation-results-grid">

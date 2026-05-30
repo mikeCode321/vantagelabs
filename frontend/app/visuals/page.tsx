@@ -1285,7 +1285,7 @@ export default function Dashboard() {
             displayObjectSize={false}
             shortenTextAfterLength={40}
           />: "[]"}
-          {/* <UserAgeForm state={state} dispatch={dispatch} /> */}
+          <UserAgeForm state={state} dispatch={dispatch} />
         </div>
 
         <FinancialOverviewCards cards={overviewCards} />

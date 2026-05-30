@@ -123,14 +123,17 @@ function TutorialStepPanel({
           Back
         </button>
 
-        <button
-          type="button"
-          className="ts-btn ts-btn--primary"
-          onClick={onNext}
-          disabled={nextDisabled}
-        >
-          {nextLabel}
-        </button>
+        {/* if no checking account added yet disable this button and have a hover that displays a tool tip saying you must add a checking account  */}
+        <div className={`ts-tooltip-wrap${nextDisabled ? " ts-tooltip-wrap--active" : ""}`}>
+          <button type="button" className="ts-btn ts-btn--primary" onClick={onNext} disabled={nextDisabled} >
+            {nextLabel}
+          </button>
+          {nextDisabled && (
+            <span className="ts-tooltip" role="tooltip">
+              You must add a checking account first
+            </span>
+          )}
+        </div>
       </div>
 
       {showSkip && (
@@ -576,7 +579,7 @@ export function TutorialOnboarding({
           onBack={onBack}
           onNext={onNext}
           onSkip={onSkip}
-          nextLabel={existingCheckingAccount ? "Next" : "Add account first"}
+          nextLabel={"Next"}
           showSkip={true}
           nextDisabled={!existingCheckingAccount}
         />

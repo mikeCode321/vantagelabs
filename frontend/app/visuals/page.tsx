@@ -1290,13 +1290,14 @@ export default function Dashboard() {
 
         <FinancialOverviewCards cards={overviewCards} />
         <section className="simulation-results-grid">
-          <IncomeGrowthChart data={simData} />
-          <div>
-            <SimulationHighlights data={simResult} />
-            <SimulationControls state={state} setSimResult={setSimResult} />
+          <div data-tutorial="income-chart">
+            <IncomeGrowthChart />
+          </div>
+
+          <div data-tutorial="simulation-highlights">
+            <SimulationHighlights data={testData} />
           </div>
         </section>
-
         <section className="simulation-section-header">
           <h2>Simulation Inputs</h2>
           <p>Define the components of your financial plan for the simulation.</p>

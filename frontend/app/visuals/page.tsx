@@ -1161,12 +1161,12 @@ export default function Dashboard() {
         />
       )}
 
-      <aside className="dash-sidebar">
+      <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
         <div className="dash-sidebar-inner">
 
           {/* Desktop layout */}
           <div className="dash-sidebar-header">
-            <div className="dash-logo">
+            <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
               <Image
                 src="/vantage_logo_transparent.svg"
                 alt="Vantage"
@@ -1176,6 +1176,20 @@ export default function Dashboard() {
                 priority
               />
             </div>
+            <button
+              type="button"
+              className="dash-collapse-btn"
+              onClick={() => setSidebarCollapsed(c => !c)}
+              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <svg
+                className={`dash-collapse-icon${sidebarCollapsed ? " dash-collapse-icon--flipped" : ""}`}
+                width="16" height="16" viewBox="0 0 16 16" fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </div>
 
           <nav className="dash-nav" aria-label="Dashboard navigation">
@@ -1261,7 +1275,7 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {/* <div style={{ display: "flex", justifyContent: "space-between"}}>
+        <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
           
           {simResult ? <JsonView
@@ -1272,7 +1286,7 @@ export default function Dashboard() {
             shortenTextAfterLength={40}
           />: "[]"}
           <UserAgeForm state={state} dispatch={dispatch} />
-        </div> */}
+        </div>
 
         <FinancialOverviewCards cards={overviewCards} />
         <section className="simulation-results-grid">

@@ -1,5 +1,3 @@
-   Dashboard Layout
-
 body, html {
   margin: 0;
   padding: 0;
@@ -159,6 +157,10 @@ body, html {
     padding: 16px 16px 12px;
   }
 
+  .dash-topbar .dash-page-title{
+    font-size: 0.75rem;
+  }
+
   .overview-cards,
   .simulation-results-grid,
   .simulation-section-header,
@@ -169,8 +171,6 @@ body, html {
 }
 
 @media (max-width: 480px) {
-  .overview-cards {
-  }
 
   .overview-card {
     padding: 12px 10px;
@@ -178,9 +178,6 @@ body, html {
 
   .overview-card__label {
     font-size: 12px;
-  }
-
-  .form-two-col {
   }
 
   .modal {
@@ -197,8 +194,6 @@ body, html {
     align-items: flex-end;
   }
 }
-
-   Tables
 
 h2 {
   margin-bottom: 1rem;
@@ -274,9 +269,6 @@ tbody tr:hover {
 .source-row:hover {
   background: #f1f5f9;
 }
-
-
-   Form — shared primitives
 
 .form-panel {
   font-family: var(--font-primary), monospace;
@@ -487,10 +479,8 @@ tbody tr:hover {
 }
 
 .form-btn-submit--mt {
+  margin-top: 24px;
 }
-
-
-   Interest Tier builder
 
 .tier-list {
   display: flex;
@@ -562,7 +552,6 @@ tbody tr:hover {
 }
 
 
-   Preview card (annual cost / value preview)
 
 .preview-card {
   border-radius: 8px;
@@ -620,7 +609,6 @@ tbody tr:hover {
 }
 
 
-   Link-to-job card (employer retirement form)
 
 .link-card {
   border-radius: 8px;
@@ -721,7 +709,6 @@ tbody tr:hover {
 }
 
 
-   SimResultViewer section header
 
 .section-header {
   display: flex;
@@ -730,7 +717,6 @@ tbody tr:hover {
 }
 
 
-   Chart container
 
 .chart-wrap {
   width: 100%;
@@ -738,7 +724,6 @@ tbody tr:hover {
 }
 
 
-   Tooltip (CustomTooltip)
 
 .chart-tooltip {
   background: #fff;
@@ -748,7 +733,6 @@ tbody tr:hover {
 }
 
 
-   Modal overlay + shell
 
 .modal-overlay {
   position: fixed;
@@ -793,9 +777,6 @@ tbody tr:hover {
   margin-left: auto;
 }
 
-
-   Entity picker cell (inside modal)
-
 .entity-cell {
   flex: 1 1 160px;
   display: flex;
@@ -807,8 +788,6 @@ tbody tr:hover {
   cursor: pointer;
 }
 
-
-   Financial entity card
 
 .entities-wrapper {
   position: relative;
@@ -939,9 +918,6 @@ tbody tr:hover {
   font-size: 13px;
   font-weight: 700;
 }
-
-   Entity rows inside cards
-
 .entity-card__rows {
   display: grid;
   gap: 2px;
@@ -1277,9 +1253,8 @@ tbody tr:hover {
   letter-spacing: -0.02em;
 }
 
-   SIDEBAR
 .dash-sidebar {
-  width: clamp(220px, 15vw, 270px);
+  width: clamp(200px, 14vw, 260px);
   height: 100dvh;
   flex-shrink: 0;
   background:
@@ -1300,7 +1275,7 @@ tbody tr:hover {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 8px 10px;
+  padding: 12px 10px;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -1310,7 +1285,9 @@ tbody tr:hover {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0edf8;
   min-height: 48px;
 }
 
@@ -1332,11 +1309,8 @@ tbody tr:hover {
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition:
-    background 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease;
   margin-left: auto;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .dash-collapse-btn:hover {
@@ -1365,21 +1339,6 @@ tbody tr:hover {
   width: 0;
 }
 
-.dash-sidebar--collapsed .dash-feedback-copy {
-  opacity: 0;
-  width: 0;
-  overflow: hidden;
-  transition: opacity 0.14s ease;
-}
-
-.dash-sidebar--collapsed .dash-feedback-card {
-  padding: 10px;
-  justify-content: center;
-  border: none;
-  background: none;
-  margin-left: 5px;
-}
-
 .dash-nav-item {
   width: 100%;
   min-height: 46px;
@@ -1395,12 +1354,7 @@ tbody tr:hover {
   font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  text-transform: none;
-  transition:
-    background 0.18s ease,
-    color 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .dash-sidebar--collapsed .dash-nav-item {
@@ -1437,8 +1391,7 @@ tbody tr:hover {
 .dash-feedback-card {
   width: 100%;
   border: 1px solid rgba(109, 40, 217, 0.12);
-  background:
-    linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(255, 255, 255, 0.92));
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(255, 255, 255, 0.92));
   border-radius: 18px;
   padding: 14px;
   display: flex;
@@ -1448,16 +1401,28 @@ tbody tr:hover {
   font-family: inherit;
   color: #211633;
   box-shadow: 0 12px 30px rgba(20, 18, 35, 0.045);
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    border-color 0.18s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .dash-feedback-card:hover {
   transform: translateY(-1px);
   border-color: rgba(109, 40, 217, 0.24);
   box-shadow: 0 16px 34px rgba(20, 18, 35, 0.075);
+}
+
+.dash-sidebar--collapsed .dash-feedback-copy {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  transition: opacity 0.14s ease;
+}
+
+.dash-sidebar--collapsed .dash-feedback-card {
+  padding: 10px;
+  justify-content: center;
+  border: none;
+  background: none;
+  box-shadow: none;
 }
 
 .dash-feedback-icon {
@@ -1488,16 +1453,15 @@ tbody tr:hover {
 
 .dash-feedback-copy p {
   color: #766f86;
-  font-size: 11px;
+  font-size: 8px;
   font-weight: 600;
   line-height: 1.3;
-  font-size: 8px;
+  margin: 0;
 }
 
-.dash-feedback-arrow {
-  color: #6d28d9;
-  font-weight: 900;
-  flex-shrink: 0;
+.dash-mobile-bar,
+.dash-mobile-dropdown {
+  display: none;
 }
 
 @media (max-width: 860px) {
@@ -1507,96 +1471,101 @@ tbody tr:hover {
     overflow: visible;
   }
 
+  .dash-main {
+    height: auto;
+    overflow: visible;
+  }
+
   .dash-sidebar {
     width: 100%;
     height: auto;
     position: sticky;
     top: 0;
-    z-index: 40;
+    z-index: 200;
     border-right: none;
     border-bottom: 1px solid #ebeaf3;
+    overflow: visible;
+    transition: none;
   }
 
   .dash-sidebar-inner {
-    padding: 10px 14px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    display: none;
+  }
+
+  .dash-mobile-bar {
+    display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: radial-gradient(circle at 0 0, #0000, #7c3aed14 84%), #fff;
+    height: 80px;
   }
 
-  .dash-logo {
-    padding: 0;
-    margin: 0;
-    border-bottom: none;
+  .dash-mobile-menu-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ebeaf3;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #6d28d9;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition: background 0.18s, border-color 0.18s;
   }
 
-  .dash-logo-img {
-    width: 120px;
-    height: 42px;
+  .dash-mobile-menu-btn:hover {
+    background: #f7f2ff;
+    border-color: rgba(109, 40, 217, 0.2);
   }
 
-  .dash-nav {
-    flex-direction: row;
+  .dash-mobile-menu-icon,
+  .dash-mobile-menu-icon::before,
+  .dash-mobile-menu-icon::after {
+    display: block;
+    width: 16px;
+    height: 1.75px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+    position: absolute;
+  }
+
+  .dash-mobile-menu-icon::before { content: ""; top: -5px; }
+  .dash-mobile-menu-icon::after  { content: ""; top: 5px;  }
+
+  .dash-mobile-menu-icon--open { background: transparent; }
+  .dash-mobile-menu-icon--open::before { transform: rotate(45deg)  translate(3.5px, 3.5px);  }
+  .dash-mobile-menu-icon--open::after  { transform: rotate(-45deg) translate(3.5px, -3.5px); }
+
+  .dash-mobile-dropdown {
+    display: flex;
+    flex-direction: column;
     gap: 8px;
-    overflow-x: auto;
-    min-width: 0;
+    padding: 10px 14px 14px;
+    background: #ffffff;
+    border-top: 1px solid #f0edf8;
+    box-shadow: 0 12px 32px rgba(20, 18, 35, 0.1);
+    animation: dropdown-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .dash-nav-item {
-    min-height: 38px;
-    white-space: nowrap;
-    padding: 0 12px;
-    font-size: 13px;
+  @keyframes dropdown-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
-  .dash-nav-icon {
-    width: 24px;
-    height: 24px;
-    border-radius: 8px;
-    font-size: 13px;
+  .dash-mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .dash-feedback-card {
-    width: auto;
-    padding: 9px 11px;
-    border-radius: 14px;
-  }
-
-  .dash-feedback-copy small {
-    display: none;
-  }
-
-  .dash-feedback-arrow {
-    display: none;
+  .dash-mobile-dropdown .dash-feedback-card {
+    margin-top: 4px;
   }
 }
-
-@media (max-width: 560px) {
-  .dash-sidebar-inner {
-    grid-template-columns: 1fr;
-    align-items: stretch;
-  }
-
-  .dash-logo-img {
-    width: 132px;
-  }
-
-  .dash-nav {
-    width: 100%;
-  }
-
-  .dash-nav-item {
-    flex: 1 0 auto;
-  }
-
-  .dash-feedback-card {
-    width: 100%;
-  }
-}
-
-
-   TOAST BANNER STYLES
 
 .toast-banner-wrapper {
   position: fixed;
@@ -2106,6 +2075,7 @@ tbody tr:hover {
 
 .simulation-results-grid {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
   gap: 8px;
   align-items: start;
   width: 100%;

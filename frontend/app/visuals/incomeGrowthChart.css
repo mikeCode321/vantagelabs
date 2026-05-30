@@ -187,3 +187,54 @@
       height: 340px;
     }
   }
+
+  @media (max-width: 640px) {
+  .income-chart-card {
+    border-radius: 16px;
+    padding: 14px;
+  }
+
+  .income-chart-title {
+    font-size: 1.4rem;
+  }
+
+  .income-chart-header {
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .income-chart-pill-groups {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .income-stat {
+    min-width: 90px;
+    padding: 8px 10px;
+  }
+
+  .income-stat strong {
+    font-size: 0.88rem;
+  }
+
+  .income-chart-wrap {
+    height: 220px;
+  }
+
+  .income-chart-footer {
+    font-size: 0.75rem;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .income-chart-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .income-stat {
+    min-width: 0;
+    width: 100%;
+  }
+}

@@ -570,7 +570,79 @@
   }
 }
 
+/* Split-layout modals collapse to single column on tablet/mobile */
+@media (max-width: 760px) {
+  .ts-modal--tutorial-flow,
+  .ts-modal--checking-step,
+  .ts-modal--split-step {
+    width: min(560px, calc(100vw - 32px));
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
 
+  .ts-checking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-step-panel,
+  .ts-tutorial-side {
+    padding: 28px 24px;
+    border-right: none;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  .ts-step-title {
+    font-size: 22px;
+    max-width: none;
+  }
+
+  .ts-step-description {
+    font-size: 14px;
+    max-width: none;
+  }
+
+  .ts-tutorial-form,
+  .ts-form-panel {
+    padding: 24px;
+    max-height: unset;
+  }
+
+  .ts-detached-step {
+    grid-template-columns: 1fr;
+    width: calc(100vw - 32px);
+    gap: 16px;
+  }
+
+  .ts-detached-form-card {
+    min-height: unset;
+    max-height: calc(100vh - 64px);
+  }
+
+  .ts-step-panel--floating {
+    min-height: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .ts-step-actions {
+    grid-template-columns: 1fr; /* stack Back / Next buttons */
+  }
+
+  .ts-highlight-card {
+    grid-template-columns: 1fr;
+    padding: 28px 20px 20px;
+  }
+
+  .ts-highlight-logo {
+    width: 48px;
+    height: 48px;
+    font-size: 36px;
+  }
+
+  .ts-highlight-actions {
+    grid-template-columns: 1fr;
+  }
+}
 
 .ts-modal--tutorial-flow {
   width: min(1120px, calc(100vw - 48px));

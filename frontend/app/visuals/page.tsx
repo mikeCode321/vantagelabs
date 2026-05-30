@@ -16,13 +16,13 @@ import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpen
 
 import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
 
-import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, SimYearResult, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
+import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
 import { TutorialStepsShell, tutorialSteps } from "@/app/visuals/TutorialSteps";
-
+import JsonView from "@uiw/react-json-view";
 import {
   FinancialOverviewCards,
   OverviewCard,
@@ -985,16 +985,16 @@ export function FinancialEntities({ state, dispatch, onToast }) {
   );
 }
 
-
-
 export default function Dashboard() {
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
-  const [simResult, setSimResult] = useState<SimYearResult[]>([]);
+  const [simResult, setSimResult] = useState(null);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isSimLoading, setIsSimLoading] = useState(true);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
   //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
@@ -1010,24 +1010,29 @@ export default function Dashboard() {
     }, 7000);
   };
 
+  const simData = Array.isArray(simResult) ? null : simResult;
 
-  const firstYear = testData.year_results[0];
-  const lastYear = testData.year_results[testData.year_results.length - 1];
+  const firstYear = simData?.year_results[0];
+  const lastYear  = simData?.year_results[simData.year_results.length - 1];
 
-  const startingNetWorth = testData.metrics.starting_net_worth;
-  const endingNetWorth = testData.metrics.ending_net_worth;
+  const startingNetWorth = simData?.metrics.starting_net_worth ?? 0;
+  const endingNetWorth   = simData?.metrics.ending_net_worth   ?? 0;
 
-  const startingCashFlow = firstYear.income_earned.net;
-  const endingCashFlow = lastYear.income_earned.net;
+  const startingCashFlow = firstYear?.income_earned.net ?? 0;
+  const endingCashFlow   = lastYear?.income_earned.net  ?? 0;
 
-  const totalAssets = 0; //lastYear.accounts_summary.total_balance;
-  const totalLiabilities = 0;
+  const startingAssets   = firstYear?.assets.total_value ?? 0;
+  const totalAssets      = lastYear?.assets.total_value  ?? 0;
+
+  const startingLiabilities = (firstYear?.expenses.total_monthly ?? 0) * 12;
+  const totalLiabilities    = (lastYear?.expenses.total_monthly  ?? 0) * 12;
 
   const annualCashFlow = endingCashFlow - totalLiabilities;
 
-  const netWorthChange = getPercentChange(startingNetWorth, endingNetWorth);
-  const cashFlowChange = getPercentChange(startingCashFlow, endingCashFlow);
-  const assetChange = getPercentChange(startingNetWorth, totalAssets);
+  const netWorthChange  = getPercentChange(startingNetWorth,   endingNetWorth);
+  const cashFlowChange  = getPercentChange(startingCashFlow,   endingCashFlow);
+  const assetChange     = getPercentChange(startingAssets,     totalAssets);
+  const liabilityChange = getPercentChange(startingLiabilities, totalLiabilities);
 
   const overviewCards: OverviewCard[] = [
     {
@@ -1047,9 +1052,9 @@ export default function Dashboard() {
       value: formatCompactMoney(annualCashFlow),
       change: formatSignedPercent(cashFlowChange),
       changeLabel: "vs first year",
-      meta: `Inflows ${formatCompactMoney(lastYear.income_earned.gross)} · Taxes ${formatCompactMoney(
-        lastYear.income_earned.taxes_paid
-      )}`,
+      meta: lastYear
+        ? `Inflows ${formatCompactMoney(lastYear.income_earned.gross)} · Taxes ${formatCompactMoney(lastYear.income_earned.taxes_paid)}`
+        : "Run simulation to see data",
       icon: "$",
       tone: "green",
       direction: getChangeDirection(startingCashFlow, endingCashFlow),
@@ -1060,27 +1065,29 @@ export default function Dashboard() {
       value: formatCompactMoney(totalAssets),
       change: formatSignedPercent(assetChange),
       changeLabel: "vs start",
-      meta: '0 accounts',//`${lastYear.accounts_summary.accounts.length} accounts`,
+      meta: lastYear
+        ? `${lastYear.assets.assets.length} assets`
+        : "Run simulation to see data",
       icon: "◔",
       tone: "blue",
-      direction: getChangeDirection(startingNetWorth, totalAssets),
+      direction: getChangeDirection(startingAssets, totalAssets),
     },
     {
       id: "total-liabilities",
       label: "Total Liabilities",
       value: formatCompactMoney(totalLiabilities),
-      change: "+0.0%",
+      change: formatSignedPercent(liabilityChange),
       changeLabel: "vs start",
-      meta: "0 liabilities",
+      meta: lastYear
+        ? `${lastYear.expenses.expenses.length} liabilities`
+        : "Run simulation to see data",
       icon: "▭",
       tone: "orange",
-      direction: "neutral",
+      direction: getChangeDirection(startingLiabilities, totalLiabilities),
     },
   ];
 
-  const activeTutorialStep = showTutorial
-  ? tutorialSteps[tutorialStepIndex]
-  : null;
+  const activeTutorialStep = showTutorial ? tutorialSteps[tutorialStepIndex] : null;
 
   const handleTutorialNext = () => {
     setTutorialStepIndex((current) =>
@@ -1120,10 +1127,7 @@ export default function Dashboard() {
   }, [state]);
 
   return (
-    <div
-     className="dash-root"
-     data-active-tutorial-step={activeTutorialStep?.id ?? ""}
-     >
+    <div className="dash-root" data-active-tutorial-step={activeTutorialStep?.id ?? ""}>
       {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
         <div className="dash-loading-overlay">
           <Audio height="100" width="100" color="#6d28d9" ariaLabel="audio-loading" visible={true} />
@@ -1160,6 +1164,7 @@ export default function Dashboard() {
       <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
         <div className="dash-sidebar-inner">
 
+          {/* Desktop layout */}
           <div className="dash-sidebar-header">
             <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
               <Image
@@ -1192,7 +1197,6 @@ export default function Dashboard() {
               <span className="dash-nav-icon">▦</span>
               <span className="dash-nav-label">Testing Grounds</span>
             </a>
-
             <a href="#" className="dash-nav-item" title="Testing Visuals">
               <span className="dash-nav-icon">◔</span>
               <span className="dash-nav-label">Testing Visuals</span>
@@ -1212,6 +1216,54 @@ export default function Dashboard() {
             </span>
           </button>
         </div>
+
+        {/* Mobile topbar */}
+        <div className="dash-mobile-bar">
+          <Image
+            src="/vantage_logo_transparent.svg"
+            alt="Vantage"
+            width={100}
+            height={34}
+            className="dash-logo-img"
+            priority
+          />
+          <button
+            type="button"
+            className="dash-mobile-menu-btn"
+            onClick={() => setMobileNavOpen(o => !o)}
+            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileNavOpen}
+          >
+            <span className={`dash-mobile-menu-icon${mobileNavOpen ? " dash-mobile-menu-icon--open" : ""}`} />
+          </button>
+        </div>
+
+        {/* Mobile dropdown */}
+        {mobileNavOpen && (
+          <div className="dash-mobile-dropdown">
+            <nav className="dash-mobile-nav">
+              <a href="/testing" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
+                <span className="dash-nav-icon">▦</span>
+                <span className="dash-nav-label">Testing Grounds</span>
+              </a>
+              <a href="#" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
+                <span className="dash-nav-icon">◔</span>
+                <span className="dash-nav-label">Testing Visuals</span>
+              </a>
+            </nav>
+            <button
+              type="button"
+              className="dash-feedback-card"
+              onClick={() => { setIsFeedbackOpen(true); setMobileNavOpen(false); }}
+            >
+              <span className="dash-feedback-icon">✦</span>
+              <span className="dash-feedback-copy">
+                <strong>Leave feedback</strong>
+                <p>Help us improve Vantage</p>
+              </span>
+            </button>
+          </div>
+        )}
       </aside>
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
@@ -1225,6 +1277,14 @@ export default function Dashboard() {
 
         <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
+          
+          {simResult ? <JsonView
+            value={simResult}
+            collapsed={2}
+            displayDataTypes={false}
+            displayObjectSize={false}
+            shortenTextAfterLength={40}
+          />: "[]"}
           <UserAgeForm state={state} dispatch={dispatch} />
         </div>
 
@@ -1244,8 +1304,6 @@ export default function Dashboard() {
         </section>
 
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
-
-        {/* <SimulationControls state={state} setSimResult={setSimResult} /> */}
 
         {/* <SimResultViewer simResult={simResult} /> */}
         <ToastBanner toasts={toasts} setToasts={setToasts} />

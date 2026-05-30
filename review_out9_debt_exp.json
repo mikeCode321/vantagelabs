@@ -1,0 +1,601 @@
+{
+  "total_years_simulated": 3,
+  "request": {
+    "user_start_age": 25,
+    "user_end_age": 28,
+    "start_year": 2026,
+    "accounts": {
+      "checking": [
+        {
+          "source_type": "liquid",
+          "variant": "checking",
+          "id": "acc_1",
+          "name": "Checking Account",
+          "start_age": 25,
+          "end_age": 28,
+          "starting_balance": 10000,
+          "interest_tiers": [
+            {
+              "threshold": 15000,
+              "annual_rate": 0
+            },
+            {
+              "threshold": 100000,
+              "annual_rate": 0.03
+            },
+            {
+              "threshold": 300000,
+              "annual_rate": 0.04
+            }
+          ]
+        }
+      ],
+      "taxable_investments": [],
+      "employer_retirement": []
+    },
+    "incomes": {
+      "salary": [
+        {
+          "source_type": "income",
+          "variant": "salary",
+          "id": "salary_1",
+          "name": "swe",
+          "start_age": 25,
+          "end_age": 26,
+          "gross_income": 100000,
+          "income_growth": 0.03,
+          "linked_401k_id": "401k_1"
+        }
+      ],
+      "hourly": [],
+      "side": []
+    },
+    "expenses": {
+      "living": [],
+      "rent": [],
+      "house_loan": [],
+      "car_loan": [],
+      "debt": [
+        {
+          "source_type": "expense",
+          "variant": "debt",
+          "id": "e1318955-7fcc-45fb-968b-3506a47e5a08",
+          "name": "Debt Expense",
+          "start_age": 25,
+          "end_age": 28,
+          "debt_amount": 10000,
+          "monthly_expense": 100,
+          "interest_rate": 0.35
+        }
+      ]
+    },
+    "assets": {
+      "house": [],
+      "car": []
+    }
+  },
+  "metrics": {
+    "total_years": 3,
+    "starting_net_worth": 10000,
+    "ending_net_worth": 86319.43,
+    "peak_net_worth": 86319.43,
+    "peak_net_worth_age": 27,
+    "total_income_lifetime": 100000,
+    "lowest_cash_balance_year": 2026,
+    "lowest_cash_balance": 84503.55
+  },
+  "year_results": [
+    {
+      "year": 2026,
+      "age": 25,
+      "net_worth": 84503.55,
+      "net_worth_change": 74503.55,
+      "net_worth_change_percent": 745.04,
+      "total_cash": 84503.55,
+      "income_earned": {
+        "gross": 100000,
+        "net": 74651,
+        "taxes_paid": 25349,
+        "federal_tax": 13449,
+        "fica_tax": 7650,
+        "state_tax": 4250,
+        "effective_tax_rate": 25.35
+      },
+      "current_gross_income": 103000,
+      "accounts_summary": {
+        "total_balance": 84503.55,
+        "total_interest_earned": 1052.51,
+        "by_variant": {
+          "checking": 84503.55,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 84503.55,
+            "annual_interest_earned": 1052.51,
+            "balance_history": [
+              16123.7223,
+              22262.75390575,
+              28417.133090514377,
+              34586.89822324066,
+              40772.08776879877,
+              46972.74028822076,
+              53188.89443894131,
+              59420.58897503866,
+              65667.86274747626,
+              71930.75470434494,
+              78209.30389110581,
+              84503.54945083357
+            ],
+            "interest_history": [
+              2.8023000000000002,
+              18.11160575,
+              33.459184764375,
+              48.84513272628594,
+              64.26954555810165,
+              79.73251942199691,
+              95.2341507205519,
+              110.77453609735326,
+              126.35377243759667,
+              141.97195686869065,
+              157.62918676086235,
+              173.32555972776453
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 100000,
+        "total_net_income": 74651,
+        "active_sources": 1,
+        "by_variant": {
+          "salary": 100000,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": [
+          {
+            "id": "salary_1",
+            "name": "swe",
+            "variant": "salary",
+            "gross_annual": 100000,
+            "net_annual": 74651,
+            "annual_401k_contributions": 0,
+            "taxes": {
+              "federal": 13449,
+              "fica": 7650,
+              "state": 4250
+            }
+          }
+        ]
+      },
+      "expenses": {
+        "total_monthly": 100,
+        "total_interest_paid_lifetime": 3907.3,
+        "by_variant": {
+          "house_loan": 0,
+          "car_loan": 0,
+          "living": 0,
+          "rent": 0,
+          "debt": 100
+        },
+        "expenses": [
+          {
+            "id": "e1318955-7fcc-45fb-968b-3506a47e5a08",
+            "name": "Debt Expense",
+            "variant": "debt",
+            "monthly_payment": 100,
+            "interest_paid_lifetime": 3907.3,
+            "remaining_balance": 12707.3,
+            "original_balance": 10000,
+            "total_interest_paid": 3907.3,
+            "total_amount_paid": 1200,
+            "annual_interest_paid": 3907.3,
+            "annual_principal_paid": 0,
+            "annual_balance_growth": 2707.3,
+            "minimum_payment_to_pay_off": 370.64,
+            "underpaying_by": 270.64,
+            "payoff_months": null,
+            "payoff_age": null,
+            "payoff_date": null,
+            "never_pays_off": true,
+            "negative_amortization": false,
+            "underpaying_interest": true,
+            "balance_history": [
+              10191.67,
+              10388.92,
+              10591.93,
+              10800.87,
+              11015.89,
+              11237.19,
+              11464.94,
+              11699.33,
+              11940.56,
+              12188.83,
+              12444.34,
+              12707.3
+            ],
+            "interest_history": [
+              291.67,
+              297.26,
+              303.01,
+              308.93,
+              315.03,
+              321.3,
+              327.75,
+              334.39,
+              341.23,
+              348.27,
+              355.51,
+              362.96
+            ],
+            "principal_history": [
+              -191.67,
+              -197.26,
+              -203.01,
+              -208.93,
+              -215.03,
+              -221.3,
+              -227.75,
+              -234.39,
+              -241.23,
+              -248.27,
+              -255.51,
+              -262.96
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 0,
+        "total_equity": 0,
+        "by_variant": {
+          "house": 0,
+          "car": 0
+        },
+        "assets": []
+      }
+    },
+    {
+      "year": 2027,
+      "age": 26,
+      "net_worth": 85397.89,
+      "net_worth_change": 894.34,
+      "net_worth_change_percent": 1.06,
+      "total_cash": 85397.89,
+      "income_earned": {
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
+        "federal_tax": 0,
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
+      },
+      "current_gross_income": 0,
+      "accounts_summary": {
+        "total_balance": 85397.89,
+        "total_interest_earned": 2094.34,
+        "by_variant": {
+          "checking": 85397.89,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 85397.89,
+            "annual_interest_earned": 2094.34,
+            "balance_history": [
+              84577.05832446065,
+              84650.75097027181,
+              84724.62784769748,
+              84798.68941731672,
+              84872.93614086001,
+              84947.36848121216,
+              85021.9869024152,
+              85096.79186967124,
+              85171.78384934542,
+              85246.96330896878,
+              85322.3307172412,
+              85397.8865440343
+            ],
+            "interest_history": [
+              173.50887362708391,
+              173.69264581115164,
+              173.87687742567954,
+              174.06156961924373,
+              174.2467235432918,
+              174.43234035215002,
+              174.6184212030304,
+              174.804967256038,
+              174.9919796741781,
+              175.17945962336356,
+              175.36740827242195,
+              175.55582679310302
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
+        "by_variant": {
+          "salary": 0,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": []
+      },
+      "expenses": {
+        "total_monthly": 100,
+        "total_interest_paid_lifetime": 8929.95,
+        "by_variant": {
+          "house_loan": 0,
+          "car_loan": 0,
+          "living": 0,
+          "rent": 0,
+          "debt": 100
+        },
+        "expenses": [
+          {
+            "id": "e1318955-7fcc-45fb-968b-3506a47e5a08",
+            "name": "Debt Expense",
+            "variant": "debt",
+            "monthly_payment": 100,
+            "interest_paid_lifetime": 8929.95,
+            "remaining_balance": 16529.95,
+            "original_balance": 10000,
+            "total_interest_paid": 8929.95,
+            "total_amount_paid": 2400,
+            "annual_interest_paid": 5022.65,
+            "annual_principal_paid": 0,
+            "annual_balance_growth": 3822.65,
+            "minimum_payment_to_pay_off": 482.13,
+            "underpaying_by": 382.13,
+            "payoff_months": null,
+            "payoff_age": null,
+            "payoff_date": null,
+            "never_pays_off": true,
+            "negative_amortization": false,
+            "underpaying_interest": true,
+            "balance_history": [
+              12977.93,
+              13256.45,
+              13543.1,
+              13838.1,
+              14141.71,
+              14454.18,
+              14775.76,
+              15106.72,
+              15447.33,
+              15797.88,
+              16158.65,
+              16529.95
+            ],
+            "interest_history": [
+              370.63,
+              378.52,
+              386.65,
+              395.01,
+              403.61,
+              412.47,
+              421.58,
+              430.96,
+              440.61,
+              450.55,
+              460.77,
+              471.29
+            ],
+            "principal_history": [
+              -270.63,
+              -278.52,
+              -286.65,
+              -295.01,
+              -303.61,
+              -312.47,
+              -321.58,
+              -330.96,
+              -340.61,
+              -350.55,
+              -360.77,
+              -371.29
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 0,
+        "total_equity": 0,
+        "by_variant": {
+          "house": 0,
+          "car": 0
+        },
+        "assets": []
+      }
+    },
+    {
+      "year": 2028,
+      "age": 27,
+      "net_worth": 86319.43,
+      "net_worth_change": 921.54,
+      "net_worth_change_percent": 1.08,
+      "total_cash": 86319.43,
+      "income_earned": {
+        "gross": 0,
+        "net": 0,
+        "taxes_paid": 0,
+        "federal_tax": 0,
+        "fica_tax": 0,
+        "state_tax": 0,
+        "effective_tax_rate": 0
+      },
+      "current_gross_income": 0,
+      "accounts_summary": {
+        "total_balance": 86319.43,
+        "total_interest_earned": 2121.54,
+        "by_variant": {
+          "checking": 86319.43,
+          "employer_retirement": 0,
+          "taxable_investments": 0
+        },
+        "accounts": [
+          {
+            "id": "acc_1",
+            "name": "Checking Account",
+            "variant": "checking",
+            "balance": 86319.43,
+            "annual_interest_earned": 2121.54,
+            "balance_history": [
+              85473.6312603944,
+              85549.56533854538,
+              85625.68925189174,
+              85702.00347502147,
+              85778.50848370903,
+              85855.2047549183,
+              85932.0927668056,
+              86009.17299872261,
+              86086.44593121942,
+              86163.91204604747,
+              86241.57182616259,
+              86319.42575572799
+            ],
+            "interest_history": [
+              175.74471636008576,
+              175.93407815098598,
+              176.12391334636345,
+              176.31422312972936,
+              176.50500868755367,
+              176.69627120927257,
+              176.88801188729576,
+              177.080231917014,
+              177.27293249680653,
+              177.46611482804857,
+              177.65978011511868,
+              177.85392956540647
+            ]
+          }
+        ]
+      },
+      "incomes_summary": {
+        "total_gross_income": 0,
+        "total_net_income": 0,
+        "active_sources": 0,
+        "by_variant": {
+          "salary": 0,
+          "hourly": 0,
+          "side": 0
+        },
+        "incomes": []
+      },
+      "expenses": {
+        "total_monthly": 100,
+        "total_interest_paid_lifetime": 15527.45,
+        "by_variant": {
+          "house_loan": 0,
+          "car_loan": 0,
+          "living": 0,
+          "rent": 0,
+          "debt": 100
+        },
+        "expenses": [
+          {
+            "id": "e1318955-7fcc-45fb-968b-3506a47e5a08",
+            "name": "Debt Expense",
+            "variant": "debt",
+            "monthly_payment": 100,
+            "interest_paid_lifetime": 15527.45,
+            "remaining_balance": 21927.45,
+            "original_balance": 10000,
+            "total_interest_paid": 15527.45,
+            "total_amount_paid": 3600,
+            "annual_interest_paid": 6597.5,
+            "annual_principal_paid": 0,
+            "annual_balance_growth": 5397.5,
+            "minimum_payment_to_pay_off": 639.56,
+            "underpaying_by": 539.56,
+            "payoff_months": null,
+            "payoff_age": null,
+            "payoff_date": null,
+            "never_pays_off": true,
+            "negative_amortization": false,
+            "underpaying_interest": true,
+            "balance_history": [
+              16912.07,
+              17305.34,
+              17710.08,
+              18126.62,
+              18555.31,
+              18996.51,
+              19450.58,
+              19917.88,
+              20398.82,
+              20893.79,
+              21403.19,
+              21927.45
+            ],
+            "interest_history": [
+              482.12,
+              493.27,
+              504.74,
+              516.54,
+              528.69,
+              541.2,
+              554.06,
+              567.31,
+              580.94,
+              594.97,
+              609.4,
+              624.26
+            ],
+            "principal_history": [
+              -382.12,
+              -393.27,
+              -404.74,
+              -416.54,
+              -428.69,
+              -441.2,
+              -454.06,
+              -467.31,
+              -480.94,
+              -494.97,
+              -509.4,
+              -524.26
+            ]
+          }
+        ]
+      },
+      "assets": {
+        "total_value": 0,
+        "total_equity": 0,
+        "by_variant": {
+          "house": 0,
+          "car": 0
+        },
+        "assets": []
+      }
+    }
+  ],
+  "net_worth_trend": [
+    84503.55,
+    85397.89,
+    86319.43
+  ],
+  "cash_trend": [
+    84503.55,
+    85397.89,
+    86319.43
+  ],
+  "annual_income_trend": [
+    103000,
+    0,
+    0
+  ]
+}

@@ -1,7 +1,5 @@
 "use client";
-
-import { useState } from "react";
-import testData from "@/test.json";
+import { useState, useMemo } from "react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid,} from "recharts";
 import "./incomeGrowthChart.css";
 
@@ -11,14 +9,11 @@ function formatCurrency(value: number) {
   return `$${value}`;
 }
 
-const ageToYear = (age: number) =>
-  testData.request.start_year + (age - testData.request.user_start_age);
-
 const VIEWS = [
   { group: "Income", key: "gross",    label: "Gross Income", dataKey: "grossIncome", gradientId: "gradGross",   colors: ["#7C3AED", "#A78BFA"] },
   { group: "Income", key: "net",      label: "Net Income",   dataKey: "netIncome",   gradientId: "gradNet",     colors: ["#0EA5E9", "#7DD3FC"] },
   { group: "Income", key: "taxes",    label: "Taxes Paid",   dataKey: "taxesPaid",   gradientId: "gradTaxes",   colors: ["#F43F5E", "#FDA4AF"] },
-  { group: "Wealth", key: "netWorth", label: "Net Worth",    dataKey: "netWorth",    gradientId: "gradWealth",  colors: ["#10B981", "#6EE7B7"], startValue: testData.metrics.starting_net_worth },
+  { group: "Wealth", key: "netWorth", label: "Net Worth", dataKey: "netWorth", gradientId: "gradWealth", colors: ["#10B981", "#6EE7B7"] }, 
 ];
 
 const VIEW_MAP = Object.fromEntries(VIEWS.map((v) => [v.key, v]));
@@ -32,7 +27,7 @@ const ICONS = {
   debt: "💳", living: "🛒",
 };
 
-function buildEventsByYear() {
+function buildEventsByYear(req) {
 //   {
 //   2025: [
 //     { icon: "🏦", name: "Checking Account", kind: "start" },
@@ -41,54 +36,42 @@ function buildEventsByYear() {
 //   ], 
 // }
 
+  if (!req) return {};
   const byYear = {};
-  const req = testData.request;
+
+  const ageToYear = (age) => req.user_start_age 
+    ? new Date().getFullYear() + (age - req.user_start_age) 
+    : age;
 
   const allEntities = [
-    ...req.accounts.checking,
-    ...req.accounts.taxable_investments,
-    ...req.accounts.employer_retirement,
-    ...req.incomes.salary,
-    ...req.incomes.hourly,
-    ...req.incomes.side,
-    ...req.expenses.living,
-    ...req.expenses.rent,
-    ...req.expenses.house_loan,
-    ...req.expenses.car_loan,
-    ...req.expenses.debt,
-    ...req.assets.house,
-    ...req.assets.car,
+    ...(req.accounts?.checking ?? []),
+    ...(req.accounts?.taxable_investments ?? []),
+    ...(req.accounts?.employer_retirement ?? []),
+    ...(req.incomes?.salary ?? []),
+    ...(req.incomes?.hourly ?? []),
+    ...(req.incomes?.side ?? []),
+    ...(req.expenses?.living ?? []),
+    ...(req.expenses?.rent ?? []),
+    ...(req.expenses?.house_loan ?? []),
+    ...(req.expenses?.car_loan ?? []),
+    ...(req.expenses?.debt ?? []),
+    ...(req.assets?.house ?? []),
+    ...(req.assets?.car ?? []),
   ];
 
   for (const e of allEntities) {
     const icon = ICONS[e.variant] ?? "📌";
-
-    const events=[{year: ageToYear(e.start_age), kind: "start" },{year: ageToYear(e.end_age), kind: "end" },];
-
-    for (const ev of events) {
-      if (!byYear[ev.year]) {
-        byYear[ev.year] = [];
-      }
-
-      byYear[ev.year].push({icon, name: e.name, kind: ev.kind,});
+    for (const ev of [
+      { year: ageToYear(e.start_age), kind: "start" },
+      { year: ageToYear(e.end_age),   kind: "end" },
+    ]) {
+      if (!byYear[ev.year]) byYear[ev.year] = [];
+      byYear[ev.year].push({ icon, name: e.name, kind: ev.kind });
     }
   }
 
   return byYear;
 }
-
-const EVENTS_BY_YEAR = buildEventsByYear();
-
-const chartData = testData.year_results.map((yr) => ({
-  year:        yr.year,
-  age:         yr.age,
-  grossIncome: yr.income_earned.gross,
-  netIncome:   yr.income_earned.net,
-  taxesPaid:   yr.income_earned.taxes_paid,
-  netWorth:    yr.net_worth,
-  events:      EVENTS_BY_YEAR[yr.year] ?? [],
-}));
-
 const ICON_R   = 12;
 const ICON_GAP = 6;
 const MAX_ICONS = 3;
@@ -186,12 +169,12 @@ function EventIconStack({ events, cx, y, isLast, onBarLeave, }) {
 }
 
 function CustomBar(props) {
-  const { x, y, width, height, fill, payload, onBarEnter, onBarLeave, } = props;
+  const { x, y, width, height, fill, payload, onBarEnter, onBarLeave, lastYear} = props;
 
   const events = payload?.events ?? [];
   const cx = x + width / 2;
 
-  const isLast = payload?.year === chartData[chartData.length - 1].year;
+  const isLast = payload?.year === lastYear;
 
   return (
     <g>
@@ -245,16 +228,41 @@ function ChartTooltip({ tooltip }) {
   );
 }
 
-export default function IncomeGrowthChart() {
+const PLACEHOLDER_DATA = [
+  { age: 25, year: 25, value: 42000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
+  { age: 26, year: 26, value: 55000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
+  { age: 27, year: 27, value: 48000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
+  { age: 28, year: 28, value: 63000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
+  { age: 29, year: 29, value: 71000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
+  { age: 30, year: 30, value: 78000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
+];
+
+export default function IncomeGrowthChart({ data }) {
   const [activeKey, setActiveKey] = useState("gross");
   const [tooltip, setTooltip] = useState(null);
+  const chartData = useMemo(() => {
+    if (!data?.year_results) return [];
+    const eventsByYear = buildEventsByYear(data.request);
+    return data.year_results.map((yr) => ({
+      year:        yr.year,
+      age:         yr.age,
+      grossIncome: yr.income_earned.gross,
+      netIncome:   yr.income_earned.net,
+      taxesPaid:   yr.income_earned.taxes_paid,
+      netWorth:    yr.net_worth,
+      events:      eventsByYear[yr.year] ?? [],
+    }));
+  }, [data]);
 
   const view = VIEW_MAP[activeKey];
 
   const values = chartData.map(d => d[view.dataKey]);
-  const startValue = view.startValue ?? values[0];
-  const endValue = values[values.length - 1];
-  const growth = ((endValue - startValue) / startValue) * 100;
+  const startValue = view.key === "netWorth"  ? (data?.metrics?.starting_net_worth ?? values[0] ?? 0) : (values[0] ?? 0);
+  const endValue = values[values.length - 1] ?? 0;
+  const growth = startValue ? ((endValue - startValue) / startValue) * 100 : 0;
+
+  const isEmpty = chartData.length === 0;
+  const displayData = isEmpty ? PLACEHOLDER_DATA : chartData;
 
   return (
   <section className="income-chart-card">
@@ -284,29 +292,27 @@ export default function IncomeGrowthChart() {
       <div className="income-chart-stats">
         <div className="income-stat">
           <span>Starting</span>
-          <strong>{formatCurrency(startValue)}</strong>
+          <strong>{isEmpty ? "--" : formatCurrency(startValue)}</strong>
         </div>
 
         <div className="income-stat">
           <span>Projected</span>
-          <strong>{formatCurrency(endValue)}</strong>
+          <strong>{isEmpty ? "--" : formatCurrency(endValue)}</strong>
         </div>
 
         <div className="income-stat income-stat-positive">
           <span>Growth</span>
-          <strong>+{growth.toFixed(1)}%</strong>
+          <strong>{isEmpty ? "--" : `+${growth.toFixed(1)}%`}</strong>
         </div>
       </div>
 
     </div>
 
-    <div className="income-chart-wrap">
+    <div className="income-chart-wrap" style={{ position: "relative" }}>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={chartData}
-          margin={{ top: 60, right: 10, left: 0, bottom: 0 }}
-          barCategoryGap="28%"
-        >
+        <BarChart key={activeKey}
+                  data={displayData} 
+                  margin={{ top: 60, right: 10, left: 0, bottom: 0 }} barCategoryGap="28%">
           <defs>
             {VIEWS.map(v => (
               <linearGradient key={v.gradientId} id={v.gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -337,19 +343,32 @@ export default function IncomeGrowthChart() {
           />
 
           <Bar
-            dataKey={view.dataKey}
+            dataKey={isEmpty ? "value" : view.dataKey}
             maxBarSize={70}
             shape={(props) => (
               <CustomBar
                 {...props}
-                fill={`url(#${view.gradientId})`}
-                onBarEnter={(row, x, y, isLast) => setTooltip({ row, x, y, isLast }) }
+                fill={isEmpty ? "#E5E7EB" : `url(#${view.gradientId})`}
+                lastYear={displayData[displayData.length - 1]?.year}
+                onBarEnter={isEmpty ? () => {} : (row, x, y, isLast) => setTooltip({ row, x, y, isLast })}
                 onBarLeave={() => setTooltip(null)}
               />
             )}
           />
         </BarChart>
       </ResponsiveContainer>
+
+      {isEmpty && (
+        <div style={{
+          position: "absolute", inset: 0,
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          gap: 8,
+        }}>
+          <p style={{ fontSize: 15, fontWeight: 500, color: "var(--color-text-primary)", margin: 0 }}>No simulation data yet</p>
+          <p style={{ fontSize: 13, color: "var(--color-text-secondary)", margin: 0 }}>Add your financial details and run a simulation to see results</p>
+        </div>
+      )}
 
       <ChartTooltip tooltip={tooltip} />
     </div>

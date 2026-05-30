@@ -500,6 +500,15 @@
   box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
 }
 
+.ts-btn--primary:disabled {
+  background: #c4b5fd;
+  color: #ede9fe;
+  border-color: transparent;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .ts-btn--primary:hover {
   background: #6d28d9;
   box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
@@ -570,7 +579,6 @@
   }
 }
 
-/* Split-layout modals collapse to single column on tablet/mobile */
 @media (max-width: 760px) {
   .ts-modal--tutorial-flow,
   .ts-modal--checking-step,
@@ -605,6 +613,18 @@
   .ts-form-panel {
     padding: 24px;
     max-height: unset;
+  }
+
+  .ts-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .ts-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
   }
 
   .ts-detached-step {
@@ -1045,6 +1065,45 @@
   color: #300d6b;
   background: rgba(95, 167, 171, 0.08);
 }
+
+
+.ts-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.ts-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e1b2e;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 10px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+}
+
+.ts-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1e1b2e;
+}
+
+.ts-tooltip-wrap--active:hover .ts-tooltip {
+  opacity: 1;
+}
+
 
 
 

@@ -1236,12 +1236,12 @@ export default function Dashboard() {
             displayObjectSize={false}
             shortenTextAfterLength={40}
           />: "[]"}
-          <UserAgeForm state={state} dispatch={dispatch} />
+          {/* <UserAgeForm state={state} dispatch={dispatch} /> */}
         </div>
 
         <FinancialOverviewCards cards={overviewCards} />
         <section className="simulation-results-grid">
-          <IncomeGrowthChart />
+          <IncomeGrowthChart data={simData} />
           <div>
             <SimulationHighlights data={simResult} />
             <SimulationControls state={state} setSimResult={setSimResult} />

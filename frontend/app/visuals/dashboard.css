@@ -2178,7 +2178,7 @@ tbody tr:hover {
 
 .simulation-results-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
   gap: 8px;
   align-items: start;
   width: 100%;

@@ -319,6 +319,7 @@ const ENTITY_CONFIG = {
     checking: {
       id: "checking",
       name: "Checking",
+      description: "Track your checking account balance and tiered interest rates.",
       emoji: "💳",
       formComponent: CheckingAccountForm,
       editFormComponent: EditCheckingAccountForm,
@@ -326,6 +327,7 @@ const ENTITY_CONFIG = {
     taxable_investments: {
       id: "taxable_investments",
       name: "Taxable Investments",
+      description: "Add brokerage accounts, stocks, ETFs, or other taxable investment balances.",
       emoji: "📊",
       formComponent: TaxableInvestmentAccountForm,
       editFormComponent: EditTaxableInvestmentAccountForm,
@@ -333,15 +335,18 @@ const ENTITY_CONFIG = {
     employer_retirement: {
       id: "employer_retirement",
       name: "Employer Retirement Accounts",
+      description: "Track your 401(k), 403(b), or pension and optionally link it to a job.",
       emoji: "🏢",
       formComponent: EmployerRetirementAccountForm,
       editFormComponent: EditEmployerRetirementAccountForm,
     },
   },
+
   income: {
     salary: {
       id: "salary",
       name: "Salary",
+      description: "Track your employment income and annual growth rate.",
       emoji: "💼",
       formComponent: SalaryForm,
       editFormComponent: EditSalaryForm,
@@ -349,6 +354,7 @@ const ENTITY_CONFIG = {
     hourly: {
       id: "hourly",
       name: "Hourly Wage",
+      description: "Track hourly income, weekly hours, and projected growth.",
       emoji: "⏱️",
       formComponent: HourlyWageForm,
       editFormComponent: EditHourlyWageForm,
@@ -356,53 +362,66 @@ const ENTITY_CONFIG = {
     side: {
       id: "side",
       name: "Side Hustle",
+      description: "Add extra income from freelance work, gigs and side businesses with variability",
       emoji: "🚀",
       formComponent: SideHustleForm,
       editFormComponent: EditSideHustleForm,
     },
   },
+
   expense: {
     living: {
       id: "living",
       name: "Living Expenses",
+      description: "Add monthly living costs like groceries, utilities, and other essentials.",
       emoji: "🏠",
+      iconTone: "purple",
       formComponent: LivingExpensesForm,
       editFormComponent: EditLivingExpensesForm,
     },
     rent: {
       id: "rent",
       name: "Rent",
+      description: "Add your monthly rent or housing payments.",
       emoji: "🏢",
+      iconTone: "blue",
       formComponent: RentExpenseForm,
       editFormComponent: EditRentExpenseForm,
     },
     debt: {
       id: "debt",
       name: "Debt",
+      description: "Add credit card debt, personal loans, or other liabilities.",
       emoji: "💳",
+      iconTone: "teal",
       formComponent: DebtExpenseForm,
       editFormComponent: EditDebtExpenseForm,
     },
     house_loan: {
       id: "house_loan",
       name: "Home Loan",
+      description: "Add your mortgage.",
       emoji: "🏡",
+      iconTone: "green",
       formComponent: HouseLoanExpenseForm,
       editFormComponent: EditHouseLoanExpenseForm,
     },
-
     car_loan: {
       id: "car_loan",
       name: "Car Loan",
+      description: "Add your car loan.",
       emoji: "🚗",
+      iconTone: "orange",
       formComponent: CarLoanExpenseForm,
       editFormComponent: EditCarLoanExpenseForm,
     },
   },
+
   asset: {
     house: {
       id: "house",
       name: "House",
+      description: "Track a property asset with appreciation and optional down payment.",
       emoji: "🏡",
       formComponent: HouseAssetForm,
       editFormComponent: EditHouseAssetForm,
@@ -410,6 +429,7 @@ const ENTITY_CONFIG = {
     car: {
       id: "car",
       name: "Car",
+      description: "Track a vehicle asset with depreciation and optional down payment.",
       emoji: "🚗",
       formComponent: CarAssetForm,
       editFormComponent: EditCarAssetForm,
@@ -421,20 +441,57 @@ const ENTITY_CONFIG = {
 
 export function EntityModalCell({ item, setSelectedVariant }) {
   return (
-    <div className="entity-cell" onClick={() => setSelectedVariant(item.id)}>
-      <span>{item.emoji}</span>
-      <span>{item.name}</span>
-    </div>
+    <button
+      type="button"
+      className="entity-select-card"
+      onClick={() => setSelectedVariant(item.id)}
+    >
+      <span className={`entity-select-card__icon entity-select-card__icon--${item.iconTone ?? "purple"}`}>
+        {item.emoji}
+      </span>
+
+      <span className="entity-select-card__copy">
+        <span className="entity-select-card__title">{item.name}</span>
+        <span className="entity-select-card__desc">
+          {item.description ?? "Add this item to your simulation."}
+        </span>
+      </span>
+    </button>
   );
 }
 
 export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEdited, state, onToast }) {
+
+  
   const [selectedVariant, setSelectedVariant] = useState(variantBeingEdited?.variant || null);
 
   const goBack = () => setSelectedVariant(null);
   const closeModal = () => setIsModalOpen(false);
 
   const FormComponent = selectedVariant ? (variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent) : null;
+  const MODAL_COPY = {
+    account: {
+      icon: "🏛️",
+      title: "Choose an account type",
+      description: "Select the account you want to add to your simulation.",
+    },
+    income: {
+      icon: "💼",
+      title: "Choose an income type",
+      description: "Select the income source you want to add to your simulation.",
+    },
+    expense: {
+      icon: "💳",
+      title: "Choose an expense type",
+      description: "Select the expense you want to add to your simulation.",
+    },
+    asset: {
+      icon: "◔",
+      title: "Choose an asset type",
+      description: "Select the asset you want to add to your simulation.",
+    },
+  };
+  const modalCopy = MODAL_COPY[category];
 
   let renderedForm;
 
@@ -453,22 +510,35 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
     <div className="modal-overlay">
       <div className="modal">
 
-        {!selectedVariant && !variantBeingEdited && (
-          <div className="modal-header">
-            <button className="modal-close" onClick={closeModal}>
-              close
-            </button>
-          </div>
-        )}
+      {!selectedVariant && !variantBeingEdited && (
+          <>
+            <div className="entity-select-header">
+              <div className="entity-select-header__icon">
+                {modalCopy.icon}
+              </div>
+              
 
-        {selectedVariant && !variantBeingEdited && (
-          <div className="modal-header">
-            <button onClick={goBack}>← Back</button>
+              <div className="entity-select-header__copy">
+                <h2>{modalCopy.title}</h2>
+                <p>{modalCopy.description}</p>
+              </div>
 
-            <button className="modal-close" onClick={closeModal}>
-              close
-            </button>
-          </div>
+              <button className="entity-select-close" onClick={closeModal}>
+                ×
+              </button>
+            </div>
+
+            <div className="entity-select-grid">
+              {data.map((item) => (
+                <EntityModalCell
+                  key={item.id}
+                  item={item}
+                  setSelectedVariant={setSelectedVariant}
+                />
+              ))}
+            </div>
+  
+          </>
         )}
 
         {/* EDIT FORM HEADER */}
@@ -477,19 +547,24 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
             {/* <div>icon + title + description</div> */}
 
             <button className="modal-close" onClick={closeModal}>
-              close
+            ×
             </button>
           </div>
         )}
 
         {/* ENTITY SOURCE SELECTION MODAL */}
-        {!selectedVariant && !variantBeingEdited && (
-          <div className="modal-body">
-            {data.map((item) => (
-              <EntityModalCell key={item.id} item={item} setSelectedVariant={setSelectedVariant} />
-            ))}
-          </div>
-        )}
+        {selectedVariant && !variantBeingEdited && (
+        <div className="modal-header">
+          <button className="modal-back" onClick={goBack}>
+            ← Back
+          </button>
+
+          <button className="entity-select-close" onClick={closeModal}>
+            ×
+          </button>
+        </div>
+      )}
+        
 
         {/* EDIT/ADD MODAL */}
         {renderedForm}
@@ -807,6 +882,8 @@ export function Entity({ state, entityName, category, dispatch, onToast }) {
       id: v.id,
       name: v.name,
       emoji: v.emoji,
+      description: v.description,
+      iconTone: v.iconTone,
     };
   });
 

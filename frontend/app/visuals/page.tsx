@@ -1089,6 +1089,24 @@ export default function Dashboard() {
 
   const activeTutorialStep = showTutorial ? tutorialSteps[tutorialStepIndex] : null;
 
+  useEffect(() => {
+    if (!showTutorial) return;
+  
+    const currentStep = tutorialSteps[tutorialStepIndex];
+  
+    if (currentStep?.id !== "expenses-assets") return;
+  
+    const target = document.querySelector('[data-tutorial="expense-card"]');
+  
+    if (!target) return;
+  
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "nearest",
+    });
+  }, [showTutorial, tutorialStepIndex]);
+
   const handleTutorialNext = () => {
     setTutorialStepIndex((current) =>
       Math.min(current + 1, tutorialSteps.length - 1)

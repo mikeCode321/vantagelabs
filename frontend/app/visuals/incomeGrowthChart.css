@@ -200,40 +200,29 @@
   text-align: center;
   padding: 0 16px;
 }
-
+/* ── Tablet (≤ 860px) ── */
 @media (max-width: 860px) {
+  /* Split step layout */
   .ts-modal--split-step {
-    display: flex;          
+    display: flex;
     flex-direction: column;
   }
 
-
-  /* KEEPS TIP PANEL AT THE BOTTOM  */
+  /* KEEPS TIP PANEL AT THE BOTTOM */
   .ts-tutorial-form {
     order: 1;
     border-radius: 20px 20px 0 0;
   }
 
-  /* KEEPS TIP PANEL AT THE BOTTOM  */
+  /* KEEPS TIP PANEL AT THE BOTTOM */
   .ts-step-panel {
     order: 2;
     border-radius: 0 0 20px 20px;
     border-right: none;
     border-top: 1px solid rgba(15, 23, 42, 0.08);
   }
-}
 
-@media (max-width: 480px) {
-  .income-chart-empty__title {
-    font-size: 13px;
-  }
-
-  .income-chart-empty__subtitle {
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 860px) {
+  /* Chart */
   .income-chart-top {
     flex-direction: column;
     gap: 14px;
@@ -281,13 +270,23 @@
     padding: 10px 12px;
   }
 
- 
   .income-chart-wrap .recharts-bar-chart {
     margin-top: 40px;
   }
 }
 
-/* ── Small phone (≤ 400px) ── */
+/* ── Small phone (≤ 480px) ── */
+@media (max-width: 480px) {
+  .income-chart-empty__title {
+    font-size: 13px;
+  }
+
+  .income-chart-empty__subtitle {
+    font-size: 12px;
+  }
+}
+
+/* ── Very small phone (≤ 400px) ── */
 @media (max-width: 400px) {
   .income-chart-card {
     padding: 12px;

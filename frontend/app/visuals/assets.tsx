@@ -68,8 +68,7 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
     const houseLinkedFromAssetSide = getHouseLinkedToLoan(loan.id);
 
     return Boolean(
-      (loan.linked_asset_id && loan.linked_asset_id !== item.id) ||
-        (houseLinkedFromAssetSide && houseLinkedFromAssetSide.id !== item.id)
+      loan.linked_asset_id || houseLinkedFromAssetSide
     );
   };
   

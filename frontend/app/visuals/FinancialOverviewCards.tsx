@@ -87,9 +87,9 @@ function FinancialOverviewCard({ card }: { card: OverviewCard }) {
   );
 }
 
-export function FinancialOverviewCards({ cards }: { cards: OverviewCard[] }) {
+export function FinancialOverviewCards({ cards, tutorialActive = false }: { cards: OverviewCard[]; tutorialActive: boolean }) {
   return (
-    <section className="overview-cards">
+    <section className={`overview-cards${tutorialActive ? " ts-tutorial-target" : ""}`}>
       {cards.map((card) => (
         <FinancialOverviewCard key={card.id} card={card} />
       ))}

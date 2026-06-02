@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./TutorialSteps.css";
 import { CheckingAccountForm , EditCheckingAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm} from "@/app/visuals/accounts";
 import { SalaryForm , EditSalaryForm} from "@/app/visuals/incomes";
@@ -430,16 +430,23 @@ type TutorialOnboardingProps = {
     onSkip: () => void;
     onFinish: () => void;
     onProfileComplete: (profile: UserProfile, mode: TutorialMode) => void;
+    onStepChange?: (stepId: TutorialStepId) => void; 
     onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
   };
   
-export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, onNext, onBack, onSkip, onFinish, onProfileComplete, onToast,}: TutorialOnboardingProps) {
+export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, onNext, onBack, onSkip, onFinish, onProfileComplete, onStepChange, onToast,}: TutorialOnboardingProps) {    
     const step = steps[currentStepIndex];
+
+    useEffect(() => {
+      onStepChange?.(step.id);
+    }, [step.id]);
+  
   
     if (!step) return null;
   
     const isLastStep = currentStepIndex === steps.length - 1;
-  
+
+    
     return (
       <div
         className={`ts-overlay ${
@@ -681,23 +688,14 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
     onSkip: () => void;
   };
   
-  function ExpensesAssetsTutorialStep({
-    step,
-    currentStepIndex,
-    totalSteps,
-    onBack,
-    onNext,
-    onSkip,
-  }: ExpensesAssetsTutorialStepProps) {
+  function ExpensesAssetsTutorialStep({ step, currentStepIndex, totalSteps, onBack, onNext, onSkip,}: ExpensesAssetsTutorialStepProps) {
     return (
       <div className="ts-highlight-step">
         <div className="ts-highlight-card">
           <button type="button" className="ts-highlight-close" onClick={onSkip}>
             ×
           </button>
-  
-          <div className="ts-highlight-logo">V</div>
-  
+    
           <div className="ts-highlight-copy">
             <p className="ts-step-count">
               Step {currentStepIndex + 1} of {totalSteps}
@@ -791,17 +789,7 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
     onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
   };
   
-  function EmployerRetirementTutorialStep({
-    step,
-    currentStepIndex,
-    totalSteps,
-    state,
-    dispatch,
-    onBack,
-    onNext,
-    onSkip,
-    onToast,
-  }: EmployerRetirementTutorialStepProps) {
+  function EmployerRetirementTutorialStep({ step, currentStepIndex, totalSteps, state, dispatch, onBack, onNext, onSkip, onToast, }: EmployerRetirementTutorialStepProps) {
     const existingRetirementAccount = state.accounts.employer_retirement[0];
   
     return (
@@ -860,7 +848,6 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
     id: TutorialStepId;
     title: string;
     description: string;
-    targetSelector?: string;
   };
   
   export const tutorialSteps: TutorialStep[] = [
@@ -872,59 +859,31 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
     {
       id: "profile",
       title: "Tell us about yourself",
-      description:
-        "Set your age, retirement age, filing status, and state so Vantage can build your timeline.",
+      description: "Set your age, retirement age, filing status, and state so Vantage can build your timeline.",
     },
     {
       id: "checking",
       title: "Start with a checking account",
-      description:
-        "Add your first account to capture your starting cash balance and timeline.",
-      targetSelector: "[data-tutorial='account-card']",
+      description: "Add your first account to capture your starting cash balance and timeline.",
     },
     {
         id: "salary",
         title: "Add your income",
-        description:
-          "Add a salary, hourly wage, or side hustle so Vantage can project the money flowing into your plan.",
-        targetSelector: "[data-tutorial='income-card']",
+        description: "Add a salary, hourly wage, or side hustle so Vantage can project the money flowing into your plan.",
     },
     {
         id: "retirement",
         title: "Link related items",
-        description:
-          "Link jobs to retirement accounts so contributions and assumptions stay in sync.",
-        targetSelector: "[data-tutorial='account-card']",
+        description: "Link jobs to retirement accounts so contributions and assumptions stay in sync.",
       },
       {
         id: "expenses-assets",
         title: "Add expenses and assets",
-        description:
-          "These inputs work the same way. Add bills, debt, homes, and vehicles to model what you spend and what you own.",
-        targetSelector: "[data-tutorial='expense-card'], [data-tutorial='asset-card']",
+        description: "These inputs work the same way. Add bills, debt, homes, and vehicles to model what you spend and what you own.",
       },
       {
         id: "results",
         title: "Run your simulation and review the results",
-        description:
-          "When you're ready click Run Simulation to generate your projection, then review the overview cards, chart, and highlights to understand your outlook.",
-        targetSelector: "[data-tutorial='income-chart'], [data-tutorial='simulation-highlights'], [data-tutorial='financial-overview']",
+        description: "When you're ready click Run Simulation to generate your projection, then review the overview cards, chart, and highlights to understand your outlook.",
       },
   ];
-
-  type TutorialStepsShellProps = {
-    steps: TutorialStep[];
-    currentStepIndex: number;
-    state: any;
-    dispatch: React.Dispatch<any>;
-    onNext: () => void;
-    onBack: () => void;
-    onSkip: () => void;
-    onFinish: () => void;
-    onProfileComplete: (profile: UserProfile, mode: TutorialMode) => void;
-    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
-  };
-  
-  export function TutorialStepsShell(props: TutorialStepsShellProps) {
-    return <TutorialOnboarding {...props} />;
-  }

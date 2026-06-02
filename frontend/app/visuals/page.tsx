@@ -2,9 +2,6 @@
 import "./dashboard.css";
 import Image from "next/image";
 import { Audio } from "react-loader-spinner";
-import { SIM_MAX } from "@/app/testing/constants";
-
-import testData from "@/test.json";
 
 import { useState, useReducer, useEffect, useRef } from "react";
 
@@ -16,23 +13,15 @@ import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpen
 
 import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
 
-import { FeedbackModal, SimulationControls, NetWorthStackedChart, SimResultViewer, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
+import { FeedbackModal, SimulationControls, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
-import { TutorialStepsShell, tutorialSteps } from "@/app/visuals/TutorialSteps";
-import JsonView from "@uiw/react-json-view";
-import {
-  FinancialOverviewCards,
-  OverviewCard,
-  formatCompactMoney,
-  formatSignedPercent,
-  getPercentChange,
-  getChangeDirection,
-  getReadableTrend,
-} from "@/app/visuals/FinancialOverviewCards";
+import { TutorialOnboarding, tutorialSteps, TutorialStepId } from "@/app/visuals/TutorialSteps";
 
+import JsonView from "@uiw/react-json-view";
+import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewCards";
 
 import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
 
@@ -859,7 +848,7 @@ const ENTITY_CARD_COPY = {
   },
 };
 
-export function Entity({ state, entityName, category, dispatch, onToast }) {
+export function Entity({ state, entityName, category, dispatch, onToast, tutorialActive }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [variantBeingEdited, setVariantBeingEdited] = useState(null);
 
@@ -916,10 +905,7 @@ export function Entity({ state, entityName, category, dispatch, onToast }) {
 
   return (
     <>
-      <div 
-      className={`entity-card entity-card--${category}`}
-      data-tutorial={`${category}-card`}
-      >
+      <div className={`entity-card entity-card--${category}${tutorialActive ? " ts-tutorial-target" : ""}`}>
         <div className="entity-card__top">
           <div className={`entity-card__icon entity-card__icon--${category}`}>
             {cardCopy.icon}
@@ -979,7 +965,7 @@ export function Entity({ state, entityName, category, dispatch, onToast }) {
 }
 /* -------------------- Financial Entities (Horizontal Container) -------------------- */
 
-export function FinancialEntities({ state, dispatch, onToast }) {
+export function FinancialEntities({ state, dispatch, onToast, tutorialStepId }) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -1043,19 +1029,16 @@ export function FinancialEntities({ state, dispatch, onToast }) {
 
       <div ref={ref} className="entities-scroll hide-scrollbar" onScroll={updateScrollState}>
         <div className="entities-item">
-          <Entity state={state} entityName="Accounts" category="account" dispatch={dispatch} onToast={onToast} />
+          <Entity state={state} entityName="Accounts" category="account" dispatch={dispatch} onToast={onToast} tutorialActive={tutorialStepId === "checking" || tutorialStepId === "retirement"}/>
         </div>
-
         <div className="entities-item">
-          <Entity state={state} entityName="Incomes" category="income" dispatch={dispatch} onToast={onToast} />
+          <Entity state={state} entityName="Incomes" category="income" dispatch={dispatch} onToast={onToast} tutorialActive={tutorialStepId === "salary"}/>
         </div>
-
         <div className="entities-item">
-          <Entity state={state} entityName="Expenses" category="expense" dispatch={dispatch} onToast={onToast} />
+          <Entity state={state} entityName="Expenses" category="expense" dispatch={dispatch} onToast={onToast} tutorialActive={tutorialStepId === "expenses-assets"}/>
         </div>
-
         <div className="entities-item">
-          <Entity state={state} entityName="Assets" category="asset" dispatch={dispatch} onToast={onToast} />
+          <Entity state={state} entityName="Assets" category="asset" dispatch={dispatch} onToast={onToast} tutorialActive={tutorialStepId === "expenses-assets"}/>
         </div>
       </div>
     </div>
@@ -1063,6 +1046,7 @@ export function FinancialEntities({ state, dispatch, onToast }) {
 }
 
 export default function Dashboard() {
+
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
   const [simResult, setSimResult] = useState(null);
@@ -1075,6 +1059,7 @@ export default function Dashboard() {
   //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
+  const [activeTutorialStepId, setActiveTutorialStepId] = useState<TutorialStepId | null>(null);
 
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
     const id = crypto.randomUUID();
@@ -1164,26 +1149,6 @@ export default function Dashboard() {
     },
   ];
 
-  const activeTutorialStep = showTutorial ? tutorialSteps[tutorialStepIndex] : null;
-
-  useEffect(() => {
-    if (!showTutorial) return;
-  
-    const currentStep = tutorialSteps[tutorialStepIndex];
-  
-    if (currentStep?.id !== "expenses-assets") return;
-  
-    const target = document.querySelector('[data-tutorial="expense-card"]');
-  
-    if (!target) return;
-  
-    target.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "nearest",
-    });
-  }, [showTutorial, tutorialStepIndex]);
-
   const handleTutorialNext = () => {
     setTutorialStepIndex((current) =>
       Math.min(current + 1, tutorialSteps.length - 1)
@@ -1198,6 +1163,7 @@ export default function Dashboard() {
     saveTutorialCompleted();
     setShowTutorial(false);
     setTutorialStepIndex(0);
+    setActiveTutorialStepId(null);
   };
 
   useEffect(() => {
@@ -1221,8 +1187,20 @@ export default function Dashboard() {
     saveState(state);
   }, [state]);
 
+  useEffect(() => {
+    if (!showTutorial || !activeTutorialStepId) return;
+
+    if (activeTutorialStepId === "expenses-assets") {
+      document.querySelector(".entities-wrapper")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    if (activeTutorialStepId === "results") {
+      document.querySelector(".overview-cards")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [activeTutorialStepId, showTutorial]);
+
   return (
-    <div className="dash-root" data-active-tutorial-step={activeTutorialStep?.id ?? ""}>
+    <div className="dash-root" data-active-tutorial-step={activeTutorialStepId ?? ""}>
       {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
         <div className="dash-loading-overlay">
           <Audio height="100" width="100" color="#6d28d9" ariaLabel="audio-loading" visible={true} />
@@ -1230,7 +1208,7 @@ export default function Dashboard() {
       )}
 
       {showTutorial && ENABLE_TUTORIAL && (
-        <TutorialStepsShell
+        <TutorialOnboarding
           steps={tutorialSteps}
           currentStepIndex={tutorialStepIndex}
           state={state}
@@ -1240,18 +1218,10 @@ export default function Dashboard() {
           onSkip={handleTutorialComplete}
           onFinish={handleTutorialComplete}
           onToast={showToast}
+          onStepChange={setActiveTutorialStepId}
           onProfileComplete={(profile, mode) => {
-            dispatch({
-              type: "UPDATE_SIMULATION_BOUNDS",
-              payload: {
-                user_start_age: profile.current_age,
-                user_end_age: profile.retirement_age,
-              },
-            });
-        
-            if (mode === "skipped") {
-              handleTutorialComplete();
-            }
+            dispatch({ type: "UPDATE_SIMULATION_BOUNDS", payload: { user_start_age: profile.current_age, user_end_age: profile.retirement_age } });
+            if (mode === "skipped") handleTutorialComplete();
           }}
         />
       )}
@@ -1363,7 +1333,6 @@ export default function Dashboard() {
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
       <main className="dash-main">
-
         <header className="dash-topbar">
           <div>
             <h1 className="dash-page-title">Financial Overview</h1>
@@ -1383,23 +1352,26 @@ export default function Dashboard() {
           <UserAgeForm state={state} dispatch={dispatch} />
         </div>
 
-        <FinancialOverviewCards cards={overviewCards} />
+        <FinancialOverviewCards cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
         <section className="simulation-results-grid">
-          <div data-tutorial="income-chart">
-            <IncomeGrowthChart data={simResult} />
-          </div>
+          <IncomeGrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />
 
-          <div data-tutorial="simulation-highlights">
-            <SimulationHighlights data={testData} />
-            <SimulationControls state={state} setSimResult={setSimResult} />
+          <div>
+            <SimulationHighlights data={simData} tutorialActive={activeTutorialStepId === "results"}/>
+            <div className={activeTutorialStepId === "results" ? "ts-tutorial-target" : ""} style={{ borderRadius: "16px" }}>
+              <SimulationControls state={state} setSimResult={setSimResult} />
+            </div>
           </div>
         </section>
+
         <section className="simulation-section-header">
           <h2>Simulation Inputs</h2>
           <p>Define the components of your financial plan for the simulation.</p>
         </section>
 
-        <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} />
+        <div>
+          <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} />
+        </div>
 
         {/* <SimResultViewer simResult={simResult} /> */}
         <ToastBanner toasts={toasts} setToasts={setToasts} />

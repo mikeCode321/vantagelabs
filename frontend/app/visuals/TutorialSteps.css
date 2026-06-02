@@ -10,7 +10,7 @@
 .ts-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  /* z-index: 9999; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,6 +18,7 @@
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   animation: ts-fade-in 0.2s ease;
+  z-index: 1000;
 }
 
 @keyframes ts-fade-in {
@@ -43,6 +44,16 @@
 
 .ts-modal::-webkit-scrollbar {
   display: none;
+}
+
+.ts-tutorial-target {
+  position: relative;
+  z-index: 999;
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 3px rgba(109, 40, 217, 0.45),
+    0 0 0 7px rgba(109, 40, 217, 0.12);
+  transition: box-shadow 0.3s ease;
 }
 
 @keyframes ts-slide-up {
@@ -581,7 +592,6 @@
 
 @media (max-width: 760px) {
   .ts-modal--tutorial-flow,
-  .ts-modal--checking-step,
   .ts-modal--split-step {
     width: min(560px, calc(100vw - 32px));
     grid-template-columns: 1fr;
@@ -592,8 +602,7 @@
     grid-template-columns: 1fr;
   }
 
-  .ts-step-panel,
-  .ts-tutorial-side {
+  .ts-step-panel {
     padding: 28px 24px;
     border-right: none;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
@@ -609,8 +618,7 @@
     max-width: none;
   }
 
-  .ts-tutorial-form,
-  .ts-form-panel {
+  .ts-tutorial-form  {
     padding: 24px;
     max-height: unset;
   }
@@ -662,6 +670,7 @@
   .ts-highlight-actions {
     grid-template-columns: 1fr;
   }
+
 }
 
 .ts-modal--tutorial-flow {
@@ -744,39 +753,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 14px;
   margin-top: auto;
-}
-
-.ts-step-skip {
-  display: block;
-  width: fit-content;
-  margin: 18px auto 0;
-  border: 0;
-  background: transparent;
-  color: #6d28d9;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.ts-form-panel {
-  padding: 36px;
-  background: #ffffff;
-}
-
-.ts-modal--checking-step {
-  width: min(1120px, calc(100vw - 48px));
-  min-height: 560px;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  overflow: hidden;
-}
-
-.ts-tutorial-side {
-  padding: 48px 36px;
-  border-right: 1px solid rgba(15, 23, 42, 0.08);
-  background:
-    radial-gradient(circle at top left, rgba(109, 40, 217, 0.08), transparent 34%),
-    rgba(255, 255, 255, 0.96);
 }
 
 .ts-step-count {
@@ -878,24 +854,6 @@
     rgba(255, 255, 255, 0.96);
 }
 
-.ts-tutorial-form {
-  padding: 36px;
-  background: #ffffff;
-}
-
-.ts-step-image-wrap {
-  margin: 36px 0;
-  display: flex;
-  justify-content: center;
-}
-
-.ts-step-image {
-  max-width: 260px;
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
 .ts-step-progress {
   display: flex;
   gap: 6px;
@@ -975,7 +933,6 @@
   min-height: 260px;
   padding: 38px 36px 26px;
 
-  display: grid;
   grid-template-columns: 80px 1fr;
   gap: 24px;
 
@@ -1003,11 +960,6 @@
   margin-bottom: 12px;
 }
 
-.ts-highlight-actions {
-  grid-template-columns: 1fr 110px 110px;
-  gap: 12px;
-  margin-top: 8px;
-}
 .ts-highlight-close {
   position: absolute;
   top: 22px;
@@ -1021,12 +973,9 @@
 }
 
 
-
 .ts-highlight-copy {
   min-width: 0;
 }
-
-
 
 .ts-highlight-actions {
   grid-column: 1 / -1;
@@ -1104,9 +1053,6 @@
   opacity: 1;
 }
 
-
-
-
 .ts-results-side-step {
   position: absolute;
   inset: 0;
@@ -1120,7 +1066,7 @@
   pointer-events: auto;
 
   left: 40px;
-  top: 100px;
+  top: 300px;
 
   width: 420px;
   min-height: 260px;
@@ -1135,18 +1081,6 @@
   box-shadow:
     0 28px 90px rgba(15, 23, 42, 0.22),
     0 0 0 1px rgba(15, 23, 42, 0.06);
-}
-
-.ts-results-logo {
-  width: 72px;
-  height: 72px;
-  display: grid;
-  place-items: center;
-  color: #6d28d9;
-  font-size: 54px;
-  font-weight: 900;
-  line-height: 1;
-  margin-bottom: 18px;
 }
 
 .ts-results-title {
@@ -1169,16 +1103,4 @@
   grid-template-columns: 1fr 1fr;
   gap: 14px;
   margin-top: 28px;
-}
-
-.ts-overlay--document-scroll {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  inset: auto;
-  min-height: 100%;
-  height: auto;
-  align-items: flex-start;
-  justify-content: flex-start;
 }

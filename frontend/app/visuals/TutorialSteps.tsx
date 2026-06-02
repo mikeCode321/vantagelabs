@@ -805,28 +805,8 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
     const existingRetirementAccount = state.accounts.employer_retirement[0];
   
     return (
-      <div className="ts-detached-step">
-        <section className="ts-detached-form-card">
-          {existingRetirementAccount ? (
-            <EditEmployerRetirementAccountForm
-              item={existingRetirementAccount}
-              state={state}
-              dispatch={dispatch}
-              onClose={onNext}
-              onToast={onToast}
-            />
-          ) : (
-            <EmployerRetirementAccountForm
-              state={state}
-              dispatch={dispatch}
-              onClose={onNext}
-              onToast={onToast}
-            />
-          )}
-        </section>
-  
+      <div className="ts-modal ts-modal--split-step">
         <TutorialStepPanel
-          className="ts-step-panel--floating"
           currentStepIndex={currentStepIndex}
           totalSteps={totalSteps}
           title={step.title}
@@ -851,6 +831,25 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
           nextLabel="Next"
           showSkip={true}
         />
+  
+        <section className="ts-tutorial-form">
+          {existingRetirementAccount ? (
+            <EditEmployerRetirementAccountForm
+              item={existingRetirementAccount}
+              state={state}
+              dispatch={dispatch}
+              onClose={onNext}
+              onToast={onToast}
+            />
+          ) : (
+            <EmployerRetirementAccountForm
+              state={state}
+              dispatch={dispatch}
+              onClose={onNext}
+              onToast={onToast}
+            />
+          )}
+        </section>
       </div>
     );
   }

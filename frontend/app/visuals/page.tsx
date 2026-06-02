@@ -1309,11 +1309,12 @@ export default function Dashboard() {
         <FinancialOverviewCards cards={overviewCards} />
         <section className="simulation-results-grid">
           <div data-tutorial="income-chart">
-            <IncomeGrowthChart />
+            <IncomeGrowthChart data={simResult} />
           </div>
 
           <div data-tutorial="simulation-highlights">
             <SimulationHighlights data={testData} />
+            <SimulationControls state={state} setSimResult={setSimResult} />
           </div>
         </section>
         <section className="simulation-section-header">

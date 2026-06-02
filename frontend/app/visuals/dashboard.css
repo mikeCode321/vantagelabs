@@ -17,8 +17,6 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #f0edf8;
-  margin-bottom: 18px;
 }
 
 .dash-logo-img {
@@ -2266,12 +2264,9 @@ tbody tr:hover {
 
 
 
-.dash-root[data-active-tutorial-step="results"]
-  [data-tutorial="income-chart"],
-.dash-root[data-active-tutorial-step="results"]
-  [data-tutorial="simulation-highlights"],
-.dash-root[data-active-tutorial-step="results"]
-  [data-tutorial="run-simulation-controls"] {
+.dash-root[data-active-tutorial-step="results"][data-tutorial="income-chart"],
+.dash-root[data-active-tutorial-step="results"][data-tutorial="simulation-highlights"],
+.dash-root[data-active-tutorial-step="results"][data-tutorial="run-simulation-controls"] {
   position: relative;
   z-index: 1000;
   box-shadow:

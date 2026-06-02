@@ -433,18 +433,7 @@ type TutorialOnboardingProps = {
     onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
   };
   
-export function TutorialOnboarding({
-    steps,
-    currentStepIndex,
-    state,
-    dispatch,
-    onNext,
-    onBack,
-    onSkip,
-    onFinish,
-    onProfileComplete,
-    onToast,
-  }: TutorialOnboardingProps) {
+export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, onNext, onBack, onSkip, onFinish, onProfileComplete, onToast,}: TutorialOnboardingProps) {
     const step = steps[currentStepIndex];
   
     if (!step) return null;
@@ -764,47 +753,24 @@ export function TutorialOnboarding({
     onSkip: () => void;
   };
   
-  function ResultsTutorialStep({
-    step,
-    currentStepIndex,
-    totalSteps,
-    onBack,
-    onFinish,
-    onSkip,
-  }: ResultsTutorialStepProps) {
+  function ResultsTutorialStep({ step, currentStepIndex, totalSteps, onBack, onFinish, onSkip,}: ResultsTutorialStepProps) {
     return (
       <div className="ts-results-side-step">
         <div className="ts-results-side-card">
-          <button type="button" className="ts-highlight-close" onClick={onSkip}>
-            ×
-          </button>
+          <button type="button" className="ts-highlight-close" onClick={onSkip}>×</button>
   
-          <div className="ts-results-logo">V</div>
-  
-          <p className="ts-step-count">
-            Step {currentStepIndex + 1} of {totalSteps}
-          </p>
-  
+          {/* <div className="ts-results-logo">V</div> */}
+          <p className="ts-step-count">Step {currentStepIndex + 1} of {totalSteps}</p>
+
           <h2 className="ts-results-title">{step.title}</h2>
-  
-          <p className="ts-results-description">
-            {step.description}
-          </p>
+          <p className="ts-results-description">{step.description}</p>
   
           <div className="ts-results-side-actions">
-            <button
-              type="button"
-              className="ts-btn ts-btn--secondary"
-              onClick={onBack}
-            >
+            <button type="button" className="ts-btn ts-btn--secondary" onClick={onBack}>
               Back
             </button>
   
-            <button
-              type="button"
-              className="ts-btn ts-btn--primary"
-              onClick={onFinish}
-            >
+            <button type="button" className="ts-btn ts-btn--primary" onClick={onFinish}>
               Finish
             </button>
           </div>
@@ -942,8 +908,8 @@ export function TutorialOnboarding({
         id: "results",
         title: "Run your simulation and review the results",
         description:
-          "Click Run Simulation to generate your projection, then review the overview cards, chart, and highlights to understand your outlook.",
-        targetSelector: "[data-tutorial='income-chart'], [data-tutorial='simulation-highlights']",
+          "When you're ready click Run Simulation to generate your projection, then review the overview cards, chart, and highlights to understand your outlook.",
+        targetSelector: "[data-tutorial='income-chart'], [data-tutorial='simulation-highlights'], [data-tutorial='financial-overview']",
       },
   ];
 

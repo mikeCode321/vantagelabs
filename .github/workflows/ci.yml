@@ -2,9 +2,8 @@ name: Frontend CI
 
 on:
   pull_request:
-  push:
     branches:
-      - main
+      - develop
 
 jobs:
   build:

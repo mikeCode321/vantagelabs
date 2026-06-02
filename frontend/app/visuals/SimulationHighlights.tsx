@@ -71,7 +71,7 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
   );
 }
   
-  export function SimulationHighlights({ data }) {
+  export function SimulationHighlights({ data, tutorialActive = false }) {
       const metrics = data?.metrics;
       const yearResults = data?.year_results;
 
@@ -128,7 +128,7 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
     ];
   
     return (
-      <aside className="simulation-highlights-card">
+      <aside className={`simulation-highlights-card${tutorialActive ? " ts-tutorial-target" : ""}`}>
         <div className="simulation-highlights-card__header">
           <h2>Simulation Highlights</h2>
         </div>

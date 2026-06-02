@@ -237,7 +237,7 @@ const PLACEHOLDER_DATA = [
   { age: 30, year: 30, value: 78000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
 ];
 
-export default function IncomeGrowthChart({ data }) {
+export default function IncomeGrowthChart({ data, tutorialActive = false }) {
   const [activeKey, setActiveKey] = useState("gross");
   const [tooltip, setTooltip] = useState(null);
   const chartData = useMemo(() => {
@@ -265,7 +265,7 @@ export default function IncomeGrowthChart({ data }) {
   const displayData = isEmpty ? PLACEHOLDER_DATA : chartData;
 
   return (
-  <section className="income-chart-card">
+  <section className={`income-chart-card${tutorialActive ? " ts-tutorial-target" : ""}`}>
 
     <div className="income-chart-top">
 

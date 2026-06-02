@@ -151,82 +151,6 @@ export function FeedbackModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
   );
 }
 
-export type SourceSnapshot = {
-  id: string;
-  name: string;
-  source_type: string;
-  asset_value: number;
-  annual_cashflow: number;
-  // start/end values for display — populated for income + expense sources
-  start_value?: number; // what the source was worth at year start
-  end_value?: number; // after growth applied
-};
-// not in use and out of sync 
-// export type SimYearResult = {
-//   year: number;
-//   net_worth: number; // total_cash + all asset values
-//   total_cash: number; // sum across all liquid accounts
-//   total_income: number; // sum of all income source cashflows
-//   total_expenses: number; // sum of all expense source cashflows
-//   // WIP: return interest earned on cash/liquid accounts separately in the future
-//   // WIP: return appreciation/asset growth separately in the future
-//   sources: SourceSnapshot[];
-// };
-
-function transformData(simResult) {
-  return simResult.map((year) => {
-    const totalAssets = year.sources.reduce((sum, src) => {
-      if (src.source_type === "rental" || src.source_type === "stock") {
-        return sum + (src.asset_value || 0);
-      }
-      return sum;
-    }, 0);
-
-    return {
-      year: year.year,
-      cash: year.total_cash,
-      assets: totalAssets,
-      netWorth: year.net_worth,
-    };
-  });
-}
-
-export function NetWorthStackedChart({ simResult }) {
-  if (!simResult.length)
-    return (
-      <>
-        <div className="chart-wrap">
-          <h3>Net Worth Over Time</h3>
-          <h5>Not Ready</h5>
-        </div>
-      </>
-    );
-
-  const data = transformData(simResult);
-
-  return (
-    <div className="chart-wrap">
-      <h3>Net Worth Over Time</h3>
-
-      <ResponsiveContainer>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="year" />
-          <YAxis />
-          <Tooltip formatter={(value) => `$${Number(value).toLocaleString()}`} />
-          <Legend />
-
-          {/* bottom layer */}
-          <Bar dataKey="cash" stackId="1" fill="#82ca9d" />
-
-          {/* top layer */}
-          <Bar dataKey="assets" stackId="1" fill="#8884d8" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
 export function SimulationControls({ state, setSimResult }) {
   const [hasResults, setHasResults] = useState(false);
 
@@ -256,92 +180,12 @@ export function SimulationControls({ state, setSimResult }) {
     setSimResult(null);
     setHasResults(false);
   };
-
   return (
     <div style={{marginTop:"25px"}}>
       <button style={{marginRight:"25px"}} onClick={runSimulation}>Run Simulation</button>
       <button onClick={clearSimulation} disabled={!hasResults}>
         Clear Simulation Result
       </button>
-    </div>
-  );
-}
-
-export function SimResultViewer({ simResult }) {
-  const [openYears, setOpenYears] = useState<number[]>([]);
-
-  const toggleYear = (year: number) => {
-    setOpenYears((previousState) => {
-      console.log("Previous state from React:", previousState);
-
-      const isOpen = previousState.includes(year);
-
-      if (isOpen) {
-        const nextState = previousState.filter((y) => y !== year);
-        console.log("Closing year → new state:", nextState);
-        return nextState;
-      }
-
-      const nextState = [...previousState, year];
-      console.log("Opening year → new state:", nextState);
-      return nextState;
-    });
-  };
-
-  //   const mockResults = generateMockResults();
-
-  return (
-    <div className="section">
-      <div className="section-header">
-        <h2>Simulation Results</h2>
-
-        {/* to generate fake data use mockResults instead of simResult */}
-        <button onClick={() => setOpenYears(simResult.map((y) => y.year))}>Expand All</button>
-        <button onClick={() => setOpenYears([])}>Collapse All</button>
-      </div>
-
-      <table className="mega-table">
-        <thead>
-          <tr>
-            <th>Year</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Asset Value</th>
-            <th>Cashflow</th>
-            <th>Start</th>
-            <th>End</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {/* to generate fake data use mockResults instead of simResult */}
-          {simResult.map((yearData) => (
-            <React.Fragment key={yearData.year}>
-              {/* YEAR SUMMARY ROW */}
-              <tr className="year-row" onClick={() => toggleYear(yearData.year)}>
-                <td>{yearData.year}</td>
-                <td colSpan={6}>
-                  Net Worth: ${yearData.net_worth} | Cash: ${yearData.total_cash} | Income: ${yearData.total_income} | Expenses: ${yearData.total_expenses}
-                </td>
-              </tr>
-
-              {/* SOURCE ROWS */}
-              {openYears.includes(yearData.year) &&
-                yearData.sources.map((src) => (
-                  <tr key={src.id} className="source-row">
-                    <td></td>
-                    <td>{src.name}</td>
-                    <td>{src.source_type}</td>
-                    <td>${src.asset_value}</td>
-                    <td>${src.annual_cashflow}</td>
-                    <td>{src.start_value ?? "-"}</td>
-                    <td>{src.end_value ?? "-"}</td>
-                  </tr>
-                ))}
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }

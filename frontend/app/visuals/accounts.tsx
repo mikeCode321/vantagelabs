@@ -1053,6 +1053,12 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
   const checkingAccounts = state?.accounts?.checking || [];
   const selectedJob = linkedIncomeId ? allJobs.find((job) => job.id === linkedIncomeId) : null;
 
+  useEffect(() => {
+    if (linkedIncomeId && selectedJob && !netIncome) {
+      handleJobSelect(linkedIncomeId);
+    }
+  }, []); // Run once on mount
+
   const calculateNetIncome = async (grossIncome: number, jobId: string) => {
     // TODO: Call our future tax API here when implemented
     // For now we use a placeholder estimate
@@ -1083,12 +1089,6 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
       setIsLoadingTaxCalc(false);
     }
   };
-
-  useEffect(() => {
-    if (linkedIncomeId && selectedJob && !netIncome) {
-      handleJobSelect(linkedIncomeId);
-    }
-  }, []); // Run once on mount
 
   // Calculate effective monthly contribution based on mode
   const effectiveMonthlyContribution = () => {

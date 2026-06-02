@@ -205,7 +205,7 @@ function ChartTooltip({ tooltip }) {
   const left = tooltip.isLast ? x - GAP - TOOLTIP_W : x + GAP;
 
   return (
-    <div className="income-tooltip" style={{position: "fixed",left, top: y - 12,pointerEvents: "none",zIndex: 50,}}>
+    <div className="income-tooltip" style={{ left, top: y - 12 }}>
       <div className="income-tooltip-title">{row.year} · Age {row.age}</div>
 
       <div className="income-tooltip-row">
@@ -359,14 +359,11 @@ export default function IncomeGrowthChart({ data, tutorialActive = false }) {
       </ResponsiveContainer>
 
       {isEmpty && (
-        <div style={{
-          position: "absolute", inset: 0,
-          display: "flex", flexDirection: "column",
-          alignItems: "center", justifyContent: "center",
-          gap: 8,
-        }}>
-          <p style={{ fontSize: 15, fontWeight: 500, color: "var(--color-text-primary)", margin: 0 }}>No simulation data yet</p>
-          <p style={{ fontSize: 13, color: "var(--color-text-secondary)", margin: 0 }}>Add your financial details and run a simulation to see results</p>
+        <div className="income-chart-empty">
+          <p className="income-chart-empty__title">No simulation data yet</p>
+          <p className="income-chart-empty__subtitle">
+            Add your financial details and run a simulation to see results
+          </p>
         </div>
       )}
 

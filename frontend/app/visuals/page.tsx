@@ -1339,7 +1339,7 @@ export default function Dashboard() {
           </div>
         </header>
 
-        <div style={{ display: "flex", justifyContent: "space-between"}}>
+        {/* <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
           
           {simResult ? <JsonView
@@ -1350,7 +1350,7 @@ export default function Dashboard() {
             shortenTextAfterLength={40}
           />: "[]"}
           <UserAgeForm state={state} dispatch={dispatch} />
-        </div>
+        </div> */}
 
         <FinancialOverviewCards cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
         <section className="simulation-results-grid">

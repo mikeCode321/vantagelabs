@@ -80,52 +80,80 @@ function TutorialStepPanel({
   nextLabel = "Next",
   showSkip = true,
   className = '',
-  nextDisabled= false,
+  nextDisabled = false,
+  // new:
+  isMobileInfoOpen = false,
+  onToggleInfo,
 }) {
   return (
     <aside className={`ts-step-panel ${className}`}>
-      <button type="button" className="ts-step-close" onClick={onSkip}>
-        ×
-      </button>
+      <button type="button" className="ts-step-close" onClick={onSkip}>×</button>
 
-      <TutorialProgress
-        currentStepIndex={currentStepIndex}
-        totalSteps={totalSteps}
-      />
+      {/* ── Desktop: progress + title + description + items as before ── */}
+      <div className="ts-panel-desktop">
+        <TutorialProgress currentStepIndex={currentStepIndex} totalSteps={totalSteps} />
+        <p className="ts-step-count">Step {currentStepIndex + 1} of {totalSteps}</p>
+        <h2 className="ts-step-title">{title}</h2>
+        <p className="ts-step-description">{description}</p>
+        {items && (
+          <div className="ts-step-list">
+            {items.map((item) => (
+              <div className="ts-step-list-item" key={item.label}>
+                <span className="ts-step-list-icon">{item.icon}</span>
+                <span>{item.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-      <p className="ts-step-count">
-        Step {currentStepIndex + 1} of {totalSteps}
-      </p>
-
-      <h2 className="ts-step-title">{title}</h2>
-
-      <p className="ts-step-description">{description}</p>
-
-      {image && (
-        <div className="ts-step-image-wrap">
-          <img src={image} alt="" className="ts-step-image" />
+      {/* ── Mobile: compact header bar ── */}
+      <div className="ts-panel-mobile">
+        <div className="ts-panel-mobile__top">
+          <div className="ts-panel-mobile__meta">
+            <TutorialProgress currentStepIndex={currentStepIndex} totalSteps={totalSteps} />
+            <p className="ts-step-count">Step {currentStepIndex + 1} of {totalSteps}</p>
+            <h2 className="ts-step-title">{title}</h2>
+          </div>
+          {(description || items) && (
+            <button
+              type="button"
+              className={`ts-info-toggle${isMobileInfoOpen ? " ts-info-toggle--open" : ""}`}
+              onClick={onToggleInfo}
+              aria-expanded={isMobileInfoOpen}
+            >
+              Tips
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                <path d="M3 6l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          )}
         </div>
-      )}
 
-      {items && (
-        <div className="ts-step-list">
-          {items.map((item) => (
-            <div className="ts-step-list-item" key={item.label}>
-              <span className="ts-step-list-icon">{item.icon}</span>
-              <span>{item.label}</span>
-            </div>
-          ))}
-        </div>
-      )}
+        {isMobileInfoOpen && (
+          <div className="ts-panel-mobile__info">
+            <p className="ts-step-description">{description}</p>
+            {items && (
+              <div className="ts-step-list">
+                {items.map((item) => (
+                  <div className="ts-step-list-item" key={item.label}>
+                    <span className="ts-step-list-icon">{item.icon}</span>
+                    <span>{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
+      {/* ── Buttons — always visible ── */}
       <div className="ts-step-actions">
         <button type="button" className="ts-btn ts-btn--secondary" onClick={onBack}>
           Back
         </button>
-
-        {/* if no checking account added yet disable this button and have a hover that displays a tool tip saying you must add a checking account  */}
         <div className={`ts-tooltip-wrap${nextDisabled ? " ts-tooltip-wrap--active" : ""}`}>
-          <button type="button" className="ts-btn ts-btn--primary" onClick={onNext} disabled={nextDisabled} >
+          <button type="button" className="ts-btn ts-btn--primary" onClick={onNext} disabled={nextDisabled}>
             {nextLabel}
           </button>
           {nextDisabled && (
@@ -144,7 +172,6 @@ function TutorialStepPanel({
     </aside>
   );
 }
-
 
 
 function WelcomeScreen({ onGetStarted }) {
@@ -448,12 +475,7 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
 
     
     return (
-      <div
-        className={`ts-overlay ${
-          step.id === "results" || step.id === "expenses-assets" ? 
-          "ts-overlay--document-scroll" : ""
-        }`}
-      >
+      <div className="ts-overlay">
         {step.id === "welcome" && (
           <div className="ts-modal">
             <div className="ts-modal__corner ts-modal__corner--tl" />
@@ -560,18 +582,10 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
     onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
   };
 
-  function CheckingAccountTutorialStep({
-    step,
-    currentStepIndex,
-    totalSteps,
-    state,
-    dispatch,
-    onBack,
-    onNext,
-    onSkip,
-    onToast,
-  }: CheckingAccountTutorialStepProps) {
+  function CheckingAccountTutorialStep({ step, currentStepIndex, totalSteps, state, dispatch, onBack, onNext, onSkip, onToast, }: CheckingAccountTutorialStepProps) {
+    const [isInfoOpen, setIsInfoOpen] = useState(false);
     const existingCheckingAccount = state.accounts.checking[0];
+    
     return (
       <div className="ts-modal ts-modal--split-step">
         <TutorialStepPanel
@@ -583,36 +597,23 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
             { icon: "🏦", label: "Name your account" },
             { icon: "💰", label: "Set your starting balance" },
             { icon: "📅", label: "Define your timeline" },
-            {
-              icon: "⌁",
-              label: "Interest tiers are optional for advanced detail.",
-            },
+            { icon: "⌁",  label: "Interest tiers are optional for advanced detail." },
           ]}
           onBack={onBack}
           onNext={onNext}
           onSkip={onSkip}
-          nextLabel={"Next"}
+          nextLabel="Next"
           showSkip={true}
           nextDisabled={!existingCheckingAccount}
+          isMobileInfoOpen={isInfoOpen}           // add
+          onToggleInfo={() => setIsInfoOpen(o => !o)}  // add
         />
-  
         <section className="ts-tutorial-form">
-        {existingCheckingAccount ? (
-          <EditCheckingAccountForm
-            item={existingCheckingAccount}
-            state={state}
-            dispatch={dispatch}
-            onClose={onNext}
-            onToast={onToast}
-          />
-        ) : (
-          <CheckingAccountForm
-            state={state}
-            dispatch={dispatch}
-            onClose={onNext}
-            onToast={onToast}
-          />
-        )}
+          {existingCheckingAccount ? (
+            <EditCheckingAccountForm item={existingCheckingAccount} state={state} dispatch={dispatch} onClose={onNext} onToast={onToast} />
+          ) : (
+            <CheckingAccountForm state={state} dispatch={dispatch} onClose={onNext} onToast={onToast} />
+          )}
         </section>
       </div>
     );
@@ -630,17 +631,8 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
     onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
   };
   
-  function SalaryIncomeTutorialStep({
-    step,
-    currentStepIndex,
-    totalSteps,
-    state,
-    dispatch,
-    onBack,
-    onNext,
-    onSkip,
-    onToast,
-  }: SalaryIncomeTutorialStepProps) {
+  function SalaryIncomeTutorialStep({ step, currentStepIndex, totalSteps, state, dispatch, onBack, onNext, onSkip, onToast, }: SalaryIncomeTutorialStepProps) {
+    const [isInfoOpen, setIsInfoOpen] = useState(false);
     const existingSalaryIncome = state.incomes.salary[0];
   
     return (
@@ -655,6 +647,8 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
           onSkip={onSkip}
           nextLabel="Next"
           showSkip={true}
+          isMobileInfoOpen={isInfoOpen}           
+          onToggleInfo={() => setIsInfoOpen(o => !o)}  
         />
   
         <section className="ts-tutorial-form">
@@ -790,6 +784,7 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
   };
   
   function EmployerRetirementTutorialStep({ step, currentStepIndex, totalSteps, state, dispatch, onBack, onNext, onSkip, onToast, }: EmployerRetirementTutorialStepProps) {
+    const [isInfoOpen, setIsInfoOpen] = useState(false);
     const existingRetirementAccount = state.accounts.employer_retirement[0];
   
     return (
@@ -818,6 +813,8 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
           onSkip={onSkip}
           nextLabel="Next"
           showSkip={true}
+          isMobileInfoOpen={isInfoOpen}        
+          onToggleInfo={() => setIsInfoOpen(o => !o)}
         />
   
         <section className="ts-tutorial-form">

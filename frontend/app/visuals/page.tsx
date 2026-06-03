@@ -1,6 +1,8 @@
 "use client";
 import "./dashboard.css";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Audio } from "react-loader-spinner";
 
 import { useState, useReducer, useEffect, useRef } from "react";
@@ -24,6 +26,8 @@ import JsonView from "@uiw/react-json-view";
 import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewCards";
 
 import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
+
+const BASE = process.env.NODE_ENV === "production" ? "/vantagelabs" : "";
 
 type SimRequest = {
   user_start_age: number;
@@ -1232,14 +1236,7 @@ export default function Dashboard() {
           {/* Desktop layout */}
           <div className="dash-sidebar-header">
             <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
-              <Image
-                src="/vantage_logo_transparent.svg"
-                alt="Vantage"
-                width={120}
-                height={40}
-                className="dash-logo-img"
-                priority
-              />
+              <img src={`${BASE}/vantage_logo_transparent.svg`} alt="Vantage" width={120} height={34} className="dash-logo-img" loading="eager" />
             </div>
             <button
               type="button"
@@ -1258,14 +1255,14 @@ export default function Dashboard() {
           </div>
 
           <nav className="dash-nav" aria-label="Dashboard navigation">
-            <a href="/testing" className="dash-nav-item" title="Testing Grounds">
+            <Link href="/testing" className="dash-nav-item" title="Testing Grounds">
               <span className="dash-nav-icon">▦</span>
               <span className="dash-nav-label">Testing Grounds</span>
-            </a>
-            <a href="#" className="dash-nav-item" title="Testing Visuals">
+            </Link>
+            <Link href="/visuals" className="dash-nav-item" title="Testing Visuals">
               <span className="dash-nav-icon">◔</span>
               <span className="dash-nav-label">Testing Visuals</span>
-            </a>
+            </Link>
           </nav>
 
           <button
@@ -1284,14 +1281,7 @@ export default function Dashboard() {
 
         {/* Mobile topbar */}
         <div className="dash-mobile-bar">
-          <Image
-            src="/vantage_logo_transparent.svg"
-            alt="Vantage"
-            width={100}
-            height={34}
-            className="dash-logo-img"
-            priority
-          />
+          <img src={`${BASE}/vantage_logo_transparent.svg`} alt="Vantage" width={120} height={34} className="dash-logo-img" loading="eager" />
           <button
             type="button"
             className="dash-mobile-menu-btn"
@@ -1307,14 +1297,14 @@ export default function Dashboard() {
         {mobileNavOpen && (
           <div className="dash-mobile-dropdown">
             <nav className="dash-mobile-nav">
-              <a href="/testing" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
+              <Link href="/testing" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
                 <span className="dash-nav-icon">▦</span>
                 <span className="dash-nav-label">Testing Grounds</span>
-              </a>
-              <a href="#" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
+              </Link>
+              <Link href="/visuals" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
                 <span className="dash-nav-icon">◔</span>
                 <span className="dash-nav-label">Testing Visuals</span>
-              </a>
+              </Link>
             </nav>
             <button
               type="button"

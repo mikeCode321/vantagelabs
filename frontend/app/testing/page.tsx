@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import "./dashboard.css";
 import { SIM_MAX } from "@/app/testing/constants";
 import { useState, useReducer, useEffect } from "react";
@@ -1154,12 +1155,12 @@ export default function Dashboard() {
           <span className="dash-logo-text">VantageLabs</span>
         </div>
         <nav className="dash-nav">
-          <a href="#" className="dash-nav-item dash-nav-active">
+          <Link href="/testing" className="dash-nav-item dash-nav-active">
             TESTING GROUNDS
-          </a>
-          <a href="/visuals" className="dash-nav-item dash-nav-active">
+          </Link>
+          <Link href="/visuals" className="dash-nav-item dash-nav-active">
             TESTING VISUALS
-          </a>
+          </Link>
         </nav>
         <div className="dash-sidebar-footer">
           <span className="dash-year-badge">FY 2025</span>

@@ -1110,6 +1110,10 @@
     background: rgba(0, 0, 0, 0.35);
   }
 
+  .ts-overlay-no-bg {
+    background: none !important;
+  }
+
   .ts-modal {
     width: calc(100vw - 24px);
     max-height: calc(100dvh - 48px);

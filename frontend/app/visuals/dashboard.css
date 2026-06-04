@@ -749,7 +749,6 @@ tbody tr:hover {
   padding: 32px;
   background: rgba(20, 18, 35, 0.55);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
 }
 
 .modal {

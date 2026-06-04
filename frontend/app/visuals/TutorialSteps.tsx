@@ -475,99 +475,114 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
 
     
     return (
-      <div className="ts-overlay">
-        {step.id === "welcome" && (
-          <div className="ts-modal">
-            <div className="ts-modal__corner ts-modal__corner--tl" />
-            <div className="ts-modal__corner ts-modal__corner--br" />
-  
-            <WelcomeScreen onGetStarted={onNext} />
-          </div>
-        )}
-  
-        {step.id === "profile" && (
-          <div className="ts-modal">
-            <div className="ts-modal__corner ts-modal__corner--tl" />
-            <div className="ts-modal__corner ts-modal__corner--br" />
-  
-            <ProfileSetupScreen
+      <>
+        
+          {step.id === "welcome" && (
+            <div className="ts-overlay">
+              <div className="ts-modal-welcome">
+                <div className="ts-modal__corner ts-modal__corner--tl" />
+                <div className="ts-modal__corner ts-modal__corner--br" />
+      
+                <WelcomeScreen onGetStarted={onNext} />
+              </div>
+            </div>
+          )}
+        
+        
+          {step.id === "profile" && (
+            <div className="ts-overlay">
+              <div className="ts-modal">
+                <div className="ts-modal__corner ts-modal__corner--tl" />
+                <div className="ts-modal__corner ts-modal__corner--br" />
+      
+                <ProfileSetupScreen
+                  onBack={onBack}
+                  onComplete={(profile) => {
+                    onProfileComplete(profile, "full");
+                    onNext();
+                  }}
+                  mode="full"
+                />
+              </div>
+            </div>
+          )}
+    
+          {step.id === "checking" && (
+            <div className="ts-overlay">
+              <CheckingAccountTutorialStep
+                step={step}
+                currentStepIndex={currentStepIndex}
+                totalSteps={steps.length}
+                state={state}
+                dispatch={dispatch}
+                onBack={onBack}
+                onNext={isLastStep ? onFinish : onNext}
+                onSkip={onSkip}
+                onToast={onToast}
+              />
+            </div>
+          )}
+        
+        
+        {step.id === "salary" && (
+          <div className="ts-overlay">
+            <SalaryIncomeTutorialStep
+              step={step}
+              currentStepIndex={currentStepIndex}
+              totalSteps={steps.length}
+              state={state}
+              dispatch={dispatch}
               onBack={onBack}
-              onComplete={(profile) => {
-                onProfileComplete(profile, "full");
-                onNext();
-              }}
-              mode="full"
+              onNext={isLastStep ? onFinish : onNext}
+              onSkip={onSkip}
+              onToast={onToast}
             />
           </div>
         )}
-  
-        {step.id === "checking" && (
-          <CheckingAccountTutorialStep
-            step={step}
-            currentStepIndex={currentStepIndex}
-            totalSteps={steps.length}
-            state={state}
-            dispatch={dispatch}
-            onBack={onBack}
-            onNext={isLastStep ? onFinish : onNext}
-            onSkip={onSkip}
-            onToast={onToast}
-          />
-
-          
-        )}
-      
-      
-      {step.id === "salary" && (
-        <SalaryIncomeTutorialStep
-          step={step}
-          currentStepIndex={currentStepIndex}
-          totalSteps={steps.length}
-          state={state}
-          dispatch={dispatch}
-          onBack={onBack}
-          onNext={isLastStep ? onFinish : onNext}
-          onSkip={onSkip}
-          onToast={onToast}
-        />
-      )}
 
         {step.id === "retirement" && (
-        <EmployerRetirementTutorialStep
-            step={step}
-            currentStepIndex={currentStepIndex}
-            totalSteps={steps.length}
-            state={state}
-            dispatch={dispatch}
-            onBack={onBack}
-            onNext={isLastStep ? onFinish : onNext}
-            onSkip={onSkip}
-            onToast={onToast}
-        />
+          <div className="ts-overlay">
+            <EmployerRetirementTutorialStep
+                step={step}
+                currentStepIndex={currentStepIndex}
+                totalSteps={steps.length}
+                state={state}
+                dispatch={dispatch}
+                onBack={onBack}
+                onNext={isLastStep ? onFinish : onNext}
+                onSkip={onSkip}
+                onToast={onToast}
+            />
+          </div>
         )}
 
         {step.id === "expenses-assets" && (
-        <ExpensesAssetsTutorialStep
-            step={step}
-            currentStepIndex={currentStepIndex}
-            totalSteps={steps.length}
-            onBack={onBack}
-            onNext={isLastStep ? onFinish : onNext}
-            onSkip={onSkip}
-        />
-        )}
+          <div className="ts-overlay ts-overlay-no-bg">
+            <ExpensesAssetsTutorialStep
+                step={step}
+                currentStepIndex={currentStepIndex}
+                totalSteps={steps.length}
+                onBack={onBack}
+                onNext={isLastStep ? onFinish : onNext}
+                onSkip={onSkip}
+            />
+          </div>
+          )}
 
-        {step.id === "results" && (
-        <ResultsTutorialStep
-            step={step}
-            currentStepIndex={currentStepIndex}
-            totalSteps={steps.length}
-            onBack={onBack}
-            onFinish={onFinish}
-            onSkip={onSkip}
-        />
-        )}
-      </div>
+          {step.id === "results" && (
+            <div className="ts-overlay ts-overlay-no-bg">
+              <ResultsTutorialStep
+                  step={step}
+                  currentStepIndex={currentStepIndex}
+                  totalSteps={steps.length}
+                  onBack={onBack}
+                  onFinish={onFinish}
+                  onSkip={onSkip}
+              />
+            </div>
+          )}
+      </>
+      
   )};
 
   type CheckingAccountTutorialStepProps = {

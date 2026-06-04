@@ -190,6 +190,9 @@ body, html {
 
   .modal-overlay {
     align-items: flex-end;
+    backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
   }
 }
 

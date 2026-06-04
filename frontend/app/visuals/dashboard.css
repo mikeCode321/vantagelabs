@@ -748,8 +748,8 @@ tbody tr:hover {
   justify-content: center;
   padding: 32px;
   background: rgba(20, 18, 35, 0.55);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .modal {

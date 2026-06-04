@@ -27,8 +27,6 @@ import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedP
 
 import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
 
-const BASE = process.env.NODE_ENV === "production" ? "/vantagelabs" : "";
-
 type SimRequest = {
   user_start_age: number;
   user_end_age: number;
@@ -1236,7 +1234,15 @@ export default function Dashboard() {
           {/* Desktop layout */}
           <div className="dash-sidebar-header">
             <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
-              <img src={`${BASE}/vantage_logo_transparent.svg`} alt="Vantage" width={120} height={34} className="dash-logo-img" loading="eager" />
+              
+            <Image
+              src="/vantage_logo_transparent.svg"
+              alt="Vantage"
+              width={120}
+              height={34}
+              className="dash-logo-img"
+              priority
+            />
             </div>
             <button
               type="button"
@@ -1281,7 +1287,14 @@ export default function Dashboard() {
 
         {/* Mobile topbar */}
         <div className="dash-mobile-bar">
-          <img src={`${BASE}/vantage_logo_transparent.svg`} alt="Vantage" width={120} height={34} className="dash-logo-img" loading="eager" />
+          <Image
+            src="/vantage_logo_transparent.svg"
+            alt="Vantage"
+            width={120}
+            height={34}
+            className="dash-logo-img"
+            priority
+          />
           <button
             type="button"
             className="dash-mobile-menu-btn"

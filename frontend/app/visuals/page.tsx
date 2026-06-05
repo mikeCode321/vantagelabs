@@ -1338,7 +1338,7 @@ export default function Dashboard() {
       <main className="dash-main">
         <header className="dash-topbar">
           <div>
-            <h1 className="dash-page-title">Financial Overview</h1>
+            <h1 className="dash-page-title">AdVantage on Finances</h1>
           </div>
         </header>
 

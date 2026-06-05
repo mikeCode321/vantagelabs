@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
+import {
+  TimelineAgeFields,
+  getValidatedTimelinePayload,
+} from "@/app/visuals/TimelineAgeFields";
 
 // ─────────────────────────────────────────────
 // CORE
@@ -78,6 +82,11 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+
+    if (timeline.invalid) {
+        return;
+    }
 
     dispatch({
       type: "ADD_ACCOUNT",
@@ -86,8 +95,8 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
         variant: "checking",
         id: crypto.randomUUID(),
         name,
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         starting_balance: Number(balance),
         interest_tiers: tiers,
       },
@@ -210,24 +219,15 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
               ))}
             </div>
           </div>
-
           {/* ── RIGHT ── */}
-          <div className="form-col">
-            <p className="form-section-heading">Timeline</p>
-
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" />
-              </div>
-            </div>
-          </div>
+          <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
         </div>
-
         {/* Submit Button */}
         <button type="submit" className="form-btn-submit form-btn-submit--mt" disabled={hasCheckingAccount} style={{ opacity: hasCheckingAccount ? 0.5 : 1, cursor: hasCheckingAccount ? "not-allowed" : "pointer" }}>
           Add Checking Account
@@ -306,10 +306,17 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
     return 0;
   };
 
+
   const canUsePercentageMode = netIncome !== null && !isLoadingTaxCalc;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+
+    if (timeline.invalid) {
+        return;
+    }
 
     if (dividendStrategy === "cash_out" && !cashOutAccountId) {
       alert("Please select a checking account for dividend payouts");
@@ -323,8 +330,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
         variant: "taxable_investments",
         id: crypto.randomUUID(),
         name,
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
@@ -453,16 +460,13 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline & Dividend</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" required />
-              </div>
-            </div>
+            <TimelineAgeFields
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
 
             {/* 🔧 FIX: Link to job card - NOW SHOWS IN BOTH MODES */}
             <div className="link-card">
@@ -630,6 +634,11 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
   };
 
   const onSubmit = (e: React.FormEvent) => {
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+
+    if (timeline.invalid) {
+        return;
+    }
     e.preventDefault();
 
     if (linkError) {
@@ -659,8 +668,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
         variant: "employer_retirement",
         id: newAccountId,
         name,
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
@@ -787,16 +796,13 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" required />
-              </div>
-            </div>
+            <TimelineAgeFields
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
 
             {/* Link to job card */}
             <div className="link-card">
@@ -891,7 +897,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 
 /* -------------------- EDIT ACCOUNT FORMS -------------------- */
 
-export function EditCheckingAccountForm({ item, dispatch, onClose, onToast }) {
+export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [startAge, setStartAge] = useState(item.start_age.toString());
@@ -900,14 +906,19 @@ export function EditCheckingAccountForm({ item, dispatch, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+
+    if (timeline.invalid) {
+        return;
+    }
 
     dispatch({
       type: "UPDATE_ACCOUNT",
       payload: {
         ...item,
         name,
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         starting_balance: Number(balance),
         interest_tiers: tiers,
       },
@@ -1008,16 +1019,13 @@ export function EditCheckingAccountForm({ item, dispatch, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
           </div>
         </div>
 
@@ -1110,14 +1118,19 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
       alert("Please select a checking account for dividend payouts");
       return;
     }
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+
+    if (timeline.invalid) {
+        return;
+    }
 
     dispatch({
       type: "UPDATE_ACCOUNT",
       payload: {
         ...item,
         name,
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
@@ -1234,16 +1247,13 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
           <div className="form-col">
             <p className="form-section-heading">Timeline & Dividend</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
 
             {/* 🔧 FIX: Link to job card - NOW SHOWS IN BOTH MODES */}
             <div className="link-card">
@@ -1412,6 +1422,11 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+
+    if (timeline.invalid) {
+        return;
+    }
 
     if (linkError) {
       return;
@@ -1420,8 +1435,8 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
     const updatedAccount = {
       ...item,
       name,
-      start_age: Number(startAge),
-      end_age: Number(endAge),
+      start_age: timeline.start,
+      end_age: timeline.end,
       starting_balance: Number(balance),
       contribution_mode: contributionMode,
       monthly_contribution: effectiveMonthlyContribution(),
@@ -1556,16 +1571,13 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
 
             {/* Link to job card */}
             <div className="link-card">

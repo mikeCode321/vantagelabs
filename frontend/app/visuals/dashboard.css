@@ -1429,9 +1429,7 @@ tbody tr:hover {
   width: clamp(200px, 14vw, 260px);
   height: 100dvh;
   flex-shrink: 0;
-  background:
-    radial-gradient(circle at top left, rgba(124, 58, 237, 0.08), transparent 34%),
-    #ffffff;
+  background: radial-gradient(circle at 0 0,#0000,#7c3aed14 84%),#fff;
   border-right: 1px solid #ebeaf3;
   position: sticky;
   top: 0;

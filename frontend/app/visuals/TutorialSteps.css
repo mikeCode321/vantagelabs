@@ -61,36 +61,12 @@
   to   { opacity: 1; transform: translateY(0)   scale(1);    }
 }
 
-/* Decorative corner accents — teal to match dashboard */
-.ts-modal__corner {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  pointer-events: none;
-}
-
-.ts-modal__corner--tl {
-  top: -1px;
-  left: -1px;
-  border-top: 2px solid #5FA7AB;
-  border-left: 2px solid #5FA7AB;
-  border-top-left-radius: 16px;
-}
-
-.ts-modal__corner--br {
-  bottom: -1px;
-  right: -1px;
-  border-bottom: 2px solid #5FA7AB;
-  border-right: 2px solid #5FA7AB;
-  border-bottom-right-radius: 16px;
-}
-
-
 /* ─────────────────────────────────────────────
    WELCOME SCREEN
 ───────────────────────────────────────────── */
 
 .ts-welcome {
+  border: 1px solid #ebeaf3;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -362,6 +362,24 @@ tbody tr:hover {
   color: var(--text-secondary);
   font-weight: 400;
 }
+.form-input--error {
+  border-color: #ef4444 !important;
+  background: #fef2f2 !important;
+  color: #991b1b;
+}
+
+.form-input--error:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16) !important;
+}
+
+.form-field-error {
+  margin: 8px 0 0;
+  color: #dc2626;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 600;
+}
 
 .form-input {
   width: 100%;

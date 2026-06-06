@@ -480,9 +480,6 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
           {step.id === "welcome" && (
             <div className="ts-overlay">
               <div className="ts-modal-welcome">
-                <div className="ts-modal__corner ts-modal__corner--tl" />
-                <div className="ts-modal__corner ts-modal__corner--br" />
-      
                 <WelcomeScreen onGetStarted={onNext} />
               </div>
             </div>
@@ -492,9 +489,6 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
           {step.id === "profile" && (
             <div className="ts-overlay">
               <div className="ts-modal">
-                <div className="ts-modal__corner ts-modal__corner--tl" />
-                <div className="ts-modal__corner ts-modal__corner--br" />
-      
                 <ProfileSetupScreen
                   onBack={onBack}
                   onComplete={(profile) => {

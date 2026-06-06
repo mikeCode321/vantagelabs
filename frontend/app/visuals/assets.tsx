@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/accounts";
+import {
+  TimelineAgeFields,
+  getValidatedTimelinePayload,
+} from "@/app/visuals/TimelineAgeFields";
 
 // ─────────────────────────────────────────────
 // ASSET
@@ -110,6 +114,11 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
   };
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+
+    if (timeline.invalid) {
+        return;
+    }
   
     if (linkError) return;
   
@@ -120,8 +129,8 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
       variant: "house",
       id: assetId,
       name: name || "House",
-      start_age: Number(startAge),
-      end_age: endAge === "" ? null : Number(endAge),
+      start_age: timeline.start,
+      end_age: timeline.end,
       asset_value: Number(houseValue),
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
@@ -206,27 +215,13 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-
-
-
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(opt)</span>
-                </label>
-                <input
-                  value={endAge}
-                  onChange={e => setEndAge(e.target.value)}
-                  className="form-input"
-                  placeholder="30"
-                  type="number"
-                />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             <div className="link-card">
               <div className="link-card__header">
@@ -375,6 +370,11 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+
+    if (timeline.invalid) {
+        return;
+    }
   
     if (linkError) return;
   
@@ -385,8 +385,8 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
       variant: "car",
       id: assetId,
       name: name || "Car",
-      start_age: Number(startAge),
-      end_age: endAge === "" ? null : Number(endAge),
+      start_age: timeline.start,
+      end_age: timeline.end,
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
@@ -472,25 +472,13 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(opt)</span>
-                </label>
-                <input
-                  value={endAge}
-                  onChange={(e) => setEndAge(e.target.value)}
-                  className="form-input"
-                  placeholder="5"
-                  type="number"
-                />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             <div className="link-card">
               <div className="link-card__header">
@@ -628,6 +616,11 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+
+    if (timeline.invalid) {
+        return;
+    }
 
     if (linkError) return;
 
@@ -636,8 +629,8 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
       source_type: "asset",
       variant: "house",
       name: name || "House",
-      start_age: Number(startAge),
-      end_age: endAge === "" ? null : Number(endAge),
+      start_age: timeline.start,
+      end_age: timeline.end,
       asset_value: Number(houseValue),
       annual_appreciation: Number(appreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
@@ -723,25 +716,13 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
-              </div>
-
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(opt)</span>
-                </label>
-                <input
-                  value={endAge}
-                  onChange={(e) => setEndAge(e.target.value)}
-                  className="form-input"
-                  placeholder="30"
-                  type="number"
-                />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             <div className="link-card">
               <div className="link-card__header">
@@ -915,6 +896,11 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+
+    if (timeline.invalid) {
+        return;
+    }
 
     if (linkError) return;
 
@@ -923,8 +909,8 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
       source_type: "asset",
       variant: "car",
       name: name || "Car",
-      start_age: Number(startAge),
-      end_age: endAge === "" ? null : Number(endAge),
+      start_age: timeline.start,
+      end_age: timeline.end,
       asset_value: Number(carValue),
       annual_depreciation: Number(depreciation) / 100,
       down_payment: downPayment === "" ? null : Number(downPayment),
@@ -1047,31 +1033,13 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input
-                  value={startAge}
-                  onChange={(e) => setStartAge(e.target.value)}
-                  className="form-input"
-                  placeholder="1"
-                  type="number"
-                />
-              </div>
-
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(opt)</span>
-                </label>
-                <input
-                  value={endAge}
-                  onChange={(e) => setEndAge(e.target.value)}
-                  className="form-input"
-                  placeholder="10"
-                  type="number"
-                />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             <div className="link-card">
               <div className="link-card__header">

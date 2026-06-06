@@ -1,15 +1,15 @@
 /* ═════════════════════════════════════════
-   Dashboard Layout
+   test-Dashboard Layout
 ═════════════════════════════════════════ */
 
-.dash-root {
+.test-dash-root {
   display: flex;
   min-height: 100vh;
   background: var(--off-white);
   font-family: 'DM Mono', monospace;
 }
 
-.dash-sidebar {
+.test-dash-sidebar {
   width: 200px;
   min-height: 100vh;
   background: var(--primary);
@@ -21,7 +21,7 @@
   flex-shrink: 0;
 }
 
-.dash-logo {
+.test-dash-logo {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -29,7 +29,7 @@
   border-bottom: 1px solid #ffffff11;
 }
 
-.dash-logo-mark {
+.test-dash-logo-mark {
   background: var(--accent);
   color: var(--primary);
   font-family: 'Playfair Display', serif;
@@ -44,21 +44,21 @@
   flex-shrink: 0;
 }
 
-.dash-logo-text {
+.test-dash-logo-text {
   font-size: 0.7rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #ffffff88;
 }
 
-.dash-nav {
+.test-dash-nav {
   display: flex;
   flex-direction: column;
   padding: 20px 0;
   flex: 1;
 }
 
-.dash-nav-item {
+.test-dash-nav-item {
   font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -69,22 +69,22 @@
   border-left: 2px solid transparent;
 }
 
-.dash-nav-item:hover {
+.test-dash-nav-item:hover {
   color: #ffffffcc;
   background: #ffffff08;
 }
 
-.dash-nav-active {
+.test-dash-nav-active {
   color: var(--white);
   border-left-color: var(--accent);
   background: #ffffff0a;
 }
 
-.dash-sidebar-footer {
+.test-dash-sidebar-footer {
   padding: 0 20px;
 }
 
-.dash-year-badge {
+.test-dash-year-badge {
   font-size: 0.6rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -94,14 +94,14 @@
   border-radius: 2px;
 }
 
-.dash-main {
+.test-dash-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
-.dash-topbar {
+.test-dash-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -110,7 +110,7 @@
   background: var(--white);
 }
 
-.dash-page-title {
+.test-dash-page-title {
   font-family: 'Playfair Display', serif;
   font-size: 1.3rem;
   font-weight: 700;
@@ -118,7 +118,7 @@
   margin: 0 0 2px;
 }
 
-.dash-page-sub {
+.test-dash-page-sub {
   font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -126,13 +126,13 @@
   margin: 0;
 }
 
-.dash-topbar-right {
+.test-dash-topbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.dash-sim-badge {
+.test-dash-sim-badge {
   font-size: 0.62rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -143,7 +143,7 @@
   border-radius: 2px;
 }
 
-.dash-grid {
+.test-dash-grid {
   padding: 24px 28px;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -151,15 +151,15 @@
   align-items: start;
 }
 
-.dash-cell { min-width: 0; }
-.dash-cell-sm   { grid-column: span 4; }
-.dash-cell-md   { grid-column: span 6; }
-.dash-cell-lg   { grid-column: span 8; }
-.dash-cell-full { grid-column: span 12; }
+.test-dash-cell { min-width: 0; }
+.test-dash-cell-sm   { grid-column: span 4; }
+.test-dash-cell-md   { grid-column: span 6; }
+.test-dash-cell-lg   { grid-column: span 8; }
+.test-dash-cell-full { grid-column: span 12; }
 
-.dash-placeholder {
+.test-dash-placeholder {
   background: var(--white);
-  border: 1px dashed #5FA7AB44;
+  border: 1px test-dashed #5FA7AB44;
   border-radius: 4px;
   padding: 32px 20px;
   font-size: 0.65rem;
@@ -174,14 +174,14 @@
 }
 
 @media (max-width: 768px) {
-  .dash-root { flex-direction: column; }
-  .dash-sidebar { width: 100%; min-height: auto; flex-direction: row; padding: 12px 16px; align-items: center; position: static; }
-  .dash-nav { flex-direction: row; padding: 0; }
-  .dash-sidebar-footer { display: none; }
-  .dash-cell-sm,
-  .dash-cell-md,
-  .dash-cell-lg,
-  .dash-cell-full { grid-column: span 12; }
+  .test-dash-root { flex-direction: column; }
+  .test-dash-sidebar { width: 100%; min-height: auto; flex-direction: row; padding: 12px 16px; align-items: center; position: static; }
+  .test-dash-nav { flex-direction: row; padding: 0; }
+  .test-dash-sidebar-footer { display: none; }
+  .test-dash-cell-sm,
+  .test-dash-cell-md,
+  .test-dash-cell-lg,
+  .test-dash-cell-full { grid-column: span 12; }
 }
 
 

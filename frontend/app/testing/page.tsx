@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import "./dashboard.css";
+import "./test-dashboard.css";
 import { SIM_MAX } from "@/app/testing/constants";
 import { useState, useReducer, useEffect } from "react";
 import React from "react";
@@ -1148,33 +1148,33 @@ export default function Dashboard() {
   const [simResult, setSimResult] = useState<SimYearResult[]>([]);
 
   return (
-    <div className="dash-root">
-      <aside className="dash-sidebar">
-        <div className="dash-logo">
-          <span className="dash-logo-mark">VL</span>
-          <span className="dash-logo-text">VantageLabs</span>
+    <div className="test-dash-root">
+      <aside className="test-dash-sidebar">
+        <div className="test-dash-logo">
+          <span className="test-dash-logo-mark">VL</span>
+          <span className="test-dash-logo-text">VantageLabs</span>
         </div>
-        <nav className="dash-nav">
-          <Link href="/testing" className="dash-nav-item dash-nav-active">
+        <nav className="test-dash-nav">
+          <Link href="/testing" className="test-dash-nav-item dash-nav-active">
             TESTING GROUNDS
           </Link>
-          <Link href="/visuals" className="dash-nav-item dash-nav-active">
+          <Link href="/visuals" className="test-dash-nav-item dash-nav-active">
             TESTING VISUALS
           </Link>
         </nav>
-        <div className="dash-sidebar-footer">
-          <span className="dash-year-badge">FY 2025</span>
+        <div className="test-dash-sidebar-footer">
+          <span className="test-dash-year-badge">FY 2025</span>
         </div>
       </aside>
 
-      <main className="dash-main">
-        <header className="dash-topbar">
+      <main className="test-dash-main">
+        <header className="test-dash-topbar">
           <div>
-            <h1 className="dash-page-title">Financial Overview</h1>
-            <p className="dash-page-sub">Stepwise simulation · Annual variables</p>
+            <h1 className="test-dash-page-title">Financial Overview</h1>
+            <p className="test-dash-page-sub">Stepwise simulation · Annual variables</p>
           </div>
-          <div className="dash-topbar-right">
-            <span className="dash-sim-badge">Sim: {SIM_MAX}yr</span>
+          <div className="test-dash-topbar-right">
+            <span className="test-dash-sim-badge">Sim: {SIM_MAX}yr</span>
           </div>
         </header>
 
@@ -1201,7 +1201,7 @@ export default function Dashboard() {
         <NetWorthStackedChart simResult={simResult} />
         <SimResultViewer simResult={simResult} />
 
-        {/* {sim.error && <div className="dash-error">{sim.error}</div>} */}
+        {/* {sim.error && <div className="test-dash-error">{sim.error}</div>} */}
       </main>
     </div>
   );

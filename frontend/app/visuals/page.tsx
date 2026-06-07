@@ -33,7 +33,7 @@ type SimRequest = {
     checking: CheckingAccount[];
     taxable_investments: TaxableInvestmentAccount[];
     employer_retirement: EmployerRetirementAccount[];
-  };
+  }
   incomes: {
     salary: SalaryIncome[];
     hourly: HourlyWageIncome[];

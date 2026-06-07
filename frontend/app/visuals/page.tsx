@@ -1,19 +1,17 @@
 "use client";
 import "./dashboard.css";
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Audio } from "react-loader-spinner";
 
 import { useState, useReducer, useEffect, useRef } from "react";
 
-import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/accounts";
+import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/Accounts";
 
-import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/incomes";
+import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/Incomes";
 
-import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/expenses";
+import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/Expenses";
 
-import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
+import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/Assets";
 
 import { FeedbackModal, SimulationControls, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
 
@@ -25,7 +23,8 @@ import { TutorialOnboarding, tutorialSteps, TutorialStepId } from "@/app/visuals
 import JsonView from "@uiw/react-json-view";
 import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewCards";
 
-import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
+import IncomeGrowthChart from '@/app/visuals/IncomeGrowthChart'
+import SideBar from '@/app/visuals/SideBar'
 
 type SimRequest = {
   user_start_age: number;
@@ -1048,15 +1047,12 @@ export function FinancialEntities({ state, dispatch, onToast, tutorialStepId }) 
 }
 
 export default function Dashboard() {
-
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
   const [simResult, setSimResult] = useState(null);
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isSimLoading, setIsSimLoading] = useState(true);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
@@ -1228,111 +1224,7 @@ export default function Dashboard() {
         />
       )}
 
-      <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
-        <div className="dash-sidebar-inner">
-
-          {/* Desktop layout */}
-          <div className="dash-sidebar-header">
-            <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
-              
-            <Image
-              src="/vantage_logo_transparent.svg"
-              alt="Vantage"
-              width={120}
-              height={34}
-              className="dash-logo-img"
-              priority
-            />
-            </div>
-            <button
-              type="button"
-              className="dash-collapse-btn"
-              onClick={() => setSidebarCollapsed(c => !c)}
-              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              <svg
-                className={`dash-collapse-icon${sidebarCollapsed ? " dash-collapse-icon--flipped" : ""}`}
-                width="16" height="16" viewBox="0 0 16 16" fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
-
-          <nav className="dash-nav" aria-label="Dashboard navigation">
-            <Link href="/testing" className="dash-nav-item" title="Testing Grounds">
-              <span className="dash-nav-icon">▦</span>
-              <span className="dash-nav-label">Testing Grounds</span>
-            </Link>
-            <Link href="/visuals" className="dash-nav-item" title="Testing Visuals">
-              <span className="dash-nav-icon">◔</span>
-              <span className="dash-nav-label">Testing Visuals</span>
-            </Link>
-          </nav>
-
-          <button
-            type="button"
-            className="dash-feedback-card"
-            onClick={() => setIsFeedbackOpen(true)}
-            title="Leave feedback"
-          >
-            <span className="dash-feedback-icon">✦</span>
-            <span className="dash-feedback-copy">
-              <strong>Leave feedback</strong>
-              <p>Help us improve Vantage</p>
-            </span>
-          </button>
-        </div>
-
-        {/* Mobile topbar */}
-        <div className="dash-mobile-bar">
-          <Image
-            src="/vantage_logo_transparent.svg"
-            alt="Vantage"
-            width={120}
-            height={34}
-            className="dash-logo-img"
-            priority
-          />
-          <button
-            type="button"
-            className="dash-mobile-menu-btn"
-            onClick={() => setMobileNavOpen(o => !o)}
-            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileNavOpen}
-          >
-            <span className={`dash-mobile-menu-icon${mobileNavOpen ? " dash-mobile-menu-icon--open" : ""}`} />
-          </button>
-        </div>
-
-        {/* Mobile dropdown */}
-        {mobileNavOpen && (
-          <div className="dash-mobile-dropdown">
-            <nav className="dash-mobile-nav">
-              <Link href="/testing" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
-                <span className="dash-nav-icon">▦</span>
-                <span className="dash-nav-label">Testing Grounds</span>
-              </Link>
-              <Link href="/visuals" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
-                <span className="dash-nav-icon">◔</span>
-                <span className="dash-nav-label">Testing Visuals</span>
-              </Link>
-            </nav>
-            <button
-              type="button"
-              className="dash-feedback-card"
-              onClick={() => { setIsFeedbackOpen(true); setMobileNavOpen(false); }}
-            >
-              <span className="dash-feedback-icon">✦</span>
-              <span className="dash-feedback-copy">
-                <strong>Leave feedback</strong>
-                <p>Help us improve Vantage</p>
-              </span>
-            </button>
-          </div>
-        )}
-      </aside>
+      <SideBar setIsFeedbackOpen={setIsFeedbackOpen} />
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
       <main className="dash-main">
@@ -1341,7 +1233,7 @@ export default function Dashboard() {
             <h1 className="dash-page-title">AdVantage on Finances</h1>
           </div>
         </header>
-{/* 
+      {/* 
         <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
           
@@ -1372,9 +1264,9 @@ export default function Dashboard() {
           <p>Define the components of your financial plan for the simulation.</p>
         </section>
 
-        <div>
-          <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} />
-        </div>
+
+        <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} />
+
 
         {/* <SimResultViewer simResult={simResult} /> */}
         <ToastBanner toasts={toasts} setToasts={setToasts} />

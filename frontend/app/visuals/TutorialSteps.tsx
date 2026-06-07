@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import "./TutorialSteps.css";
-import { CheckingAccountForm , EditCheckingAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm} from "@/app/visuals/accounts";
-import { SalaryForm , EditSalaryForm} from "@/app/visuals/incomes";
+import { CheckingAccountForm , EditCheckingAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm} from "@/app/visuals/Accounts";
+import { SalaryForm , EditSalaryForm} from "@/app/visuals/Incomes";
 
 export type FilingStatus =
   | "single"

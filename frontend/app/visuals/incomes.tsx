@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
-import { ID } from "@/app/visuals/accounts";
+import { ID } from "@/app/visuals/Accounts";
 import {
   TimelineAgeFields,
   getValidatedTimelinePayload,

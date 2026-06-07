@@ -132,7 +132,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
         start_age: timeline.start,
         end_age: timeline.end,
         gross_income: Number(grossIncome),
-        income_growth: Number(growth),
+        income_growth: Number(growth)/100,
         linked_401k_id: linked401kId || undefined,
       },
     });
@@ -337,7 +337,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
         hourly_rate: Number(hourlyRate),       
         hours_per_week: Number(hoursPerWeek),  
         gross_income: Number(annualIncome),
-        income_growth: Number(growth),
+        income_growth: Number(growth)/100,
         linked_401k_id: linked401kId || undefined,
       },
     });
@@ -690,7 +690,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
       start_age: timeline.start,
       end_age: timeline.end,
       gross_income: Number(grossIncome),
-      income_growth: Number(growth),
+      income_growth: Number(growth)/100,
       linked_401k_id: linked401kId || undefined,
     };
 
@@ -903,7 +903,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
       hourly_rate: Number(hourlyRate),          
       hours_per_week: Number(hoursPerWeek),     
       gross_income: Number(annualIncome),
-      income_growth: Number(growth),
+      income_growth: Number(growth)/100,
       linked_401k_id: linked401kId || undefined,
     };
 

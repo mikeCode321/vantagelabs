@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/Accounts";
-import {
-  TimelineAgeFields,
-  getValidatedTimelinePayload,
-} from "@/app/visuals/TimelineAgeFields";
+import { TimelineAgeFields, getValidatedTimelinePayload, } from "@/app/visuals/TimelineAgeFields";
 
 // ─────────────────────────────────────────────
 // ASSET
@@ -215,13 +212,7 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
 
             <div className="link-card">
               <div className="link-card__header">
@@ -265,17 +256,7 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linkedLoan && !linkError && (
                       <div className="link-card__synced">
@@ -522,17 +503,7 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linkedLoan && !linkError && (
                       <div className="link-card__synced">
@@ -746,15 +717,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
                   <div className="link-card__synced">
                     🔗 Linked to {linkedLoan?.name || "Home loan"}
 
-                    <div
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#6B7280",
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      Delete the linked loan to reassign
-                    </div>
+                    <p className="form-inline-muted">Delete the linked loan to reassign</p>
                   </div>
                 ) : (
                   <div className="form-field--gap8">
@@ -780,17 +743,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linkedLoanId && !linkError && (
                       <div className="link-card__synced">
@@ -948,8 +901,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
     onClose();
   };
 
-  const depreciatedValue =
-    Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
+  const depreciatedValue = Number(carValue) * (1 - (Number(depreciation) || 0) / 100);
 
   return (
     <div className="form-panel">
@@ -970,26 +922,14 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Car Name</label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="form-input"
-                placeholder="Toyota Camry"
-              />
+              <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Toyota Camry" />
             </div>
 
             <div className="form-field">
               <label className="form-label">Car Value</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(carValue)}
-                  onChange={(e) => handleNumberInput(e, setCarValue)}
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="30,000"
-                  type="text"
-                  inputMode="decimal"
-                />
+                <input value={formatNumberWithCommas(carValue)} onChange={(e) => handleNumberInput(e, setCarValue)} className="form-input form-input--prefix-dollar" placeholder="30,000" type="text" inputMode="decimal" />
               </div>
             </div>
 
@@ -1000,14 +940,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
               </label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(downPayment)}
-                  onChange={(e) => handleNumberInput(e, setDownPayment)}
-                  className="form-input form-input--prefix-dollar"
-                  placeholder="5,000"
-                  type="text"
-                  inputMode="decimal"
-                />
+                <input value={formatNumberWithCommas(downPayment)} onChange={(e) => handleNumberInput(e, setDownPayment)} className="form-input form-input--prefix-dollar" placeholder="5,000" type="text" inputMode="decimal" />
               </div>
             </div>
 
@@ -1018,28 +951,14 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
                   {Number(depreciation).toFixed(1)}%
                 </span>
               </div>
-              <input
-                type="range"
-                min={0}
-                max={30}
-                step={0.5}
-                value={depreciation}
-                onChange={(e) => setDepreciation(e.target.value)}
-                className="form-slider"
-              />
+              <input type="range" min={0} max={30} step={0.5} value={depreciation} onChange={(e) => setDepreciation(e.target.value)} className="form-slider" />
             </div>
           </div>
 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
 
             <div className="link-card">
               <div className="link-card__header">
@@ -1060,9 +979,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
               ) : isAlreadyLinked ? (
                 <div className="link-card__synced">
                   🔗 Linked to {linkedLoan?.name || "Car loan"}
-                  <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "0.5rem" }}>
-                    Delete the linked loan to reassign
-                  </div>
+                  <p className="form-inline-muted">Delete the linked loan to reassign</p>
                 </div>
               ) : (
                   <div className="form-field--gap8">
@@ -1077,28 +994,14 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
                       const isLinked = isLoanLinkedToAnotherCar(loan);
 
                       return (
-                        <option
-                          key={loan.id}
-                          value={loan.id}
-                          disabled={isLinked}
-                        >
+                        <option key={loan.id} value={loan.id} disabled={isLinked} >
                           {loan.name} {isLinked ? "(already linked)" : ""}
                         </option>
                       );
                     })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linkedLoanId && !linkError && (
                       <div className="link-card__synced">

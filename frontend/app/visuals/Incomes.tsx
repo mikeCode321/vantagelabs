@@ -234,17 +234,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
@@ -450,17 +440,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
@@ -814,17 +794,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
@@ -1017,15 +987,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
                 ) : isAlreadyLinked ? (
                   <div className="link-card__synced">
                     🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
-                    <div
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#6B7280",
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      Delete the linked account to reassign
-                    </div>
+                    <p className="form-inline-muted">Delete the linked account to reassign</p>
                   </div>
                 ) : (
                   <div className="form-field--gap8">
@@ -1043,17 +1005,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>

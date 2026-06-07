@@ -326,17 +326,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
@@ -594,17 +584,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
@@ -1170,9 +1150,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
                 ) : item.linked_asset_id ? (
                   <div className="link-card__synced">
                     🔗 Linked to {availableCars.find((car) => car.id === item.linked_asset_id)?.name || "Car"}
-                    <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "0.5rem" }}>
-                      Delete the linked car to reassign
-                    </div>
+                    <p className="form-inline-muted">Delete the linked car to reassign</p>
                   </div>
                 ) : (
                   <div className="form-field--gap8">
@@ -1184,7 +1162,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
                         </option>
                       ))}
                     </select>
-                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
                         🔗 Linked to {availableCars.find((car) => car.id === linkedAssetId)?.name}
@@ -1507,15 +1485,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
                   <div className="link-card__synced">
                     🔗 Linked to {linkedHouse?.name || "House asset"}
 
-                    <div
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#6B7280",
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      Delete the linked loan to reassign
-                    </div>
+                    <p className="form-inline-muted">Delete the linked house to reassign</p>
                   </div>
                 ) : (
                   <div className="form-field--gap8">
@@ -1541,17 +1511,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">

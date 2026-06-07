@@ -189,7 +189,8 @@
 }
 
 .income-chart-select {
-  min-width: 180px;
+  min-width: 130px;
+  width: 150px;
   padding: 9px 12px;
   border: 1px solid #d8c7ff;
   border-radius: 10px;

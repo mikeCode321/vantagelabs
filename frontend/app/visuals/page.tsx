@@ -18,7 +18,7 @@ import { FeedbackModal, SimulationControls, Toast, ToastBanner, UserAgeForm } fr
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
-import { TutorialOnboarding, tutorialSteps, TutorialStepId } from "@/app/visuals/TutorialSteps";
+import { TutorialOnboarding, TutorialStepId } from "@/app/visuals/TutorialSteps";
 
 import JsonView from "@uiw/react-json-view";
 import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewCards";
@@ -1056,7 +1056,6 @@ export default function Dashboard() {
 
   //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
-  const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
   const [activeTutorialStepId, setActiveTutorialStepId] = useState<TutorialStepId | null>(null);
 
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
@@ -1147,20 +1146,9 @@ export default function Dashboard() {
     },
   ];
 
-  const handleTutorialNext = () => {
-    setTutorialStepIndex((current) =>
-      Math.min(current + 1, tutorialSteps.length - 1)
-    );
-  };
-  
-  const handleTutorialBack = () => {
-    setTutorialStepIndex((current) => Math.max(current - 1, 0));
-  };
-  
   const handleTutorialComplete = () => {
     saveTutorialCompleted();
     setShowTutorial(false);
-    setTutorialStepIndex(0);
     setActiveTutorialStepId(null);
   };
 
@@ -1185,18 +1173,6 @@ export default function Dashboard() {
     saveState(state);
   }, [state]);
 
-  useEffect(() => {
-    if (!showTutorial || !activeTutorialStepId) return;
-
-    if (activeTutorialStepId === "expenses-assets") {
-      document.querySelector(".entities-wrapper")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    if (activeTutorialStepId === "results") {
-      document.querySelector(".overview-cards")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [activeTutorialStepId, showTutorial]);
-
   return (
     <div className="dash-root" data-active-tutorial-step={activeTutorialStepId ?? ""}>
       {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
@@ -1207,14 +1183,9 @@ export default function Dashboard() {
 
       {showTutorial && ENABLE_TUTORIAL && (
         <TutorialOnboarding
-          steps={tutorialSteps}
-          currentStepIndex={tutorialStepIndex}
           state={state}
           dispatch={dispatch}
-          onNext={handleTutorialNext}
-          onBack={handleTutorialBack}
-          onSkip={handleTutorialComplete}
-          onFinish={handleTutorialComplete}
+          onComplete={handleTutorialComplete}
           onToast={showToast}
           onStepChange={setActiveTutorialStepId}
           onProfileComplete={(profile, mode) => {
@@ -1233,7 +1204,7 @@ export default function Dashboard() {
             <h1 className="dash-page-title">AdVantage on Finances</h1>
           </div>
         </header>
-      {/* 
+        {/* 
         <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
           
@@ -1245,17 +1216,15 @@ export default function Dashboard() {
             shortenTextAfterLength={40}
           />: "[]"}
           <UserAgeForm state={state} dispatch={dispatch} />
-        </div> */}
+        </div> 
+        */}
 
         <FinancialOverviewCards cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
         <section className="simulation-results-grid">
           <IncomeGrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />
-
           <div>
             <SimulationHighlights data={simData} tutorialActive={activeTutorialStepId === "results"}/>
-            <div className={activeTutorialStepId === "results" ? "ts-tutorial-target" : ""} style={{ borderRadius: "16px" }}>
-              <SimulationControls state={state} setSimResult={setSimResult} />
-            </div>
+            <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} />
           </div>
         </section>
 
@@ -1264,11 +1233,7 @@ export default function Dashboard() {
           <p>Define the components of your financial plan for the simulation.</p>
         </section>
 
-
         <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} />
-
-
-        {/* <SimResultViewer simResult={simResult} /> */}
         <ToastBanner toasts={toasts} setToasts={setToasts} />
       </main>
     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/accounts";
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight ,Handbag, Clock,Rocket,Link } from 'lucide-react';
 
 // ─────────────────────────────────────────────
 // INCOME
@@ -142,7 +143,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💼</div>
+        <div className="form-header-icon"><Handbag/></div>
         <div>
           <h3 className="form-header-title">Add Salary Income</h3>
           <p className="form-header-desc">Track your employment income and annual growth rate.</p>
@@ -199,7 +200,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Landmark/></span>
 
                   <div>
                     <div className="link-card__title">Link to a 401(k) Account</div>
@@ -346,7 +347,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">⏱️</div>
+        <div className="form-header-icon"><Clock/></div>
         <div>
           <h3 className="form-header-title">Add Hourly Wage Income</h3>
           <p className="form-header-desc">Track hourly income, weekly hours, and projected growth.</p>
@@ -413,7 +414,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Landmark/></span>
 
                   <div>
                     <div className="link-card__title">Link to a 401(k) Account</div>
@@ -463,7 +464,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
             {/* Annual Income Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💰</span>
+                <span className="preview-icon"><CircleDollarSign/></span>
                 <span className="preview-card__label">Estimated Annual Income</span>
               </div>
               <div className="preview-card__amount">
@@ -533,7 +534,7 @@ export function SideHustleForm({ dispatch, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">🚀</div>
+        <div className="form-header-icon"><Rocket/></div>
         <div>
           <h3 className="form-header-title">Add Side Hustle Income</h3>
           <p className="form-header-desc">Track variable income with frequency and variability estimates.</p>
@@ -604,7 +605,7 @@ export function SideHustleForm({ dispatch, onToast }) {
             {/* Annual Income Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💰</span>
+                <span className="preview-icon"><CircleDollarSign/></span>
                 <span className="preview-card__label">Estimated Annual Income</span>
               </div>
               <div className="preview-card__amount">
@@ -709,7 +710,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💼</div>
+        <div className="form-header-icon"><Handbag/></div>
 
         <div>
           <h3 className="form-header-title">Edit Salary Income</h3>
@@ -776,7 +777,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Landmark/></span>
 
                   <div>
                     <div className="link-card__title">Link to a 401(k) Account</div>
@@ -817,7 +818,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
                       </div>
                     )}
 
-                    {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                    {linked401kId && !linkError && <div className="link-card__synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
                 )}
               </div>
@@ -923,7 +924,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">⏱️</div>
+        <div className="form-header-icon"><Clock/></div>
         <div>
           <h3 className="form-header-title">Edit Hourly Wage Income</h3>
           <p className="form-header-desc">Update hourly rate, weekly hours, and growth details.</p>
@@ -990,7 +991,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Landmark/></span>
 
                   <div>
                     <div className="link-card__title">Link 401(k) Account</div>
@@ -1005,7 +1006,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
                   <p className="link-card__no-accounts">No 401(k) accounts available.</p>
                 ) : isAlreadyLinked ? (
                   <div className="link-card__synced">
-                    🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
+                    <Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
                     <div
                       style={{
                         fontSize: "0.8rem",
@@ -1044,7 +1045,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
                       </div>
                     )}
 
-                    {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                    {linked401kId && !linkError && <div className="link-card__synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
                 )}
               </div>
@@ -1053,7 +1054,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
             {/* Annual Income Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💰</span>
+                <span className="preview-icon"><CircleDollarSign/></span>
                 <span className="preview-card__label">Estimated Annual Income</span>
               </div>
               <div className="preview-card__amount">
@@ -1119,7 +1120,7 @@ export function EditSideHustleForm({ item, dispatch, onClose, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">🚀</div>
+        <div className="form-header-icon"><Rocket/></div>
         <div>
           <h3 className="form-header-title">Edit Side Hustle Income</h3>
           <p className="form-header-desc">Update frequency, variability, and income details.</p>
@@ -1190,7 +1191,7 @@ export function EditSideHustleForm({ item, dispatch, onClose, onToast }) {
             {/* Annual Income Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💰</span>
+                <span className="preview-icon"><CircleDollarSign/></span>
                 <span className="preview-card__label">Estimated Annual Income</span>
               </div>
               <div className="preview-card__amount">

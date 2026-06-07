@@ -238,7 +238,7 @@ const PLACEHOLDER_DATA = [
 ];
 
 export default function IncomeGrowthChart({ data, tutorialActive = false }) {
-  const [activeKey, setActiveKey] = useState("gross");
+  const [activeKey, setActiveKey] = useState("netWorth");
   const [tooltip, setTooltip] = useState(null);
   const chartData = useMemo(() => {
     if (!data?.year_results) return [];

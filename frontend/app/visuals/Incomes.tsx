@@ -644,7 +644,7 @@ export function SideHustleForm({ dispatch,state, onToast }) {
 export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [grossIncome, setGrossIncome] = useState(item.gross_income.toString());
-  const [growth, setGrowth] = useState(item.income_growth.toString());
+  const [growth, setGrowth] = useState((item.income_growth*100).toString());
   const [startAge, setStartAge] = useState(item.start_age.toString());
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
@@ -855,7 +855,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [hourlyRate, setHourlyRate] = useState(item.hourly_rate?.toString() || "");
   const [hoursPerWeek, setHoursPerWeek] = useState(item.hours_per_week?.toString() || "");
-  const [growth, setGrowth] = useState(item.income_growth.toString());
+  const [growth, setGrowth] = useState((item.income_growth*100).toString());
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
   const [linkError, setLinkError] = useState("");
 

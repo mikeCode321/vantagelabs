@@ -132,7 +132,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
         start_age: timeline.start,
         end_age: timeline.end,
         gross_income: Number(grossIncome),
-        income_growth: Number(growth),
+        income_growth: Number(growth)/100,
         linked_401k_id: linked401kId || undefined,
       },
     });
@@ -327,7 +327,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
         hourly_rate: Number(hourlyRate),       
         hours_per_week: Number(hoursPerWeek),  
         gross_income: Number(annualIncome),
-        income_growth: Number(growth),
+        income_growth: Number(growth)/100,
         linked_401k_id: linked401kId || undefined,
       },
     });
@@ -624,7 +624,7 @@ export function SideHustleForm({ dispatch,state, onToast }) {
 export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [grossIncome, setGrossIncome] = useState(item.gross_income.toString());
-  const [growth, setGrowth] = useState(item.income_growth.toString());
+  const [growth, setGrowth] = useState((item.income_growth*100).toString());
   const [startAge, setStartAge] = useState(item.start_age.toString());
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
@@ -670,7 +670,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
       start_age: timeline.start,
       end_age: timeline.end,
       gross_income: Number(grossIncome),
-      income_growth: Number(growth),
+      income_growth: Number(growth)/100,
       linked_401k_id: linked401kId || undefined,
     };
 
@@ -825,7 +825,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [hourlyRate, setHourlyRate] = useState(item.hourly_rate?.toString() || "");
   const [hoursPerWeek, setHoursPerWeek] = useState(item.hours_per_week?.toString() || "");
-  const [growth, setGrowth] = useState(item.income_growth.toString());
+  const [growth, setGrowth] = useState((item.income_growth*100).toString());
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
   const [linkError, setLinkError] = useState("");
 
@@ -873,7 +873,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
       hourly_rate: Number(hourlyRate),          
       hours_per_week: Number(hoursPerWeek),     
       gross_income: Number(annualIncome),
-      income_growth: Number(growth),
+      income_growth: Number(growth)/100,
       linked_401k_id: linked401kId || undefined,
     };
 

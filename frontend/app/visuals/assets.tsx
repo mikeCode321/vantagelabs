@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/accounts";
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight ,Handbag, Clock,Rocket,Link, HousePlus, ChartBarIncreasing, Car, ChartBarDecreasing } from 'lucide-react';
+
 
 // ─────────────────────────────────────────────
 // ASSET
@@ -159,7 +161,7 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🏡</div>
+        <div className="form-header-icon"><HousePlus/></div>
         <div>
           <h3 className="form-header-title">Add House</h3>
           <p className="form-header-desc">Track a property asset with appreciation and optional down payment.</p>
@@ -231,7 +233,7 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a Home Loan</div>
                     <div className="link-card__sub">
@@ -284,7 +286,7 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
 
                     {linkedLoan && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Linked to {linkedLoan.name}
+                        <Link/> Linked to {linkedLoan.name}
                       </div>
                     )}
                   </div>
@@ -294,7 +296,7 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
 
             <div className="preview-card">
               <div className="preview-card__header preview-card__header--mb10">
-                <span className="preview-icon">📈</span>
+                <span className="preview-icon"><ChartBarIncreasing/></span>
                 <span className="preview-card__label">Value After Year 1</span>
               </div>
 
@@ -423,7 +425,7 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🚗</div>
+        <div className="form-header-icon"><Car/></div>
         <div>
           <h3 className="form-header-title">Add Car</h3>
           <p className="form-header-desc">Track a vehicle asset with depreciation and optional down payment.</p>
@@ -495,7 +497,7 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a Car Loan</div>
                     <div className="link-card__sub">
@@ -548,7 +550,7 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
 
                     {linkedLoan && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Linked to {linkedLoan.name}
+                        <Link/> Linked to {linkedLoan.name}
                       </div>
                     )}
                   </div>
@@ -558,7 +560,7 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
 
             <div className="preview-card">
               <div className="preview-card__header preview-card__header--mb10">
-                <span className="preview-icon">📉</span>
+                <span className="preview-icon"><ChartBarDecreasing/></span>
                 <span className="preview-card__label">Value After Year 1</span>
               </div>
 
@@ -676,7 +678,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🏡</div>
+        <div className="form-header-icon"><HousePlus/></div>
         <div>
           <h3 className="form-header-title">Edit House</h3>
           <p className="form-header-desc">Update property value, appreciation rate, and timeline.</p>
@@ -746,7 +748,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a Home Loan</div>
                     <div className="link-card__sub">
@@ -763,7 +765,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
                   </p>
                 ) : isAlreadyLinked ? (
                   <div className="link-card__synced">
-                    🔗 Linked to {linkedLoan?.name || "Home loan"}
+                    <Link/> Linked to {linkedLoan?.name || "Home loan"}
 
                     <div
                       style={{
@@ -813,7 +815,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
 
                     {linkedLoanId && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Linked to {linkedLoan?.name}
+                        <Link/> Linked to {linkedLoan?.name}
                       </div>
                     )}
                   </div>
@@ -823,7 +825,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
 
             <div className="preview-card">
               <div className="preview-card__header preview-card__header--mb10">
-                <span className="preview-icon">📈</span>
+                <span className="preview-icon"><ChartBarIncreasing/></span>
                 <span className="preview-card__label">Value After Year 1</span>
               </div>
 
@@ -968,7 +970,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🚗</div>
+        <div className="form-header-icon"><Car/></div>
         <div>
           <h3 className="form-header-title">Edit Car</h3>
           <p className="form-header-desc">
@@ -1076,7 +1078,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a Car Loan</div>
                     <div className="link-card__sub">
@@ -1091,7 +1093,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
                 <p className="link-card__no-accounts">No car loans available.</p>
               ) : isAlreadyLinked ? (
                 <div className="link-card__synced">
-                  🔗 Linked to {linkedLoan?.name || "Car loan"}
+                  <Link/> Linked to {linkedLoan?.name || "Car loan"}
                   <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "0.5rem" }}>
                     Delete the linked loan to reassign
                   </div>
@@ -1134,7 +1136,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
 
                     {linkedLoanId && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Linked to {linkedLoan?.name}
+                        <Link/> Linked to {linkedLoan?.name}
                       </div>
                     )}
                   </div>
@@ -1144,7 +1146,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
 
             <div className="preview-card">
               <div className="preview-card__header preview-card__header--mb10">
-                <span className="preview-icon">📉</span>
+                <span className="preview-icon"><ChartBarDecreasing/></span>
                 <span className="preview-card__label">Value After Year 1</span>
               </div>
 

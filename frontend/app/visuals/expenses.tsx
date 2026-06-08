@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/accounts";
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus, TrendingUpDown, ArrowBigDownDash, BanknoteArrowUp, DollarSign, Link } from 'lucide-react';
 
 // ─────────────────────────────────────────────
 // EXPENSES
@@ -215,7 +216,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🏦</div>
+        <div className="form-header-icon"><House/></div>
         <div>
           <h3 className="form-header-title">Add Home Loan</h3>
           <p className="form-header-desc">
@@ -291,7 +292,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏡</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a House Asset</div>
                     <div className="link-card__sub">
@@ -344,7 +345,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Linked to{" "}
+                        <Link/> Linked to{" "}
                         {
                           availableHouses.find(
                             (house) => house.id === linkedAssetId
@@ -359,7 +360,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
             <div className="preview-card">
               <div className="preview-card__header preview-card__header--mb10">
-                <span>📊</span>
+                <span><DollarSign/></span>
                 <div className="preview-card__label">Estimated Payment</div>
               </div>
               <div className="preview-card__amount">
@@ -501,7 +502,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🚗</div>
+        <div className="form-header-icon"><Car/></div>
         <div>
           <h3 className="form-header-title">Add Car Loan</h3>
           <p className="form-header-desc">
@@ -567,7 +568,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🚗</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a Car Asset</div>
                     <div className="link-card__sub">
@@ -620,7 +621,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Linked to{" "}
+                        <Link/> Linked to{" "}
                         {
                           availableCars.find(
                             (car) => car.id === linkedAssetId
@@ -635,7 +636,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
             <div className="preview-card">
               <div className="preview-card__header preview-card__header--mb10">
-                <span>📊</span>
+                <span><DollarSign/></span>
                 <div className="preview-card__label">Estimated Payment</div>
               </div>
               <div className="preview-card__amount">
@@ -706,7 +707,7 @@ export function LivingExpensesForm({ dispatch, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">🏠</div>
+        <div className="form-header-icon"><ShoppingCart/></div>
         <div>
           <h3 className="form-header-title">Add Living Expenses</h3>
           <p className="form-header-desc">Track recurring monthly costs like groceries, utilities, and subscriptions.</p>
@@ -762,7 +763,7 @@ export function LivingExpensesForm({ dispatch, onToast }) {
             {/* Annual Cost Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💸</span>
+                <span className="preview-icon"><DollarSign/></span>
                 <span className="preview-card__label">Annual Cost</span>
               </div>
               <div className="preview-card__amount">
@@ -826,7 +827,7 @@ export function DebtExpenseForm({ dispatch, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💳</div>
+        <div className="form-header-icon"><HandCoins/></div>
         <div>
           <h3 className="form-header-title">Add Debt</h3>
           <p className="form-header-desc">Track loans, credit cards, or any outstanding debt with monthly payments.</p>
@@ -892,7 +893,7 @@ export function DebtExpenseForm({ dispatch, onToast }) {
             {/* Annual Payment Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💸</span>
+                <span className="preview-icon"><DollarSign/></span>
                 <span className="preview-card__label">Annual Payment</span>
               </div>
               <div className="preview-card__amount">
@@ -954,7 +955,7 @@ export function RentExpenseForm({ dispatch, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">🏢</div>
+        <div className="form-header-icon"><BanknoteArrowDown/></div>
         <div>
           <h3 className="form-header-title">Add Rent</h3>
           <p className="form-header-desc">Track monthly rent payments with expected annual rent growth.</p>
@@ -1005,7 +1006,7 @@ export function RentExpenseForm({ dispatch, onToast }) {
             {/* Annual Cost Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💸</span>
+                <span className="preview-icon"><DollarSign/></span>
                 <span className="preview-card__label">Annual Rent Cost</span>
               </div>
               <div className="preview-card__amount">
@@ -1110,7 +1111,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🚗</div>
+        <div className="form-header-icon"><Car/></div>
         <div>
           <h3 className="form-header-title">Edit Car Loan</h3>
           <p className="form-header-desc">Update vehicle loan details, payment assumptions, and timeline.</p>
@@ -1166,7 +1167,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🚗</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a Car Asset</div>
                     <div className="link-card__sub">Sync this loan with an existing vehicle</div>
@@ -1206,7 +1207,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
 
             <div className="preview-card">
               <div className="preview-card__header preview-card__header--mb10">
-                <span>📊</span>
+                <span><DollarSign/></span>
                 <div className="preview-card__label">Estimated Payment</div>
               </div>
               <div className="preview-card__amount">
@@ -1587,7 +1588,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
             <div className="preview-card">
               <div className="preview-card__header preview-card__header--mb10">
-                <span>📊</span>
+                <span><DollarSign/></span>
                 <div className="preview-card__label">Estimated Payment</div>
               </div>
               <div className="preview-card__amount">
@@ -1655,7 +1656,7 @@ export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">🏠</div>
+        <div className="form-header-icon"><House/></div>
         <div>
           <h3 className="form-header-title">Edit Living Expenses</h3>
           <p className="form-header-desc">Update monthly amount and growth rate for this expense.</p>

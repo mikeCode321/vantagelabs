@@ -1,33 +1,30 @@
 "use client";
 import "./dashboard.css";
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Audio } from "react-loader-spinner";
 
 import { useState, useReducer, useEffect, useRef } from "react";
 
-import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/accounts";
+import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/Accounts";
 
-import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/incomes";
+import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/Incomes";
 
-import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/expenses";
+import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/Expenses";
 
-import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
+import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/Assets";
 
 import { FeedbackModal, SimulationControls, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
-import { TutorialOnboarding, tutorialSteps, TutorialStepId } from "@/app/visuals/TutorialSteps";
+import { TutorialOnboarding, TutorialStepId } from "@/app/visuals/TutorialSteps";
 
 import JsonView from "@uiw/react-json-view";
 import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewCards";
 
-import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
-
-const BASE = process.env.NODE_ENV === "production" ? "/vantagelabs" : "";
+import IncomeGrowthChart from '@/app/visuals/IncomeGrowthChart'
+import SideBar from '@/app/visuals/SideBar'
 import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 
 type SimRequest = {
@@ -37,7 +34,7 @@ type SimRequest = {
     checking: CheckingAccount[];
     taxable_investments: TaxableInvestmentAccount[];
     employer_retirement: EmployerRetirementAccount[];
-  };
+  }
   incomes: {
     salary: SalaryIncome[];
     hourly: HourlyWageIncome[];
@@ -1051,19 +1048,15 @@ export function FinancialEntities({ state, dispatch, onToast, tutorialStepId }) 
 }
 
 export default function Dashboard() {
-
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
   const [simResult, setSimResult] = useState(null);
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isSimLoading, setIsSimLoading] = useState(true);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
-  const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
   const [activeTutorialStepId, setActiveTutorialStepId] = useState<TutorialStepId | null>(null);
 
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
@@ -1154,20 +1147,9 @@ export default function Dashboard() {
     },
   ];
 
-  const handleTutorialNext = () => {
-    setTutorialStepIndex((current) =>
-      Math.min(current + 1, tutorialSteps.length - 1)
-    );
-  };
-  
-  const handleTutorialBack = () => {
-    setTutorialStepIndex((current) => Math.max(current - 1, 0));
-  };
-  
   const handleTutorialComplete = () => {
     saveTutorialCompleted();
     setShowTutorial(false);
-    setTutorialStepIndex(0);
     setActiveTutorialStepId(null);
   };
 
@@ -1192,18 +1174,6 @@ export default function Dashboard() {
     saveState(state);
   }, [state]);
 
-  useEffect(() => {
-    if (!showTutorial || !activeTutorialStepId) return;
-
-    if (activeTutorialStepId === "expenses-assets") {
-      document.querySelector(".entities-wrapper")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    if (activeTutorialStepId === "results") {
-      document.querySelector(".overview-cards")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [activeTutorialStepId, showTutorial]);
-
   return (
     <div className="dash-root" data-active-tutorial-step={activeTutorialStepId ?? ""}>
       {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
@@ -1214,14 +1184,9 @@ export default function Dashboard() {
 
       {showTutorial && ENABLE_TUTORIAL && (
         <TutorialOnboarding
-          steps={tutorialSteps}
-          currentStepIndex={tutorialStepIndex}
           state={state}
           dispatch={dispatch}
-          onNext={handleTutorialNext}
-          onBack={handleTutorialBack}
-          onSkip={handleTutorialComplete}
-          onFinish={handleTutorialComplete}
+          onComplete={handleTutorialComplete}
           onToast={showToast}
           onStepChange={setActiveTutorialStepId}
           onProfileComplete={(profile, mode) => {
@@ -1231,106 +1196,17 @@ export default function Dashboard() {
         />
       )}
 
-      <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
-        <div className="dash-sidebar-inner">
-
-          {/* Desktop layout */}
-          <div className="dash-sidebar-header">
-            <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
-              <img src={`${BASE}/vantage_logo_transparent.svg`} alt="Vantage" width={120} height={34} className="dash-logo-img" loading="eager" />
-            </div>
-            <button
-              type="button"
-              className="dash-collapse-btn"
-              onClick={() => setSidebarCollapsed(c => !c)}
-              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              <svg
-                className={`dash-collapse-icon${sidebarCollapsed ? " dash-collapse-icon--flipped" : ""}`}
-                width="16" height="16" viewBox="0 0 16 16" fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
-
-          <nav className="dash-nav" aria-label="Dashboard navigation">
-            <Link href="/testing" className="dash-nav-item" title="Testing Grounds">
-              <span className="dash-nav-icon"><Grid3x3/></span>
-              <span className="dash-nav-label">Testing Grounds</span>
-            </Link>
-            <Link href="/visuals" className="dash-nav-item" title="Testing Visuals">
-              <span className="dash-nav-icon"><PieChart/></span>
-              <span className="dash-nav-label">Testing Visuals</span>
-            </Link>
-          </nav>
-
-          <button
-            type="button"
-            className="dash-feedback-card"
-            onClick={() => setIsFeedbackOpen(true)}
-            title="Leave feedback"
-          >
-            <span className="dash-feedback-icon">✦</span>
-            <span className="dash-feedback-copy">
-              <strong>Leave feedback</strong>
-              <p>Help us improve Vantage</p>
-            </span>
-          </button>
-        </div>
-
-        {/* Mobile topbar */}
-        <div className="dash-mobile-bar">
-          <img src={`${BASE}/vantage_logo_transparent.svg`} alt="Vantage" width={120} height={34} className="dash-logo-img" loading="eager" />
-          <button
-            type="button"
-            className="dash-mobile-menu-btn"
-            onClick={() => setMobileNavOpen(o => !o)}
-            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileNavOpen}
-          >
-            <span className={`dash-mobile-menu-icon${mobileNavOpen ? " dash-mobile-menu-icon--open" : ""}`} />
-          </button>
-        </div>
-
-        {/* Mobile dropdown */}
-        {mobileNavOpen && (
-          <div className="dash-mobile-dropdown">
-            <nav className="dash-mobile-nav">
-              <Link href="/testing" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
-                <span className="dash-nav-icon"><Grid3x3/></span>
-                <span className="dash-nav-label">Testing Grounds</span>
-              </Link>
-              <Link href="/visuals" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
-                <span className="dash-nav-icon"><PieChart/></span>
-                <span className="dash-nav-label">Testing Visuals</span>
-              </Link>
-            </nav>
-            <button
-              type="button"
-              className="dash-feedback-card"
-              onClick={() => { setIsFeedbackOpen(true); setMobileNavOpen(false); }}
-            >
-              <span className="dash-feedback-icon">✦</span>
-              <span className="dash-feedback-copy">
-                <strong>Leave feedback</strong>
-                <p>Help us improve Vantage</p>
-              </span>
-            </button>
-          </div>
-        )}
-      </aside>
+      <SideBar setIsFeedbackOpen={setIsFeedbackOpen} />
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
       <main className="dash-main">
         <header className="dash-topbar">
           <div>
-            <h1 className="dash-page-title">Financial Overview</h1>
+            <h1 className="dash-page-title">AdVantage on Finances</h1>
           </div>
         </header>
-
-        {/* <div style={{ display: "flex", justifyContent: "space-between"}}>
+        {/* 
+        <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
           
           {simResult ? <JsonView
@@ -1341,17 +1217,15 @@ export default function Dashboard() {
             shortenTextAfterLength={40}
           />: "[]"}
           <UserAgeForm state={state} dispatch={dispatch} />
-        </div> */}
+        </div> 
+        */}
 
         <FinancialOverviewCards cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
         <section className="simulation-results-grid">
           <IncomeGrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />
-
           <div>
             <SimulationHighlights data={simData} tutorialActive={activeTutorialStepId === "results"}/>
-            <div className={activeTutorialStepId === "results" ? "ts-tutorial-target" : ""} style={{ borderRadius: "16px" }}>
-              <SimulationControls state={state} setSimResult={setSimResult} />
-            </div>
+            <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} />
           </div>
         </section>
 
@@ -1360,11 +1234,7 @@ export default function Dashboard() {
           <p>Define the components of your financial plan for the simulation.</p>
         </section>
 
-        <div>
-          <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} />
-        </div>
-
-        {/* <SimResultViewer simResult={simResult} /> */}
+        <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} />
         <ToastBanner toasts={toasts} setToasts={setToasts} />
       </main>
     </div>

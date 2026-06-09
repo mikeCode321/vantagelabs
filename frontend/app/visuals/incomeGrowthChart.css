@@ -176,6 +176,37 @@
   color: #9CA3AF;
 }
 
+.income-chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.income-chart-select-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.income-chart-select {
+  min-width: 130px;
+  width: 150px;
+  padding: 9px 12px;
+  border: 1px solid #d8c7ff;
+  border-radius: 10px;
+  background: #fff;
+  color: #1f2937;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.income-chart-select:focus {
+  outline: none;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14);
+}
+
 .income-chart-empty {
   position: absolute;
   inset: 0;

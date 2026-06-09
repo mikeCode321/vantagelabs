@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import "./TutorialSteps.css";
-import { CheckingAccountForm , EditCheckingAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm} from "@/app/visuals/accounts";
-import { SalaryForm , EditSalaryForm} from "@/app/visuals/incomes";
+import { CheckingAccountForm , EditCheckingAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm} from "@/app/visuals/Accounts";
+import { SalaryForm , EditSalaryForm} from "@/app/visuals/Incomes";
 
 export type FilingStatus =
   | "single"
@@ -67,24 +67,10 @@ function TutorialProgress({ currentStepIndex, totalSteps }) {
     );
   }
 
-function TutorialStepPanel({
-  currentStepIndex,
-  totalSteps,
-  title,
-  description,
-  image,
-  items,
-  onBack,
-  onNext,
-  onSkip,
-  nextLabel = "Next",
-  showSkip = true,
-  className = '',
-  nextDisabled = false,
-  // new:
-  isMobileInfoOpen = false,
-  onToggleInfo,
-}) {
+function TutorialStepPanel({currentStepIndex, totalSteps, title, description, items = [], onBack, onNext, onSkip, className = '', nextDisabled = false, isMobileInfoOpen = false, onToggleInfo, }) {
+  const nextLabel = currentStepIndex === totalSteps - 1 ? "Finish" : "Next";
+  const showSkip = currentStepIndex > 0; // hide skip on welcome
+
   return (
     <aside className={`ts-step-panel ${className}`}>
       <button type="button" className="ts-step-close" onClick={onSkip}>×</button>
@@ -446,141 +432,100 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
   );
 }
 
+export function TutorialOnboarding({ state, dispatch, onComplete, onProfileComplete, onStepChange, onToast }) {
+    const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
-type TutorialOnboardingProps = {
-    steps: TutorialStep[];
-    currentStepIndex: number;
-    state: any;
-    dispatch: React.Dispatch<any>;
-    onNext: () => void;
-    onBack: () => void;
-    onSkip: () => void;
-    onFinish: () => void;
-    onProfileComplete: (profile: UserProfile, mode: TutorialMode) => void;
-    onStepChange?: (stepId: TutorialStepId) => void; 
-    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
-  };
-  
-export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, onNext, onBack, onSkip, onFinish, onProfileComplete, onStepChange, onToast,}: TutorialOnboardingProps) {    
-    const step = steps[currentStepIndex];
+    const step = tutorialSteps[currentStepIndex];
+    const totalSteps = tutorialSteps.length;
+    const isLastStep = currentStepIndex === totalSteps - 1;
+
+    const next = () => setCurrentStepIndex(i => Math.min(i + 1, totalSteps - 1));
+    const back = () => setCurrentStepIndex(i => Math.max(i - 1, 0));
+    const finish = () => onComplete();
+    const skip = () => onComplete();
 
     useEffect(() => {
       onStepChange?.(step.id);
     }, [step.id]);
-  
-  
-    if (!step) return null;
-  
-    const isLastStep = currentStepIndex === steps.length - 1;
 
-    
+    useEffect(() => {
+      if (step.id === "expenses-assets") {
+        document.querySelector(".entities-wrapper")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      if (step.id === "results") {
+        document.querySelector(".overview-cards")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, [step.id]);
+
+    if (!step) return null;
+
+    const commonProps = {
+      step,
+      currentStepIndex,
+      totalSteps,
+      state,
+      dispatch,
+      onBack: back,
+      onNext: isLastStep ? finish : next,
+      onSkip: skip,
+      onFinish: finish,
+      onToast,
+    };
+        
     return (
       <>
-        
-          {step.id === "welcome" && (
-            <div className="ts-overlay">
-              <div className="ts-modal-welcome">
-                <div className="ts-modal__corner ts-modal__corner--tl" />
-                <div className="ts-modal__corner ts-modal__corner--br" />
-      
-                <WelcomeScreen onGetStarted={onNext} />
-              </div>
+        {step.id === "welcome" && (
+          <div className="ts-overlay">
+            <div className="ts-modal-welcome">
+              <WelcomeScreen onGetStarted={next} />
             </div>
-          )}
-        
-        
-          {step.id === "profile" && (
-            <div className="ts-overlay">
-              <div className="ts-modal">
-                <div className="ts-modal__corner ts-modal__corner--tl" />
-                <div className="ts-modal__corner ts-modal__corner--br" />
-      
-                <ProfileSetupScreen
-                  onBack={onBack}
-                  onComplete={(profile) => {
-                    onProfileComplete(profile, "full");
-                    onNext();
-                  }}
-                  mode="full"
-                />
-              </div>
-            </div>
-          )}
-    
-          {step.id === "checking" && (
-            <div className="ts-overlay">
-              <CheckingAccountTutorialStep
-                step={step}
-                currentStepIndex={currentStepIndex}
-                totalSteps={steps.length}
-                state={state}
-                dispatch={dispatch}
-                onBack={onBack}
-                onNext={isLastStep ? onFinish : onNext}
-                onSkip={onSkip}
-                onToast={onToast}
+          </div>
+        )}
+
+        {step.id === "profile" && (
+          <div className="ts-overlay">
+            <div className="ts-modal">
+              <ProfileSetupScreen
+                onBack={back}
+                onComplete={(profile) => {
+                  onProfileComplete(profile, "full");
+                  next();
+                }}
+                mode="full"
               />
             </div>
-          )}
-        
-        
+          </div>
+        )}
+
+        {step.id === "checking" && (
+          <div className="ts-overlay">
+            <CheckingAccountTutorialStep {...commonProps} />
+          </div>
+        )}
+
         {step.id === "salary" && (
           <div className="ts-overlay">
-            <SalaryIncomeTutorialStep
-              step={step}
-              currentStepIndex={currentStepIndex}
-              totalSteps={steps.length}
-              state={state}
-              dispatch={dispatch}
-              onBack={onBack}
-              onNext={isLastStep ? onFinish : onNext}
-              onSkip={onSkip}
-              onToast={onToast}
-            />
+            <SalaryIncomeTutorialStep {...commonProps} />
           </div>
         )}
 
         {step.id === "retirement" && (
           <div className="ts-overlay">
-            <EmployerRetirementTutorialStep
-                step={step}
-                currentStepIndex={currentStepIndex}
-                totalSteps={steps.length}
-                state={state}
-                dispatch={dispatch}
-                onBack={onBack}
-                onNext={isLastStep ? onFinish : onNext}
-                onSkip={onSkip}
-                onToast={onToast}
-            />
+            <EmployerRetirementTutorialStep {...commonProps} />
           </div>
         )}
 
         {step.id === "expenses-assets" && (
           <div className="ts-overlay ts-overlay-no-bg">
-            <ExpensesAssetsTutorialStep
-                step={step}
-                currentStepIndex={currentStepIndex}
-                totalSteps={steps.length}
-                onBack={onBack}
-                onNext={isLastStep ? onFinish : onNext}
-                onSkip={onSkip}
-            />
+            <ExpensesAssetsTutorialStep {...commonProps} />
           </div>
-          )}
+        )}
 
-          {step.id === "results" && (
-            <div className="ts-overlay ts-overlay-no-bg">
-              <ResultsTutorialStep
-                  step={step}
-                  currentStepIndex={currentStepIndex}
-                  totalSteps={steps.length}
-                  onBack={onBack}
-                  onFinish={onFinish}
-                  onSkip={onSkip}
-              />
-            </div>
-          )}
+        {step.id === "results" && (
+          <div className="ts-overlay ts-overlay-no-bg">
+            <ResultsTutorialStep {...commonProps} />
+          </div>
+        )}
       </>
       
   )};
@@ -617,8 +562,6 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
           onBack={onBack}
           onNext={onNext}
           onSkip={onSkip}
-          nextLabel="Next"
-          showSkip={true}
           nextDisabled={!existingCheckingAccount}
           isMobileInfoOpen={isInfoOpen}           // add
           onToggleInfo={() => setIsInfoOpen(o => !o)}  // add
@@ -660,8 +603,6 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
           onBack={onBack}
           onNext={onNext}
           onSkip={onSkip}
-          nextLabel="Next"
-          showSkip={true}
           isMobileInfoOpen={isInfoOpen}           
           onToggleInfo={() => setIsInfoOpen(o => !o)}  
         />
@@ -826,8 +767,6 @@ export function TutorialOnboarding({ steps, currentStepIndex, state, dispatch, o
           onBack={onBack}
           onNext={onNext}
           onSkip={onSkip}
-          nextLabel="Next"
-          showSkip={true}
           isMobileInfoOpen={isInfoOpen}        
           onToggleInfo={() => setIsInfoOpen(o => !o)}
         />

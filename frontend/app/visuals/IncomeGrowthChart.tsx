@@ -238,7 +238,7 @@ const PLACEHOLDER_DATA = [
 ];
 
 export default function IncomeGrowthChart({ data, tutorialActive = false }) {
-  const [activeKey, setActiveKey] = useState("gross");
+  const [activeKey, setActiveKey] = useState("netWorth");
   const [tooltip, setTooltip] = useState(null);
   const chartData = useMemo(() => {
     if (!data?.year_results) return [];
@@ -269,25 +269,24 @@ export default function IncomeGrowthChart({ data, tutorialActive = false }) {
 
     <div className="income-chart-top">
 
-      <div className="income-chart-controls">
+    <div className="income-chart-controls">
+      <select
+        id="income-chart-view"
+        className="income-chart-select"
+        value={activeKey}
+        onChange={(e) => setActiveKey(e.target.value)}
+      >
         {GROUPS.map((group) => (
-          <div key={group} className="income-pill-group">
-            <span className="income-pill-group-label">{group}</span>
-
-            <div className="income-chart-pills">
-              {VIEWS.filter(v => v.group === group).map(v => (
-                <button
-                  key={v.key}
-                  className={`income-pill income-pill-${v.key} ${activeKey === v.key ? "income-pill-active" : ""}`}
-                  onClick={() => setActiveKey(v.key)}
-                >
-                  {v.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          <optgroup key={group} label={group}>
+            {VIEWS.filter((v) => v.group === group).map((v) => (
+              <option key={v.key} value={v.key}>
+                {v.label}
+              </option>
+            ))}
+          </optgroup>
         ))}
-      </div>
+      </select>
+    </div>
 
       <div className="income-chart-stats">
         <div className="income-stat">

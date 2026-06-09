@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
-import { ID } from "@/app/visuals/accounts";
+import { ID } from "@/app/visuals/Accounts";
+import {
+  TimelineAgeFields,
+  getValidatedTimelinePayload,
+} from "@/app/visuals/TimelineAgeFields";
 import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus, TrendingUpDown, ArrowBigDownDash, BanknoteArrowUp, DollarSign, Link } from 'lucide-react';
 
 // ─────────────────────────────────────────────
@@ -111,6 +115,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   const [interestRate, setInterestRate] = useState("6.75");
   const [loanTermYears, setLoanTermYears] = useState("30");
   const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
   const [extraMonthlyPayment, setExtraMonthlyPayment] = useState("");
 
   const [linkedAssetId, setLinkedAssetId] = useState("");
@@ -167,6 +172,11 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+    
+        if (timeline.invalid) {
+            return;
+        }
 
     if (linkError) return;
 
@@ -177,8 +187,8 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
       variant: "house_loan",
       id: loanId,
       name: name || "House Loan",
-      start_age: Number(startAge),
-      end_age: Number(startAge) + Number(loanTermYears),
+      start_age: timeline.start,
+      end_age: timeline.end,
       linked_asset_id: linkedAssetId || null,
       monthly_expense: monthlyExpense,
       original_principal: Number(originalPrincipal),
@@ -267,27 +277,13 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(auto)</span>
-                </label>
-                <input
-                  value={calculatedEndYear}
-                  className="form-input"
-                  disabled
-                  style={{
-                    backgroundColor: "#f3f4f6",
-                    cursor: "not-allowed",
-                  }}
-                />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             <div className="link-card">
               <div className="link-card__header">
@@ -331,17 +327,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
@@ -403,6 +389,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   const [interestRate, setInterestRate] = useState("7.5");
   const [loanTermYears, setLoanTermYears] = useState("5");
   const [startAge, setStartAge] = useState("");
+  const [endAge, setEndAge] = useState("");
 
   const [linkedAssetId, setLinkedAssetId] = useState("");
   const [linkError, setLinkError] = useState("");
@@ -456,6 +443,11 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+    
+        if (timeline.invalid) {
+            return;
+        }
 
     if (linkError) return;
 
@@ -466,8 +458,8 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
       variant: "car_loan",
       id: loanId,
       name: name || "Car Loan",
-      start_age: Number(startAge),
-      end_age: Number(startAge) + Number(loanTermYears),
+      start_age: timeline.start,
+      end_age: timeline.end,
       linked_asset_id: linkedAssetId || null,
       monthly_expense: monthlyExpense,
       original_principal: Number(originalPrincipal),
@@ -543,27 +535,13 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(auto)</span>
-                </label>
-                <input
-                  value={calculatedEndYear}
-                  className="form-input"
-                  disabled
-                  style={{
-                    backgroundColor: "#f3f4f6",
-                    cursor: "not-allowed",
-                  }}
-                />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             <div className="link-card">
               <div className="link-card__header">
@@ -607,17 +585,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
@@ -668,7 +636,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   );
 }
 
-export function LivingExpensesForm({ dispatch, onToast }) {
+export function LivingExpensesForm({ dispatch,state, onToast }) {
   const [name, setName] = useState("Living Expenses");
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("3");
@@ -677,6 +645,11 @@ export function LivingExpensesForm({ dispatch, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+    
+        if (timeline.invalid) {
+            return;
+        }
 
     dispatch({
       type: "ADD_EXPENSE",
@@ -685,8 +658,8 @@ export function LivingExpensesForm({ dispatch, onToast }) {
         variant: "living",
         id: crypto.randomUUID(),
         name,
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         monthly_expense: Number(amount),
         expense_growth: Number(growth) / 100,
       },
@@ -747,18 +720,13 @@ export function LivingExpensesForm({ dispatch, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(opt)</span>
-                </label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Annual Cost Preview */}
             <div className="preview-card">
@@ -785,7 +753,7 @@ export function LivingExpensesForm({ dispatch, onToast }) {
   );
 }
 
-export function DebtExpenseForm({ dispatch, onToast }) {
+export function DebtExpenseForm({ dispatch,state, onToast }) {
   const [name, setName] = useState("Debt Expense");
   const [debtAmount, setDebtAmount] = useState("");
   const [monthlyPayment, setMonthlyPayment] = useState("");
@@ -795,6 +763,11 @@ export function DebtExpenseForm({ dispatch, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+    
+        if (timeline.invalid) {
+            return;
+        }
 
     dispatch({
       type: "ADD_EXPENSE",
@@ -803,8 +776,8 @@ export function DebtExpenseForm({ dispatch, onToast }) {
         variant: "debt",
         id: crypto.randomUUID(),
         name: name || "Debt",
-        start_age: Number(startAge),
-        end_age: endAge === "" ? null : Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         debt_amount: Number(debtAmount),
         monthly_expense: Number(monthlyPayment),
         interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
@@ -877,18 +850,13 @@ export function DebtExpenseForm({ dispatch, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input type="number" placeholder="1" value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" required />
-              </div>
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(opt)</span>
-                </label>
-                <input type="number" placeholder="10" value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Annual Payment Preview */}
             <div className="preview-card">
@@ -918,7 +886,7 @@ export function DebtExpenseForm({ dispatch, onToast }) {
   );
 }
 
-export function RentExpenseForm({ dispatch, onToast }) {
+export function RentExpenseForm({ dispatch,state, onToast, }) {
   const [amount, setAmount] = useState("");
   const [growth, setGrowth] = useState("3");
   const [startAge, setStartAge] = useState("");
@@ -926,6 +894,11 @@ export function RentExpenseForm({ dispatch, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+    
+        if (timeline.invalid) {
+            return;
+        }
 
     dispatch({
       type: "ADD_EXPENSE",
@@ -934,8 +907,8 @@ export function RentExpenseForm({ dispatch, onToast }) {
         variant: "rent",
         id: crypto.randomUUID(),
         name: "Rent",
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         monthly_expense: Number(amount),
         expense_growth: Number(growth) / 100,
       },
@@ -990,18 +963,13 @@ export function RentExpenseForm({ dispatch, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(opt)</span>
-                </label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="10" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Annual Cost Preview */}
             <div className="preview-card">
@@ -1038,6 +1006,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
   const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
   const [loanTermYears, setLoanTermYears] = useState(item.loan_term_years?.toString() || "5");
   const [startAge, setStartAge] = useState(item.start_age?.toString() || "");
+  const [endAge, setEndAge] = useState(item.end_age?.toString() || "");
   const [linkedAssetId, setLinkedAssetId] = useState(item.linked_asset_id || "");
   const [linkError, setLinkError] = useState("");
 
@@ -1074,6 +1043,11 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+    
+        if (timeline.invalid) {
+            return;
+        }
     if (linkError) return;
 
     if (item.linked_asset_id && item.linked_asset_id !== linkedAssetId) {
@@ -1093,8 +1067,8 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
         source_type: "expense",
         variant: "car_loan",
         name: name || "Car Loan",
-        start_age: Number(startAge),
-        end_age: calculatedEndYear,
+        start_age: timeline.start,
+        end_age: timeline.end,
         linked_asset_id: linkedAssetId || null,
         monthly_expense: monthlyExpense,
         original_principal: Number(originalPrincipal),
@@ -1153,16 +1127,13 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age <span className="form-label--muted">(auto)</span></label>
-                <input value={calculatedEndYear || ''} className="form-input" disabled style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }} />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             <div className="link-card">
               <div className="link-card__header">
@@ -1180,9 +1151,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
                 ) : item.linked_asset_id ? (
                   <div className="link-card__synced">
                     🔗 Linked to {availableCars.find((car) => car.id === item.linked_asset_id)?.name || "Car"}
-                    <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "0.5rem" }}>
-                      Delete the linked car to reassign
-                    </div>
+                    <p className="form-inline-muted">Delete the linked car to reassign</p>
                   </div>
                 ) : (
                   <div className="form-field--gap8">
@@ -1194,7 +1163,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
                         </option>
                       ))}
                     </select>
-                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
                         🔗 Linked to {availableCars.find((car) => car.id === linkedAssetId)?.name}
@@ -1248,6 +1217,9 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
   );
   const [startAge, setStartAge] = useState(
     item.start_age?.toString() || ""
+  );
+  const [endAge, setEndAge] = useState(
+    item.end_age?.toString() || ""
   );
 
 
@@ -1318,6 +1290,11 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+    
+        if (timeline.invalid) {
+            return;
+        }
 
     if (linkError) return;
 
@@ -1363,8 +1340,8 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
         source_type: "expense",
         variant: "house_loan",
         name: name || "Home Loan",
-        start_age: Number(startAge),
-        end_age: Number(startAge) + Number(loanTermYears),
+        start_age: timeline.start,
+        end_age: timeline.end,
         linked_asset_id: item.linked_asset_id || linkedAssetId || null,
         monthly_expense: monthlyExpense,
         original_principal: Number(originalPrincipal),
@@ -1477,34 +1454,13 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input
-                  value={startAge}
-                  onChange={(e) => setStartAge(e.target.value)}
-                  className="form-input"
-                  placeholder="1"
-                  type="number"
-                  required
-                />
-              </div>
-
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(auto)</span>
-                </label>
-                <input
-                  value={calculatedEndYear}
-                  className="form-input"
-                  disabled
-                  style={{
-                    backgroundColor: "#f3f4f6",
-                    cursor: "not-allowed",
-                  }}
-                />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             <div className="link-card">
               <div className="link-card__header">
@@ -1530,15 +1486,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
                   <div className="link-card__synced">
                     🔗 Linked to {linkedHouse?.name || "House asset"}
 
-                    <div
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#6B7280",
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      Delete the linked loan to reassign
-                    </div>
+                    <p className="form-inline-muted">Delete the linked house to reassign</p>
                   </div>
                 ) : (
                   <div className="form-field--gap8">
@@ -1564,17 +1512,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card__synced">
@@ -1622,7 +1560,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
   );
 }
 
-export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
+export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [amount, setAmount] = useState(item.monthly_expense.toString());
   const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
@@ -1631,6 +1569,11 @@ export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+    
+        if (timeline.invalid) {
+            return;
+        }
 
     dispatch({
       type: "UPDATE_EXPENSE",
@@ -1638,8 +1581,8 @@ export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
         ...item,
         variant: "living",
         name,
-        start_age: Number(startAge),
-        end_age: endAge === "" ? null : Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         monthly_expense: Number(amount),
         expense_growth: Number(growth) / 100,
       },
@@ -1696,18 +1639,13 @@ export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(opt)</span>
-                </label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="40" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Annual Cost Preview */}
             <div className="preview-card">
@@ -1737,7 +1675,7 @@ export function EditLivingExpensesForm({ item, dispatch, onClose, onToast }) {
   );
 }
 
-export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
+export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) {
   const [amount, setAmount] = useState(item.monthly_expense.toString());
   const [growth, setGrowth] = useState((item.expense_growth * 100).toString());
   const [startAge, setStartAge] = useState(item.start_age.toString());
@@ -1746,6 +1684,11 @@ export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+    
+        if (timeline.invalid) {
+            return;
+        }
 
     dispatch({
       type: "UPDATE_EXPENSE",
@@ -1753,8 +1696,8 @@ export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
         ...item,
         variant: "rent",
         name: name || "Rent",
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         monthly_expense: Number(amount),
         expense_growth: Number(growth) / 100,
       },
@@ -1806,16 +1749,13 @@ export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="10" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Annual Cost Preview */}
             <div className="preview-card">
@@ -1848,7 +1788,7 @@ export function EditRentExpenseForm({ item, dispatch, onClose, onToast }) {
   );
 }
 
-export function EditDebtExpenseForm({ item, dispatch, onClose, onToast }) {
+export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [debtAmount, setDebtAmount] = useState(item.debt_amount.toString());
   const [monthlyPayment, setMonthlyPayment] = useState(item.monthly_expense.toString());
@@ -1858,6 +1798,11 @@ export function EditDebtExpenseForm({ item, dispatch, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+    
+        if (timeline.invalid) {
+            return;
+        }
 
     dispatch({
       type: "UPDATE_EXPENSE",
@@ -1865,8 +1810,8 @@ export function EditDebtExpenseForm({ item, dispatch, onClose, onToast }) {
         ...item,
         variant: "debt",
         name: name || "Debt",
-        start_age: Number(startAge),
-        end_age: endAge === "" ? null : Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         debt_amount: Number(debtAmount),
         monthly_expense: Number(monthlyPayment),
         interest_rate: interestRate === "" ? null : Number(interestRate) / 100,
@@ -1934,18 +1879,13 @@ export function EditDebtExpenseForm({ item, dispatch, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">
-                  End Age <span className="form-label--muted">(opt)</span>
-                </label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="10" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Annual Payment Preview */}
             <div className="preview-card">

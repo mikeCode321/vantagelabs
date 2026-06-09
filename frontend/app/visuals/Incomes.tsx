@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
-import { ID } from "@/app/visuals/accounts";
+import { ID } from "@/app/visuals/Accounts";
+import {
+  TimelineAgeFields,
+  getValidatedTimelinePayload,
+} from "@/app/visuals/TimelineAgeFields";
 import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight ,Handbag, Clock,Rocket,Link } from 'lucide-react';
 
 // ─────────────────────────────────────────────
@@ -92,6 +96,11 @@ export function SalaryForm({ dispatch, state, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+        
+            if (timeline.invalid) {
+                return;
+            }
 
     if (linkError) {
       return;
@@ -121,10 +130,10 @@ export function SalaryForm({ dispatch, state, onToast }) {
         variant: "salary",
         id: newIncomeId,
         name,
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         gross_income: Number(grossIncome),
-        income_growth: Number(growth),
+        income_growth: Number(growth)/100,
         linked_401k_id: linked401kId || undefined,
       },
     });
@@ -185,16 +194,13 @@ export function SalaryForm({ dispatch, state, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" required />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Link to 401k card */}
             <div className="link-card">
@@ -229,17 +235,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
@@ -294,6 +290,11 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+        
+            if (timeline.invalid) {
+                return;
+            }
 
     if (linkError) {
       return;
@@ -322,12 +323,12 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
         variant: "hourly",
         id: newIncomeId,
         name,
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         hourly_rate: Number(hourlyRate),       
         hours_per_week: Number(hoursPerWeek),  
         gross_income: Number(annualIncome),
-        income_growth: Number(growth),
+        income_growth: Number(growth)/100,
         linked_401k_id: linked401kId || undefined,
       },
     });
@@ -399,16 +400,13 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Link to 401k card */}
             <div className="link-card">
@@ -443,17 +441,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
@@ -489,7 +477,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
   );
 }
 
-export function SideHustleForm({ dispatch, onToast }) {
+export function SideHustleForm({ dispatch,state, onToast }) {
   const [name, setName] = useState("");
   const [startAge, setStartAge] = useState("");
   const [endAge, setEndAge] = useState("");
@@ -503,6 +491,11 @@ export function SideHustleForm({ dispatch, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+        
+            if (timeline.invalid) {
+                return;
+            }
 
     dispatch({
       type: "ADD_INCOME",
@@ -511,8 +504,8 @@ export function SideHustleForm({ dispatch, onToast }) {
         variant: "side",
         id: crypto.randomUUID(),
         name: name || "Side Hustle",
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         gross_income: annualIncome,
         variability: Number(variability) / 100,
         frequency: frequency,
@@ -591,16 +584,13 @@ export function SideHustleForm({ dispatch, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Annual Income Preview */}
             <div className="preview-card">
@@ -635,7 +625,7 @@ export function SideHustleForm({ dispatch, onToast }) {
 export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [grossIncome, setGrossIncome] = useState(item.gross_income.toString());
-  const [growth, setGrowth] = useState(item.income_growth.toString());
+  const [growth, setGrowth] = useState((item.income_growth*100).toString());
   const [startAge, setStartAge] = useState(item.start_age.toString());
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
@@ -665,6 +655,11 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+        
+            if (timeline.invalid) {
+                return;
+            }
 
     if (linkError) {
       return;
@@ -673,10 +668,10 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
     const updatedIncome = {
       ...item,
       name,
-      start_age: Number(startAge),
-      end_age: Number(endAge),
+      start_age: timeline.start,
+      end_age: timeline.end,
       gross_income: Number(grossIncome),
-      income_growth: Number(growth),
+      income_growth: Number(growth)/100,
       linked_401k_id: linked401kId || undefined,
     };
 
@@ -759,19 +754,13 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
-              </div>
-
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Link to 401k card */}
             <div className="link-card">
@@ -806,17 +795,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linked401kId && !linkError && <div className="link-card__synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
@@ -847,7 +826,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [hourlyRate, setHourlyRate] = useState(item.hourly_rate?.toString() || "");
   const [hoursPerWeek, setHoursPerWeek] = useState(item.hours_per_week?.toString() || "");
-  const [growth, setGrowth] = useState(item.income_growth.toString());
+  const [growth, setGrowth] = useState((item.income_growth*100).toString());
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
   const [linkError, setLinkError] = useState("");
 
@@ -877,6 +856,11 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+        
+            if (timeline.invalid) {
+                return;
+            }
 
     if (linkError) {
       return;
@@ -885,12 +869,12 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
     const updatedIncome = {
       ...item,
       name,
-      start_age: Number(startAge),
-      end_age: Number(endAge),
+      start_age: timeline.start,
+      end_age: timeline.end,
       hourly_rate: Number(hourlyRate),          
       hours_per_week: Number(hoursPerWeek),     
       gross_income: Number(annualIncome),
-      income_growth: Number(growth),
+      income_growth: Number(growth)/100,
       linked_401k_id: linked401kId || undefined,
     };
 
@@ -976,16 +960,13 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Link to 401k card */}
             <div className="link-card">
@@ -1006,16 +987,8 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
                   <p className="link-card__no-accounts">No 401(k) accounts available.</p>
                 ) : isAlreadyLinked ? (
                   <div className="link-card__synced">
-                    <Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
-                    <div
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#6B7280",
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      Delete the linked account to reassign
-                    </div>
+                    🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
+                    <p className="form-inline-muted">Delete the linked account to reassign</p>
                   </div>
                 ) : (
                   <div className="form-field--gap8">
@@ -1033,17 +1006,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linked401kId && !linkError && <div className="link-card__synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
@@ -1082,7 +1045,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
   );
 }
 
-export function EditSideHustleForm({ item, dispatch, onClose, onToast }) {
+export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [startAge, setStartAge] = useState(item.start_age.toString());
   const [endAge, setEndAge] = useState(item.end_age.toString());
@@ -1096,14 +1059,19 @@ export function EditSideHustleForm({ item, dispatch, onClose, onToast }) {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
+        
+            if (timeline.invalid) {
+                return;
+            }
 
     dispatch({
       type: "UPDATE_INCOME",
       payload: {
         ...item,
         name,
-        start_age: Number(startAge),
-        end_age: Number(endAge),
+        start_age: timeline.start,
+        end_age: timeline.end,
         gross_income: annualIncome,
         variability: Number(variability) / 100,
         frequency: frequency,
@@ -1177,16 +1145,13 @@ export function EditSideHustleForm({ item, dispatch, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <div className="form-year-grid">
-              <div className="form-field">
-                <label className="form-label">Start Age</label>
-                <input value={startAge} onChange={(e) => setStartAge(e.target.value)} className="form-input" placeholder="1" type="number" />
-              </div>
-              <div className="form-field">
-                <label className="form-label">End Age</label>
-                <input value={endAge} onChange={(e) => setEndAge(e.target.value)} className="form-input" placeholder="30" type="number" />
-              </div>
-            </div>
+            <TimelineAgeFields
+            state={state}
+            startAge={startAge}
+            endAge={endAge}
+            setStartAge={setStartAge}
+            setEndAge={setEndAge}
+          />
 
             {/* Annual Income Preview */}
             <div className="preview-card">

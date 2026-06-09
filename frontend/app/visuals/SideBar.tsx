@@ -14,7 +14,7 @@ export default function SideBar({setIsFeedbackOpen}) {
 
             <div className="dash-sidebar-header">
                 <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
-                    <Image src="/vantage_logo_transparent.svg" alt="Vantage" width={120} height={34} className="dash-logo-img" priority />
+                    <Image src="/temp/phin-no-name-bg.png" alt="Vantage" width={120} height={82} className="dash-logo-img" priority />
                 </div>
                 <button type="button" className="dash-collapse-btn" onClick={() => setSidebarCollapsed(c => !c)} aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
                     <svg className={`dash-collapse-icon${sidebarCollapsed ? " dash-collapse-icon--flipped" : ""}`} width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" >

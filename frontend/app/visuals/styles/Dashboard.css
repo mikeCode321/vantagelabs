@@ -128,29 +128,6 @@ h3 {
   margin-bottom: 16px;
 }
 
-.dash-root[data-active-tutorial-step="expenses-assets"]
-  [data-tutorial="expense-card"],
-.dash-root[data-active-tutorial-step="expenses-assets"]
-  [data-tutorial="asset-card"] {
-  position: relative;
-  z-index: 1300;
-  box-shadow:
-    0 0 0 3px rgba(109, 40, 217, 0.45),
-    0 20px 60px rgba(109, 40, 217, 0.2);
-}
-
-.dash-root[data-active-tutorial-step="results"][data-tutorial="income-chart"],
-.dash-root[data-active-tutorial-step="results"][data-tutorial="simulation-highlights"],
-.dash-root[data-active-tutorial-step="results"][data-tutorial="run-simulation-controls"] {
-  position: relative;
-  z-index: 1000;
-  box-shadow:
-    0 0 0 3px rgba(109, 40, 217, 0.65),
-    0 20px 60px rgba(109, 40, 217, 0.24);
-  border-radius: 16px;
-  background: #ffffff;
-}
-
 @media (max-width: 480px) {
   .overview-card {
     padding: 12px 10px;

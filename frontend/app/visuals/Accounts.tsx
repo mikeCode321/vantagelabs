@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus, TrendingUpDown, ArrowBigDownDash, BanknoteArrowUp, DollarSign, Link } from 'lucide-react';
 import {
   TimelineAgeFields,
   getValidatedTimelinePayload,
@@ -139,7 +140,7 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💰</div>
+        <div className="form-header-icon"><CreditCard/></div>
         <div>
           <h3 className="form-header-title">Add Checking Account</h3>
           <p className="form-header-desc">Track your checking account balance and tiered interest rates.</p>
@@ -349,7 +350,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">📈</div>
+        <div className="form-header-icon"><ChartColumnIncreasing/></div>
         <div>
           <h3 className="form-header-title">Add Taxable Investment Account</h3>
           <p className="form-header-desc">Track your brokerage account with returns and dividend strategies.</p>
@@ -446,7 +447,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">💼</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a job</div>
                     <div className="link-card__sub">
@@ -674,7 +675,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🏢</div>
+        <div className="form-header-icon"><Accessibility/></div>
         <div>
           <h3 className="form-header-title">Add Employer Retirement Account</h3>
           <p className="form-header-desc">Track your 401(k), 403(b), or pension and optionally link it to a job.</p>
@@ -769,7 +770,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">💼</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a job</div>
                     <div className="link-card__sub">Required for percentage-based contributions</div>
@@ -796,7 +797,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
                     {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
                     {linkedJob && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Synced years {linkedJob.start_age}–{linkedJob.end_age}
+                        <Link/> Synced years {linkedJob.start_age}–{linkedJob.end_age}
                       </div>
                     )}
                   </div>
@@ -808,7 +809,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             {contributionMode === "percentage" && selectedJob && (
               <div className="preview-card">
                 <div className="preview-card__header">
-                  <span className="preview-icon">💵</span>
+                  <span className="preview-icon"><DollarSign/></span>
                   <span className="preview-card__label">Contribution Preview</span>
                 </div>
                 <div className="preview-card__row">
@@ -831,7 +832,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             {contributionMode == "dollar" && (
               <div className="preview-card">
                 <div className="preview-card__header preview-card__header--mb10">
-                  <span className="preview-icon">✨</span>
+                  <span className="preview-icon"></span>
                   <span className="preview-card__label">Annual Total</span>
                 </div>
                 <div className="preview-card__amount preview-card__amount--lg">
@@ -915,7 +916,7 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💰</div>
+        <div className="form-header-icon"><CreditCard/></div>
         <div>
           <h3 className="form-header-title">Edit Checking Account</h3>
           <p className="form-header-desc">Update your checking account balance and tiered interest rates.</p>
@@ -1207,7 +1208,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">💼</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a job</div>
                     <div className="link-card__sub">
@@ -1248,7 +1249,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
             {contributionMode === "percentage" && selectedJob && netIncome && !isLoadingTaxCalc && (
               <div className="preview-card">
                 <div className="preview-card__header">
-                  <span className="preview-icon">💵</span>
+                  <span className="preview-icon"><DollarSign/></span>
                   <span className="preview-card__label">Contribution Preview</span>
                 </div>
                 <div className="preview-card__row">
@@ -1423,7 +1424,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🏢</div>
+        <div className="form-header-icon"><Building/></div>
         <div>
           <h3 className="form-header-title">Edit Employer Retirement Account</h3>
           <p className="form-header-desc">Update your 401(k), 403(b), or pension details.</p>
@@ -1518,7 +1519,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">💼</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a job</div>
                     <div className="link-card__sub">Required for percentage-based contributions</div>
@@ -1552,7 +1553,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
                     {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
                     {linkedJob && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Synced years {linkedJob.start_age}–{linkedJob.end_age}
+                        <Link/> Synced years {linkedJob.start_age}–{linkedJob.end_age}
                       </div>
                     )}
                   </div>
@@ -1564,7 +1565,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
             {contributionMode === "percentage" && selectedJob && (
               <div className="preview-card">
                 <div className="preview-card__header">
-                  <span className="preview-icon">💵</span>
+                  <span className="preview-icon"><DollarSign/></span>
                   <span className="preview-card__label">Contribution Preview</span>
                 </div>
                 <div className="preview-card__row">
@@ -1587,7 +1588,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
             {contributionMode == "dollar" && (
               <div className="preview-card">
                 <div className="preview-card__header preview-card__header--mb10">
-                  <span className="preview-icon">✨</span>
+                  <span className="preview-icon"></span>
                   <span className="preview-card__label">Annual Total</span>
                 </div>
                 <div className="preview-card__amount preview-card__amount--lg">

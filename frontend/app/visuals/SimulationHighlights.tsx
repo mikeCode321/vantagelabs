@@ -2,6 +2,8 @@ import {
     formatCompactMoney,
   } from "@/app/visuals/FinancialOverviewCards";
   
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus, TrendingUpDown, ArrowBigDownDash, BanknoteArrowUp } from 'lucide-react';
+
   type YearResult = {
     year: number;
     age: number;
@@ -34,7 +36,7 @@ import {
     label: string;
     sublabel: string;
     value: string;
-    icon: string;
+    icon: any;
     tone: HighlightTone;
     isNegative?: boolean;
   };
@@ -97,7 +99,7 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
         label: "Ending Net Worth",
         sublabel: finalYear ? `In year ${finalYear.age} (${finalYear.year})` : "Run a simulation",
         value: data ? formatCompactMoney(endingNetWorth) : "--",
-        icon: "↗",
+        icon: <TrendingUpDown />,
         tone: "purple",
       },
       {
@@ -105,7 +107,7 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
         label: "CAGR (Net Worth)",
         sublabel: "Annualized growth rate",
         value: data ? `${cagr.toFixed(1)}%` : "--",
-        icon: "$",
+        icon: <CircleDollarSign/>,
         tone: "green",
       },
       {
@@ -113,7 +115,7 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
         label: "Peak Net Worth",
         sublabel: data ? `At age ${metrics?.peak_net_worth_age}` : "Run a simulation",
         value: data ? formatCompactMoney(metrics?.peak_net_worth ?? 0) : "--",
-        icon: "◔",
+        icon: <BanknoteArrowUp/>,
         tone: "blue",
       },
       {
@@ -121,7 +123,7 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
         label: "Max Drawdown",
         sublabel: data ? `Lowest cash year ${metrics?.lowest_cash_balance_year}` : "Run a simulation",
         value: data ? (isCashDrawdown ? formatCompactMoney(drawdownAmount) : formatCompactMoney(0)) : "--",
-        icon: "↘",
+        icon: <ArrowBigDownDash/>,
         tone: "red",
         isNegative: isCashDrawdown,
       },

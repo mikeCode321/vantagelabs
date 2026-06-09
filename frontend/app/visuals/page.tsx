@@ -27,6 +27,7 @@ import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedP
 
 import IncomeGrowthChart from '@/app/visuals/IncomeGrowthChart'
 import SideBar from '@/app/visuals/SideBar'
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 
 type SimRequest = {
   user_start_age: number;
@@ -303,14 +304,13 @@ function saveState(state: SimRequest) {
   }
 }
 
-// ENTITY DATA:
 const ENTITY_CONFIG = {
   account: {
     checking: {
       id: "checking",
       name: "Checking",
       description: "Track your checking account balance and tiered interest rates.",
-      emoji: "💳",
+      emoji: <CreditCard/>,
       formComponent: CheckingAccountForm,
       editFormComponent: EditCheckingAccountForm,
     },
@@ -318,7 +318,7 @@ const ENTITY_CONFIG = {
       id: "taxable_investments",
       name: "Taxable Investments",
       description: "Add brokerage accounts, stocks, ETFs, or other taxable investment balances.",
-      emoji: "📊",
+      emoji: <ChartColumnIncreasing/>,
       formComponent: TaxableInvestmentAccountForm,
       editFormComponent: EditTaxableInvestmentAccountForm,
     },
@@ -326,7 +326,7 @@ const ENTITY_CONFIG = {
       id: "employer_retirement",
       name: "Employer Retirement Accounts",
       description: "Track your 401(k), 403(b), or pension and optionally link it to a job.",
-      emoji: "🏢",
+      emoji: <Accessibility/>,
       formComponent: EmployerRetirementAccountForm,
       editFormComponent: EditEmployerRetirementAccountForm,
     },
@@ -337,7 +337,7 @@ const ENTITY_CONFIG = {
       id: "salary",
       name: "Salary",
       description: "Track your employment income and annual growth rate.",
-      emoji: "💼",
+      emoji: <Luggage/>,
       formComponent: SalaryForm,
       editFormComponent: EditSalaryForm,
     },
@@ -345,7 +345,7 @@ const ENTITY_CONFIG = {
       id: "hourly",
       name: "Hourly Wage",
       description: "Track hourly income, weekly hours, and projected growth.",
-      emoji: "⏱️",
+      emoji: <Clock/>,
       formComponent: HourlyWageForm,
       editFormComponent: EditHourlyWageForm,
     },
@@ -353,7 +353,7 @@ const ENTITY_CONFIG = {
       id: "side",
       name: "Side Hustle",
       description: "Add extra income from freelance work, gigs and side businesses with variability",
-      emoji: "🚀",
+      emoji: <Rocket/>,
       formComponent: SideHustleForm,
       editFormComponent: EditSideHustleForm,
     },
@@ -364,7 +364,7 @@ const ENTITY_CONFIG = {
       id: "living",
       name: "Living Expenses",
       description: "Add monthly living costs like groceries, utilities, and other essentials.",
-      emoji: "🏠",
+      emoji: <ShoppingCart  />,
       iconTone: "purple",
       formComponent: LivingExpensesForm,
       editFormComponent: EditLivingExpensesForm,
@@ -373,7 +373,7 @@ const ENTITY_CONFIG = {
       id: "rent",
       name: "Rent",
       description: "Add your monthly rent or housing payments.",
-      emoji: "🏢",
+      emoji: <BanknoteArrowDown/>,
       iconTone: "blue",
       formComponent: RentExpenseForm,
       editFormComponent: EditRentExpenseForm,
@@ -382,7 +382,7 @@ const ENTITY_CONFIG = {
       id: "debt",
       name: "Debt",
       description: "Add credit card debt, personal loans, or other liabilities.",
-      emoji: "💳",
+      emoji: <HandCoins/>,
       iconTone: "teal",
       formComponent: DebtExpenseForm,
       editFormComponent: EditDebtExpenseForm,
@@ -391,7 +391,7 @@ const ENTITY_CONFIG = {
       id: "house_loan",
       name: "Home Loan",
       description: "Add your mortgage.",
-      emoji: "🏡",
+      emoji: <House/>,
       iconTone: "green",
       formComponent: HouseLoanExpenseForm,
       editFormComponent: EditHouseLoanExpenseForm,
@@ -400,7 +400,7 @@ const ENTITY_CONFIG = {
       id: "car_loan",
       name: "Car Loan",
       description: "Add your car loan.",
-      emoji: "🚗",
+      emoji: <Car/>,
       iconTone: "orange",
       formComponent: CarLoanExpenseForm,
       editFormComponent: EditCarLoanExpenseForm,
@@ -412,7 +412,7 @@ const ENTITY_CONFIG = {
       id: "house",
       name: "House",
       description: "Track a property asset with appreciation and optional down payment.",
-      emoji: "🏡",
+      emoji: <HousePlus/>,
       formComponent: HouseAssetForm,
       editFormComponent: EditHouseAssetForm,
     },
@@ -420,7 +420,7 @@ const ENTITY_CONFIG = {
       id: "car",
       name: "Car",
       description: "Track a vehicle asset with depreciation and optional down payment.",
-      emoji: "🚗",
+      emoji: <Car/>,
       formComponent: CarAssetForm,
       editFormComponent: EditCarAssetForm,
     },
@@ -447,8 +447,6 @@ export function EntityModalCell({ item, setSelectedVariant }) {
 }
 
 export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEdited, state, onToast }) {
-
-  
   const [selectedVariant, setSelectedVariant] = useState(variantBeingEdited?.variant || null);
 
   const goBack = () => setSelectedVariant(null);
@@ -457,22 +455,22 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
   const FormComponent = selectedVariant ? (variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent) : null;
   const MODAL_COPY = {
     account: {
-      icon: "🏛️",
+      icon: <Landmark/>,
       title: "Choose an account type",
       description: "Select the account you want to add to your simulation.",
     },
     income: {
-      icon: "💼",
+      icon: <Handbag/>,
       title: "Choose an income type",
       description: "Select the income source you want to add to your simulation.",
     },
     expense: {
-      icon: "💳",
+      icon: <CreditCard/>,
       title: "Choose an expense type",
       description: "Select the expense you want to add to your simulation.",
     },
     asset: {
-      icon: "◔",
+      icon: <ChartPie/>,
       title: "Choose an asset type",
       description: "Select the asset you want to add to your simulation.",
     },
@@ -818,28 +816,28 @@ const ENTITY_CARD_COPY = {
   account: {
     title: "Accounts",
     description: "Add your bank, investment, and other accounts.",
-    icon: "🏛️",
+    icon: <Landmark/>,
     emptyText: "0 accounts added",
     itemText: "accounts added",
   },
   income: {
     title: "Income",
     description: "Add salary, side income, and other inflows.",
-    icon: "💼",
+    icon: <CircleDollarSign/>,
     emptyText: "0 income sources",
     itemText: "income sources",
   },
   expense: {
     title: "Expenses",
     description: "Add living expenses, bills, and other outflows.",
-    icon: "🧾",
+    icon: <HandCoins/>,
     emptyText: "0 expense items",
     itemText: "expense items",
   },
   asset: {
     title: "Assets",
     description: "Add real estate, vehicles, and other assets.",
-    icon: "◔",
+    icon: <PieChart/>,
     emptyText: "0 assets added",
     itemText: "assets added",
   },
@@ -1014,13 +1012,13 @@ export function FinancialEntities({ state, dispatch, onToast, tutorialStepId }) 
     <div className="entities-wrapper">
       {showArrows && canScrollLeft && (
         <button className="entities-arrow entities-arrow--left" onClick={() => scrollByStep("left")}>
-          ◀
+          <ChevronLeft/>
         </button>
       )}
 
       {showArrows && canScrollRight && (
         <button className="entities-arrow entities-arrow--right" onClick={() => scrollByStep("right")}>
-          ▶
+          <ChevronRight/>
         </button>
       )}
 
@@ -1097,7 +1095,7 @@ export default function Dashboard() {
       change: formatSignedPercent(netWorthChange),
       changeLabel: "vs start",
       meta: getReadableTrend(startingNetWorth, endingNetWorth, "Net worth"),
-      icon: "⌁",
+      icon: <ChartNoAxesCombined/>,
       tone: "purple",
       direction: getChangeDirection(startingNetWorth, endingNetWorth),
     },
@@ -1110,7 +1108,7 @@ export default function Dashboard() {
       meta: lastYear
         ? `Inflows ${formatCompactMoney(lastYear.income_earned.gross)} · Taxes ${formatCompactMoney(lastYear.income_earned.taxes_paid)}`
         : "Run simulation to see data",
-      icon: "$",
+      icon: <CircleDollarSign/>,
       tone: "green",
       direction: getChangeDirection(startingCashFlow, endingCashFlow),
     },
@@ -1123,7 +1121,7 @@ export default function Dashboard() {
       meta: lastYear
         ? `${lastYear.assets.assets.length} assets`
         : "Run simulation to see data",
-      icon: "◔",
+      icon: <ChartPie/>,
       tone: "blue",
       direction: getChangeDirection(startingAssets, totalAssets),
     },
@@ -1136,7 +1134,7 @@ export default function Dashboard() {
       meta: lastYear
         ? `${lastYear.expenses.expenses.length} liabilities`
         : "Run simulation to see data",
-      icon: "▭",
+      icon: <HandCoins/>,
       tone: "orange",
       direction: getChangeDirection(startingLiabilities, totalLiabilities),
     },

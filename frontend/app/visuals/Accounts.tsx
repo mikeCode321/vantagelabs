@@ -140,7 +140,7 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon"><DollarSign/></div>
+        <div className="form-header-icon"><CreditCard/></div>
         <div>
           <h3 className="form-header-title">Add Checking Account</h3>
           <p className="form-header-desc">Track your checking account balance and tiered interest rates.</p>
@@ -916,7 +916,7 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💰</div>
+        <div className="form-header-icon"><CreditCard/></div>
         <div>
           <h3 className="form-header-title">Edit Checking Account</h3>
           <p className="form-header-desc">Update your checking account balance and tiered interest rates.</p>

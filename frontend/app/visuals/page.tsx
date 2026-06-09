@@ -304,7 +304,6 @@ function saveState(state: SimRequest) {
   }
 }
 
-// ENTITY DATA:
 const ENTITY_CONFIG = {
   account: {
     checking: {
@@ -452,8 +451,6 @@ export function EntityModalCell({ item, setSelectedVariant }) {
 }
 
 export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEdited, state, onToast }) {
-
-  
   const [selectedVariant, setSelectedVariant] = useState(variantBeingEdited?.variant || null);
 
   const goBack = () => setSelectedVariant(null);

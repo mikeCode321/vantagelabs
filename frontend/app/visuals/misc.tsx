@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BarChart, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer, Bar } from "recharts";
 import { simulate } from "@/app/visuals/simulate"
 import React from "react";
+import "./styles/FeedbackForm.css"
 
 /* -------------------- Toast Banner -------------------- */
 export type Toast = {

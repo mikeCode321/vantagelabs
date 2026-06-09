@@ -1,7 +1,9 @@
+import "./styles/FinancialOverviewCards.css";
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 type OverviewCardTone = "purple" | "green" | "blue" | "orange";
-type OverviewCardDirection = "up" | "down" | "neutral";
+type OverviewCardDirection = "up" | "down" | "neutral"; 
 
 export type OverviewCard = {
   id: string;

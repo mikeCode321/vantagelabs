@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import "./TutorialSteps.css";
+import "./styles/TutorialSteps.css";
 import { CheckingAccountForm , EditCheckingAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm} from "@/app/visuals/Accounts";
 import { SalaryForm , EditSalaryForm} from "@/app/visuals/Incomes";
 

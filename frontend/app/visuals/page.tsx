@@ -1,33 +1,27 @@
 "use client";
-import "./dashboard.css";
-import "./EntityModal.css";
-import "./Entities.css";
+import "./styles/Dashboard.css";
+import "./styles/EntityModal.css";
+import "./styles/Entities.css";
+import "./styles/FinancialOverviewCards.css";
+import "./styles/Modal.css";
+import "./styles/Toast.css";
+import "./styles/Forms.css";
 
 import { Audio } from "react-loader-spinner";
-
 import { useState, useReducer, useEffect, useRef } from "react";
-
 import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/Accounts";
-
 import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/Incomes";
-
 import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/Expenses";
-
 import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/Assets";
-
-import { FeedbackModal, SimulationControls, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
-
+import { FeedbackModal, SimulationControls, Toast, ToastBanner } from "@/app/visuals/misc";
 import { formatNumberWithCommas } from "@/app/visuals/utils";
-
 import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
 import { TutorialOnboarding, TutorialStepId } from "@/app/visuals/TutorialSteps";
-
 import JsonView from "@uiw/react-json-view";
 import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewCards";
-
-import IncomeGrowthChart from '@/app/visuals/IncomeGrowthChart'
-import SideBar from '@/app/visuals/SideBar'
-import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus } from 'lucide-react';
+import IncomeGrowthChart from '@/app/visuals/IncomeGrowthChart';
+import SideBar from '@/app/visuals/SideBar';
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 
 type SimRequest = {
   user_start_age: number;

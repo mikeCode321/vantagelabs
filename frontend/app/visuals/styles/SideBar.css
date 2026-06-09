@@ -208,3 +208,103 @@
   line-height: 1.3;
   margin: 0;
 }
+
+.dash-mobile-bar,
+.dash-mobile-dropdown {
+  display: none;
+}
+
+
+@media (max-width: 860px) {
+
+.dash-sidebar {
+    width: 100%;
+    height: auto;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    border-right: none;
+    border-bottom: 1px solid #ebeaf3;
+    overflow: visible;
+    transition: none;
+  }
+
+  .dash-sidebar-inner {
+    display: none;
+  }
+
+  .dash-mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: radial-gradient(circle at 0 0, #0000, #7c3aed14 84%), #fff;
+    height: 80px;
+  }
+
+  .dash-mobile-menu-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ebeaf3;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #6d28d9;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition: background 0.18s, border-color 0.18s;
+  }
+
+  .dash-mobile-menu-btn:hover {
+    background: #f7f2ff;
+    border-color: rgba(109, 40, 217, 0.2);
+  }
+
+  .dash-mobile-menu-icon,
+  .dash-mobile-menu-icon::before,
+  .dash-mobile-menu-icon::after {
+    display: block;
+    width: 16px;
+    height: 1.75px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+    position: absolute;
+  }
+
+  .dash-mobile-menu-icon::before { content: ""; top: -5px; }
+  .dash-mobile-menu-icon::after  { content: ""; top: 5px;  }
+
+  .dash-mobile-menu-icon--open { background: transparent; }
+  .dash-mobile-menu-icon--open::before { transform: rotate(45deg)  translate(3.5px, 3.5px);  }
+  .dash-mobile-menu-icon--open::after  { transform: rotate(-45deg) translate(3.5px, -3.5px); }
+
+  .dash-mobile-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 14px 14px;
+    background: #ffffff;
+    border-top: 1px solid #f0edf8;
+    box-shadow: 0 12px 32px rgba(20, 18, 35, 0.1);
+    animation: dropdown-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes dropdown-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .dash-mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .dash-mobile-dropdown .dash-feedback-card {
+    margin-top: 4px;
+  }
+
+}

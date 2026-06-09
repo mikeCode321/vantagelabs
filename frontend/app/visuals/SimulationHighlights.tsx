@@ -1,8 +1,6 @@
-import {
-    formatCompactMoney,
-  } from "@/app/visuals/FinancialOverviewCards";
-  
-import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus, TrendingUpDown, ArrowBigDownDash, BanknoteArrowUp } from 'lucide-react';
+import { formatCompactMoney, } from "@/app/visuals/FinancialOverviewCards";
+import { CircleDollarSign, TrendingUpDown, ArrowBigDownDash, BanknoteArrowUp } from 'lucide-react';
+import "./styles/SimulationHighlights.css";
 
   type YearResult = {
     year: number;

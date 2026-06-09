@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { PieChart, Grid3x3 } from 'lucide-react';
+
 
 export default function SideBar({setIsFeedbackOpen}) {
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -23,7 +25,7 @@ export default function SideBar({setIsFeedbackOpen}) {
 
             <nav className="dash-nav" aria-label="Dashboard navigation">
                 <Link href="/visuals" className="dash-nav-item" title="Testing Visuals">
-                    <span className="dash-nav-icon">◔</span> 
+                    <span className="dash-nav-icon"><PieChart /></span> 
                     <span className="dash-nav-label">Testing Visuals</span>
                 </Link>
             </nav>
@@ -48,12 +50,8 @@ export default function SideBar({setIsFeedbackOpen}) {
             {mobileNavOpen && (
             <div className="dash-mobile-dropdown">
                 <nav className="dash-mobile-nav">
-                    <Link href="/testing" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
-                        <span className="dash-nav-icon">▦</span>
-                        <span className="dash-nav-label">Testing Grounds</span>
-                    </Link>
                     <Link href="/visuals" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
-                        <span className="dash-nav-icon">◔</span>
+                        <span className="dash-nav-icon"><PieChart /></span>
                         <span className="dash-nav-label">Testing Visuals</span>
                     </Link>
                 </nav>

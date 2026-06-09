@@ -1,6 +1,8 @@
 "use client";
 import "./dashboard.css";
-import { useRouter } from "next/navigation";
+import "./EntityModal.css";
+import "./Entities.css";
+
 import { Audio } from "react-loader-spinner";
 
 import { useState, useReducer, useEffect, useRef } from "react";
@@ -257,7 +259,6 @@ const INITIAL_STATE: SimRequest = {
 // our sim_request
 const LOCAL_STORAGE_KEY = "sim_request";
 const ENABLE_LOCAL_STORAGE_PERSISTENCE = true;
- // tutorial feature flag
 
 const ENABLE_TUTORIAL = true;
 const TUTORIAL_COMPLETED_KEY = "tutorial_v1_completed";
@@ -279,7 +280,6 @@ function saveTutorialCompleted() {
 
   localStorage.setItem(TUTORIAL_COMPLETED_KEY, "true");
 }
-
 
 function loadState(){
   if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return null;
@@ -431,18 +431,14 @@ const ENTITY_CONFIG = {
 
 export function EntityModalCell({ item, setSelectedVariant }) {
   return (
-    <button
-      type="button"
-      className="entity-select-card"
-      onClick={() => setSelectedVariant(item.id)}
-    >
-      <span className={`entity-select-card__icon entity-select-card__icon--${item.iconTone ?? "purple"}`}>
+    <button type="button" className="entity-select-card" onClick={() => setSelectedVariant(item.id)} >
+      <span className={`entity-select-card-icon entity-select-card-icon--${item.iconTone ?? "purple"}`}>
         {item.emoji}
       </span>
 
-      <span className="entity-select-card__copy">
-        <span className="entity-select-card__title">{item.name}</span>
-        <span className="entity-select-card__desc">
+      <span className="entity-select-card-copy">
+        <span className="entity-select-card-title">{item.name}</span>
+        <span className="entity-select-card-desc">
           {item.description ?? "Add this item to your simulation."}
         </span>
       </span>
@@ -907,7 +903,7 @@ export function Entity({ state, entityName, category, dispatch, onToast, tutoria
   return (
     <>
       <div className={`entity-card entity-card--${category}${tutorialActive ? " ts-tutorial-target" : ""}`}>
-        <div className="entity-card__top">
+        <div className="entity-card-top">
           <div className={`entity-card__icon entity-card__icon--${category}`}>
             {cardCopy.icon}
           </div>
@@ -1204,8 +1200,8 @@ export default function Dashboard() {
             <h1 className="dash-page-title">AdVantage on Finances</h1>
           </div>
         </header>
-        {/* 
-        <div style={{ display: "flex", justifyContent: "space-between"}}>
+        
+        {/* <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
           
           {simResult ? <JsonView
@@ -1216,9 +1212,8 @@ export default function Dashboard() {
             shortenTextAfterLength={40}
           />: "[]"}
           <UserAgeForm state={state} dispatch={dispatch} />
-        </div> 
-        */}
-
+        </div>  */}
+       
         <FinancialOverviewCards cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
         <section className="simulation-results-grid">
           <IncomeGrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />

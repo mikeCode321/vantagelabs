@@ -1,0 +1,113 @@
+/* ─────────────────────────────────────────────
+   Entity Selection Cards
+───────────────────────────────────────────── */
+
+.entity-select-grid {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  padding: 36px 42px 42px;
+}
+
+.entity-select-card {
+  width: 100%;
+  min-height: 118px;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 18px;
+  align-items: center;
+  padding: 22px 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(109, 40, 217, 0.18);
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-primary), monospace;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    border-color 0.16s ease,
+    background 0.16s ease;
+}
+
+.entity-select-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(109, 40, 217, 0.42);
+  background:
+    radial-gradient(circle at top left, rgba(109, 40, 217, 0.055), transparent 40%),
+    #ffffff;
+  box-shadow:
+    0 18px 50px rgba(109, 40, 217, 0.12),
+    0 0 0 1px rgba(109, 40, 217, 0.06);
+}
+
+.entity-select-card-icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-size: 28px;
+  background: rgba(109, 40, 217, 0.09);
+}
+
+.entity-select-card-icon--purple {
+  background: rgba(109, 40, 217, 0.1);
+}
+
+.entity-select-card-icon--blue {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.entity-select-card-icon--green {
+  background: rgba(22, 163, 74, 0.1);
+}
+
+.entity-select-card-icon--teal {
+  background: rgba(20, 184, 166, 0.1);
+}
+
+.entity-select-card-icon--orange {
+  background: rgba(249, 115, 22, 0.1);
+}
+
+.entity-select-card-copy {
+  display: grid;
+  gap: 7px;
+}
+
+.entity-select-card-title {
+  color: #111827;
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.entity-select-card-desc {
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.entity-card__icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+  flex-shrink: 0;
+}
+
+.entity-cell {
+  flex: 1 1 160px;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  cursor: pointer;
+}

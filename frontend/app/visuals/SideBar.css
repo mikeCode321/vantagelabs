@@ -1,0 +1,210 @@
+
+.dash-sidebar {
+  width: clamp(200px, 14vw, 260px);
+  height: 100dvh;
+  flex-shrink: 0;
+  background: radial-gradient(circle at 0 0,#0000,#7c3aed14 84%),#fff;
+  border-right: 1px solid #ebeaf3;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  transition: width 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dash-sidebar--collapsed {
+  width: 64px;
+}
+
+.dash-sidebar-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.dash-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0edf8;
+  min-height: 48px;
+}
+
+.dash-sidebar-footer {
+  padding: 0 20px;
+}
+
+.dash-sidebar--collapsed .dash-feedback-copy {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  transition: opacity 0.14s ease;
+}
+
+.dash-sidebar--collapsed .dash-feedback-card {
+  padding: 10px;
+  justify-content: center;
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+.dash-collapse-btn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 1px solid #ebeaf3;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #6d28d9;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  margin-left: auto;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.dash-collapse-btn:hover {
+  background: #f7f2ff;
+  border-color: rgba(109, 40, 217, 0.2);
+  box-shadow: 0 2px 8px rgba(109, 40, 217, 0.1);
+}
+
+.dash-collapse-icon {
+  transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+}
+
+.dash-collapse-icon--flipped {
+  transform: rotate(180deg);
+}
+
+.dash-nav-label {
+  transition: opacity 0.18s ease, width 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.dash-sidebar--collapsed .dash-nav-label {
+  opacity: 0;
+  width: 0;
+}
+
+
+.dash-nav-item {
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #596174;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.dash-sidebar--collapsed .dash-nav-item {
+  padding: 0;
+  justify-content: center;
+  gap: 0;
+}
+
+.dash-nav-item:hover {
+  color: #6d28d9;
+  background: #f7f2ff;
+  border-color: rgba(109, 40, 217, 0.1);
+}
+
+.dash-logo--hidden {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  overflow: hidden;
+}
+
+.dash-nav-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #6d28d9;
+  background: rgba(109, 40, 217, 0.08);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.dash-feedback-card {
+  width: 100%;
+  border: 1px solid rgba(109, 40, 217, 0.12);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(255, 255, 255, 0.92));
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  color: #211633;
+  box-shadow: 0 12px 30px rgba(20, 18, 35, 0.045);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.dash-feedback-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(109, 40, 217, 0.24);
+  box-shadow: 0 16px 34px rgba(20, 18, 35, 0.075);
+}
+
+
+.dash-nav-active {
+  color: #6d28d9;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(124, 58, 237, 0.05));
+  border-color: rgba(109, 40, 217, 0.12);
+  box-shadow: 0 10px 24px rgba(109, 40, 217, 0.08);
+}
+
+.dash-feedback-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #6d28d9;
+  background: rgba(109, 40, 217, 0.1);
+  flex-shrink: 0;
+}
+
+.dash-feedback-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  flex: 1;
+}
+
+.dash-feedback-copy strong {
+  color: #161225;
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1.2;
+}
+
+.dash-feedback-copy p {
+  color: #766f86;
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0;
+}

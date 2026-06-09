@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus, TrendingUpDown, ArrowBigDownDash, BanknoteArrowUp, DollarSign, Link } from 'lucide-react';
 import {
   TimelineAgeFields,
   getValidatedTimelinePayload,
@@ -139,32 +140,17 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💰</div>
+        <div className="form-header-icon"><CreditCard/></div>
         <div>
           <h3 className="form-header-title">Add Checking Account</h3>
           <p className="form-header-desc">Track your checking account balance and tiered interest rates.</p>
         </div>
       </div>
-
-      <div style={{ marginBottom: "12px" }}>
-        {hasCheckingAccount && (
-          <div
-            style={{
-              backgroundColor: "#FEF3F2",
-              border: "1px solid #FECACA",
-              borderRadius: "12px",
-              padding: "12px 14px",
-              fontSize: "13px",
-              color: "#991B1B",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            At the moment we are only supporting 1 checking account. Remove the existing account or edit it.
-          </div>
-        )}
-      </div>
+      {hasCheckingAccount && (
+        <div className="form-warning">
+          At the moment we are only supporting 1 checking account. Remove the existing account or edit it.
+        </div>
+      )}
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -229,8 +215,8 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
           />
         </div>
         {/* Submit Button */}
-        <button type="submit" className="form-btn-submit form-btn-submit--mt" disabled={hasCheckingAccount} style={{ opacity: hasCheckingAccount ? 0.5 : 1, cursor: hasCheckingAccount ? "not-allowed" : "pointer" }}>
-          Add Checking Account
+        <button type="submit" className="form-btn-submit form-btn-submit--mt" disabled={hasCheckingAccount}>
+            Add Checking Account
         </button>
       </form>
     </div>
@@ -364,7 +350,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">📈</div>
+        <div className="form-header-icon"><ChartColumnIncreasing/></div>
         <div>
           <h3 className="form-header-title">Add Taxable Investment Account</h3>
           <p className="form-header-desc">Track your brokerage account with returns and dividend strategies.</p>
@@ -394,25 +380,14 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
             <div className="form-field">
               <label className="form-label">Contribution</label>
               <div style={{ display: "flex", gap: "4px" }}>
-                <button type="button" className={contributionMode === "dollar" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setContributionMode("dollar")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
-                  $
-                </button>
-                <button
-                  type="button"
-                  className={contributionMode === "percentage" ? "form-btn-secondary active" : "form-btn-secondary"}
-                  onClick={() => setContributionMode("percentage")}
-                  disabled={!canUsePercentageMode}
-                  title={!canUsePercentageMode ? "Link a job first and calculate taxes" : ""}
-                  style={{
-                    flex: 1,
-                    padding: "8px 12px",
-                    fontSize: "13px",
-                    opacity: !canUsePercentageMode ? 0.5 : 1,
-                    cursor: !canUsePercentageMode ? "not-allowed" : "pointer",
-                  }}
-                >
-                  %
-                </button>
+                <div className="form-toggle-group">
+                  <button type="button" className={`form-btn-secondary${contributionMode === "dollar" ? " active" : ""}`} onClick={() => setContributionMode("dollar")}>
+                    $
+                  </button>
+                  <button type="button" className={`form-btn-secondary${contributionMode === "percentage" ? " active" : ""}`} onClick={() => setContributionMode("percentage")} disabled={!canUsePercentageMode} title={!canUsePercentageMode ? "Link a job first" : ""}>
+                    %
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -472,7 +447,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">💼</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a job</div>
                     <div className="link-card__sub">
@@ -502,8 +477,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
                         </option>
                       ))}
                     </select>
-                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
-                    {isLoadingTaxCalc && <div style={{ color: "#3B82F6", fontSize: "0.875rem", marginTop: "0.5rem" }}>⏳ Calculating net income...</div>}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
+                    {isLoadingTaxCalc && <p className="form-inline-loading">⏳ Calculating net income...</p>}
                   
                   </div>
                 )}
@@ -517,17 +492,17 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
                   <span className="preview-icon">💵</span>
                   <span className="preview-card__label">Contribution Preview</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
-                  <div>
-                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Monthly</div>
-                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
+                <div className="preview-card__row">
+                  <div className="preview-card__col">
+                    <span className="preview-card__meta-label">Monthly</span>
+                    <span className="preview-card__value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
                   </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Annual</div>
-                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</div>
+                  <div className="preview-card__col preview-card__col--right">
+                    <span className="preview-card__meta-label">Annual</span>
+                    <span className="preview-card__value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
                   </div>
                 </div>
-                <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", paddingTop: "8px", borderTop: "1px solid var(--color-border-tertiary)" }}>
+                <div className="preview-card__footer">
                   {Number(contributionPercentage).toFixed(1)}% of ${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
                 </div>
               </div>
@@ -537,11 +512,11 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
             <p className="form-section-heading">Dividend Strategy</p>
 
             <div className="form-field">
-              <div style={{ display: "flex", gap: "4px" }}>
-                <button type="button" className={dividendStrategy === "drip" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("drip")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+              <div className="form-toggle-group">
+                <button type="button" className={dividendStrategy === "drip" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("drip")}>
                   DRIP
                 </button>
-                <button type="button" className={dividendStrategy === "cash_out" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("cash_out")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+                <button type="button" className={dividendStrategy === "cash_out" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("cash_out")}>
                   Cash Out
                 </button>
               </div>
@@ -700,7 +675,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🏢</div>
+        <div className="form-header-icon"><Accessibility/></div>
         <div>
           <h3 className="form-header-title">Add Employer Retirement Account</h3>
           <p className="form-header-desc">Track your 401(k), 403(b), or pension and optionally link it to a job.</p>
@@ -729,24 +704,11 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             {/* Contribution Mode Toggle - Compact */}
             <div className="form-field">
               <label className="form-label">Contribution</label>
-              <div style={{ display: "flex", gap: "4px" }}>
-                <button type="button" className={contributionMode === "dollar" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setContributionMode("dollar")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+              <div className="form-toggle-group">
+                <button type="button" className={`form-btn-secondary${contributionMode === "dollar" ? " active" : ""}`} onClick={() => setContributionMode("dollar")}>
                   $
                 </button>
-                <button
-                  type="button"
-                  className={contributionMode === "percentage" ? "form-btn-secondary active" : "form-btn-secondary"}
-                  onClick={() => setContributionMode("percentage")}
-                  disabled={!canUsePercentageMode}
-                  title={!canUsePercentageMode ? "Link a job first" : ""}
-                  style={{
-                    flex: 1,
-                    padding: "8px 12px",
-                    fontSize: "13px",
-                    opacity: !canUsePercentageMode ? 0.5 : 1,
-                    cursor: !canUsePercentageMode ? "not-allowed" : "pointer",
-                  }}
-                >
+                <button type="button" className={`form-btn-secondary${contributionMode === "percentage" ? " active" : ""}`} onClick={() => setContributionMode("percentage")} disabled={!canUsePercentageMode} title={!canUsePercentageMode ? "Link a job first" : ""}>
                   %
                 </button>
               </div>
@@ -808,7 +770,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">💼</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a job</div>
                     <div className="link-card__sub">Required for percentage-based contributions</div>
@@ -835,7 +797,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
                     {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
                     {linkedJob && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Synced years {linkedJob.start_age}–{linkedJob.end_age}
+                        <Link/> Synced years {linkedJob.start_age}–{linkedJob.end_age}
                       </div>
                     )}
                   </div>
@@ -847,20 +809,20 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             {contributionMode === "percentage" && selectedJob && (
               <div className="preview-card">
                 <div className="preview-card__header">
-                  <span className="preview-icon">💵</span>
+                  <span className="preview-icon"><DollarSign/></span>
                   <span className="preview-card__label">Contribution Preview</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
-                  <div>
-                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Monthly</div>
-                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
+                <div className="preview-card__row">
+                  <div className="preview-card__col">
+                    <span className="preview-card__meta-label">Monthly</span>
+                    <span className="preview-card__value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
                   </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Annual</div>
-                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</div>
+                  <div className="preview-card__col preview-card__col--right">
+                    <span className="preview-card__meta-label">Annual</span>
+                    <span className="preview-card__value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
                   </div>
                 </div>
-                <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", paddingTop: "8px", borderTop: "1px solid var(--color-border-tertiary)" }}>
+                <div className="preview-card__footer">
                   {Number(contributionPercentage).toFixed(1)}% of ${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly gross
                 </div>
               </div>
@@ -870,7 +832,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             {contributionMode == "dollar" && (
               <div className="preview-card">
                 <div className="preview-card__header preview-card__header--mb10">
-                  <span className="preview-icon">✨</span>
+                  <span className="preview-icon"></span>
                   <span className="preview-card__label">Annual Total</span>
                 </div>
                 <div className="preview-card__amount preview-card__amount--lg">
@@ -954,7 +916,7 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💰</div>
+        <div className="form-header-icon"><CreditCard/></div>
         <div>
           <h3 className="form-header-title">Edit Checking Account</h3>
           <p className="form-header-desc">Update your checking account balance and tiered interest rates.</p>
@@ -1180,24 +1142,11 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
             {/* Contribution Mode Toggle - Compact */}
             <div className="form-field">
               <label className="form-label">Contribution</label>
-              <div style={{ display: "flex", gap: "4px" }}>
-                <button type="button" className={contributionMode === "dollar" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setContributionMode("dollar")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+              <div className="form-toggle-group">
+                <button type="button" className={`form-btn-secondary${contributionMode === "dollar" ? " active" : ""}`} onClick={() => setContributionMode("dollar")}>
                   $
                 </button>
-                <button
-                  type="button"
-                  className={contributionMode === "percentage" ? "form-btn-secondary active" : "form-btn-secondary"}
-                  onClick={() => setContributionMode("percentage")}
-                  disabled={!canUsePercentageMode}
-                  title={!canUsePercentageMode ? "Link a job first and calculate taxes" : ""}
-                  style={{
-                    flex: 1,
-                    padding: "8px 12px",
-                    fontSize: "13px",
-                    opacity: !canUsePercentageMode ? 0.5 : 1,
-                    cursor: !canUsePercentageMode ? "not-allowed" : "pointer",
-                  }}
-                >
+                <button type="button" className={`form-btn-secondary${contributionMode === "percentage" ? " active" : ""}`} onClick={() => setContributionMode("percentage")} disabled={!canUsePercentageMode} title={!canUsePercentageMode ? "Link a job first" : ""}>
                   %
                 </button>
               </div>
@@ -1259,7 +1208,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">💼</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a job</div>
                     <div className="link-card__sub">
@@ -1289,8 +1238,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
                         </option>
                       ))}
                     </select>
-                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
-                    {isLoadingTaxCalc && <div style={{ color: "#3B82F6", fontSize: "0.875rem", marginTop: "0.5rem" }}>⏳ Calculating net income...</div>}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
+                    {isLoadingTaxCalc && <p className="form-inline-loading">⏳ Calculating net income...</p>}
                   </div>
                 )}
               </div>
@@ -1300,20 +1249,20 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
             {contributionMode === "percentage" && selectedJob && netIncome && !isLoadingTaxCalc && (
               <div className="preview-card">
                 <div className="preview-card__header">
-                  <span className="preview-icon">💵</span>
+                  <span className="preview-icon"><DollarSign/></span>
                   <span className="preview-card__label">Contribution Preview</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
-                  <div>
-                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Monthly</div>
-                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
+                <div className="preview-card__row">
+                  <div className="preview-card__col">
+                    <span className="preview-card__meta-label">Monthly</span>
+                    <span className="preview-card__value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
                   </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Annual</div>
-                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</div>
+                  <div className="preview-card__col preview-card__col--right">
+                    <span className="preview-card__meta-label">Annual</span>
+                    <span className="preview-card__value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
                   </div>
                 </div>
-                <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", paddingTop: "8px", borderTop: "1px solid var(--color-border-tertiary)" }}>
+                <div className="preview-card__footer">
                   {Number(contributionPercentage).toFixed(1)}% of ${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
                 </div>
               </div>
@@ -1475,7 +1424,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🏢</div>
+        <div className="form-header-icon"><Building/></div>
         <div>
           <h3 className="form-header-title">Edit Employer Retirement Account</h3>
           <p className="form-header-desc">Update your 401(k), 403(b), or pension details.</p>
@@ -1504,24 +1453,11 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
             {/* Contribution Mode Toggle - Compact */}
             <div className="form-field">
               <label className="form-label">Contribution</label>
-              <div style={{ display: "flex", gap: "4px" }}>
-                <button type="button" className={contributionMode === "dollar" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setContributionMode("dollar")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
+              <div className="form-toggle-group">
+                <button type="button" className={`form-btn-secondary${contributionMode === "dollar" ? " active" : ""}`} onClick={() => setContributionMode("dollar")}>
                   $
                 </button>
-                <button
-                  type="button"
-                  className={contributionMode === "percentage" ? "form-btn-secondary active" : "form-btn-secondary"}
-                  onClick={() => setContributionMode("percentage")}
-                  disabled={!canUsePercentageMode}
-                  title={!canUsePercentageMode ? "Link a job first" : ""}
-                  style={{
-                    flex: 1,
-                    padding: "8px 12px",
-                    fontSize: "13px",
-                    opacity: !canUsePercentageMode ? 0.5 : 1,
-                    cursor: !canUsePercentageMode ? "not-allowed" : "pointer",
-                  }}
-                >
+                <button type="button" className={`form-btn-secondary${contributionMode === "percentage" ? " active" : ""}`} onClick={() => setContributionMode("percentage")} disabled={!canUsePercentageMode} title={!canUsePercentageMode ? "Link a job first" : ""}>
                   %
                 </button>
               </div>
@@ -1583,7 +1519,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">💼</span>
+                  <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card__title">Link to a job</div>
                     <div className="link-card__sub">Required for percentage-based contributions</div>
@@ -1598,7 +1534,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
                   <div>
                     <div className="link-card__synced">
                       🔗 Linked to {allJobs.find((j) => j.id === linkedIncomeId)?.name}
-                      <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "0.5rem" }}>Delete this account to unlink and reassign</div>
+                      <p className="form-inline-muted">Delete this account to unlink and reassign</p>
                     </div>
                   </div>
                 ) : (
@@ -1617,7 +1553,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
                     {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
                     {linkedJob && !linkError && (
                       <div className="link-card__synced">
-                        🔗 Synced years {linkedJob.start_age}–{linkedJob.end_age}
+                        <Link/> Synced years {linkedJob.start_age}–{linkedJob.end_age}
                       </div>
                     )}
                   </div>
@@ -1629,21 +1565,21 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
             {contributionMode === "percentage" && selectedJob && (
               <div className="preview-card">
                 <div className="preview-card__header">
-                  <span className="preview-icon">💵</span>
+                  <span className="preview-icon"><DollarSign/></span>
                   <span className="preview-card__label">Contribution Preview</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
-                  <div>
-                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Monthly</div>
-                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</div>
+                <div className="preview-card__row">
+                  <div className="preview-card__col">
+                    <span className="preview-card__meta-label">Monthly</span>
+                    <span className="preview-card__value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
                   </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", marginBottom: "4px" }}>Annual</div>
-                    <div style={{ fontSize: "18px", fontWeight: "500", color: "var(--color-text-primary)" }}>${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</div>
+                  <div className="preview-card__col preview-card__col--right">
+                    <span className="preview-card__meta-label">Annual</span>
+                    <span className="preview-card__value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
                   </div>
                 </div>
-                <div style={{ fontSize: "12px", color: "var(--color-text-secondary)", paddingTop: "8px", borderTop: "1px solid var(--color-border-tertiary)" }}>
-                  {Number(contributionPercentage).toFixed(1)}% of ${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly gross
+                <div className="preview-card__footer">
+                  {Number(contributionPercentage).toFixed(1)}% of ${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
                 </div>
               </div>
             )}
@@ -1652,7 +1588,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
             {contributionMode == "dollar" && (
               <div className="preview-card">
                 <div className="preview-card__header preview-card__header--mb10">
-                  <span className="preview-icon">✨</span>
+                  <span className="preview-icon"></span>
                   <span className="preview-card__label">Annual Total</span>
                 </div>
                 <div className="preview-card__amount preview-card__amount--lg">

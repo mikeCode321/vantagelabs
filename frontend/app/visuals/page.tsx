@@ -1,31 +1,31 @@
 "use client";
 import "./dashboard.css";
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Audio } from "react-loader-spinner";
 
 import { useState, useReducer, useEffect, useRef } from "react";
 
-import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/accounts";
+import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/Accounts";
 
-import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/incomes";
+import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/Incomes";
 
-import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/expenses";
+import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/Expenses";
 
-import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/assets";
+import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/Assets";
 
 import { FeedbackModal, SimulationControls, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
 
 import { formatNumberWithCommas } from "@/app/visuals/utils";
 
 import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
-import { TutorialOnboarding, tutorialSteps, TutorialStepId } from "@/app/visuals/TutorialSteps";
+import { TutorialOnboarding, TutorialStepId } from "@/app/visuals/TutorialSteps";
 
 import JsonView from "@uiw/react-json-view";
 import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewCards";
 
-import IncomeGrowthChart from '@/app/visuals/incomeGrowthChart'
+import IncomeGrowthChart from '@/app/visuals/IncomeGrowthChart'
+import SideBar from '@/app/visuals/SideBar'
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 
 type SimRequest = {
   user_start_age: number;
@@ -34,7 +34,7 @@ type SimRequest = {
     checking: CheckingAccount[];
     taxable_investments: TaxableInvestmentAccount[];
     employer_retirement: EmployerRetirementAccount[];
-  };
+  }
   incomes: {
     salary: SalaryIncome[];
     hourly: HourlyWageIncome[];
@@ -304,14 +304,13 @@ function saveState(state: SimRequest) {
   }
 }
 
-// ENTITY DATA:
 const ENTITY_CONFIG = {
   account: {
     checking: {
       id: "checking",
       name: "Checking",
       description: "Track your checking account balance and tiered interest rates.",
-      emoji: "💳",
+      emoji: <CreditCard/>,
       formComponent: CheckingAccountForm,
       editFormComponent: EditCheckingAccountForm,
     },
@@ -319,7 +318,7 @@ const ENTITY_CONFIG = {
       id: "taxable_investments",
       name: "Taxable Investments",
       description: "Add brokerage accounts, stocks, ETFs, or other taxable investment balances.",
-      emoji: "📊",
+      emoji: <ChartColumnIncreasing/>,
       formComponent: TaxableInvestmentAccountForm,
       editFormComponent: EditTaxableInvestmentAccountForm,
     },
@@ -327,7 +326,7 @@ const ENTITY_CONFIG = {
       id: "employer_retirement",
       name: "Employer Retirement Accounts",
       description: "Track your 401(k), 403(b), or pension and optionally link it to a job.",
-      emoji: "🏢",
+      emoji: <Accessibility/>,
       formComponent: EmployerRetirementAccountForm,
       editFormComponent: EditEmployerRetirementAccountForm,
     },
@@ -338,7 +337,7 @@ const ENTITY_CONFIG = {
       id: "salary",
       name: "Salary",
       description: "Track your employment income and annual growth rate.",
-      emoji: "💼",
+      emoji: <Luggage/>,
       formComponent: SalaryForm,
       editFormComponent: EditSalaryForm,
     },
@@ -346,7 +345,7 @@ const ENTITY_CONFIG = {
       id: "hourly",
       name: "Hourly Wage",
       description: "Track hourly income, weekly hours, and projected growth.",
-      emoji: "⏱️",
+      emoji: <Clock/>,
       formComponent: HourlyWageForm,
       editFormComponent: EditHourlyWageForm,
     },
@@ -354,7 +353,7 @@ const ENTITY_CONFIG = {
       id: "side",
       name: "Side Hustle",
       description: "Add extra income from freelance work, gigs and side businesses with variability",
-      emoji: "🚀",
+      emoji: <Rocket/>,
       formComponent: SideHustleForm,
       editFormComponent: EditSideHustleForm,
     },
@@ -365,7 +364,7 @@ const ENTITY_CONFIG = {
       id: "living",
       name: "Living Expenses",
       description: "Add monthly living costs like groceries, utilities, and other essentials.",
-      emoji: "🏠",
+      emoji: <ShoppingCart  />,
       iconTone: "purple",
       formComponent: LivingExpensesForm,
       editFormComponent: EditLivingExpensesForm,
@@ -374,7 +373,7 @@ const ENTITY_CONFIG = {
       id: "rent",
       name: "Rent",
       description: "Add your monthly rent or housing payments.",
-      emoji: "🏢",
+      emoji: <BanknoteArrowDown/>,
       iconTone: "blue",
       formComponent: RentExpenseForm,
       editFormComponent: EditRentExpenseForm,
@@ -383,7 +382,7 @@ const ENTITY_CONFIG = {
       id: "debt",
       name: "Debt",
       description: "Add credit card debt, personal loans, or other liabilities.",
-      emoji: "💳",
+      emoji: <HandCoins/>,
       iconTone: "teal",
       formComponent: DebtExpenseForm,
       editFormComponent: EditDebtExpenseForm,
@@ -392,7 +391,7 @@ const ENTITY_CONFIG = {
       id: "house_loan",
       name: "Home Loan",
       description: "Add your mortgage.",
-      emoji: "🏡",
+      emoji: <House/>,
       iconTone: "green",
       formComponent: HouseLoanExpenseForm,
       editFormComponent: EditHouseLoanExpenseForm,
@@ -401,7 +400,7 @@ const ENTITY_CONFIG = {
       id: "car_loan",
       name: "Car Loan",
       description: "Add your car loan.",
-      emoji: "🚗",
+      emoji: <Car/>,
       iconTone: "orange",
       formComponent: CarLoanExpenseForm,
       editFormComponent: EditCarLoanExpenseForm,
@@ -413,7 +412,7 @@ const ENTITY_CONFIG = {
       id: "house",
       name: "House",
       description: "Track a property asset with appreciation and optional down payment.",
-      emoji: "🏡",
+      emoji: <HousePlus/>,
       formComponent: HouseAssetForm,
       editFormComponent: EditHouseAssetForm,
     },
@@ -421,7 +420,7 @@ const ENTITY_CONFIG = {
       id: "car",
       name: "Car",
       description: "Track a vehicle asset with depreciation and optional down payment.",
-      emoji: "🚗",
+      emoji: <Car/>,
       formComponent: CarAssetForm,
       editFormComponent: EditCarAssetForm,
     },
@@ -452,8 +451,6 @@ export function EntityModalCell({ item, setSelectedVariant }) {
 }
 
 export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEdited, state, onToast }) {
-
-  
   const [selectedVariant, setSelectedVariant] = useState(variantBeingEdited?.variant || null);
 
   const goBack = () => setSelectedVariant(null);
@@ -462,22 +459,22 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
   const FormComponent = selectedVariant ? (variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent) : null;
   const MODAL_COPY = {
     account: {
-      icon: "🏛️",
+      icon: <Landmark/>,
       title: "Choose an account type",
       description: "Select the account you want to add to your simulation.",
     },
     income: {
-      icon: "💼",
+      icon: <Handbag/>,
       title: "Choose an income type",
       description: "Select the income source you want to add to your simulation.",
     },
     expense: {
-      icon: "💳",
+      icon: <CreditCard/>,
       title: "Choose an expense type",
       description: "Select the expense you want to add to your simulation.",
     },
     asset: {
-      icon: "◔",
+      icon: <ChartPie/>,
       title: "Choose an asset type",
       description: "Select the asset you want to add to your simulation.",
     },
@@ -823,28 +820,28 @@ const ENTITY_CARD_COPY = {
   account: {
     title: "Accounts",
     description: "Add your bank, investment, and other accounts.",
-    icon: "🏛️",
+    icon: <Landmark/>,
     emptyText: "0 accounts added",
     itemText: "accounts added",
   },
   income: {
     title: "Income",
     description: "Add salary, side income, and other inflows.",
-    icon: "💼",
+    icon: <CircleDollarSign/>,
     emptyText: "0 income sources",
     itemText: "income sources",
   },
   expense: {
     title: "Expenses",
     description: "Add living expenses, bills, and other outflows.",
-    icon: "🧾",
+    icon: <HandCoins/>,
     emptyText: "0 expense items",
     itemText: "expense items",
   },
   asset: {
     title: "Assets",
     description: "Add real estate, vehicles, and other assets.",
-    icon: "◔",
+    icon: <PieChart/>,
     emptyText: "0 assets added",
     itemText: "assets added",
   },
@@ -1019,13 +1016,13 @@ export function FinancialEntities({ state, dispatch, onToast, tutorialStepId }) 
     <div className="entities-wrapper">
       {showArrows && canScrollLeft && (
         <button className="entities-arrow entities-arrow--left" onClick={() => scrollByStep("left")}>
-          ◀
+          <ChevronLeft/>
         </button>
       )}
 
       {showArrows && canScrollRight && (
         <button className="entities-arrow entities-arrow--right" onClick={() => scrollByStep("right")}>
-          ▶
+          <ChevronRight/>
         </button>
       )}
 
@@ -1048,19 +1045,15 @@ export function FinancialEntities({ state, dispatch, onToast, tutorialStepId }) 
 }
 
 export default function Dashboard() {
-
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
   const [simResult, setSimResult] = useState(null);
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isSimLoading, setIsSimLoading] = useState(true);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
-  const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
   const [activeTutorialStepId, setActiveTutorialStepId] = useState<TutorialStepId | null>(null);
 
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
@@ -1106,7 +1099,7 @@ export default function Dashboard() {
       change: formatSignedPercent(netWorthChange),
       changeLabel: "vs start",
       meta: getReadableTrend(startingNetWorth, endingNetWorth, "Net worth"),
-      icon: "⌁",
+      icon: <ChartNoAxesCombined/>,
       tone: "purple",
       direction: getChangeDirection(startingNetWorth, endingNetWorth),
     },
@@ -1119,7 +1112,7 @@ export default function Dashboard() {
       meta: lastYear
         ? `Inflows ${formatCompactMoney(lastYear.income_earned.gross)} · Taxes ${formatCompactMoney(lastYear.income_earned.taxes_paid)}`
         : "Run simulation to see data",
-      icon: "$",
+      icon: <CircleDollarSign/>,
       tone: "green",
       direction: getChangeDirection(startingCashFlow, endingCashFlow),
     },
@@ -1132,7 +1125,7 @@ export default function Dashboard() {
       meta: lastYear
         ? `${lastYear.assets.assets.length} assets`
         : "Run simulation to see data",
-      icon: "◔",
+      icon: <ChartPie/>,
       tone: "blue",
       direction: getChangeDirection(startingAssets, totalAssets),
     },
@@ -1145,26 +1138,15 @@ export default function Dashboard() {
       meta: lastYear
         ? `${lastYear.expenses.expenses.length} liabilities`
         : "Run simulation to see data",
-      icon: "▭",
+      icon: <HandCoins/>,
       tone: "orange",
       direction: getChangeDirection(startingLiabilities, totalLiabilities),
     },
   ];
 
-  const handleTutorialNext = () => {
-    setTutorialStepIndex((current) =>
-      Math.min(current + 1, tutorialSteps.length - 1)
-    );
-  };
-  
-  const handleTutorialBack = () => {
-    setTutorialStepIndex((current) => Math.max(current - 1, 0));
-  };
-  
   const handleTutorialComplete = () => {
     saveTutorialCompleted();
     setShowTutorial(false);
-    setTutorialStepIndex(0);
     setActiveTutorialStepId(null);
   };
 
@@ -1189,18 +1171,6 @@ export default function Dashboard() {
     saveState(state);
   }, [state]);
 
-  useEffect(() => {
-    if (!showTutorial || !activeTutorialStepId) return;
-
-    if (activeTutorialStepId === "expenses-assets") {
-      document.querySelector(".entities-wrapper")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    if (activeTutorialStepId === "results") {
-      document.querySelector(".overview-cards")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [activeTutorialStepId, showTutorial]);
-
   return (
     <div className="dash-root" data-active-tutorial-step={activeTutorialStepId ?? ""}>
       {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
@@ -1211,14 +1181,9 @@ export default function Dashboard() {
 
       {showTutorial && ENABLE_TUTORIAL && (
         <TutorialOnboarding
-          steps={tutorialSteps}
-          currentStepIndex={tutorialStepIndex}
           state={state}
           dispatch={dispatch}
-          onNext={handleTutorialNext}
-          onBack={handleTutorialBack}
-          onSkip={handleTutorialComplete}
-          onFinish={handleTutorialComplete}
+          onComplete={handleTutorialComplete}
           onToast={showToast}
           onStepChange={setActiveTutorialStepId}
           onProfileComplete={(profile, mode) => {
@@ -1228,111 +1193,7 @@ export default function Dashboard() {
         />
       )}
 
-      <aside className={`dash-sidebar${sidebarCollapsed ? " dash-sidebar--collapsed" : ""}`}>
-        <div className="dash-sidebar-inner">
-
-          {/* Desktop layout */}
-          <div className="dash-sidebar-header">
-            <div className={`dash-logo${sidebarCollapsed ? " dash-logo--hidden" : ""}`}>
-              
-            <Image
-              src="/vantage_logo_transparent.svg"
-              alt="Vantage"
-              width={120}
-              height={34}
-              className="dash-logo-img"
-              priority
-            />
-            </div>
-            <button
-              type="button"
-              className="dash-collapse-btn"
-              onClick={() => setSidebarCollapsed(c => !c)}
-              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              <svg
-                className={`dash-collapse-icon${sidebarCollapsed ? " dash-collapse-icon--flipped" : ""}`}
-                width="16" height="16" viewBox="0 0 16 16" fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
-
-          <nav className="dash-nav" aria-label="Dashboard navigation">
-            <Link href="/testing" className="dash-nav-item" title="Testing Grounds">
-              <span className="dash-nav-icon">▦</span>
-              <span className="dash-nav-label">Testing Grounds</span>
-            </Link>
-            <Link href="/visuals" className="dash-nav-item" title="Testing Visuals">
-              <span className="dash-nav-icon">◔</span>
-              <span className="dash-nav-label">Testing Visuals</span>
-            </Link>
-          </nav>
-
-          <button
-            type="button"
-            className="dash-feedback-card"
-            onClick={() => setIsFeedbackOpen(true)}
-            title="Leave feedback"
-          >
-            <span className="dash-feedback-icon">✦</span>
-            <span className="dash-feedback-copy">
-              <strong>Leave feedback</strong>
-              <p>Help us improve Vantage</p>
-            </span>
-          </button>
-        </div>
-
-        {/* Mobile topbar */}
-        <div className="dash-mobile-bar">
-          <Image
-            src="/vantage_logo_transparent.svg"
-            alt="Vantage"
-            width={120}
-            height={34}
-            className="dash-logo-img"
-            priority
-          />
-          <button
-            type="button"
-            className="dash-mobile-menu-btn"
-            onClick={() => setMobileNavOpen(o => !o)}
-            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileNavOpen}
-          >
-            <span className={`dash-mobile-menu-icon${mobileNavOpen ? " dash-mobile-menu-icon--open" : ""}`} />
-          </button>
-        </div>
-
-        {/* Mobile dropdown */}
-        {mobileNavOpen && (
-          <div className="dash-mobile-dropdown">
-            <nav className="dash-mobile-nav">
-              <Link href="/testing" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
-                <span className="dash-nav-icon">▦</span>
-                <span className="dash-nav-label">Testing Grounds</span>
-              </Link>
-              <Link href="/visuals" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
-                <span className="dash-nav-icon">◔</span>
-                <span className="dash-nav-label">Testing Visuals</span>
-              </Link>
-            </nav>
-            <button
-              type="button"
-              className="dash-feedback-card"
-              onClick={() => { setIsFeedbackOpen(true); setMobileNavOpen(false); }}
-            >
-              <span className="dash-feedback-icon">✦</span>
-              <span className="dash-feedback-copy">
-                <strong>Leave feedback</strong>
-                <p>Help us improve Vantage</p>
-              </span>
-            </button>
-          </div>
-        )}
-      </aside>
+      <SideBar setIsFeedbackOpen={setIsFeedbackOpen} />
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
       <main className="dash-main">
@@ -1341,7 +1202,7 @@ export default function Dashboard() {
             <h1 className="dash-page-title">AdVantage on Finances</h1>
           </div>
         </header>
-{/* 
+        {/* 
         <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
           
@@ -1353,17 +1214,15 @@ export default function Dashboard() {
             shortenTextAfterLength={40}
           />: "[]"}
           <UserAgeForm state={state} dispatch={dispatch} />
-        </div> */}
+        </div> 
+        */}
 
         <FinancialOverviewCards cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
         <section className="simulation-results-grid">
           <IncomeGrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />
-
           <div>
             <SimulationHighlights data={simData} tutorialActive={activeTutorialStepId === "results"}/>
-            <div className={activeTutorialStepId === "results" ? "ts-tutorial-target" : ""} style={{ borderRadius: "16px" }}>
-              <SimulationControls state={state} setSimResult={setSimResult} />
-            </div>
+            <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} />
           </div>
         </section>
 
@@ -1372,11 +1231,7 @@ export default function Dashboard() {
           <p>Define the components of your financial plan for the simulation.</p>
         </section>
 
-        <div>
-          <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} />
-        </div>
-
-        {/* <SimResultViewer simResult={simResult} /> */}
+        <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} />
         <ToastBanner toasts={toasts} setToasts={setToasts} />
       </main>
     </div>

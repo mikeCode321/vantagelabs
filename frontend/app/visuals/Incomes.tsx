@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
-import { ID } from "@/app/visuals/accounts";
+import { ID } from "@/app/visuals/Accounts";
 import {
   TimelineAgeFields,
   getValidatedTimelinePayload,
 } from "@/app/visuals/TimelineAgeFields";
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight ,Handbag, Clock,Rocket,Link } from 'lucide-react';
 
 // ─────────────────────────────────────────────
 // INCOME
@@ -132,7 +133,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
         start_age: timeline.start,
         end_age: timeline.end,
         gross_income: Number(grossIncome),
-        income_growth: Number(growth),
+        income_growth: Number(growth)/100,
         linked_401k_id: linked401kId || undefined,
       },
     });
@@ -151,7 +152,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💼</div>
+        <div className="form-header-icon"><Handbag/></div>
         <div>
           <h3 className="form-header-title">Add Salary Income</h3>
           <p className="form-header-desc">Track your employment income and annual growth rate.</p>
@@ -205,7 +206,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Landmark/></span>
 
                   <div>
                     <div className="link-card__title">Link to a 401(k) Account</div>
@@ -234,17 +235,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
@@ -337,7 +328,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
         hourly_rate: Number(hourlyRate),       
         hours_per_week: Number(hoursPerWeek),  
         gross_income: Number(annualIncome),
-        income_growth: Number(growth),
+        income_growth: Number(growth)/100,
         linked_401k_id: linked401kId || undefined,
       },
     });
@@ -357,7 +348,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">⏱️</div>
+        <div className="form-header-icon"><Clock/></div>
         <div>
           <h3 className="form-header-title">Add Hourly Wage Income</h3>
           <p className="form-header-desc">Track hourly income, weekly hours, and projected growth.</p>
@@ -421,7 +412,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Landmark/></span>
 
                   <div>
                     <div className="link-card__title">Link to a 401(k) Account</div>
@@ -450,17 +441,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
                     {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
@@ -471,7 +452,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
             {/* Annual Income Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💰</span>
+                <span className="preview-icon"><CircleDollarSign/></span>
                 <span className="preview-card__label">Estimated Annual Income</span>
               </div>
               <div className="preview-card__amount">
@@ -546,7 +527,7 @@ export function SideHustleForm({ dispatch,state, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">🚀</div>
+        <div className="form-header-icon"><Rocket/></div>
         <div>
           <h3 className="form-header-title">Add Side Hustle Income</h3>
           <p className="form-header-desc">Track variable income with frequency and variability estimates.</p>
@@ -614,7 +595,7 @@ export function SideHustleForm({ dispatch,state, onToast }) {
             {/* Annual Income Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💰</span>
+                <span className="preview-icon"><CircleDollarSign/></span>
                 <span className="preview-card__label">Estimated Annual Income</span>
               </div>
               <div className="preview-card__amount">
@@ -644,7 +625,7 @@ export function SideHustleForm({ dispatch,state, onToast }) {
 export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [grossIncome, setGrossIncome] = useState(item.gross_income.toString());
-  const [growth, setGrowth] = useState(item.income_growth.toString());
+  const [growth, setGrowth] = useState((item.income_growth*100).toString());
   const [startAge, setStartAge] = useState(item.start_age.toString());
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
@@ -690,7 +671,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
       start_age: timeline.start,
       end_age: timeline.end,
       gross_income: Number(grossIncome),
-      income_growth: Number(growth),
+      income_growth: Number(growth)/100,
       linked_401k_id: linked401kId || undefined,
     };
 
@@ -724,7 +705,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💼</div>
+        <div className="form-header-icon"><Handbag/></div>
 
         <div>
           <h3 className="form-header-title">Edit Salary Income</h3>
@@ -785,7 +766,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Landmark/></span>
 
                   <div>
                     <div className="link-card__title">Link to a 401(k) Account</div>
@@ -814,19 +795,9 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
-                    {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                    {linked401kId && !linkError && <div className="link-card__synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
                 )}
               </div>
@@ -855,7 +826,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [hourlyRate, setHourlyRate] = useState(item.hourly_rate?.toString() || "");
   const [hoursPerWeek, setHoursPerWeek] = useState(item.hours_per_week?.toString() || "");
-  const [growth, setGrowth] = useState(item.income_growth.toString());
+  const [growth, setGrowth] = useState((item.income_growth*100).toString());
   const [linked401kId, setLinked401kId] = useState(item.linked_401k_id || "");
   const [linkError, setLinkError] = useState("");
 
@@ -903,7 +874,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
       hourly_rate: Number(hourlyRate),          
       hours_per_week: Number(hoursPerWeek),     
       gross_income: Number(annualIncome),
-      income_growth: Number(growth),
+      income_growth: Number(growth)/100,
       linked_401k_id: linked401kId || undefined,
     };
 
@@ -937,7 +908,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">⏱️</div>
+        <div className="form-header-icon"><Clock/></div>
         <div>
           <h3 className="form-header-title">Edit Hourly Wage Income</h3>
           <p className="form-header-desc">Update hourly rate, weekly hours, and growth details.</p>
@@ -1001,7 +972,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
             <div className="link-card">
               <div className="link-card__header">
                 <div className="link-card__info">
-                  <span className="preview-icon">🏦</span>
+                  <span className="preview-icon"><Landmark/></span>
 
                   <div>
                     <div className="link-card__title">Link 401(k) Account</div>
@@ -1017,15 +988,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
                 ) : isAlreadyLinked ? (
                   <div className="link-card__synced">
                     🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
-                    <div
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#6B7280",
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      Delete the linked account to reassign
-                    </div>
+                    <p className="form-inline-muted">Delete the linked account to reassign</p>
                   </div>
                 ) : (
                   <div className="form-field--gap8">
@@ -1043,19 +1006,9 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
                       })}
                     </select>
 
-                    {linkError && (
-                      <div
-                        style={{
-                          color: "#EF4444",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {linkError}
-                      </div>
-                    )}
+                    {linkError && <p className="form-inline-error">{linkError}</p>}
 
-                    {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                    {linked401kId && !linkError && <div className="link-card__synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
                 )}
               </div>
@@ -1064,7 +1017,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
             {/* Annual Income Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💰</span>
+                <span className="preview-icon"><CircleDollarSign/></span>
                 <span className="preview-card__label">Estimated Annual Income</span>
               </div>
               <div className="preview-card__amount">
@@ -1135,7 +1088,7 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">🚀</div>
+        <div className="form-header-icon"><Rocket/></div>
         <div>
           <h3 className="form-header-title">Edit Side Hustle Income</h3>
           <p className="form-header-desc">Update frequency, variability, and income details.</p>
@@ -1203,7 +1156,7 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
             {/* Annual Income Preview */}
             <div className="preview-card">
               <div className="preview-card__header">
-                <span className="preview-icon">💰</span>
+                <span className="preview-icon"><CircleDollarSign/></span>
                 <span className="preview-card__label">Estimated Annual Income</span>
               </div>
               <div className="preview-card__amount">

@@ -10,7 +10,7 @@ export type OverviewCard = {
   change: string;
   changeLabel: string;
   meta: string;
-  icon: string;
+  icon: any;
   tone: OverviewCardTone;
   direction?: OverviewCardDirection;
 };

@@ -1,5 +1,6 @@
 import './globals.css'
 import { Inter, DM_Mono, Playfair_Display } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable} ${dmMono.variable} ${playfair.variable}`}>
       <body>
         <main>{children}</main>
+        <Analytics />
       </body>
     </html>
   )

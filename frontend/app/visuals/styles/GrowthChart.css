@@ -217,14 +217,14 @@
   gap: 8px;
 }
 
-.income-chart-empty__title {
+.income-chart-empty-title {
   font-size: 15px;
   font-weight: 500;
   color: var(--color-text-primary, #111827);
   margin: 0;
 }
 
-.income-chart-empty__subtitle {
+.income-chart-empty-subtitle {
   font-size: 13px;
   color: var(--color-text-secondary, #6b7280);
   margin: 0;
@@ -302,11 +302,11 @@
 }
 
 @media (max-width: 480px) {
-  .income-chart-empty__title {
+  .income-chart-empty-title {
     font-size: 13px;
   }
 
-  .income-chart-empty__subtitle {
+  .income-chart-empty-subtitle {
     font-size: 12px;
   }
 }

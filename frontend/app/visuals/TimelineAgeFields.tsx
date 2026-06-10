@@ -110,7 +110,7 @@ export function TimelineAgeFields({
                 setEndAge(clampedStart);
               }
             }}
-            className={`form-input ${startAgeInvalid ? "form-input--error" : ""}`}
+            className={`form-input ${startAgeInvalid ? "form-input-error" : ""}`}
             placeholder={String(minAge)}
             type="number"
             min={minAge}
@@ -130,7 +130,7 @@ export function TimelineAgeFields({
               const minEndAge = Number(startAge) || minAge;
               setEndAge(clampAge(endAge, minEndAge, maxAge));
             }}
-            className={`form-input ${endAgeInvalid ? "form-input--error" : ""}`}
+            className={`form-input ${endAgeInvalid ? "form-input-error" : ""}`}
             placeholder={`${maxAge}`}
             type="number"
             min={Number(startAge) || minAge}

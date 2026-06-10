@@ -1,11 +1,10 @@
+import './styles/Forms.css'
+
 import { useState } from "react";
-import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
+import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/Accounts";
-import {
-  TimelineAgeFields,
-  getValidatedTimelinePayload,
-} from "@/app/visuals/TimelineAgeFields";
-import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight ,Handbag, Clock,Rocket,Link } from 'lucide-react';
+import { TimelineAgeFields, getValidatedTimelinePayload } from "@/app/visuals/TimelineAgeFields";
+import { CircleDollarSign, Landmark,Handbag, Clock,Rocket,Link } from 'lucide-react';
 
 // ─────────────────────────────────────────────
 // INCOME

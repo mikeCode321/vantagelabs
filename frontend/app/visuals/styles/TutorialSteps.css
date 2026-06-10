@@ -846,10 +846,6 @@
 .ts-panel-desktop { display: contents; }
 
 @media (max-width: 480px) {
-  .ts-profile {
-    padding: 24px 24px 32px;
-  }
-
   .ts-field-row-sep {
     display: none;
   }
@@ -919,10 +915,6 @@
   .ts-field-row {
     grid-template-columns: 1fr;
     gap: 16px;
-  }
-
-  .ts-field-row-sep {
-    display: none;
   }
 
   .ts-filing-grid {

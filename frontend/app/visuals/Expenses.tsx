@@ -1,11 +1,10 @@
+import './styles/Forms.css'
+
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/Accounts";
-import {
-  TimelineAgeFields,
-  getValidatedTimelinePayload,
-} from "@/app/visuals/TimelineAgeFields";
-import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus, TrendingUpDown, ArrowBigDownDash, BanknoteArrowUp, DollarSign, Link } from 'lucide-react';
+import {TimelineAgeFields,getValidatedTimelinePayload, } from "@/app/visuals/TimelineAgeFields";
+import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Link } from 'lucide-react';
 
 // ─────────────────────────────────────────────
 // EXPENSES

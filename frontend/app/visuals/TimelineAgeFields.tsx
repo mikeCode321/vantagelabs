@@ -1,3 +1,5 @@
+import './styles/Forms.css';
+
 type TimelineAgeFieldsProps = {
   state: any;
   startAge: string;

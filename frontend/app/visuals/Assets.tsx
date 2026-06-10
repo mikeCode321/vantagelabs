@@ -1,8 +1,10 @@
+import './styles/Forms.css'
+
 import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
 import { ID } from "@/app/visuals/Accounts";
 import { TimelineAgeFields, getValidatedTimelinePayload, } from "@/app/visuals/TimelineAgeFields";
-import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight ,Handbag, Clock,Rocket,Link, HousePlus, ChartBarIncreasing, Car, ChartBarDecreasing } from 'lucide-react';
+import { Link, HousePlus, ChartBarIncreasing, Car, ChartBarDecreasing } from 'lucide-react';
 
 
 // ─────────────────────────────────────────────

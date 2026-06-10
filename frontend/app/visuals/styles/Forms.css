@@ -153,10 +153,6 @@
   padding-left: 22px;
 }
 
-.form-input-suffix {
-  padding-right: 38px;
-}
-
 .form-input-prefix-dollar .form-input-suffix {
   padding-left: 22px;
   padding-right: 38px;
@@ -184,6 +180,7 @@
   font-size: 0.68rem;
   color: rgba(109, 40, 217, 0.5);
   pointer-events: none;
+  padding-right: 38px;
 }
 
 .form-slider {

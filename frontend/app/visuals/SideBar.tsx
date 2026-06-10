@@ -1,8 +1,9 @@
+import "./styles/SideBar.css";
+
 import Image from "next/image";
 import Link from "next/link";
-import "./styles/SideBar.css";
 import { useState } from "react";
-import { PieChart, Grid3x3 } from 'lucide-react';
+import { PieChart } from 'lucide-react';
 
 export default function SideBar({setIsFeedbackOpen}) {
     const [mobileNavOpen, setMobileNavOpen] = useState(false);

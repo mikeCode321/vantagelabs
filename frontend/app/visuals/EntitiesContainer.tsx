@@ -1,4 +1,4 @@
-import "./styles/Entities.css";
+import "./styles/EntityCard.css";
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from 'lucide-react';

@@ -44,7 +44,7 @@ function FinancialOverviewCard({ card }) {
   const direction = card.direction ?? "neutral";
 
   return (
-    <article className={`overview-card overview-card--${card.tone}`}>
+    <article className={`overview-card overview-card-${card.tone}`}>
       <div className="overview-card-top">
         <div className="overview-card-icon">{card.icon}</div>
 
@@ -54,7 +54,7 @@ function FinancialOverviewCard({ card }) {
           <div className="overview-card-value-row">
             <h3 className="overview-card-value">{card.value}</h3>
 
-            <div className={`overview-card-change overview-card-change--${direction}`}>
+            <div className={`overview-card-change overview-card-change-${direction}`}>
               <span>
                 {getDirectionArrow(direction)} {card.change}
               </span>

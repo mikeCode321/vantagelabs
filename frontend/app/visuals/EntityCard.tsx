@@ -1,4 +1,4 @@
-import './styles/Entities.css';
+import './styles/EntityCard.css';
 
 import { useState} from "react";
 import { CircleDollarSign, HandCoins, PieChart, Landmark, } from 'lucide-react';
@@ -35,7 +35,6 @@ const ENTITY_CARD_COPY = {
     itemText: "assets added",
   },
 };
-
 
 /* -------------------- Row Styles -------------------- */
 
@@ -351,7 +350,7 @@ export default function EntityCard({ state, ENTITY_CONFIG, category, dispatch, o
     <>
       <div className={`entity-card entity-card--${category}${tutorialActive ? " ts-tutorial-target" : ""}`}>
         <div className="entity-card-top">
-          <div className={`entity-card-icon entity-card-icon--${category}`}>
+          <div className={`entity-card-icon entity-card-icon-${category}`}>
             {cardCopy.icon}
           </div>
 

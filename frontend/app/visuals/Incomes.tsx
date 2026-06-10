@@ -183,8 +183,8 @@ export function SalaryForm({ dispatch, state, onToast }) {
             <div className="form-field">
               <label className="form-label">Annual Growth Rate</label>
               <div className="form-input-wrap">
-                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input-suffix" placeholder="3" type="number" step="0.1" />
-                <span className="form-input-suffix">%</span>
+                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input-has-suffix" placeholder="3" type="number" step="0.1" />
+                <span className="form-input-suffix-label">%</span>
               </div>
             </div>
           </div>
@@ -371,8 +371,8 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
               <label className="form-label">Hourly Rate</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/hr</span>
-                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="25" type="text" step="0.01" />
+                <span className="form-input-suffix-label">/hr</span>
+                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="25" type="text" step="0.01" />
               </div>
             </div>
 
@@ -380,8 +380,8 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
             <div className="form-field">
               <label className="form-label">Hours Per Week</label>
               <div className="form-input-wrap">
-                <input value={formatNumberWithCommas(hoursPerWeek)} onChange={(e) => handleNumberInput(e, setHoursPerWeek)} className="form-input form-input-suffix" placeholder="40" type="text" />
-                <span className="form-input-suffix">hrs/wk</span>
+                <input value={formatNumberWithCommas(hoursPerWeek)} onChange={(e) => handleNumberInput(e, setHoursPerWeek)} className="form-input form-input-has-suffix" placeholder="40" type="text" />
+                <span className="form-input-suffix-label">hrs/wk</span>
               </div>
             </div>
 
@@ -389,8 +389,8 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
             <div className="form-field">
               <label className="form-label">Annual Growth Rate</label>
               <div className="form-input-wrap">
-                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input-suffix" placeholder="3" type="text" step="0.1" />
-                <span className="form-input-suffix">%</span>
+                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input-has-suffix" placeholder="3" type="text" step="0.1" />
+                <span className="form-input-suffix-label">%</span>
               </div>
             </div>
           </div>
@@ -742,9 +742,9 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
               <label className="form-label">Annual Growth Rate</label>
 
               <div className="form-input-wrap">
-                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input-suffix" placeholder="3" type="text" step="0.1" />
+                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input-has-suffix" placeholder="3" type="text" step="0.1" />
 
-                <span className="form-input-suffix">%</span>
+                <span className="form-input-suffix-label">%</span>
               </div>
             </div>
           </div>
@@ -931,8 +931,8 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
               <label className="form-label">Hourly Rate</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/hr</span>
-                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="25" type="text" step="0.01" />
+                <span className="form-input-suffix-label">/hr</span>
+                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="25" type="text" step="0.01" />
               </div>
             </div>
 
@@ -940,8 +940,8 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
             <div className="form-field">
               <label className="form-label">Hours Per Week</label>
               <div className="form-input-wrap">
-                <input value={formatNumberWithCommas(hoursPerWeek)} onChange={(e) => handleNumberInput(e, setHoursPerWeek)} className="form-input form-input-suffix" placeholder="40" type="text" />
-                <span className="form-input-suffix">hrs/wk</span>
+                <input value={formatNumberWithCommas(hoursPerWeek)} onChange={(e) => handleNumberInput(e, setHoursPerWeek)} className="form-input form-input-has-suffix" placeholder="40" type="text" />
+                <span className="form-input-suffix-label">hrs/wk</span>
               </div>
             </div>
 
@@ -949,8 +949,8 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
             <div className="form-field">
               <label className="form-label">Annual Growth Rate</label>
               <div className="form-input-wrap">
-                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input-suffix" placeholder="3" type="text" step="0.1" />
-                <span className="form-input-suffix">%</span>
+                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input-has-suffix" placeholder="3" type="text" step="0.1" />
+                <span className="form-input-suffix-label">%</span>
               </div>
             </div>
           </div>

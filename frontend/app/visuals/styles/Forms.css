@@ -172,7 +172,7 @@
   pointer-events: none;
 }
 
-.form-input-suffix {
+.form-input-suffix-label {
   position: absolute;
   right: 11px;
   top: 50%;
@@ -180,6 +180,9 @@
   font-size: 0.68rem;
   color: rgba(109, 40, 217, 0.5);
   pointer-events: none;
+}
+
+.form-input-has-suffix {
   padding-right: 38px;
 }
 

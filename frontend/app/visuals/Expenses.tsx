@@ -701,8 +701,8 @@ export function LivingExpensesForm({ dispatch,state, onToast }) {
               <label className="form-label">Monthly Amount</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/mo</span>
-                <input value={formatNumberWithCommas(amount)} onChange={(e) => handleNumberInput(e, setAmount)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="3,000" type="text" inputMode="decimal" required />
+                <span className="form-input-suffix-label">/mo</span>
+                <input value={formatNumberWithCommas(amount)} onChange={(e) => handleNumberInput(e, setAmount)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="3,000" type="text" inputMode="decimal" required />
               </div>
             </div>
 
@@ -829,8 +829,8 @@ export function DebtExpenseForm({ dispatch,state, onToast }) {
               <label className="form-label">Monthly Payment</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/mo</span>
-                <input className="form-input form-input-prefix-dollar form-input-suffix" value={formatNumberWithCommas(monthlyPayment)} onChange={(e) => handleNumberInput(e, setMonthlyPayment)} type="text" inputMode="decimal" placeholder="400" required />
+                <span className="form-input-suffix-label">/mo</span>
+                <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyPayment)} onChange={(e) => handleNumberInput(e, setMonthlyPayment)} type="text" inputMode="decimal" placeholder="400" required />
               </div>
             </div>
 
@@ -839,8 +839,8 @@ export function DebtExpenseForm({ dispatch,state, onToast }) {
                 Interest Rate <span className="form-label-muted">(optional)</span>
               </label>
               <div className="form-input-wrap">
-                <input type="number" placeholder="6.5" value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input form-input-suffix" />
-                <span className="form-input-suffix">%</span>
+                <input type="number" placeholder="6.5" value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input form-input-has-suffix" />
+                <span className="form-input-suffix-label">%</span>
               </div>
             </div>
           </div>
@@ -944,8 +944,8 @@ export function RentExpenseForm({ dispatch,state, onToast, }) {
               <label className="form-label">Monthly Rent</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/mo</span>
-                <input className="form-input form-input-prefix-dollar form-input-suffix" onChange={(e) => handleNumberInput(e, setAmount)} value={formatNumberWithCommas(amount)} placeholder="2,000" type="text" required />
+                <span className="form-input-suffix-label">/mo</span>
+                <input className="form-input form-input-prefix-dollar form-input-has-suffix" onChange={(e) => handleNumberInput(e, setAmount)} value={formatNumberWithCommas(amount)} placeholder="2,000" type="text" required />
               </div>
             </div>
 
@@ -1112,8 +1112,8 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
             <div className="form-field">
               <label className="form-label">Interest Rate</label>
               <div className="form-input-wrap">
-                <input value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input form-input-suffix" placeholder="7.5" type="number" step="0.01" required />
-                <span className="form-input-suffix">%</span>
+                <input value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input form-input-has-suffix" placeholder="7.5" type="number" step="0.01" required />
+                <span className="form-input-suffix-label">%</span>
               </div>
             </div>
 
@@ -1407,13 +1407,13 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
                 <input
                   value={interestRate}
                   onChange={(e) => setInterestRate(e.target.value)}
-                  className="form-input form-input-suffix"
+                  className="form-input form-input-has-suffix"
                   placeholder="6.75"
                   type="number"
                   step="0.01"
                   required
                 />
-                <span className="form-input-suffix">%</span>
+                <span className="form-input-suffix-label">%</span>
               </div>
             </div>
 
@@ -1620,8 +1620,8 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
               <label className="form-label">Monthly Amount</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/mo</span>
-                <input value={formatNumberWithCommas(amount)} onChange={(e) => handleNumberInput(e, setAmount)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="3,000" type="text" />
+                <span className="form-input-suffix-label">/mo</span>
+                <input value={formatNumberWithCommas(amount)} onChange={(e) => handleNumberInput(e, setAmount)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="3,000" type="text" />
               </div>
             </div>
 
@@ -1730,8 +1730,8 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
               <label className="form-label">Monthly Rent</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/mo</span>
-                <input value={amount} onChange={(e) => setAmount(e.target.value)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="2,000" />
+                <span className="form-input-suffix-label">/mo</span>
+                <input value={amount} onChange={(e) => setAmount(e.target.value)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="2,000" />
               </div>
             </div>
 
@@ -1858,8 +1858,8 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
               <label className="form-label">Monthly Payment</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix">/mo</span>
-                <input value={formatNumberWithCommas(monthlyPayment)} onChange={(e) => handleNumberInput(e, setMonthlyPayment)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="400" type="text" inputMode="decimal" />
+                <span className="form-input-suffix-label">/mo</span>
+                <input value={formatNumberWithCommas(monthlyPayment)} onChange={(e) => handleNumberInput(e, setMonthlyPayment)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="400" type="text" inputMode="decimal" />
               </div>
             </div>
 
@@ -1868,8 +1868,8 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
                 Interest Rate <span className="form-label-muted">(optional)</span>
               </label>
               <div className="form-input-wrap">
-                <input value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input form-input-suffix" placeholder="6.5" type="number" />
-                <span className="form-input-suffix">%</span>
+                <input value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="form-input form-input-has-suffix" placeholder="6.5" type="number" />
+                <span className="form-input-suffix-label">%</span>
               </div>
             </div>
           </div>

@@ -399,8 +399,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
                 <label className="form-label">Monthly Contribution</label>
                 <div className="form-input-wrap">
                   <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix">/mo</span>
-                  <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="1,000" type="text" />
+                  <span className="form-input-suffix-label">/mo</span>
+                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} placeholder="1,000" type="text" />
                 </div>
               </div>
             )}
@@ -410,8 +410,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
               <div className="form-field">
                 <label className="form-label">Percentage of Net Income</label>
                 <div className="form-input-wrap">
-                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input-suffix" placeholder="10" type="number" min="0" max="100" step="0.1" />
-                  <span className="form-input-suffix">%</span>
+                  <input className="form-input form-input-has-suffix" value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} placeholder="10" type="number" min="0" max="100" step="0.1" />
+                  <span className="form-input-suffix-label">%</span>
                 </div>
               </div>
             )}
@@ -722,8 +722,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
                 <label className="form-label">Monthly Contribution</label>
                 <div className="form-input-wrap">
                   <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix">/mo</span>
-                  <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="500" type="text" />
+                  <span className="form-input-suffix-label">/mo</span>
+                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)}placeholder="500" type="text" />
                 </div>
               </div>
             )}
@@ -733,8 +733,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
               <div className="form-field">
                 <label className="form-label">Percentage of Gross Income</label>
                 <div className="form-input-wrap">
-                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input-suffix" placeholder="6" type="number" min="0" max="100" step="0.1" />
-                  <span className="form-input-suffix">%</span>
+                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input-has-suffix" placeholder="6" type="number" min="0" max="100" step="0.1" />
+                  <span className="form-input-suffix-label">%</span>
                 </div>
               </div>
             )}
@@ -1160,8 +1160,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
                 <label className="form-label">Monthly Contribution</label>
                 <div className="form-input-wrap">
                   <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix">/mo</span>
-                  <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="1,000" type="text" />
+                  <span className="form-input-suffix-label">/mo</span>
+                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} placeholder="1,000" type="text" />
                 </div>
               </div>
             )}
@@ -1171,8 +1171,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
               <div className="form-field">
                 <label className="form-label">Percentage of Net Income</label>
                 <div className="form-input-wrap">
-                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input-suffix" placeholder="10" type="number" min="0" max="100" step="0.1" />
-                  <span className="form-input-suffix">%</span>
+                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input-has-suffix" placeholder="10" type="number" min="0" max="100" step="0.1" />
+                  <span className="form-input-suffix-label">%</span>
                 </div>
               </div>
             )}
@@ -1471,8 +1471,8 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
                 <label className="form-label">Monthly Contribution</label>
                 <div className="form-input-wrap">
                   <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix">/mo</span>
-                  <input value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="500" type="text" />
+                  <span className="form-input-suffix-label">/mo</span>
+                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} placeholder="500" type="text" />
                 </div>
               </div>
             )}
@@ -1482,8 +1482,8 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               <div className="form-field">
                 <label className="form-label">Percentage of Gross Income</label>
                 <div className="form-input-wrap">
-                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input-suffix" placeholder="6" type="number" min="0" max="100" step="0.1" />
-                  <span className="form-input-suffix">%</span>
+                  <input value={contributionPercentage} onChange={(e) => setContributionPercentage(e.target.value)} className="form-input form-input-has-suffix" placeholder="6" type="number" min="0" max="100" step="0.1" />
+                  <span className="form-input-suffix-label">%</span>
                 </div>
               </div>
             )}

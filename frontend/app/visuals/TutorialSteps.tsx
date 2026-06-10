@@ -54,7 +54,7 @@ function TutorialProgress({ currentStepIndex, totalSteps }) {
     return (
       <div className="ts-step-progress">
         {Array.from({ length: totalSteps }).map((_, index) => (
-          <span key={index} className={index === currentStepIndex ? "ts-step-progress-dot ts-step-progress-dot--active" : "ts-step-progress-dot"} />
+          <span key={index} className={index === currentStepIndex ? "ts-step-progress-dot ts-step-progress-dot-active" : "ts-step-progress-dot"} />
         ))}
       </div>
     );
@@ -97,7 +97,7 @@ function TutorialStepPanel({currentStepIndex, totalSteps, title, description, it
           {(description || items) && (
             <button
               type="button"
-              className={`ts-info-toggle${isMobileInfoOpen ? " ts-info-toggle--open" : ""}`}
+              className={`ts-info-toggle${isMobileInfoOpen ? " ts-info-toggle-open" : ""}`}
               onClick={onToggleInfo}
               aria-expanded={isMobileInfoOpen}
             >
@@ -128,11 +128,11 @@ function TutorialStepPanel({currentStepIndex, totalSteps, title, description, it
 
       {/* ── Buttons — always visible ── */}
       <div className="ts-step-actions">
-        <button type="button" className="ts-btn ts-btn--secondary" onClick={onBack}>
+        <button type="button" className="ts-btn ts-btn-secondary" onClick={onBack}>
           Back
         </button>
-        <div className={`ts-tooltip-wrap${nextDisabled ? " ts-tooltip-wrap--active" : ""}`}>
-          <button type="button" className="ts-btn ts-btn--primary" onClick={onNext} disabled={nextDisabled}>
+        <div className={`ts-tooltip-wrap${nextDisabled ? " ts-tooltip-wrap-active" : ""}`}>
+          <button type="button" className="ts-btn ts-btn-primary" onClick={onNext} disabled={nextDisabled}>
             {nextLabel}
           </button>
           {nextDisabled && (
@@ -192,7 +192,7 @@ function WelcomeScreen({ onGetStarted }) {
       <div className="ts-welcome-actions">
         <button
           type="button"
-          className="ts-btn ts-btn--primary"
+          className="ts-btn ts-btn-primary"
           onClick={onGetStarted}
         >
           Get Started
@@ -275,7 +275,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
       <div className="ts-profile-form">
 
         <div className="ts-field-row">
-          <div className={`ts-field ${errors.currentAge ? "ts-field--error" : ""}`}>
+          <div className={`ts-field ${errors.currentAge ? "ts-field-error" : ""}`}>
             <label className="ts-label">
               Current Age
               <span className="ts-label-hint">How old are you today?</span>
@@ -301,7 +301,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
 
           <div className="ts-field-row-sep">→</div>
 
-          <div className={`ts-field ${errors.retirementAge ? "ts-field--error" : ""}`}>
+          <div className={`ts-field ${errors.retirementAge ? "ts-field-error" : ""}`}>
             <label className="ts-label">
               Target Retirement Age
               <span className="ts-label-hint">When do you plan to retire?</span>
@@ -331,7 +331,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
           </div>
         </div>
 
-        <div className={`ts-field ${errors.filingStatus ? "ts-field--error" : ""}`}>
+        <div className={`ts-field ${errors.filingStatus ? "ts-field-error" : ""}`}>
           <label className="ts-label">
             Filing Status
             <span className="ts-label-hint">Used to calculate your federal tax bracket</span>
@@ -341,7 +341,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
               <button
                 key={opt.value}
                 type="button"
-                className={`ts-filing-card ${filingStatus === opt.value ? "ts-filing-card--selected" : ""}`}
+                className={`ts-filing-card ${filingStatus === opt.value ? "ts-filing-card-selected" : ""}`}
                 onClick={() => {
                   setFilingStatus(opt.value);
                   setErrors((prev) => ({ ...prev, filingStatus: undefined }));
@@ -361,7 +361,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
         </div>
 
         {/* State of residence */}
-        <div className={`ts-field ${errors.stateOfResidence ? "ts-field--error" : ""}`}>
+        <div className={`ts-field ${errors.stateOfResidence ? "ts-field-error" : ""}`}>
           <label className="ts-label">
             State of Residence After Retirement
             <span className="ts-label-hint">Affects state income tax in the simulation</span>
@@ -397,7 +397,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
         {mode === "full" ? (
           <button
             type="button"
-            className="ts-btn ts-btn--primary"
+            className="ts-btn ts-btn-primary"
             onClick={handleSubmit}
           >
             Continue to Setup
@@ -408,7 +408,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
         ) : (
           <button
             type="button"
-            className="ts-btn ts-btn--primary"
+            className="ts-btn ts-btn-primary"
             onClick={handleSubmit}
           >
             Go to Dashboard
@@ -540,7 +540,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
     const existingCheckingAccount = state.accounts.checking[0];
     
     return (
-      <div className="ts-modal ts-modal--split-step">
+      <div className="ts-modal ts-modal-split-step">
         <TutorialStepPanel
           currentStepIndex={currentStepIndex}
           totalSteps={totalSteps}
@@ -587,7 +587,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
     const existingSalaryIncome = state.incomes.salary[0];
   
     return (
-      <div className="ts-modal ts-modal--split-step">
+      <div className="ts-modal ts-modal-split-step">
         <TutorialStepPanel
           currentStepIndex={currentStepIndex}
           totalSteps={totalSteps}
@@ -666,7 +666,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
   
             <button
               type="button"
-              className="ts-btn ts-btn--secondary"
+              className="ts-btn ts-btn-secondary"
               onClick={onBack}
             >
               Back
@@ -674,7 +674,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
   
             <button
               type="button"
-              className="ts-btn ts-btn--primary"
+              className="ts-btn ts-btn-primary"
               onClick={onNext}
             >
               Next
@@ -707,11 +707,11 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
           <p className="ts-results-description">{step.description}</p>
   
           <div className="ts-results-side-actions">
-            <button type="button" className="ts-btn ts-btn--secondary" onClick={onBack}>
+            <button type="button" className="ts-btn ts-btn-secondary" onClick={onBack}>
               Back
             </button>
   
-            <button type="button" className="ts-btn ts-btn--primary" onClick={onFinish}>
+            <button type="button" className="ts-btn ts-btn-primary" onClick={onFinish}>
               Finish
             </button>
           </div>
@@ -737,7 +737,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
     const existingRetirementAccount = state.accounts.employer_retirement[0];
   
     return (
-      <div className="ts-modal ts-modal--split-step">
+      <div className="ts-modal ts-modal-split-step">
         <TutorialStepPanel
           currentStepIndex={currentStepIndex}
           totalSteps={totalSteps}

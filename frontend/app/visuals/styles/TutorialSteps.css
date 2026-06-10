@@ -1,10 +1,3 @@
-/* ─────────────────────────────────────────────
-   TutorialSteps.css
-   Scoped under .ts-* prefix to avoid collisions
-   Styled to match dashboard.css design language:
-   light bg · white cards · teal+purple accents ·
-   uppercase monospace labels · 3–4px radius inputs
-───────────────────────────────────────────── */
 
 /* OVERLAY */
 .ts-overlay {
@@ -249,8 +242,8 @@
   gap: 6px;
 }
 
-.ts-field--error .ts-input,
-.ts-field--error .ts-select {
+.ts-field-error .ts-input,
+.ts-field-error .ts-select {
   border-color: rgba(220, 38, 38, 0.5);
   background: rgba(220, 38, 38, 0.02);
 }
@@ -366,7 +359,7 @@
   background: var(--accent-muted);
 }
 
-.ts-filing-card--selected {
+.ts-filing-card-selected {
   border-color: var(--accent);
   background: var(--accent-muted);
   box-shadow: 0 0 0 1px var(--accent-border);
@@ -481,13 +474,13 @@
   font-family: var(--font-primary), monospace;
 }
 
-.ts-btn--primary {
+.ts-btn-primary {
   background: #7c3aed;
   color: #ffffff;
   box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
 }
 
-.ts-btn--primary:disabled {
+.ts-btn-primary:disabled {
   background: #c4b5fd;
   color: #ede9fe;
   border-color: transparent;
@@ -496,36 +489,36 @@
   opacity: 0.6;
 }
 
-.ts-btn--primary:hover {
+.ts-btn-primary:hover {
   background: #6d28d9;
   box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
   transform: translateY(-1px);
 }
 
-.ts-btn--primary:active {
+.ts-btn-primary:active {
   transform: translateY(0);
 }
 
-/* ADD after .ts-btn--primary:active */
-.ts-btn--secondary {
+/* ADD after .ts-btn-primary:active */
+.ts-btn-secondary {
   background: #ffffff;
   color: #300d6b;
   border: 1px solid #ebeaf3;
 }
 
-.ts-btn--secondary:hover {
+.ts-btn-secondary:hover {
   border-color: rgba(109, 40, 217, 0.3);
   background: var(--accent-muted);
   color: #300d6b;
 }
 
-.ts-btn--ghost {
+.ts-btn-ghost {
   background: transparent;
   color: #697287;
   border: 1px solid #ebeaf3;
 }
 
-.ts-btn--ghost:hover {
+.ts-btn-ghost:hover {
   color: #300d6b;
   border-color: var(--accent-border);
   background: var(--accent-muted);
@@ -599,7 +592,7 @@
   cursor: pointer;
 }
 
-.ts-modal--split-step {
+.ts-modal-split-step {
   width: min(1120px, calc(100vw - 48px));
   min-height: 560px;
   padding: 0;
@@ -645,7 +638,7 @@
   flex-shrink: 0;
 }
 
-.ts-step-progress-dot--active {
+.ts-step-progress-dot-active {
   width: 16px;
   height: 16px;
   border: 3px solid rgba(109, 40, 217, 0.25);
@@ -793,7 +786,7 @@
   border-top-color: #1e1b2e;
 }
 
-.ts-tooltip-wrap--active:hover .ts-tooltip {
+.ts-tooltip-wrap-active:hover .ts-tooltip {
   opacity: 1;
 }
 
@@ -947,7 +940,7 @@
     font-size: 0.7rem;
   }
 
-  .ts-modal--split-step {
+  .ts-modal-split-step {
     width: calc(100vw - 8px);
     border-radius: 16px;
   }
@@ -997,7 +990,7 @@
     font-size: 16px;
   }
 
-  .ts-modal--split-step {
+  .ts-modal-split-step {
     width: min(560px, calc(100vw - 32px));
     grid-template-columns: 1fr;
     min-height: unset;
@@ -1091,7 +1084,7 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  .ts-modal--split-step {
+  .ts-modal-split-step {
     grid-template-columns: 1fr;
     width: calc(100vw - 16px);
     min-height: unset;
@@ -1165,7 +1158,7 @@
     transition: transform 0.2s ease;
   }
 
-  .ts-info-toggle--open svg {
+  .ts-info-toggle-open svg {
     transform: rotate(180deg);
   }
 

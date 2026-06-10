@@ -176,7 +176,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
               <label className="form-label">Annual Gross Income</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(grossIncome)} onChange={(e) => handleNumberInput(e, setGrossIncome)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="text" required />
+                <input value={formatNumberWithCommas(grossIncome)} onChange={(e) => handleNumberInput(e, setGrossIncome)} className="form-input form-input-prefix-dollar" placeholder="120,000" type="text" required />
               </div>
             </div>
 
@@ -184,7 +184,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
             <div className="form-field">
               <label className="form-label">Annual Growth Rate</label>
               <div className="form-input-wrap">
-                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input--suffix" placeholder="3" type="number" step="0.1" />
+                <input value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-input form-input-suffix" placeholder="3" type="number" step="0.1" />
                 <span className="form-input-suffix">%</span>
               </div>
             </div>
@@ -204,23 +204,23 @@ export function SalaryForm({ dispatch, state, onToast }) {
 
             {/* Link to 401k card */}
             <div className="link-card">
-              <div className="link-card__header">
-                <div className="link-card__info">
+              <div className="link-card-header">
+                <div className="link-card-info">
                   <span className="preview-icon"><Landmark/></span>
 
                   <div>
-                    <div className="link-card__title">Link to a 401(k) Account</div>
+                    <div className="link-card-title">Link to a 401(k) Account</div>
 
-                    <div className="link-card__sub">Sync this item with a retirement account</div>
+                    <div className="link-card-sub">Sync this item with a retirement account</div>
                   </div>
                 </div>
               </div>
 
-              <div className="link-card__body">
+              <div className="link-card-body">
                 {available401ks.length === 0 ? (
-                  <p className="link-card__no-accounts">No 401(k) accounts available.</p>
+                  <p className="link-card-no-accounts">No 401(k) accounts available.</p>
                 ) : (
-                  <div className="form-field--gap8">
+                  <div className="form-field-gap8">
                     <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
                       <option value="">Select an account</option>
 
@@ -237,7 +237,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
 
                     {linkError && <p className="form-inline-error">{linkError}</p>}
 
-                    {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                    {linked401kId && !linkError && <div className="link-card-synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
                 )}
               </div>
@@ -373,7 +373,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <span className="form-input-suffix">/hr</span>
-                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="25" type="text" step="0.01" />
+                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="25" type="text" step="0.01" />
               </div>
             </div>
 
@@ -381,7 +381,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
             <div className="form-field">
               <label className="form-label">Hours Per Week</label>
               <div className="form-input-wrap">
-                <input value={formatNumberWithCommas(hoursPerWeek)} onChange={(e) => handleNumberInput(e, setHoursPerWeek)} className="form-input form-input--suffix" placeholder="40" type="text" />
+                <input value={formatNumberWithCommas(hoursPerWeek)} onChange={(e) => handleNumberInput(e, setHoursPerWeek)} className="form-input form-input-suffix" placeholder="40" type="text" />
                 <span className="form-input-suffix">hrs/wk</span>
               </div>
             </div>
@@ -390,7 +390,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
             <div className="form-field">
               <label className="form-label">Annual Growth Rate</label>
               <div className="form-input-wrap">
-                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input--suffix" placeholder="3" type="text" step="0.1" />
+                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input-suffix" placeholder="3" type="text" step="0.1" />
                 <span className="form-input-suffix">%</span>
               </div>
             </div>
@@ -410,23 +410,23 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
 
             {/* Link to 401k card */}
             <div className="link-card">
-              <div className="link-card__header">
-                <div className="link-card__info">
+              <div className="link-card-header">
+                <div className="link-card-info">
                   <span className="preview-icon"><Landmark/></span>
 
                   <div>
-                    <div className="link-card__title">Link to a 401(k) Account</div>
+                    <div className="link-card-title">Link to a 401(k) Account</div>
 
-                    <div className="link-card__sub">Sync retirement account with a linked job</div>
+                    <div className="link-card-sub">Sync retirement account with a linked job</div>
                   </div>
                 </div>
               </div>
 
-              <div className="link-card__body">
+              <div className="link-card-body">
                 {available401ks.length === 0 ? (
-                  <p className="link-card__no-jobs">No 401(k) accounts available.</p>
+                  <p className="link-card-no-jobs">No 401(k) accounts available.</p>
                 ) : (
-                  <div className="form-field--gap8">
+                  <div className="form-field-gap8">
                     <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
                       <option value="">Select an account</option>
 
@@ -443,7 +443,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
 
                     {linkError && <p className="form-inline-error">{linkError}</p>}
 
-                    {linked401kId && !linkError && <div className="link-card__synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                    {linked401kId && !linkError && <div className="link-card-synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
                 )}
               </div>
@@ -451,15 +451,15 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
 
             {/* Annual Income Preview */}
             <div className="preview-card">
-              <div className="preview-card__header">
+              <div className="preview-card-header">
                 <span className="preview-icon"><CircleDollarSign/></span>
-                <span className="preview-card__label">Estimated Annual Income</span>
+                <span className="preview-card-label">Estimated Annual Income</span>
               </div>
-              <div className="preview-card__amount">
+              <div className="preview-card-amount">
                 ${annualIncome.toLocaleString()}
-                <span className="preview-card__unit">/yr</span>
+                <span className="preview-card-unit">/yr</span>
               </div>
-              <div className="preview-card__sub">
+              <div className="preview-card-sub">
                 ${(Number(hourlyRate) || 0).toLocaleString()}/hr × {(Number(hoursPerWeek) || 0).toLocaleString()} hrs/week
               </div>
             </div>
@@ -551,7 +551,7 @@ export function SideHustleForm({ dispatch,state, onToast }) {
               <label className="form-label">Average Income Per Period</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(averageIncome)} onChange={(e) => handleNumberInput(e, setAverageIncome)} className="form-input form-input--prefix-dollar" placeholder="500" type="text" step="0.01" />
+                <input value={formatNumberWithCommas(averageIncome)} onChange={(e) => handleNumberInput(e, setAverageIncome)} className="form-input form-input-prefix-dollar" placeholder="500" type="text" step="0.01" />
               </div>
             </div>
 
@@ -568,13 +568,13 @@ export function SideHustleForm({ dispatch,state, onToast }) {
             </div>
 
             {/* Variability Slider */}
-            <div className="form-field--gap8">
+            <div className="form-field-gap8">
               <div className="form-slider-header">
                 <label className="form-label">Income Variability</label>
                 <span className="form-slider-value">±{variabilityPercent.toFixed(1)}%</span>
               </div>
               <input type="range" min={0} max={50} step={0.1} value={variability} onChange={(e) => setVariability(e.target.value)} className="form-slider" />
-              <p className="preview-card__sub">
+              <p className="preview-card-sub">
                 Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </p>
             </div>
@@ -594,15 +594,15 @@ export function SideHustleForm({ dispatch,state, onToast }) {
 
             {/* Annual Income Preview */}
             <div className="preview-card">
-              <div className="preview-card__header">
+              <div className="preview-card-header">
                 <span className="preview-icon"><CircleDollarSign/></span>
-                <span className="preview-card__label">Estimated Annual Income</span>
+                <span className="preview-card-label">Estimated Annual Income</span>
               </div>
-              <div className="preview-card__amount">
+              <div className="preview-card-amount">
                 ${annualIncome.toLocaleString()}
-                <span className="preview-card__unit">/yr</span>
+                <span className="preview-card-unit">/yr</span>
               </div>
-              <div className="preview-card__sub">
+              <div className="preview-card-sub">
                 ${(Number(averageIncome) || 0).toLocaleString()} {frequency}
               </div>
             </div>
@@ -734,7 +734,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
 
-                <input value={formatNumberWithCommas(grossIncome)} onChange={(e) => handleNumberInput(e, setGrossIncome)} className="form-input form-input--prefix-dollar" placeholder="120,000" type="text" />
+                <input value={formatNumberWithCommas(grossIncome)} onChange={(e) => handleNumberInput(e, setGrossIncome)} className="form-input form-input-prefix-dollar" placeholder="120,000" type="text" />
               </div>
             </div>
 
@@ -743,7 +743,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
               <label className="form-label">Annual Growth Rate</label>
 
               <div className="form-input-wrap">
-                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input--suffix" placeholder="3" type="text" step="0.1" />
+                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input-suffix" placeholder="3" type="text" step="0.1" />
 
                 <span className="form-input-suffix">%</span>
               </div>
@@ -764,23 +764,23 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
 
             {/* Link to 401k card */}
             <div className="link-card">
-              <div className="link-card__header">
-                <div className="link-card__info">
+              <div className="link-card-header">
+                <div className="link-card-info">
                   <span className="preview-icon"><Landmark/></span>
 
                   <div>
-                    <div className="link-card__title">Link to a 401(k) Account</div>
+                    <div className="link-card-title">Link to a 401(k) Account</div>
 
-                    <div className="link-card__sub">Sync account connections automatically</div>
+                    <div className="link-card-sub">Sync account connections automatically</div>
                   </div>
                 </div>
               </div>
 
-              <div className="link-card__body">
+              <div className="link-card-body">
                 {available401ks.length === 0 ? (
-                  <p className="link-card__no-accounts">No 401(k) accounts available.</p>
+                  <p className="link-card-no-accounts">No 401(k) accounts available.</p>
                 ) : (
-                  <div className="form-field--gap8">
+                  <div className="form-field-gap8">
                     <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
                       <option value="">Select an account</option>
 
@@ -797,7 +797,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
 
                     {linkError && <p className="form-inline-error">{linkError}</p>}
 
-                    {linked401kId && !linkError && <div className="link-card__synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                    {linked401kId && !linkError && <div className="link-card-synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
                 )}
               </div>
@@ -933,7 +933,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
                 <span className="form-input-suffix">/hr</span>
-                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input--prefix-dollar form-input--suffix" placeholder="25" type="text" step="0.01" />
+                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input-prefix-dollar form-input-suffix" placeholder="25" type="text" step="0.01" />
               </div>
             </div>
 
@@ -941,7 +941,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
             <div className="form-field">
               <label className="form-label">Hours Per Week</label>
               <div className="form-input-wrap">
-                <input value={formatNumberWithCommas(hoursPerWeek)} onChange={(e) => handleNumberInput(e, setHoursPerWeek)} className="form-input form-input--suffix" placeholder="40" type="text" />
+                <input value={formatNumberWithCommas(hoursPerWeek)} onChange={(e) => handleNumberInput(e, setHoursPerWeek)} className="form-input form-input-suffix" placeholder="40" type="text" />
                 <span className="form-input-suffix">hrs/wk</span>
               </div>
             </div>
@@ -950,7 +950,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
             <div className="form-field">
               <label className="form-label">Annual Growth Rate</label>
               <div className="form-input-wrap">
-                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input--suffix" placeholder="3" type="text" step="0.1" />
+                <input value={formatNumberWithCommas(growth)} onChange={(e) => handleNumberInput(e, setGrowth)} className="form-input form-input-suffix" placeholder="3" type="text" step="0.1" />
                 <span className="form-input-suffix">%</span>
               </div>
             </div>
@@ -970,28 +970,28 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
 
             {/* Link to 401k card */}
             <div className="link-card">
-              <div className="link-card__header">
-                <div className="link-card__info">
+              <div className="link-card-header">
+                <div className="link-card-info">
                   <span className="preview-icon"><Landmark/></span>
 
                   <div>
-                    <div className="link-card__title">Link 401(k) Account</div>
+                    <div className="link-card-title">Link 401(k) Account</div>
 
-                    <div className="link-card__sub">Connect this job to a retirement account</div>
+                    <div className="link-card-sub">Connect this job to a retirement account</div>
                   </div>
                 </div>
               </div>
 
-              <div className="link-card__body">
+              <div className="link-card-body">
                 {available401ks.length === 0 ? (
-                  <p className="link-card__no-accounts">No 401(k) accounts available.</p>
+                  <p className="link-card-no-accounts">No 401(k) accounts available.</p>
                 ) : isAlreadyLinked ? (
-                  <div className="link-card__synced">
+                  <div className="link-card-synced">
                     🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
                     <p className="form-inline-muted">Delete the linked account to reassign</p>
                   </div>
                 ) : (
-                  <div className="form-field--gap8">
+                  <div className="form-field-gap8">
                     <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
                       <option value="">None - No linking</option>
 
@@ -1008,7 +1008,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
 
                     {linkError && <p className="form-inline-error">{linkError}</p>}
 
-                    {linked401kId && !linkError && <div className="link-card__synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
+                    {linked401kId && !linkError && <div className="link-card-synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
                   </div>
                 )}
               </div>
@@ -1016,15 +1016,15 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
 
             {/* Annual Income Preview */}
             <div className="preview-card">
-              <div className="preview-card__header">
+              <div className="preview-card-header">
                 <span className="preview-icon"><CircleDollarSign/></span>
-                <span className="preview-card__label">Estimated Annual Income</span>
+                <span className="preview-card-label">Estimated Annual Income</span>
               </div>
-              <div className="preview-card__amount">
+              <div className="preview-card-amount">
                 ${annualIncome.toLocaleString()}
-                <span className="preview-card__unit">/yr</span>
+                <span className="preview-card-unit">/yr</span>
               </div>
-              <div className="preview-card__sub">
+              <div className="preview-card-sub">
                 ${(Number(hourlyRate) || 0).toLocaleString()}/hr × {(Number(hoursPerWeek) || 0).toLocaleString()} hrs/week
               </div>
             </div>
@@ -1112,7 +1112,7 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
               <label className="form-label">Average Income Per Period</label>
               <div className="form-input-wrap">
                 <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(averageIncome)} onChange={(e) => handleNumberInput(e, setAverageIncome)} className="form-input form-input--prefix-dollar" placeholder="500" type="text" step="0.01" />
+                <input value={formatNumberWithCommas(averageIncome)} onChange={(e) => handleNumberInput(e, setAverageIncome)} className="form-input form-input-prefix-dollar" placeholder="500" type="text" step="0.01" />
               </div>
             </div>
 
@@ -1129,13 +1129,13 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
             </div>
 
             {/* Variability Slider */}
-            <div className="form-field--gap8">
+            <div className="form-field-gap8">
               <div className="form-slider-header">
                 <label className="form-label">Income Variability</label>
                 <span className="form-slider-value">±{variabilityPercent.toFixed(1)}%</span>
               </div>
               <input type="range" min={0} max={50} step={0.1} value={variability} onChange={(e) => setVariability(e.target.value)} className="form-slider" />
-              <p className="preview-card__sub">
+              <p className="preview-card-sub">
                 Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </p>
             </div>
@@ -1155,15 +1155,15 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
 
             {/* Annual Income Preview */}
             <div className="preview-card">
-              <div className="preview-card__header">
+              <div className="preview-card-header">
                 <span className="preview-icon"><CircleDollarSign/></span>
-                <span className="preview-card__label">Estimated Annual Income</span>
+                <span className="preview-card-label">Estimated Annual Income</span>
               </div>
-              <div className="preview-card__amount">
+              <div className="preview-card-amount">
                 ${annualIncome.toLocaleString()}
-                <span className="preview-card__unit">/yr</span>
+                <span className="preview-card-unit">/yr</span>
               </div>
-              <div className="preview-card__sub">
+              <div className="preview-card-sub">
                 ${(Number(averageIncome) || 0).toLocaleString()} {frequency}
               </div>
             </div>

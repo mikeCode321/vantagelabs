@@ -359,8 +359,8 @@ export default function IncomeGrowthChart({ data, tutorialActive = false }) {
 
       {isEmpty && (
         <div className="income-chart-empty">
-          <p className="income-chart-empty__title">No simulation data yet</p>
-          <p className="income-chart-empty__subtitle">
+          <p className="income-chart-empty-title">No simulation data yet</p>
+          <p className="income-chart-empty-subtitle">
             Add your financial details and run a simulation to see results
           </p>
         </div>

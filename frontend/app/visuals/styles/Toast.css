@@ -40,7 +40,6 @@
     border-color 0.18s ease;
 }
 
-
 .toast-icon {
   width: 34px;
   height: 34px;
@@ -87,7 +86,7 @@
   transform: scale(0.95);
 }
 
-.toast-item--added {
+.toast-item-added {
   background:
     linear-gradient(
       135deg,
@@ -100,12 +99,12 @@
   color: #065f46;
 }
 
-.toast-item--added .toast-icon {
+.toast-item-added .toast-icon {
   background: rgba(16, 185, 129, 0.14);
   color: #059669;
 }
 
-.toast-item--edited {
+.toast-item-edited {
   background:
     linear-gradient(
       135deg,
@@ -118,12 +117,12 @@
   color: #4c1d95;
 }
 
-.toast-item--edited .toast-icon {
+.toast-item-edited .toast-icon {
   background: rgba(124, 58, 237, 0.12);
   color: #6d28d9;
 }
 
-.toast-item--deleted {
+.toast-item-deleted {
   background:
     linear-gradient(
       135deg,
@@ -136,7 +135,7 @@
   color: #991b1b;
 }
 
-.toast-item--deleted .toast-icon {
+.toast-item-deleted .toast-icon {
   background: rgba(239, 68, 68, 0.10);
   color: #dc2626;
 }

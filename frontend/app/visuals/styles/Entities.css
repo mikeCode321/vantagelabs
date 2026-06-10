@@ -28,7 +28,7 @@
   transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
 }
 
-.entity-card__add-btn {
+.entity-card-add-btn {
   width: 31px;
   height: 31px;
   border: none;
@@ -45,7 +45,7 @@
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.entity-card__add-btn:hover {
+.entity-card-add-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 12px 24px rgba(109, 40, 217, 0.32);
 }
@@ -62,35 +62,35 @@
   gap: 18px;
 }
 
-.entity-card__icon--account, .entity-row__icon--account {
+.entity-card-icon-account, .entity-row-icon-account {
   color: #6d28d9;
   background: linear-gradient(135deg, rgba(109, 40, 217, 0.15), rgba(139, 92, 246, 0.07));
 }
 
-.entity-card__icon--income,
-.entity-row__icon--income {
+.entity-card-icon-income,
+.entity-row-icon-income {
   color: #0f9f6e;
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.06));
 }
 
-.entity-card__icon--expense,
-.entity-row__icon--expense {
+.entity-card-icon-expense,
+.entity-row-icon-expense {
   color: #6d28d9;
   background: linear-gradient(135deg, rgba(109, 40, 217, 0.13), rgba(139, 92, 246, 0.06));
 }
 
-.entity-card__icon--asset,
-.entity-row__icon--asset {
+.entity-card-icon-asset,
+.entity-row-icon-asset {
   color: #1677ff;
   background: linear-gradient(135deg, rgba(22, 119, 255, 0.13), rgba(22, 119, 255, 0.06));
 }
 
-.entity-card__copy {
+.entity-card-copy {
   flex: 1;
   min-width: 0;
 }
 
-.entity-card__title {
+.entity-card-title {
   margin: 0 0 7px;
   color: #121529;
   font-size: 16px;
@@ -99,26 +99,26 @@
   letter-spacing: -0.02em;
 }
 
-.entity-card__desc {
+.entity-card-desc {
   margin: 0;
   color: #697287;
   font-size: 10px;
   max-width: 240px;
 }
 
-.entity-card__rows {
+.entity-card-rows {
   display: grid;
   gap: 2px;
   margin-top: 14px;
 }
 
-.entity-card__divider {
+.entity-card-divider {
   height: 1px;
   border-top: 1px dashed #deddea;
   margin: 18px 0 12px;
 }
 
-.entity-card__footer {
+.entity-card-footer {
   margin: 0;
   color: #6d28d9;
   font-size: 13px;
@@ -142,7 +142,7 @@
   background: var(--accent-muted);
 }
 
-.entity-row__left {
+.entity-row-left {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -150,12 +150,12 @@
   gap: 0;
 }
 
-.entity-row__main {
+.entity-row-main {
   min-width: 0;
   flex: 1;
 }
 
-.entity-row__topline {
+.entity-row-topline {
   display: flex;
   align-items: center;
   gap: 7px;
@@ -163,7 +163,7 @@
   min-width: 0;
 }
 
-.entity-row__name {
+.entity-row-name {
   margin: 0;
   font-size: 0.8rem;
   font-weight: 700;
@@ -176,7 +176,7 @@
   text-transform: capitalize;
 }
 
-.entity-row__linked-pill {
+.entity-row-linked-pill {
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
@@ -191,7 +191,7 @@
   line-height: 1.5;
 }
 
-.entity-row__meta {
+.entity-row-meta {
   margin: 0;
   font-size: 0.63rem;
   letter-spacing: 0.02em;
@@ -203,19 +203,19 @@
   min-width: 0;
 }
 
-.entity-row__meta span {
+.entity-row-meta span {
   white-space: nowrap;
 }
 
-.entity-row__actions {
+.entity-row-actions {
   display: flex;
   align-items: center;
   gap: 5px;
   flex-shrink: 0;
 }
 
-.entity-row__btn-edit,
-.entity-row__btn-delete {
+.entity-row-btn-edit,
+.entity-row-btn-delete {
   font-family: inherit;
   cursor: pointer;
   transition: all 0.13s ease;
@@ -225,7 +225,7 @@
   line-height: 1;
 }
 
-.entity-row__btn-edit {
+.entity-row-btn-edit {
   font-size: 0.6rem;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -238,12 +238,12 @@
   height: 26px;
 }
 
-.entity-row__btn-edit:hover {
+.entity-row-btn-edit:hover {
   background: var(--accent-muted);
   border-color: rgba(109, 40, 217, 0.4);
 }
 
-.entity-row__btn-delete {
+.entity-row-btn-delete {
   border: 1px solid #B46D6D44;
   background: transparent;
   color: #B46D6D;
@@ -254,7 +254,7 @@
   padding: 0;
 }
 
-.entity-row__btn-delete:hover {
+.entity-row-btn-delete:hover {
   background: rgba(180, 109, 109, 0.08);
   border-color: #B46D6D88;
 }
@@ -280,11 +280,11 @@
   box-shadow: 0 10px 24px rgba(20, 18, 35, 0.08);
 }
 
-.entities-arrow--left {
+.entities-arrow-left {
   left: -10px;
 }
 
-.entities-arrow--right {
+.entities-arrow-right {
   right: -10px;
 }
 
@@ -310,7 +310,7 @@
     gap: 14px;
   }
 
-  .entity-card__desc {
+  .entity-card-desc {
     max-width: none;
   }
 }

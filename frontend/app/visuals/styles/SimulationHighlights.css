@@ -10,11 +10,11 @@
   box-sizing: border-box;
 }
 
-.simulation-highlights-card__header {
+.simulation-highlights-card-header {
   margin-bottom: 14px;
 }
 
-.simulation-highlights-card__header h2 {
+.simulation-highlights-card-header h2 {
   margin: 0;
   color: #111426;
   font-size: 17px;
@@ -22,7 +22,7 @@
   letter-spacing: -0.02em;
 }
 
-.simulation-highlights-card__list {
+.simulation-highlights-card-list {
   display: flex;
   flex-direction: column;
 }
@@ -36,14 +36,14 @@
   border-bottom: 1px solid #eeeef6;
 }
 
-.simulation-highlight-row__left {
+.simulation-highlight-row-left {
   display: flex;
   align-items: center;
   gap: 12px;
   min-width: 0;
 }
 
-.simulation-highlight-row__icon {
+.simulation-highlight-row-icon {
   width: 38px;
   height: 38px;
   border-radius: 12px;
@@ -54,31 +54,31 @@
   flex-shrink: 0;
 }
 
-.simulation-highlight-row__icon--purple {
+.simulation-highlight-row-icon-purple {
   color: #6d28d9;
   background: rgba(109, 40, 217, 0.09);
 }
 
-.simulation-highlight-row__icon--green {
+.simulation-highlight-row-icon-green {
   color: #0f9f6e;
   background: rgba(16, 185, 129, 0.1);
 }
 
-.simulation-highlight-row__icon--blue {
+.simulation-highlight-row-icon-blue {
   color: #1677ff;
   background: rgba(22, 119, 255, 0.1);
 }
 
-.simulation-highlight-row__icon--red {
+.simulation-highlight-row-icon-red {
   color: #dc2626;
   background: rgba(220, 38, 38, 0.09);
 }
 
-.simulation-highlight-row__copy {
+.simulation-highlight-row-copy {
   min-width: 0;
 }
 
-.simulation-highlight-row__label {
+.simulation-highlight-row-label {
   margin: 0 0 3px;
   color: #202337;
   font-size: 13px;
@@ -86,7 +86,7 @@
   line-height: 1.2;
 }
 
-.simulation-highlight-row__sublabel {
+.simulation-highlight-row-sublabel {
   margin: 0;
   color: #697287;
   font-size: 12px;
@@ -94,7 +94,7 @@
   line-height: 1.2;
 }
 
-.simulation-highlight-row__value {
+.simulation-highlight-row-value {
   margin: 0;
   color: #111426;
   font-size: 14px;
@@ -103,11 +103,11 @@
   flex-shrink: 0;
 }
 
-.simulation-highlight-row__value--negative {
+.simulation-highlight-row-value-negative {
   color: #dc2626;
 }
 
-.simulation-highlights-card__button {
+.simulation-highlights-card-button {
   width: 100%;
   min-height: 44px;
   margin-top: 18px;
@@ -130,7 +130,7 @@
     box-shadow 0.18s ease;
 }
 
-.simulation-highlights-card__button:hover {
+.simulation-highlights-card-button:hover {
   background: #f7f2ff;
   border-color: rgba(109, 40, 217, 0.22);
   box-shadow: 0 10px 24px rgba(109, 40, 217, 0.08);
@@ -148,7 +148,7 @@
     align-items: flex-start;
   }
 
-  .simulation-highlight-row__value {
+  .simulation-highlight-row-value {
     font-size: 13px;
   }
 }

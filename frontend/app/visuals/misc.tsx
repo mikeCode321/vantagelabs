@@ -22,7 +22,7 @@ export function ToastBanner({ toasts, setToasts }) {
   return (
     <div className="toast-banner-wrapper">
       {toasts.map((toast) => (
-        <div key={toast.id} className={`toast-item toast-item--${toast.action}`}>
+        <div key={toast.id} className={`toast-item toast-item-${toast.action}`}>
           <span className="toast-icon">✓</span>
 
           <span className="toast-message">{toast.message}</span>

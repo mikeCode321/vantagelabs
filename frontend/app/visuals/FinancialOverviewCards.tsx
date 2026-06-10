@@ -63,16 +63,16 @@ function FinancialOverviewCard({ card }: { card: OverviewCard }) {
 
   return (
     <article className={`overview-card overview-card--${card.tone}`}>
-      <div className="overview-card__top">
-        <div className="overview-card__icon">{card.icon}</div>
+      <div className="overview-card-top">
+        <div className="overview-card-icon">{card.icon}</div>
 
-        <div className="overview-card__content">
-          <p className="overview-card__label">{card.label}</p>
+        <div className="overview-card-content">
+          <p className="overview-card-label">{card.label}</p>
 
-          <div className="overview-card__value-row">
-            <h3 className="overview-card__value">{card.value}</h3>
+          <div className="overview-card-value-row">
+            <h3 className="overview-card-value">{card.value}</h3>
 
-            <div className={`overview-card__change overview-card__change--${direction}`}>
+            <div className={`overview-card-change overview-card-change--${direction}`}>
               <span>
                 {getDirectionArrow(direction)} {card.change}
               </span>
@@ -82,9 +82,9 @@ function FinancialOverviewCard({ card }: { card: OverviewCard }) {
         </div>
       </div>
 
-      {/* <div className="overview-card__divider" /> */}
+      {/* <div className="overview-card-divider" /> */}
 
-      {/* <p className="overview-card__meta">{card.meta}</p> */}
+      {/* <p className="overview-card-meta">{card.meta}</p> */}
     </article>
   );
 }

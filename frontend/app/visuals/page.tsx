@@ -491,12 +491,12 @@ export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEd
       {!selectedVariant && !variantBeingEdited && (
           <>
             <div className="entity-select-header">
-              <div className="entity-select-header__icon">
+              <div className="entity-select-header-icon">
                 {modalCopy.icon}
               </div>
               
 
-              <div className="entity-select-header__copy">
+              <div className="entity-select-header-copy">
                 <h2>{modalCopy.title}</h2>
                 <p>{modalCopy.description}</p>
               </div>
@@ -764,18 +764,18 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
 
   return (
     <div className="entity-row">
-      <div className="entity-row__left">
+      <div className="entity-row-left">
 
-        <div className="entity-row__main">
-          <div className="entity-row__topline">
-            <p className="entity-row__name">{item.name}</p>
+        <div className="entity-row-main">
+          <div className="entity-row-topline">
+            <p className="entity-row-name">{item.name}</p>
   
             {item.linked_401k_id || item.linked_income_id || item.linked_asset_id || item.linked_loan_id ? (
-              <span className="entity-row__linked-pill">Linked</span>
+              <span className="entity-row-linked-pill">Linked</span>
             ) : null}
           </div>
   
-          <div className="entity-row__meta">
+          <div className="entity-row-meta">
             <span>{getEntityAmount(item)}</span>
             <span>•</span>
             <span>{getEntityYears(item)}</span>
@@ -783,10 +783,10 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
         </div>
       </div>
   
-      <div className="entity-row__actions">
+      <div className="entity-row-actions">
         <button
           type="button"
-          className="entity-row__btn entity-row__btn-edit"
+          className="entity-row-btn entity-row-btn-edit"
           onClick={() => onEdit(item, item.variant)}
         >
           Edit
@@ -794,7 +794,7 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
   
         <button
           type="button"
-          className="entity-row__btn entity-row__btn-delete"
+          className="entity-row-btn entity-row-btn-delete"
           onClick={handleDelete}
           aria-label={`Delete ${item.name}`}
         >
@@ -896,18 +896,18 @@ export function Entity({ state, entityName, category, dispatch, onToast, tutoria
     <>
       <div className={`entity-card entity-card--${category}${tutorialActive ? " ts-tutorial-target" : ""}`}>
         <div className="entity-card-top">
-          <div className={`entity-card__icon entity-card__icon--${category}`}>
+          <div className={`entity-card-icon entity-card-icon--${category}`}>
             {cardCopy.icon}
           </div>
 
-          <div className="entity-card__copy">
-            <h3 className="entity-card__title">{cardCopy.title}</h3>
-            <p className="entity-card__desc">{cardCopy.description}</p>
+          <div className="entity-card-copy">
+            <h3 className="entity-card-title">{cardCopy.title}</h3>
+            <p className="entity-card-desc">{cardCopy.description}</p>
           </div>
 
           <button
             type="button"
-            className="entity-card__add-btn"
+            className="entity-card-add-btn"
             onClick={() => setIsModalOpen(true)}
             aria-label={`Add ${cardCopy.title}`}
           >
@@ -916,7 +916,7 @@ export function Entity({ state, entityName, category, dispatch, onToast, tutoria
         </div>
 
         {items.length > 0 && (
-          <div className="entity-card__rows">
+          <div className="entity-card-rows">
             {items.map((item) => (
               <EntityRow
                 key={item.id}
@@ -931,9 +931,9 @@ export function Entity({ state, entityName, category, dispatch, onToast, tutoria
           </div>
         )}
 
-        <div className="entity-card__divider" />
+        <div className="entity-card-divider" />
 
-        <p className="entity-card__footer">
+        <p className="entity-card-footer">
           {items.length === 0 ? cardCopy.emptyText : `${items.length} ${cardCopy.itemText}`}
         </p>
       </div>
@@ -1005,13 +1005,13 @@ export function FinancialEntities({ state, dispatch, onToast, tutorialStepId }) 
   return (
     <div className="entities-wrapper">
       {showArrows && canScrollLeft && (
-        <button className="entities-arrow entities-arrow--left" onClick={() => scrollByStep("left")}>
+        <button className="entities-arrow entities-arrow-left" onClick={() => scrollByStep("left")}>
           <ChevronLeft/>
         </button>
       )}
 
       {showArrows && canScrollRight && (
-        <button className="entities-arrow entities-arrow--right" onClick={() => scrollByStep("right")}>
+        <button className="entities-arrow entities-arrow-right" onClick={() => scrollByStep("right")}>
           <ChevronRight/>
         </button>
       )}

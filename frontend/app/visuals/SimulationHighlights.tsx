@@ -47,22 +47,22 @@ import "./styles/SimulationHighlights.css";
 function SimulationHighlightRow({ item }: { item: HighlightItem }) {
   return (
     <div className="simulation-highlight-row">
-      <div className="simulation-highlight-row__left">
+      <div className="simulation-highlight-row-left">
         <div
-          className={`simulation-highlight-row__icon simulation-highlight-row__icon--${item.tone}`}
+          className={`simulation-highlight-row-icon simulation-highlight-row-icon-${item.tone}`}
         >
           {item.icon}
         </div>
 
-        <div className="simulation-highlight-row__copy">
-          <p className="simulation-highlight-row__label">{item.label}</p>
-          <p className="simulation-highlight-row__sublabel">{item.sublabel}</p>
+        <div className="simulation-highlight-row-copy">
+          <p className="simulation-highlight-row-label">{item.label}</p>
+          <p className="simulation-highlight-row-sublabel">{item.sublabel}</p>
         </div>
       </div>
 
       <p
-        className={`simulation-highlight-row__value ${
-          item.isNegative ? "simulation-highlight-row__value--negative" : ""
+        className={`simulation-highlight-row-value ${
+          item.isNegative ? "simulation-highlight-row-value-negative" : ""
         }`}
       >
         {item.value}
@@ -96,7 +96,7 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
         id: "ending-net-worth",
         label: "Ending Net Worth",
         sublabel: finalYear ? `In year ${finalYear.age} (${finalYear.year})` : "Run a simulation",
-        value: data ? formatCompactMoney(endingNetWorth) : "--",
+        value: data ? formatCompactMoney(endingNetWorth) : "-",
         icon: <TrendingUpDown />,
         tone: "purple",
       },
@@ -104,7 +104,7 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
         id: "cagr-net-worth",
         label: "CAGR (Net Worth)",
         sublabel: "Annualized growth rate",
-        value: data ? `${cagr.toFixed(1)}%` : "--",
+        value: data ? `${cagr.toFixed(1)}%` : "-",
         icon: <CircleDollarSign/>,
         tone: "green",
       },
@@ -112,7 +112,7 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
         id: "peak-net-worth",
         label: "Peak Net Worth",
         sublabel: data ? `At age ${metrics?.peak_net_worth_age}` : "Run a simulation",
-        value: data ? formatCompactMoney(metrics?.peak_net_worth ?? 0) : "--",
+        value: data ? formatCompactMoney(metrics?.peak_net_worth ?? 0) : "-",
         icon: <BanknoteArrowUp/>,
         tone: "blue",
       },
@@ -120,7 +120,7 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
         id: "max-drawdown",
         label: "Max Drawdown",
         sublabel: data ? `Lowest cash year ${metrics?.lowest_cash_balance_year}` : "Run a simulation",
-        value: data ? (isCashDrawdown ? formatCompactMoney(drawdownAmount) : formatCompactMoney(0)) : "--",
+        value: data ? (isCashDrawdown ? formatCompactMoney(drawdownAmount) : formatCompactMoney(0)) : "-",
         icon: <ArrowBigDownDash/>,
         tone: "red",
         isNegative: isCashDrawdown,
@@ -129,11 +129,11 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
   
     return (
       <aside className={`simulation-highlights-card${tutorialActive ? " ts-tutorial-target" : ""}`}>
-        <div className="simulation-highlights-card__header">
+        <div className="simulation-highlights-card-header">
           <h2>Simulation Highlights</h2>
         </div>
   
-        <div className="simulation-highlights-card__list">
+        <div className="simulation-highlights-card-list">
           {highlights.map((item) => (
             <SimulationHighlightRow key={item.id} item={item} />
           ))}
@@ -142,6 +142,6 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
     );
   }
 
-   {/* <button type="button" className="simulation-highlights-card__button">
+   {/* <button type="button" className="simulation-highlights-card-button">
           View Full Report
         </button> */}

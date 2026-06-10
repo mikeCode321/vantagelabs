@@ -53,23 +53,23 @@
   background: rgba(109, 40, 217, 0.09);
 }
 
-.entity-select-card-icon--purple {
+.entity-select-card-icon-purple {
   background: rgba(109, 40, 217, 0.1);
 }
 
-.entity-select-card-icon--blue {
+.entity-select-card-icon-blue {
   background: rgba(37, 99, 235, 0.1);
 }
 
-.entity-select-card-icon--green {
+.entity-select-card-icon-green {
   background: rgba(22, 163, 74, 0.1);
 }
 
-.entity-select-card-icon--teal {
+.entity-select-card-icon-teal {
   background: rgba(20, 184, 166, 0.1);
 }
 
-.entity-select-card-icon--orange {
+.entity-select-card-icon-orange {
   background: rgba(249, 115, 22, 0.1);
 }
 
@@ -91,7 +91,7 @@
   line-height: 1.45;
 }
 
-.entity-card__icon {
+.entity-card-icon {
   width: 54px;
   height: 54px;
   border-radius: 18px;

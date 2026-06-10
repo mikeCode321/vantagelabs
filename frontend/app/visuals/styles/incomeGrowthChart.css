@@ -233,7 +233,7 @@
 }
 
 @media (max-width: 860px) {
-  .ts-modal--split-step {
+  .ts-modal-split-step {
     display: flex;
     flex-direction: column;
   }

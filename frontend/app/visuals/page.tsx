@@ -1,31 +1,29 @@
 "use client";
-import "./dashboard.css";
-import { useRouter } from "next/navigation";
-import { Audio } from "react-loader-spinner";
+import "./styles/Dashboard.css";
 
-import { useState, useReducer, useEffect, useRef } from "react";
+import { useState, useReducer, useEffect } from "react";
+import { Audio } from "react-loader-spinner";
+// import JsonView from "@uiw/react-json-view";
+// import UserAgeForm from "@/app/visuals/UserAgeForm";
 
 import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/Accounts";
-
 import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/Incomes";
-
 import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/Expenses";
-
 import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/Assets";
-
-import { FeedbackModal, SimulationControls, Toast, ToastBanner, UserAgeForm } from "@/app/visuals/misc";
-
-import { formatNumberWithCommas } from "@/app/visuals/utils";
-
-import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
 import { TutorialOnboarding, TutorialStepId } from "@/app/visuals/TutorialSteps";
 
-import JsonView from "@uiw/react-json-view";
-import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewCards";
+import FeedbackFormModal from "@/app/visuals/FeedbackFormModal";
+import SimulationControls from "@/app/visuals/SimulationControls";
+import ToastBanner from "@/app/visuals/ToastBanner";
+import EntitiesContainer from "@/app/visuals/EntitiesContainer";
+import SimulationHighlightsCard from "@/app/visuals/SimulationHighlightsCard";
 
-import IncomeGrowthChart from '@/app/visuals/IncomeGrowthChart'
-import SideBar from '@/app/visuals/SideBar'
-import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark,Grid3x3 , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown, Building,ShoppingCart ,Car, HousePlus } from 'lucide-react';
+import SideBar from '@/app/visuals/SideBar';
+import FinancialOverviewContainer from "@/app/visuals/FinancialOverviewContainer";
+import GrowthChart from '@/app/visuals/GrowthChart';
+
+import { formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewContainer";
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 
 type SimRequest = {
   user_start_age: number;
@@ -258,7 +256,6 @@ const INITIAL_STATE: SimRequest = {
 // our sim_request
 const LOCAL_STORAGE_KEY = "sim_request";
 const ENABLE_LOCAL_STORAGE_PERSISTENCE = true;
- // tutorial feature flag
 
 const ENABLE_TUTORIAL = true;
 const TUTORIAL_COMPLETED_KEY = "tutorial_v1_completed";
@@ -280,7 +277,6 @@ function saveTutorialCompleted() {
 
   localStorage.setItem(TUTORIAL_COMPLETED_KEY, "true");
 }
-
 
 function loadState(){
   if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return null;
@@ -427,628 +423,12 @@ const ENTITY_CONFIG = {
   },
 };
 
-/* -------------------- Modal -------------------- */
-
-export function EntityModalCell({ item, setSelectedVariant }) {
-  return (
-    <button
-      type="button"
-      className="entity-select-card"
-      onClick={() => setSelectedVariant(item.id)}
-    >
-      <span className={`entity-select-card__icon entity-select-card__icon--${item.iconTone ?? "purple"}`}>
-        {item.emoji}
-      </span>
-
-      <span className="entity-select-card__copy">
-        <span className="entity-select-card__title">{item.name}</span>
-        <span className="entity-select-card__desc">
-          {item.description ?? "Add this item to your simulation."}
-        </span>
-      </span>
-    </button>
-  );
-}
-
-export function Modal({ setIsModalOpen, data, category, dispatch, variantBeingEdited, state, onToast }) {
-  const [selectedVariant, setSelectedVariant] = useState(variantBeingEdited?.variant || null);
-
-  const goBack = () => setSelectedVariant(null);
-  const closeModal = () => setIsModalOpen(false);
-
-  const FormComponent = selectedVariant ? (variantBeingEdited ? ENTITY_CONFIG[category][selectedVariant]?.editFormComponent : ENTITY_CONFIG[category][selectedVariant]?.formComponent) : null;
-  const MODAL_COPY = {
-    account: {
-      icon: <Landmark/>,
-      title: "Choose an account type",
-      description: "Select the account you want to add to your simulation.",
-    },
-    income: {
-      icon: <Handbag/>,
-      title: "Choose an income type",
-      description: "Select the income source you want to add to your simulation.",
-    },
-    expense: {
-      icon: <CreditCard/>,
-      title: "Choose an expense type",
-      description: "Select the expense you want to add to your simulation.",
-    },
-    asset: {
-      icon: <ChartPie/>,
-      title: "Choose an asset type",
-      description: "Select the asset you want to add to your simulation.",
-    },
-  };
-  const modalCopy = MODAL_COPY[category];
-
-  let renderedForm;
-
-  if (selectedVariant) {
-    if (!FormComponent) {
-      renderedForm = <div>Form not implemented</div>;
-    } else if (variantBeingEdited) {
-      // i'm not sure how passing state for one edit form doesn't affect others check on this, but it works for now
-      renderedForm = <FormComponent item={variantBeingEdited} state={state} dispatch={dispatch} onClose={closeModal} onToast={onToast} />;
-    } else {
-      renderedForm = <FormComponent dispatch={dispatch} state={state} onClose={closeModal} onToast={onToast} />;
-    }
-  }
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal">
-
-      {!selectedVariant && !variantBeingEdited && (
-          <>
-            <div className="entity-select-header">
-              <div className="entity-select-header__icon">
-                {modalCopy.icon}
-              </div>
-              
-
-              <div className="entity-select-header__copy">
-                <h2>{modalCopy.title}</h2>
-                <p>{modalCopy.description}</p>
-              </div>
-
-              <button className="entity-select-close" onClick={closeModal}>
-                ×
-              </button>
-            </div>
-
-            <div className="entity-select-grid">
-              {data.map((item) => (
-                <EntityModalCell
-                  key={item.id}
-                  item={item}
-                  setSelectedVariant={setSelectedVariant}
-                />
-              ))}
-            </div>
-  
-          </>
-        )}
-
-        {/* EDIT FORM HEADER */}
-        {variantBeingEdited && (
-          <div className="modal-header">
-            {/* <div>icon + title + description</div> */}
-
-            <button className="modal-close" onClick={closeModal}>
-            ×
-            </button>
-          </div>
-        )}
-
-        {/* ENTITY SOURCE SELECTION MODAL */}
-        {selectedVariant && !variantBeingEdited && (
-        <div className="modal-header">
-          <button className="modal-back" onClick={goBack}>
-            ← Back
-          </button>
-
-          <button className="entity-select-close" onClick={closeModal}>
-            ×
-          </button>
-        </div>
-      )}
-        
-
-        {/* EDIT/ADD MODAL */}
-        {renderedForm}
-      </div>
-    </div>
-  );
-}
-
-/* -------------------- Row Styles -------------------- */
-
-function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
-
-  const handleDeleteHouseAsset = (asset, state, dispatch) => {
-    if (asset.linked_loan_id) {
-      const linkedLoan = state.expenses.house_loan.find((loan) => loan.id === asset.linked_loan_id);
-
-      if (linkedLoan) {
-        dispatch({
-          type: "DELETE_EXPENSE",
-          payload: { id: linkedLoan.id, variant: "house_loan" },
-        });
-        onToast(linkedLoan.name, "deleted");
-      }
-    }
-
-    dispatch({
-      type: "DELETE_ASSET",
-      payload: { id: asset.id, variant: "house" },
-    });
-
-    onToast(asset.name, "deleted");
-  };
-
-  const handleDeleteCarAsset = (asset, state, dispatch) => {
-    if (asset.linked_loan_id) {
-      const linkedLoan = state.expenses.car_loan.find((loan) => loan.id === asset.linked_loan_id);
-
-      if (linkedLoan) {
-        dispatch({
-          type: "DELETE_EXPENSE",
-          payload: { id: linkedLoan.id, variant: "car_loan" },
-        });
-        onToast(linkedLoan.name, "deleted");
-      }
-    }
-
-    dispatch({
-      type: "DELETE_ASSET",
-      payload: { id: asset.id, variant: "car" },
-    });
-
-    onToast(asset.name, "deleted");
-  };
-
-  const handleDeleteHouseLoan = (expense, state, dispatch) => {
-    if (expense.linked_asset_id) {
-      const linkedHouse = state.assets.house.find((house) => house.id === expense.linked_asset_id);
-
-      if (linkedHouse) {
-        dispatch({
-          type: "UPDATE_ASSET",
-          payload: {
-            ...linkedHouse,
-            linked_loan_id: null,
-          },
-        });
-        onToast(linkedHouse.name, "unlinked");
-      }
-    }
-
-    dispatch({
-      type: "DELETE_EXPENSE",
-      payload: { id: expense.id, variant: "house_loan" },
-    });
-
-    onToast(expense.name, "deleted");
-  };
-
-  const handleDeleteCarLoan = (expense, state, dispatch) => {
-    if (expense.linked_asset_id) {
-      const linkedCar = state.assets.car.find((car) => car.id === expense.linked_asset_id);
-
-      if (linkedCar) {
-        dispatch({
-          type: "UPDATE_ASSET",
-          payload: {
-            ...linkedCar,
-            linked_loan_id: null,
-          },
-        });
-        onToast(linkedCar.name, "unlinked");
-      }
-    }
-
-    dispatch({
-      type: "DELETE_EXPENSE",
-      payload: { id: expense.id, variant: "car_loan" },
-    });
-
-    onToast(expense.name, "deleted");
-  };
-
-  const handleDelete401k = (account, state, dispatch) => {
-    const allJobs = [...state.incomes.salary, ...state.incomes.hourly, ...state.incomes.side];
-    // If linked, unlink the job first
-    if (account.linked_income_id) {
-      const linkedJob = allJobs.find((job) => job.id === account.linked_income_id);
-      if (linkedJob) {
-        dispatch({
-          type: "UPDATE_INCOME",
-          payload: {
-            ...linkedJob,
-            linked_401k_id: undefined,
-          },
-        });
-        onToast(linkedJob.name, "edited");
-      }
-    }
-
-    dispatch({
-      type: "DELETE_ACCOUNT",
-      payload: account,
-    });
-
-    onToast(item.name, "deleted");
-  };
-
-  const handleDeleteJob = (job, state, dispatch) => {
-    const available401ks = [...state.accounts.employer_retirement];
-    // If linked, delete the 401k first
-    if (job.linked_401k_id) {
-      const linked401k = available401ks.find((acc) => acc.id === job.linked_401k_id);
-      if (linked401k) {
-        dispatch({
-          type: "DELETE_ACCOUNT",
-          payload: linked401k,
-        });
-        onToast(linked401k.name, "deleted");
-      }
-    }
-
-    dispatch({
-      type: "DELETE_INCOME",
-      payload: job,
-    });
-    onToast(item.name, "deleted");
-  };
-
-  const handleDelete = () => {
-    if (item.variant === "employer_retirement") {
-      return handleDelete401k(item, state, dispatch);
-    }
-
-    if (item.variant === "salary" || item.variant === "hourly") {
-      return handleDeleteJob(item, state, dispatch);
-    }
-
-    if (item.variant === "house") {
-      return handleDeleteHouseAsset(item, state, dispatch);
-    }
-
-    if (item.variant === "car") {
-      return handleDeleteCarAsset(item, state, dispatch);
-    }
-
-    if (item.variant === "house_loan") {
-      return handleDeleteHouseLoan(item, state, dispatch);
-    }
-
-    if (item.variant === "car_loan") {
-      return handleDeleteCarLoan(item, state, dispatch);
-    }
-
-    const deleteType = {
-      account: "DELETE_ACCOUNT",
-      income: "DELETE_INCOME",
-      expense: "DELETE_EXPENSE",
-      asset: "DELETE_ASSET",
-    }[category];
-
-    dispatch({
-      type: deleteType,
-      payload: { id: item.id, variant: item.variant },
-    });
-
-    onToast(item.name, "deleted");
-  };
-
-  function getEntityAmount(item) {
-    if (item.starting_balance != null) {
-      return `$${formatNumberWithCommas(item.starting_balance.toString())}`;
-    }
-  
-    if (item.gross_income != null) {
-      return `$${formatNumberWithCommas(item.gross_income.toString())}`;
-    }
-  
-    if (item.monthly_expense != null) {
-      return `$${formatNumberWithCommas(item.monthly_expense.toString())}/mo`;
-    }
-  
-    if (item.asset_value != null) {
-      return `$${formatNumberWithCommas(item.asset_value.toString())}`;
-    }
-  
-    return "No amount";
-  }
-  
-  function getEntityYears(item) {
-    const start = item.start_year ?? item.start_age;
-    const end = item.end_year ?? item.end_age;
-  
-    if (start == null && end == null) return "No timeline";
-    if (start != null && end == null) return `Starts ${start}`;
-    if (start == null && end != null) return `Ends ${end}`;
-  
-    return `${start}–${end}`;
-  }
-
-  return (
-    <div className="entity-row">
-      <div className="entity-row__left">
-
-        <div className="entity-row__main">
-          <div className="entity-row__topline">
-            <p className="entity-row__name">{item.name}</p>
-  
-            {item.linked_401k_id || item.linked_income_id || item.linked_asset_id || item.linked_loan_id ? (
-              <span className="entity-row__linked-pill">Linked</span>
-            ) : null}
-          </div>
-  
-          <div className="entity-row__meta">
-            <span>{getEntityAmount(item)}</span>
-            <span>•</span>
-            <span>{getEntityYears(item)}</span>
-          </div>
-        </div>
-      </div>
-  
-      <div className="entity-row__actions">
-        <button
-          type="button"
-          className="entity-row__btn entity-row__btn-edit"
-          onClick={() => onEdit(item, item.variant)}
-        >
-          Edit
-        </button>
-  
-        <button
-          type="button"
-          className="entity-row__btn entity-row__btn-delete"
-          onClick={handleDelete}
-          aria-label={`Delete ${item.name}`}
-        >
-          ×
-        </button>
-      </div>
-    </div>
-  );
-}
-/* -------------------- Financial Entity Card -------------------- */
-
-const ENTITY_CARD_COPY = {
-  account: {
-    title: "Accounts",
-    description: "Add your bank, investment, and other accounts.",
-    icon: <Landmark/>,
-    emptyText: "0 accounts added",
-    itemText: "accounts added",
-  },
-  income: {
-    title: "Income",
-    description: "Add salary, side income, and other inflows.",
-    icon: <CircleDollarSign/>,
-    emptyText: "0 income sources",
-    itemText: "income sources",
-  },
-  expense: {
-    title: "Expenses",
-    description: "Add living expenses, bills, and other outflows.",
-    icon: <HandCoins/>,
-    emptyText: "0 expense items",
-    itemText: "expense items",
-  },
-  asset: {
-    title: "Assets",
-    description: "Add real estate, vehicles, and other assets.",
-    icon: <PieChart/>,
-    emptyText: "0 assets added",
-    itemText: "assets added",
-  },
-};
-
-export function Entity({ state, entityName, category, dispatch, onToast, tutorialActive }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [variantBeingEdited, setVariantBeingEdited] = useState(null);
-
-  const handleEdit = (item) => {
-    setVariantBeingEdited(item);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setVariantBeingEdited(null);
-  };
-
-  const config = ENTITY_CONFIG[category];
-  const cardCopy = ENTITY_CARD_COPY[category];
-
-  const data = Object.keys(config).map((key) => {
-    const v = config[key as keyof typeof config];
-    return {
-      id: v.id,
-      name: v.name,
-      emoji: v.emoji,
-      description: v.description,
-      iconTone: v.iconTone,
-    };
-  });
-
-  const getItems = () => {
-    switch (category) {
-      case "account":
-        return [
-          ...state.accounts.checking,
-          ...state.accounts.taxable_investments,
-          ...state.accounts.employer_retirement,
-        ];
-      case "income":
-        return [...state.incomes.salary, ...state.incomes.hourly, ...state.incomes.side];
-      case "expense":
-        return [
-          ...state.expenses.living,
-          ...state.expenses.rent,
-          ...state.expenses.debt,
-          ...state.expenses.house_loan,
-          ...state.expenses.car_loan,
-        ];
-      case "asset":
-        return [...state.assets.house, ...state.assets.car];
-      default:
-        return [];
-    }
-  };
-
-  const items = getItems();
-
-  return (
-    <>
-      <div className={`entity-card entity-card--${category}${tutorialActive ? " ts-tutorial-target" : ""}`}>
-        <div className="entity-card__top">
-          <div className={`entity-card__icon entity-card__icon--${category}`}>
-            {cardCopy.icon}
-          </div>
-
-          <div className="entity-card__copy">
-            <h3 className="entity-card__title">{cardCopy.title}</h3>
-            <p className="entity-card__desc">{cardCopy.description}</p>
-          </div>
-
-          <button
-            type="button"
-            className="entity-card__add-btn"
-            onClick={() => setIsModalOpen(true)}
-            aria-label={`Add ${cardCopy.title}`}
-          >
-            +
-          </button>
-        </div>
-
-        {items.length > 0 && (
-          <div className="entity-card__rows">
-            {items.map((item) => (
-              <EntityRow
-                key={item.id}
-                item={item}
-                category={category}
-                dispatch={dispatch}
-                onEdit={handleEdit}
-                state={state}
-                onToast={onToast}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="entity-card__divider" />
-
-        <p className="entity-card__footer">
-          {items.length === 0 ? cardCopy.emptyText : `${items.length} ${cardCopy.itemText}`}
-        </p>
-      </div>
-
-      {isModalOpen && (
-        <Modal
-          state={state}
-          setIsModalOpen={handleCloseModal}
-          data={data}
-          category={category}
-          dispatch={dispatch}
-          variantBeingEdited={variantBeingEdited}
-          onToast={onToast}
-        />
-      )}
-    </>
-  );
-}
-/* -------------------- Financial Entities (Horizontal Container) -------------------- */
-
-export function FinancialEntities({ state, dispatch, onToast, tutorialStepId }) {
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const [showArrows, setShowArrows] = useState(false);
-
-  const STEP_SIZE = 266;
-
-  useEffect(() => {
-    const handleResize = () => {
-      setShowArrows(window.innerWidth <= 1250);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const updateScrollState = () => {
-    const el = ref.current;
-    if (!el) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-
-    setCanScrollLeft(scrollLeft > 5);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
-  };
-
-  useEffect(() => {
-    updateScrollState();
-  }, []);
-
-  const scrollByStep = (direction) => {
-    const el = ref.current;
-    if (!el) return;
-
-    const amount = direction === "left" ? -STEP_SIZE : STEP_SIZE;
-
-    el.scrollBy({
-      left: amount,
-      behavior: "smooth",
-    });
-
-    setTimeout(updateScrollState, 300);
-  };
-
-  return (
-    <div className="entities-wrapper">
-      {showArrows && canScrollLeft && (
-        <button className="entities-arrow entities-arrow--left" onClick={() => scrollByStep("left")}>
-          <ChevronLeft/>
-        </button>
-      )}
-
-      {showArrows && canScrollRight && (
-        <button className="entities-arrow entities-arrow--right" onClick={() => scrollByStep("right")}>
-          <ChevronRight/>
-        </button>
-      )}
-
-      <div ref={ref} className="entities-scroll hide-scrollbar" onScroll={updateScrollState}>
-        <div className="entities-item">
-          <Entity state={state} entityName="Accounts" category="account" dispatch={dispatch} onToast={onToast} tutorialActive={tutorialStepId === "checking" || tutorialStepId === "retirement"}/>
-        </div>
-        <div className="entities-item">
-          <Entity state={state} entityName="Incomes" category="income" dispatch={dispatch} onToast={onToast} tutorialActive={tutorialStepId === "salary"}/>
-        </div>
-        <div className="entities-item">
-          <Entity state={state} entityName="Expenses" category="expense" dispatch={dispatch} onToast={onToast} tutorialActive={tutorialStepId === "expenses-assets"}/>
-        </div>
-        <div className="entities-item">
-          <Entity state={state} entityName="Assets" category="asset" dispatch={dispatch} onToast={onToast} tutorialActive={tutorialStepId === "expenses-assets"}/>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function Dashboard() {
   // const sim = useSimulation();
   const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
   const [simResult, setSimResult] = useState(null);
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [toasts, setToasts] = useState([]);
   const [isSimLoading, setIsSimLoading] = useState(true);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
@@ -1091,7 +471,7 @@ export default function Dashboard() {
   const assetChange     = getPercentChange(startingAssets,     totalAssets);
   const liabilityChange = getPercentChange(startingLiabilities, totalLiabilities);
 
-  const overviewCards: OverviewCard[] = [
+  const overviewCards = [
     {
       id: "net-worth",
       label: "Net Worth",
@@ -1194,7 +574,7 @@ export default function Dashboard() {
       )}
 
       <SideBar setIsFeedbackOpen={setIsFeedbackOpen} />
-      <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
+      <FeedbackFormModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
       <main className="dash-main">
         <header className="dash-topbar">
@@ -1202,8 +582,8 @@ export default function Dashboard() {
             <h1 className="dash-page-title">AdVantage on Finances</h1>
           </div>
         </header>
-        {/* 
-        <div style={{ display: "flex", justifyContent: "space-between"}}>
+        
+        {/* <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>
           
           {simResult ? <JsonView
@@ -1214,14 +594,13 @@ export default function Dashboard() {
             shortenTextAfterLength={40}
           />: "[]"}
           <UserAgeForm state={state} dispatch={dispatch} />
-        </div> 
-        */}
-
-        <FinancialOverviewCards cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
+        </div>  */}
+       
+        <FinancialOverviewContainer cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
         <section className="simulation-results-grid">
-          <IncomeGrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />
+          <GrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />
           <div>
-            <SimulationHighlights data={simData} tutorialActive={activeTutorialStepId === "results"}/>
+            <SimulationHighlightsCard data={simData} tutorialActive={activeTutorialStepId === "results"}/>
             <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} />
           </div>
         </section>
@@ -1231,7 +610,7 @@ export default function Dashboard() {
           <p>Define the components of your financial plan for the simulation.</p>
         </section>
 
-        <FinancialEntities state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} />
+        <EntitiesContainer state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} ENTITY_CONFIG={ENTITY_CONFIG} />
         <ToastBanner toasts={toasts} setToasts={setToasts} />
       </main>
     </div>

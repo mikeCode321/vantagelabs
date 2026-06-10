@@ -1,7 +1,8 @@
 "use client";
+import "./styles/GrowthChart.css";
+
 import { useState, useMemo } from "react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid,} from "recharts";
-import "./incomeGrowthChart.css";
 
 function formatCurrency(value: number) {
   if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
@@ -237,7 +238,7 @@ const PLACEHOLDER_DATA = [
   { age: 30, year: 30, value: 78000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
 ];
 
-export default function IncomeGrowthChart({ data, tutorialActive = false }) {
+export default function GrowthChart({ data, tutorialActive = false }) {
   const [activeKey, setActiveKey] = useState("netWorth");
   const [tooltip, setTooltip] = useState(null);
   const chartData = useMemo(() => {
@@ -359,8 +360,8 @@ export default function IncomeGrowthChart({ data, tutorialActive = false }) {
 
       {isEmpty && (
         <div className="income-chart-empty">
-          <p className="income-chart-empty__title">No simulation data yet</p>
-          <p className="income-chart-empty__subtitle">
+          <p className="income-chart-empty-title">No simulation data yet</p>
+          <p className="income-chart-empty-subtitle">
             Add your financial details and run a simulation to see results
           </p>
         </div>

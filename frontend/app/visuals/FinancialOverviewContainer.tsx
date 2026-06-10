@@ -1,22 +1,6 @@
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-type OverviewCardTone = "purple" | "green" | "blue" | "orange";
-type OverviewCardDirection = "up" | "down" | "neutral";
-
-export type OverviewCard = {
-  id: string;
-  label: string;
-  value: string;
-  change: string;
-  changeLabel: string;
-  meta: string;
-  icon: any;
-  tone: OverviewCardTone;
-  direction?: OverviewCardDirection;
-};
+import "./styles/FinancialOverviewCards.css";
 
 // ─── Helpers (moved from page.tsx) ───────────────────────────────────────────
-
 export function formatCompactMoney(value: number) {
   const abs = Math.abs(value);
   if (abs >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
@@ -34,7 +18,7 @@ export function getPercentChange(start: number, end: number) {
   return ((end - start) / start) * 100;
 }
 
-export function getChangeDirection(start: number, end: number): OverviewCardDirection {
+export function getChangeDirection(start: number, end: number) {
   if (end > start) return "up";
   if (end < start) return "down";
   return "neutral";
@@ -48,7 +32,7 @@ export function getReadableTrend(start: number, end: number, label: string) {
 
 // ─── Internal helpers ─────────────────────────────────────────────────────────
 
-function getDirectionArrow(direction?: OverviewCardDirection) {
+function getDirectionArrow(direction?) {
   if (direction === "up") return "↗";
   if (direction === "down") return "↘";
   return "→";
@@ -56,21 +40,21 @@ function getDirectionArrow(direction?: OverviewCardDirection) {
 
 // ─── Components ───────────────────────────────────────────────────────────────
 
-function FinancialOverviewCard({ card }: { card: OverviewCard }) {
+function FinancialOverviewCard({ card }) {
   const direction = card.direction ?? "neutral";
 
   return (
-    <article className={`overview-card overview-card--${card.tone}`}>
-      <div className="overview-card__top">
-        <div className="overview-card__icon">{card.icon}</div>
+    <article className={`overview-card overview-card-${card.tone}`}>
+      <div className="overview-card-top">
+        <div className="overview-card-icon">{card.icon}</div>
 
-        <div className="overview-card__content">
-          <p className="overview-card__label">{card.label}</p>
+        <div className="overview-card-content">
+          <p className="overview-card-label">{card.label}</p>
 
-          <div className="overview-card__value-row">
-            <h3 className="overview-card__value">{card.value}</h3>
+          <div className="overview-card-value-row">
+            <h3 className="overview-card-value">{card.value}</h3>
 
-            <div className={`overview-card__change overview-card__change--${direction}`}>
+            <div className={`overview-card-change overview-card-change-${direction}`}>
               <span>
                 {getDirectionArrow(direction)} {card.change}
               </span>
@@ -79,15 +63,11 @@ function FinancialOverviewCard({ card }: { card: OverviewCard }) {
           </div>
         </div>
       </div>
-
-      {/* <div className="overview-card__divider" /> */}
-
-      {/* <p className="overview-card__meta">{card.meta}</p> */}
     </article>
   );
 }
 
-export function FinancialOverviewCards({ cards, tutorialActive = false }: { cards: OverviewCard[]; tutorialActive: boolean }) {
+export default function FinancialOverviewContainer({ cards, tutorialActive = false }) {
   return (
     <section className={`overview-cards${tutorialActive ? " ts-tutorial-target" : ""}`}>
       {cards.map((card) => (

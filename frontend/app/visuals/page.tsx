@@ -19,7 +19,7 @@ import { SimulationHighlights } from "@/app/visuals/SimulationHighlights";
 import { TutorialOnboarding, TutorialStepId } from "@/app/visuals/TutorialSteps";
 import JsonView from "@uiw/react-json-view";
 import { FinancialOverviewCards, OverviewCard, formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewCards";
-import IncomeGrowthChart from '@/app/visuals/IncomeGrowthChart';
+import IncomeGrowthChart from '@/app/visuals/GrowthChart';
 import SideBar from '@/app/visuals/SideBar';
 import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, PieChart, Landmark , ChevronLeft, ChevronRight, Handbag, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 

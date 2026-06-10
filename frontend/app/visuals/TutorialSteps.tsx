@@ -54,14 +54,7 @@ function TutorialProgress({ currentStepIndex, totalSteps }) {
     return (
       <div className="ts-step-progress">
         {Array.from({ length: totalSteps }).map((_, index) => (
-          <span
-            key={index}
-            className={
-              index === currentStepIndex
-                ? "ts-step-progress-dot ts-step-progress-dot--active"
-                : "ts-step-progress-dot"
-            }
-          />
+          <span key={index} className={index === currentStepIndex ? "ts-step-progress-dot ts-step-progress-dot--active" : "ts-step-progress-dot"} />
         ))}
       </div>
     );
@@ -95,8 +88,8 @@ function TutorialStepPanel({currentStepIndex, totalSteps, title, description, it
 
       {/* ── Mobile: compact header bar ── */}
       <div className="ts-panel-mobile">
-        <div className="ts-panel-mobile__top">
-          <div className="ts-panel-mobile__meta">
+        <div className="ts-panel-mobile-top">
+          <div className="ts-panel-mobile-meta">
             <TutorialProgress currentStepIndex={currentStepIndex} totalSteps={totalSteps} />
             <p className="ts-step-count">Step {currentStepIndex + 1} of {totalSteps}</p>
             <h2 className="ts-step-title">{title}</h2>
@@ -117,7 +110,7 @@ function TutorialStepPanel({currentStepIndex, totalSteps, title, description, it
         </div>
 
         {isMobileInfoOpen && (
-          <div className="ts-panel-mobile__info">
+          <div className="ts-panel-mobile-info">
             <p className="ts-step-description">{description}</p>
             {items && (
               <div className="ts-step-list">
@@ -163,40 +156,40 @@ function TutorialStepPanel({currentStepIndex, totalSteps, title, description, it
 function WelcomeScreen({ onGetStarted }) {
   return (
     <div className="ts-welcome">
-      <div className="ts-welcome__badge">NEW TO VANTAGE</div>
+      <div className="ts-welcome-badge">NEW TO VANTAGE</div>
 
-      <div className="ts-welcome__wordmark">
-        <span className="ts-welcome__wordmark-v">V</span>antage
+      <div className="ts-welcome-wordmark">
+        <span className="ts-welcome-wordmark-v">V</span>antage
       </div>
 
-      <p className="ts-welcome__tagline">
+      <p className="ts-welcome-tagline">
         Your financial future, simulated.
       </p>
 
-      <div className="ts-welcome__divider" />
+      <div className="ts-welcome-divider" />
 
-      <p className="ts-welcome__body">
+      <p className="ts-welcome-body">
         Vantage models your financial life from today through retirement —
         accounts, income, expenses, and assets — and projects where you will end up.
         Let's set things up so your simulation reflects your real situation.
       </p>
 
-      <div className="ts-welcome__features">
-        <div className="ts-welcome__feature">
-          <span className="ts-welcome__feature-icon">⌁</span>
+      <div className="ts-welcome-features">
+        <div className="ts-welcome-feature">
+          <span className="ts-welcome-feature-icon">⌁</span>
           <span>Net worth projections</span>
         </div>
-        <div className="ts-welcome__feature">
-          <span className="ts-welcome__feature-icon">$</span>
+        <div className="ts-welcome-feature">
+          <span className="ts-welcome-feature-icon">$</span>
           <span>Cash flow modeling</span>
         </div>
-        <div className="ts-welcome__feature">
-          <span className="ts-welcome__feature-icon">◔</span>
+        <div className="ts-welcome-feature">
+          <span className="ts-welcome-feature-icon">◔</span>
           <span>Retirement readiness</span>
         </div>
       </div>
 
-      <div className="ts-welcome__actions">
+      <div className="ts-welcome-actions">
         <button
           type="button"
           className="ts-btn ts-btn--primary"
@@ -261,31 +254,31 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
 
   return (
     <div className="ts-profile">
-      <div className="ts-profile__header">
+      <div className="ts-profile-header">
         <button type="button" className="ts-back-btn" onClick={onBack}>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           Back
         </button>
-        <div className="ts-profile__step-label">Step 1 of 1</div>
+        <div className="ts-profile-step-label">Step 1 of 1</div>
       </div>
 
-      <div className="ts-profile__title-block">
-        <h2 className="ts-profile__title">Tell us about yourself</h2>
-        <p className="ts-profile__subtitle">
+      <div className="ts-profile-title-block">
+        <h2 className="ts-profile-title">Tell us about yourself</h2>
+        <p className="ts-profile-subtitle">
           These assumptions shape every projection in your simulation. You can
           always update them later.
         </p>
       </div>
 
-      <div className="ts-profile__form">
+      <div className="ts-profile-form">
 
         <div className="ts-field-row">
           <div className={`ts-field ${errors.currentAge ? "ts-field--error" : ""}`}>
             <label className="ts-label">
               Current Age
-              <span className="ts-label__hint">How old are you today?</span>
+              <span className="ts-label-hint">How old are you today?</span>
             </label>
             <div className="ts-input-wrapper">
               <input
@@ -306,12 +299,12 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
             )}
           </div>
 
-          <div className="ts-field-row__sep">→</div>
+          <div className="ts-field-row-sep">→</div>
 
           <div className={`ts-field ${errors.retirementAge ? "ts-field--error" : ""}`}>
             <label className="ts-label">
               Target Retirement Age
-              <span className="ts-label__hint">When do you plan to retire?</span>
+              <span className="ts-label-hint">When do you plan to retire?</span>
             </label>
             <div className="ts-input-wrapper">
               <input
@@ -341,7 +334,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
         <div className={`ts-field ${errors.filingStatus ? "ts-field--error" : ""}`}>
           <label className="ts-label">
             Filing Status
-            <span className="ts-label__hint">Used to calculate your federal tax bracket</span>
+            <span className="ts-label-hint">Used to calculate your federal tax bracket</span>
           </label>
           <div className="ts-filing-grid">
             {FILING_STATUS_OPTIONS.map((opt) => (
@@ -354,10 +347,10 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
                   setErrors((prev) => ({ ...prev, filingStatus: undefined }));
                 }}
               >
-                <span className="ts-filing-card__label">{opt.label}</span>
-                <span className="ts-filing-card__desc">{opt.description}</span>
+                <span className="ts-filing-card-label">{opt.label}</span>
+                <span className="ts-filing-card-desc">{opt.description}</span>
                 {filingStatus === opt.value && (
-                  <span className="ts-filing-card__check">✓</span>
+                  <span className="ts-filing-card-check">✓</span>
                 )}
               </button>
             ))}
@@ -371,7 +364,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
         <div className={`ts-field ${errors.stateOfResidence ? "ts-field--error" : ""}`}>
           <label className="ts-label">
             State of Residence After Retirement
-            <span className="ts-label__hint">Affects state income tax in the simulation</span>
+            <span className="ts-label-hint">Affects state income tax in the simulation</span>
           </label>
           <div className="ts-select-wrapper">
             <select
@@ -400,7 +393,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
 
       </div>
 
-      <div className="ts-profile__actions">
+      <div className="ts-profile-actions">
         {mode === "full" ? (
           <button
             type="button"
@@ -424,7 +417,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
             </svg>
           </button>
         )}
-        <p className="ts-profile__skip-note">
+        <p className="ts-profile-skip-note">
           Your data stays local — nothing is sent to a server.
         </p>
       </div>

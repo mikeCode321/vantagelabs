@@ -921,12 +921,6 @@
     grid-template-columns: 1fr;
   }
 
-  .ts-input,
-  .ts-select {
-    padding: 12px 14px;
-    font-size: 0.78rem;
-  }
-
   .ts-btn {
     padding: 13px 20px;
     font-size: 0.7rem;
@@ -978,7 +972,8 @@
 }
 
 @media (max-width: 760px) { 
-  input, select, textarea {
+  .ts-input, .ts-select, .ts-textarea {
+    padding: 12px 14px;
     font-size: 16px;
   }
 
@@ -1028,7 +1023,7 @@
 
 @media (max-width: 860px) {
 
-    .ts-overlay {
+  .ts-overlay {
     background: rgba(0, 0, 0, 0.35);
   }
 

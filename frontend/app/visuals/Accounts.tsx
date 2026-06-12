@@ -381,7 +381,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
             {/* Contribution Mode Toggle - Compact */}
             <div className="form-field">
               <label className="form-label">Contribution</label>
-              <div style={{ display: "flex", gap: "4px" }}>
+              
                 <div className="form-toggle-group">
                   <button type="button" className={`form-btn-secondary${contributionMode === "dollar" ? " active" : ""}`} onClick={() => setContributionMode("dollar")}>
                     $
@@ -390,7 +390,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
                     %
                   </button>
                 </div>
-              </div>
+             
             </div>
 
             {/* Dollar Mode */}

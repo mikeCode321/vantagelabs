@@ -9,7 +9,6 @@
   justify-content: center;
   /* background: rgba(20, 18, 35, 0.55); */
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   animation: ts-fade-in 0.2s ease;
   z-index: 1000;
 }
@@ -287,11 +286,6 @@
   -moz-appearance: textfield;
 }
 
-.ts-input::-webkit-outer-spin-button,
-.ts-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-}
-
 .ts-input::placeholder {
   color: #9198ac;
 }
@@ -398,7 +392,6 @@
   width: 100%;
   box-sizing: border-box;
   appearance: none;
-  -webkit-appearance: none;
   background: #ffffff;
   border: 1px solid var(--accent-border);
   border-radius: 3px;

@@ -361,7 +361,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
           </div>
         </div>
 
-        <div className="form-actions">
+        <div className="form-footer">
           {onClose && (
             <button
               type="button"
@@ -372,7 +372,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             </button>
           )}
 
-          <button type="submit" className="form-btn-primary">
+          <button type="submit" className="form-btn-submit">
             Add Home Loan
           </button>
         </div>
@@ -619,14 +619,14 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
           </div>
         </div>
 
-        <div className="form-actions">
+        <div className="form-footer">
           {onClose && (
             <button type="button" onClick={onClose} className="form-btn-secondary">
               Cancel
             </button>
           )}
 
-          <button type="submit" className="form-btn-primary">
+          <button type="submit" className="form-btn-submit">
             Add Car Loan
           </button>
         </div>

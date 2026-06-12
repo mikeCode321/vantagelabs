@@ -292,9 +292,9 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
           </div>
         </div>
 
-        <div className="form-actions">
-          <button type="submit" className="form-btn-primary">
-            Save & Continue
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
+            Add House
           </button>
         </div>
       </form>
@@ -458,12 +458,12 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
 
             <div className="link-card">
               <div className="link-card-header">
@@ -539,9 +539,9 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
           </div>
         </div>
 
-        <div className="form-actions">
-          <button type="submit" className="form-btn-primary">
-            Save & Continue
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit">
+            Add Car
           </button>
         </div>
       </form>
@@ -779,12 +779,12 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
           </div>
         </div>
 
-        <div className="form-actions">
+        <div className="form-footer">
           <button type="button" onClick={onClose} className="form-btn-secondary">
             Cancel
           </button>
-          <button type="submit" className="form-btn-primary">
-            Save & Continue
+          <button type="submit" className="form-btn-submit">
+            Save House
           </button>
         </div>
       </form>

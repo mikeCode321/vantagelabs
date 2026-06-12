@@ -103,8 +103,6 @@ export default function EntityModal({ setIsModalOpen, data, category, dispatch, 
         {/* EDIT FORM HEADER */}
         {variantBeingEdited && (
           <div className="modal-header">
-            {/* <div>icon + title + description</div> */}
-
             <button className="modal-close" onClick={closeModal}>
             ×
             </button>

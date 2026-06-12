@@ -675,6 +675,15 @@
 }
 
 @media (max-width: 860px) {
+  .form-input,
+  .ts-input,
+  .ts-select,
+  .ts-textarea,
+  .setup-input,
+  .feedback-input {
+    font-size: 16px !important;
+  }
+
   .form-two-col {
     grid-template-columns: 1fr;
     gap: 18px;

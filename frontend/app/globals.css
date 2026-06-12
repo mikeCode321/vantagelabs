@@ -11,12 +11,13 @@
   --accent-soft:    #f5f3ff;
   --accent-border:  rgba(109, 40, 217, 0.18);
   --accent-muted:   rgba(109, 40, 217, 0.08);
+  --accent-disabled-bg: #c4b5fd;
+  --accent-disabled-fg: #ede9fe;
+  --accent-hover:       #ede9fe;
 
   /* Neutrals */
   --white:          #ffffff;
   --off-white:      #faf9ff;
-  --text-secondary: #6b7280;
-  --text-muted:     #9ca3af;
   --border-soft:    #ebeaf3;
 
   /* Semantic */
@@ -30,7 +31,17 @@
   --soft-bg:        #f5f3ff;
 
   --font-primary: "Instrument Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  
+  --font-serif: 'Georgia', serif;
+
+  --border-subtle:      rgba(15, 23, 42, 0.08);
+
+  --text-primary: #1e0a3c;
+  --text-secondary: #6b7280;
+  --text-muted:     #9ca3af;
+  --text-body:          #4b5563;
+  --text-dark:          #374151;
+  --text-ui:            #111827;
+
   --text-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
   --text-sm: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
   --text-base: clamp(1rem, 0.95rem + 0.4vw, 1.125rem);
@@ -38,6 +49,7 @@
   --text-xl: clamp(1.5rem, 1.2rem + 1vw, 2.5rem);
   --text-label: clamp(0.72rem, 0.68rem + 0.2vw, 0.8rem);
 
+  --icon-color: #1e0a3c;
   --icon-sm:        32px;
   --icon-md:        44px;
   --icon-lg:        58px;
@@ -51,4 +63,11 @@
   --header-height:  52px;
 
   --btn-close-size: 32px;
+
+  --shadow-overlay:     rgba(15, 23, 42, 0.14);
+  --shadow-card:        rgba(15, 23, 42, 0.2);
+  --shadow-card-ring:   rgba(15, 23, 42, 0.06);
+  --shadow-sheet:       rgba(15, 23, 42, 0.18);
+
+  --tooltip-bg:         #1e1b2e;
 }

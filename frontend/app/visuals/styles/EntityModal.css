@@ -14,7 +14,7 @@
 
 .modal {
   width: min(960px, calc(100vw - 64px));
-  max-height: 92vh;
+  max-height: 95vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -124,6 +124,7 @@
   border-radius: 999px;
   font-size: 28px;
   background: rgba(109, 40, 217, 0.09);
+  color: var(--icon-color);
 }
 
 .entity-select-card-icon-purple {
@@ -153,12 +154,13 @@
 
 .entity-select-card-title {
   font-size: var(--text-base);
+  color: var(--text-primary);
   line-height: 1.2;
   font-weight: 800;
 }
 
 .entity-select-card-desc {
-  color: #4b5563;
+  color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.45;
 }
@@ -192,7 +194,7 @@
   margin: 0 0 2px;
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--primary-mid);
+  color: var(--text-primary);
   letter-spacing: -0.01em;
 }
 
@@ -245,10 +247,8 @@
 
 @media (max-width: 480px) {
   .modal {
-    width: 95vw;
-    height: 90vh;
-    border-radius: 14px;
-    position: relative; /* remove fixed override */
+    height: 95vh;
+    position: relative; 
   }
 
   .entity-select-grid {

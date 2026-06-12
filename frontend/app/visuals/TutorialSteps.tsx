@@ -157,38 +157,20 @@ function TutorialStepPanel({currentStepIndex, totalSteps, title, description, it
 function WelcomeScreen({ onGetStarted }) {
   return (
     <div className="ts-welcome">
-      <div className="ts-welcome-badge">NEW TO VANTAGE</div>
-
       <div className="ts-welcome-wordmark">
-        <span className="ts-welcome-wordmark-v">V</span>antage
+        <span className="ts-welcome-wordmark-v">Fire</span>phin
       </div>
 
       <p className="ts-welcome-tagline">
-        Your financial future, simulated.
+        Retire early. Model the path.
       </p>
 
       <div className="ts-welcome-divider" />
 
       <p className="ts-welcome-body">
-        Vantage models your financial life from today through retirement —
-        accounts, income, expenses, and assets — and projects where you will end up.
-        Let's set things up so your simulation reflects your real situation.
+        Firephin projects your financial life from today through retirement —
+        model your accounts, income, expenses, and assets to see exactly where you'll end up.
       </p>
-
-      <div className="ts-welcome-features">
-        <div className="ts-welcome-feature">
-          <span className="ts-welcome-feature-icon">⌁</span>
-          <span>Net worth projections</span>
-        </div>
-        <div className="ts-welcome-feature">
-          <span className="ts-welcome-feature-icon">$</span>
-          <span>Cash flow modeling</span>
-        </div>
-        <div className="ts-welcome-feature">
-          <span className="ts-welcome-feature-icon">◔</span>
-          <span>Retirement readiness</span>
-        </div>
-      </div>
 
       <div className="ts-welcome-actions">
         <button
@@ -324,13 +306,9 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
             {errors.retirementAge && (
               <span className="ts-field-error">{errors.retirementAge}</span>
             )}
-            {currentAge && retirementAge && !errors.retirementAge && (
-              <span className="ts-field-hint">
-                {Number(retirementAge) - Number(currentAge)} years to retirement
-              </span>
-            )}
           </div>
         </div>
+          
 
         <div className={`ts-field ${errors.filingStatus ? "ts-field-error" : ""}`}>
           <label className="ts-label">
@@ -395,29 +373,13 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
       </div>
 
       <div className="ts-profile-actions">
-        {mode === "full" ? (
-          <button
-            type="button"
-            className="ts-btn ts-btn-primary"
-            onClick={handleSubmit}
-          >
-            Continue to Setup
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="ts-btn ts-btn-primary"
-            onClick={handleSubmit}
-          >
-            Go to Dashboard
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        )}
+        <button type="button" className="ts-btn ts-btn-primary" onClick={handleSubmit}>
+          {mode === "full" ? "Continue to Setup" : "Go to Dashboard"}
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        
         <p className="ts-profile-skip-note">
           Your data stays local — nothing is sent to a server.
         </p>
@@ -493,19 +455,46 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
 
         {step.id === "checking" && (
           <div className="ts-overlay">
-            <CheckingAccountTutorialStep {...commonProps} />
+            <FormTutorialStep
+              {...commonProps}
+              items={[
+                { icon: "🏦", label: "Name your account" },
+                { icon: "💰", label: "Set your starting balance" },
+                { icon: "📅", label: "Define your timeline" },
+                { icon: "⌁",  label: "Interest tiers are optional for advanced detail." },
+              ]}
+              existingItem={state.accounts.checking[0]}
+              AddForm={CheckingAccountForm}
+              EditForm={EditCheckingAccountForm}
+              nextDisabled={!state.accounts.checking[0]}
+            />
           </div>
         )}
 
         {step.id === "salary" && (
           <div className="ts-overlay">
-            <SalaryIncomeTutorialStep {...commonProps} />
+            <FormTutorialStep
+              {...commonProps}
+              existingItem={state.incomes.salary[0]}
+              AddForm={SalaryForm}
+              EditForm={EditSalaryForm}
+            />
           </div>
         )}
 
         {step.id === "retirement" && (
           <div className="ts-overlay">
-            <EmployerRetirementTutorialStep {...commonProps} />
+            <FormTutorialStep
+              {...commonProps}
+              items={[
+                { icon: "🔗", label: "Connect retirement accounts to jobs." },
+                { icon: "💼", label: "Keep contribution assumptions tied to income." },
+                { icon: "⌁",  label: "The same idea applies to other linked simulator items." },
+              ]}
+              existingItem={state.accounts.employer_retirement[0]}
+              AddForm={EmployerRetirementAccountForm}
+              EditForm={EditEmployerRetirementAccountForm}
+            />
           </div>
         )}
 
@@ -524,22 +513,9 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
       
   )};
 
-  type CheckingAccountTutorialStepProps = {
-    step: TutorialStep;
-    currentStepIndex: number;
-    totalSteps: number;
-    state: any;
-    dispatch: React.Dispatch<any>;
-    onBack: () => void;
-    onNext: () => void;
-    onSkip: () => void;
-    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
-  };
-
-  function CheckingAccountTutorialStep({ step, currentStepIndex, totalSteps, state, dispatch, onBack, onNext, onSkip, onToast, }: CheckingAccountTutorialStepProps) {
+  function FormTutorialStep({ step, currentStepIndex, totalSteps, onBack, onNext, onSkip, onToast, items = [], existingItem, EditForm, AddForm, state, dispatch, nextDisabled = false }) {
     const [isInfoOpen, setIsInfoOpen] = useState(false);
-    const existingCheckingAccount = state.accounts.checking[0];
-    
+
     return (
       <div className="ts-modal ts-modal-split-step">
         <TutorialStepPanel
@@ -547,77 +523,19 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
           totalSteps={totalSteps}
           title={step.title}
           description={step.description}
-          items={[
-            { icon: "🏦", label: "Name your account" },
-            { icon: "💰", label: "Set your starting balance" },
-            { icon: "📅", label: "Define your timeline" },
-            { icon: "⌁",  label: "Interest tiers are optional for advanced detail." },
-          ]}
+          items={items}
           onBack={onBack}
           onNext={onNext}
           onSkip={onSkip}
-          nextDisabled={!existingCheckingAccount}
-          isMobileInfoOpen={isInfoOpen}           // add
-          onToggleInfo={() => setIsInfoOpen(o => !o)}  // add
+          nextDisabled={nextDisabled}
+          isMobileInfoOpen={isInfoOpen}
+          onToggleInfo={() => setIsInfoOpen(o => !o)}
         />
         <section className="ts-tutorial-form">
-          {existingCheckingAccount ? (
-            <EditCheckingAccountForm item={existingCheckingAccount} state={state} dispatch={dispatch} onClose={onNext} onToast={onToast} />
-          ) : (
-            <CheckingAccountForm state={state} dispatch={dispatch} onClose={onNext} onToast={onToast} />
-          )}
-        </section>
-      </div>
-    );
-  }
-
-  type SalaryIncomeTutorialStepProps = {
-    step: TutorialStep;
-    currentStepIndex: number;
-    totalSteps: number;
-    state: any;
-    dispatch: React.Dispatch<any>;
-    onBack: () => void;
-    onNext: () => void;
-    onSkip: () => void;
-    onToast?: (entityName: string, action: "added" | "edited" | "deleted") => void;
-  };
-  
-  function SalaryIncomeTutorialStep({ step, currentStepIndex, totalSteps, state, dispatch, onBack, onNext, onSkip, onToast, }: SalaryIncomeTutorialStepProps) {
-    const [isInfoOpen, setIsInfoOpen] = useState(false);
-    const existingSalaryIncome = state.incomes.salary[0];
-  
-    return (
-      <div className="ts-modal ts-modal-split-step">
-        <TutorialStepPanel
-          currentStepIndex={currentStepIndex}
-          totalSteps={totalSteps}
-          title={step.title}
-          description={step.description}
-          onBack={onBack}
-          onNext={onNext}
-          onSkip={onSkip}
-          isMobileInfoOpen={isInfoOpen}           
-          onToggleInfo={() => setIsInfoOpen(o => !o)}  
-        />
-  
-        <section className="ts-tutorial-form">
-          {existingSalaryIncome ? (
-            <EditSalaryForm
-              item={existingSalaryIncome}
-              state={state}
-              dispatch={dispatch}
-              onClose={onNext}
-              onToast={onToast}
-            />
-          ) : (
-            <SalaryForm
-              state={state}
-              dispatch={dispatch}
-              onClose={onNext}
-              onToast={onToast}
-            />
-          )}
+          {existingItem
+            ? <EditForm item={existingItem} state={state} dispatch={dispatch} onClose={onNext} onToast={onToast} />
+            : <AddForm state={state} dispatch={dispatch} onClose={onNext} onToast={onToast} />
+          }
         </section>
       </div>
     );
@@ -636,7 +554,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
     return (
       <div className="ts-highlight-step">
         <div className="ts-highlight-card">
-          <button type="button" className="ts-highlight-close" onClick={onSkip}>
+          <button type="button" className="ts-step-close" onClick={onSkip}>
             ×
           </button>
     
@@ -699,7 +617,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
     return (
       <div className="ts-results-side-step">
         <div className="ts-results-side-card">
-          <button type="button" className="ts-highlight-close" onClick={onSkip}>×</button>
+          <button type="button" className="ts-step-close" onClick={onSkip}>×</button>
   
           {/* <div className="ts-results-logo">V</div> */}
           <p className="ts-step-count">Step {currentStepIndex + 1} of {totalSteps}</p>

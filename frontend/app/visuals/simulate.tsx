@@ -1546,6 +1546,7 @@ class SimulationState {
 }
 
 function simulate(req) {
+  console.log('simulating..')
   const state = new SimulationState();
   const filingStatus = req.filing_status ?? "single";
   const stateCode = req.state ?? "MI";

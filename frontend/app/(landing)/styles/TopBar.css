@@ -6,48 +6,48 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  
-  .landing-header-inner {
+}
+
+.landing-header-inner {
     width: min(100%, 900px);
     height: 100%;
     padding: 0 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-  
-  .landing-logo {
+}
+
+.landing-logo {
     display: inline-flex;
     align-items: center;
     text-decoration: none;
-  }
-  
-  .landing-logo-mark {
+}
+
+.landing-logo-mark {
     width: 72px;
     height: 72px;
     object-fit: contain;
     display: block;
-  }
-  
-  .landing-logo-text {
+}
+
+.landing-logo-text {
     font-family: var(--font-primary);
     font-size: 30px;
     letter-spacing: -0.055em;
     line-height: 1;
-  }
+}
 
-  .landing-logo-fire {
+.landing-logo-fire {
     font-weight: bold;
     color: var(--secondary);
-  }
-  
-  .landing-logo-phin {
+}
+
+.landing-logo-phin {
     font-weight: bolder;
     color: var(--accent);
-  }
-  
-  .landing-try-btn {
+}
+
+.landing-try-btn {
     min-height: 44px;
     padding: 0 22px;
     border-radius: var(--radius-pill);
@@ -62,39 +62,39 @@
     align-items: center;
     justify-content: center;
     transition:
-      background 160ms ease,
-      color 160ms ease,
-      border-color 160ms ease,
-      transform 160ms ease;
-  }
-  
-  .landing-try-btn:hover {
+        background 160ms ease,
+        color 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.landing-try-btn:hover {
     background: var(--accent-soft);
     border-color: var(--accent-dark);
     color: var(--accent-dark);
     transform: translateY(-1px);
-  }
-  
-  .landing-try-btn:active {
+}
+
+.landing-try-btn:active {
     transform: translateY(0);
-  }
+}
   
-  @media (max-width: 640px) {
+@media (max-width: 640px) {
     .landing-header {
-      height: 68px;
+        height: 68px;
     }
-  
+
     .landing-header-inner {
-      padding: 0 18px;
+        padding: 0 18px;
     }
-  
+
     .landing-logo-text {
-      font-size: 25px;
+        font-size: 25px;
     }
-  
+
     .landing-try-btn {
-      min-height: 40px;
-      padding: 0 18px;
-      font-size: 14px;
+        min-height: 40px;
+        padding: 0 18px;
+        font-size: 14px;
     }
-  }
+}

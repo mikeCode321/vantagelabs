@@ -1,5 +1,3 @@
-
- 
 .overview-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -9,11 +7,11 @@
 }
 
 .overview-card {
-  background: #ffffff;
-  border: 1px solid #ebeaf3;
-  border-radius: 16px;
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
   padding: 20px 10px 16px;
-  box-shadow: 0 12px 30px rgba(20, 18, 35, 0.045);
+  box-shadow: 0 12px 30px var(--shadow-card-soft);
   min-width: 0;
 }
 
@@ -31,6 +29,7 @@
   place-items: center;
   font-size: 24px;
   font-weight: 800;
+  flex-shrink: 0;
 }
 
 .overview-card-content {
@@ -40,8 +39,8 @@
 
 .overview-card-label {
   margin: 0 0 8px;
-  color: #606981;
-  font-size: 14px;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 
@@ -56,7 +55,7 @@
 
 .overview-card-value {
   margin: 0;
-  color: #101426;
+  color: var(--text-ui);
   font-size: clamp(17px, 1.6vw, 22px);
   line-height: 1;
   letter-spacing: 0.03em;
@@ -88,90 +87,88 @@
   font-size: 10px;
   font-weight: 500;
   line-height: 1;
-  color: #9198ac;
+  color: var(--text-muted);
   padding: 0 2px;
 }
 
 .overview-card-change-up span {
-  color: #15803d;
-  background: rgba(22, 163, 74, 0.12);
+  color: var(--success-dark);
+  background: var(--success-bg);
 }
 
 .overview-card-change-down span {
-  color: #b91c1c;
-  background: rgba(220, 38, 38, 0.11);
+  color: var(--error-dark);
+  background: var(--error-bg);
 }
 
 .overview-card-change-neutral span {
-  color: #475569;
-  background: rgba(100, 116, 139, 0.10);
+  color: var(--neutral-change-fg);
+  background: var(--neutral-change-bg);
 }
 
 .overview-card-divider {
   height: 1px;
-  border-top: 1px dashed #deddea;
+  border-top: 1px dashed var(--border-soft);
   margin: 18px 0 12px;
 }
 
 .overview-card-meta {
   margin: 0;
-  color: #697287;
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
 }
 
 .overview-card-purple .overview-card-icon {
-  color: #6d28d9;
-  background: linear-gradient(135deg, rgba(109, 40, 217, 0.16), rgba(139, 92, 246, 0.08));
+  color: var(--accent);
+  background: var(--card-icon-purple-bg);
 }
 
 .overview-card-green .overview-card-icon {
-  color: #0f9f6e;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(16, 185, 129, 0.07));
+  color: var(--card-icon-green);
+  background: var(--card-icon-green-bg);
 }
 
 .overview-card-blue .overview-card-icon {
-  color: #1677ff;
-  background: linear-gradient(135deg, rgba(22, 119, 255, 0.14), rgba(22, 119, 255, 0.06));
+  color: var(--card-icon-blue);
+  background: var(--card-icon-blue-bg);
 }
 
 .overview-card-orange .overview-card-icon {
-  color: #ea6a12;
-  background: linear-gradient(135deg, rgba(234, 106, 18, 0.14), rgba(234, 106, 18, 0.06));
+  color: var(--card-icon-orange);
+  background: var(--card-icon-orange-bg);
+}
+
+@media (max-width: 860px) {
+  .overview-cards {
+    grid-template-columns: 1fr;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .overview-card {
+    border-radius: var(--radius-md);
+    padding: 12px;
+  }
+
+  .overview-card-top {
+    gap: 14px;
+  }
+
+  .overview-card-icon {
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+    border-radius: var(--radius-md);
+  }
 }
 
 @media (max-width: 480px) {
   .overview-card {
-    padding: 12px 10px;
+    padding: 10px;
   }
 
   .overview-card-label {
     font-size: 12px;
   }
-}
-
-@media (max-width: 640px) {
-    .overview-cards {
-        width: 100%;
-        grid-template-columns: 1fr;
-        padding-left: 16px;
-        padding-right: 16px;
-     }
-
-    .overview-card{
-        border-radius: 14px;
-        padding: 12px;
-    }
-
-    .overview-card-top {
-        gap: 14px;
-    }
-
-    .overview-card-icon {
-        width: 48px;
-        height: 48px;
-        flex-basis: 48px;
-        border-radius: 16px;
-    }
-
 }

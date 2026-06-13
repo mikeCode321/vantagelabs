@@ -97,11 +97,10 @@
 }
 
 .form-label {
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--teal);
-  font-weight: 600;
   margin-bottom: 2px;
 }
 
@@ -630,8 +629,76 @@
   font-weight: 600;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
+  .form-panel {
+    margin: 16px;
+  }
+
+  .form-two-col {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .form-year-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-footer {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .form-btn-submit,
+  .form-btn-cancel {
+    width: 100%;
+    text-align: center;
+  }
+
+  .setup-section {
+    padding: 16px;
+    margin-bottom: 20px;
+    max-height: unset;
+  }
+
   .setup-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .preview-card {
+    padding: 12px;
+  }
+
+  .preview-card-amount-lg {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .form-input,
+  .ts-input,
+  .ts-select,
+  .ts-textarea,
+  .setup-input,
+  .feedback-input {
+    font-size: 16px !important;
+  }
+
+  .form-two-col {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .form-year-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .setup-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .setup-section {
+    max-height: unset;
   }
 }

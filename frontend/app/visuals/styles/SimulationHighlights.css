@@ -1,11 +1,10 @@
-
 .simulation-highlights-card {
   width: 100%;
   min-width: 0;
-  background: #ffffff;
-  border: 1px solid #ebeaf3;
-  border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(20, 18, 35, 0.045);
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 30px var(--shadow-card-soft);
   padding: 20px;
   box-sizing: border-box;
 }
@@ -16,8 +15,8 @@
 
 .simulation-highlights-card-header h2 {
   margin: 0;
-  color: #111426;
-  font-size: 17px;
+  color: var(--text-ui);
+  font-size: var(--text-sm);
   font-weight: 850;
   letter-spacing: -0.02em;
 }
@@ -33,7 +32,7 @@
   justify-content: space-between;
   gap: 14px;
   padding: 13px 0;
-  border-bottom: 1px solid #eeeef6;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .simulation-highlight-row-left {
@@ -46,32 +45,31 @@
 .simulation-highlight-row-icon {
   width: 38px;
   height: 38px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
   font-size: 17px;
-  font-weight: 900;
   flex-shrink: 0;
 }
 
 .simulation-highlight-row-icon-purple {
-  color: #6d28d9;
-  background: rgba(109, 40, 217, 0.09);
+  color: var(--accent);
+  background: var(--accent-muted);
 }
 
 .simulation-highlight-row-icon-green {
-  color: #0f9f6e;
-  background: rgba(16, 185, 129, 0.1);
+  color: var(--card-icon-green);
+  background: var(--card-icon-green-bg);
 }
 
 .simulation-highlight-row-icon-blue {
-  color: #1677ff;
-  background: rgba(22, 119, 255, 0.1);
+  color: var(--card-icon-blue);
+  background: var(--card-icon-blue-bg);
 }
 
 .simulation-highlight-row-icon-red {
-  color: #dc2626;
-  background: rgba(220, 38, 38, 0.09);
+  color: var(--error);
+  background: var(--error-bg);
 }
 
 .simulation-highlight-row-copy {
@@ -80,82 +78,72 @@
 
 .simulation-highlight-row-label {
   margin: 0 0 3px;
-  color: #202337;
-  font-size: 13px;
+  color: var(--text-ui);
+  font-size: var(--text-xs);
   font-weight: 850;
   line-height: 1.2;
 }
 
 .simulation-highlight-row-sublabel {
   margin: 0;
-  color: #697287;
-  font-size: 12px;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
   font-weight: 600;
   line-height: 1.2;
 }
 
 .simulation-highlight-row-value {
   margin: 0;
-  color: #111426;
-  font-size: 14px;
+  color: var(--text-ui);
+  font-size: var(--text-xs);
   font-weight: 900;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .simulation-highlight-row-value-negative {
-  color: #dc2626;
+  color: var(--error);
 }
 
 .simulation-highlights-card-button {
   width: 100%;
   min-height: 44px;
   margin-top: 18px;
-  border: 1px solid #deddea;
-  background: #ffffff;
-  color: #6d28d9;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 14px;
+  border: 1px solid var(--border-soft);
+  background: var(--white);
+  color: var(--accent);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-primary), monospace;
+  font-size: var(--text-xs);
   font-weight: 850;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   cursor: pointer;
-  transition:
-    background 0.18s ease,
-    border-color 0.18s ease,
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .simulation-highlights-card-button:hover {
-  background: #f7f2ff;
-  border-color: rgba(109, 40, 217, 0.22);
-  box-shadow: 0 10px 24px rgba(109, 40, 217, 0.08);
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  box-shadow: 0 10px 24px var(--accent-muted);
   transform: translateY(-1px);
 }
 
-
-@media (max-width: 640px) {
+@media (max-width: 860px) {
   .simulation-highlights-card {
-    padding: 18px;
-    border-radius: 14px;
+    order: -1;
+    border-radius: var(--radius-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .simulation-highlights-card {
+    padding: 14px;
   }
 
   .simulation-highlight-row {
     align-items: flex-start;
-  }
-
-  .simulation-highlight-row-value {
-    font-size: 13px;
-  }
-}
-
-
-@media (max-width: 860px) {
-    .simulation-highlights-card {
-    order: -1;
   }
 }

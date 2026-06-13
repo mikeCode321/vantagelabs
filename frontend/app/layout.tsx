@@ -1,34 +1,24 @@
-import './globals.css'
-import { Inter, DM_Mono, Playfair_Display } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next"
+import "./globals.css";
+import { Instrument_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
-const inter = Inter({
+const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-instrument",
   display: "swap",
 });
 
-const dmMono = DM_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-dm-mono",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-});
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className={`${inter.variable} ${dmMono.variable} ${playfair.variable}`}>
+    <html lang="en" className={instrumentSans.variable}>
       <body>
         <main>{children}</main>
         <Analytics />
       </body>
     </html>
-  )
+  );
 }

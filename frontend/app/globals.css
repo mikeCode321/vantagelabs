@@ -1,24 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800;900&display=swap');
-
-* { box-sizing: border-box; }
-
 :root {
-  /* Purple scheme — primary brand */
-  --primary:        #1e0a3c;
-  --primary-mid:    #300d6b;
-  --accent:         #7c3aed;
-  --accent-dark:    #6d28d9;
-  --accent-soft:    #f5f3ff;
-  --accent-border:  rgba(109, 40, 217, 0.18);
-  --accent-muted:   rgba(109, 40, 217, 0.08);
-  --accent-disabled-bg: #c4b5fd;
-  --accent-disabled-fg: #ede9fe;
-  --accent-hover:       #ede9fe;
+  /* Fire Phin scheme — primary brand */
+  --primary:        #071b4d;
+  --primary-mid:    #0b3f91;
+  --accent:         #0d6efd;
+  --accent-dark:    #084db8;
+  --accent-soft:    #eaf3ff;
+  --accent-border:  rgba(13, 110, 253, 0.18);
+  --accent-muted:   rgba(13, 110, 253, 0.08);
+  --accent-disabled-bg: #b8d7ff;
+  --accent-disabled-fg: #eef6ff;
+  --accent-hover:       #dcebff;
+
+  /* Fire Phin secondary brand */
+  --secondary:        #ff4b32;
+  --secondary-dark:   #dc2f1d;
+  --secondary-soft:   #fff0ed;
+  --secondary-border: rgba(255, 75, 50, 0.22);
+  --secondary-muted:  rgba(255, 75, 50, 0.09);
+  --secondary-hover:  #ffe1dc;
 
   /* Neutrals */
   --white:          #ffffff;
-  --off-white:      #faf9ff;
-  --border-soft:    #ebeaf3;
+  --off-white:      #f8fbff;
+  --border-soft:    #e5edf7;
 
   /* Semantic */
   --error:          #dc2626;
@@ -27,20 +31,20 @@
   --success:        #059669;
 
   /* Legacy aliases — keeps old var() references working */
-  --teal:           #7c3aed;
-  --soft-bg:        #f5f3ff;
+  --teal:           var(--accent);
+  --soft-bg:        var(--accent-soft);
 
   --font-primary: "Instrument Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-serif: 'Georgia', serif;
 
   --border-subtle:      rgba(15, 23, 42, 0.08);
 
-  --text-primary: #1e0a3c;
+  --text-primary:   var(--primary);
   --text-secondary: #6b7280;
   --text-muted:     #9ca3af;
-  --text-body:          #4b5563;
-  --text-dark:          #374151;
-  --text-ui:            #111827;
+  --text-body:      #4b5563;
+  --text-dark:      #374151;
+  --text-ui:        #111827;
 
   --text-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
   --text-sm: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
@@ -49,7 +53,7 @@
   --text-xl: clamp(1.5rem, 1.2rem + 1vw, 2.5rem);
   --text-label: clamp(0.72rem, 0.68rem + 0.2vw, 0.8rem);
 
-  --icon-color: #1e0a3c;
+  --icon-color: var(--primary);
   --icon-sm:        32px;
   --icon-md:        44px;
   --icon-lg:        58px;

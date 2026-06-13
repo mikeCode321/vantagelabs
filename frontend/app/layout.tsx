@@ -1,4 +1,5 @@
 import './globals.css'
+import './Landing.css'
 import { Inter, DM_Mono, Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
 

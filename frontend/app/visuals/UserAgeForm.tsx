@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export function UserAgeForm({ state, dispatch }) {
   const [start, setStart] = useState(String(state.user_start_age));
-  const [end, setEnd] = useState(String(state.user_end_age));
+  const [end, setEnd] = useState(String(state.sim_end_age));
 
   return (
       <div className="setup-section">
@@ -35,7 +35,7 @@ export function UserAgeForm({ state, dispatch }) {
                   type: "UPDATE_SIMULATION_BOUNDS",
                   payload: {
                     user_start_age: cleaned,
-                    user_end_age: state.user_end_age,
+                    sim_end_age: state.sim_end_age,
                   },
                 });
               }}
@@ -64,7 +64,7 @@ export function UserAgeForm({ state, dispatch }) {
                   type: "UPDATE_SIMULATION_BOUNDS",
                   payload: {
                     user_start_age: state.user_start_age,
-                    user_end_age: cleaned,
+                    sim_end_age: cleaned,
                   },
                 });
               }}

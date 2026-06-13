@@ -1641,7 +1641,7 @@ function simulate(req) {
 
   for (
     let yearOffset = 0;
-    yearOffset < req.user_end_age - req.user_start_age;
+    yearOffset < req.sim_end_age - req.user_start_age;
     yearOffset++
   ) {
     const currentAge = req.user_start_age + yearOffset;
@@ -2002,7 +2002,7 @@ function simulate(req) {
   };
 
   return {
-    total_years_simulated: req.user_end_age - req.user_start_age,
+    total_years_simulated: req.sim_end_age - req.user_start_age,
     request: req,
     metrics,
     year_results: results,

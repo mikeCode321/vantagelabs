@@ -25,9 +25,9 @@ export default function SideBar({setIsFeedbackOpen}) {
             </div>
 
             <nav className="dash-nav" aria-label="Dashboard navigation">
-                <Link href="/visuals" className="dash-nav-item" title="Testing Visuals">
+                <Link href="/visuals" className="dash-nav-item" title="Dashboard">
                     <span className="dash-nav-icon"><PieChart /></span> 
-                    <span className="dash-nav-label">Testing Visuals</span>
+                    <span className="dash-nav-label">Dashboard</span>
                 </Link>
             </nav>
 
@@ -53,7 +53,7 @@ export default function SideBar({setIsFeedbackOpen}) {
                 <nav className="dash-mobile-nav">
                     <Link href="/visuals" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
                         <span className="dash-nav-icon"><PieChart /></span>
-                        <span className="dash-nav-label">Testing Visuals</span>
+                        <span className="dash-nav-label">Dashboard</span>
                     </Link>
                 </nav>
                 <button type="button" className="dash-feedback-card" onClick={() => { setIsFeedbackOpen(true); setMobileNavOpen(false); }} >

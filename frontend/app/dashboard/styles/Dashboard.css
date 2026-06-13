@@ -21,20 +21,6 @@ h3 {
   font-family: var(--font-primary), monospace;
 }
 
-.dash-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dash-logo-img {
-  width: 100%;
-  max-width: 120px;
-  height: auto;
-  object-fit: contain;
-  display: block;
-}
-
 .dash-nav {
   display: flex;
   flex-direction: column;

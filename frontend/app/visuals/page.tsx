@@ -27,7 +27,8 @@ import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, CreditCard,
 
 type SimRequest = {
   user_start_age: number;
-  user_end_age: number;
+  sim_end_age: number;
+  user_retirement_age: number;
   accounts: {
     checking: CheckingAccount[];
     taxable_investments: TaxableInvestmentAccount[];
@@ -65,7 +66,7 @@ type Action =
   | { type: "ADD_ASSET"; payload: AssetSource }
   | { type: "UPDATE_ASSET"; payload: AssetSource }
   | { type: "DELETE_ASSET"; payload: { id: string; variant: "house" | "car" } }
-  | { type: "UPDATE_SIMULATION_BOUNDS"; payload: { user_start_age: number; user_end_age: number } };
+  | { type: "UPDATE_SIMULATION_BOUNDS"; payload: { user_start_age: number; user_retirement_age: number } }
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
@@ -218,8 +219,13 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
     }
 
     case "UPDATE_SIMULATION_BOUNDS": {
-      const { user_start_age, user_end_age } = action.payload;
-      return { ...state, user_start_age, user_end_age };
+      const { user_start_age, user_retirement_age } = action.payload;
+      return {
+        ...state,
+        user_start_age,
+        user_retirement_age,
+        sim_end_age: user_start_age + 100,
+      };
     }
 
     default:
@@ -229,7 +235,8 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
 
 const INITIAL_STATE: SimRequest = {
   user_start_age: 25,
-  user_end_age: 65,
+  sim_end_age: 125, // TODO: rename to sim_end_age
+  user_retirement_age: 65,
 
   accounts: {
     checking: [],
@@ -597,7 +604,9 @@ export default function Dashboard() {
           onToast={showToast}
           onStepChange={setActiveTutorialStepId}
           onProfileComplete={(profile, mode) => {
-            dispatch({ type: "UPDATE_SIMULATION_BOUNDS", payload: { user_start_age: profile.current_age, user_end_age: profile.retirement_age } });
+            dispatch({
+              type: "UPDATE_SIMULATION_BOUNDS", payload: {user_start_age: profile.current_age,user_retirement_age: profile.retirement_age}
+            });
             if (mode === "skipped") handleTutorialComplete();
           }}
         />
@@ -646,3 +655,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

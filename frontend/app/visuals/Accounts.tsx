@@ -217,9 +217,11 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
           />
         </div>
         {/* Submit Button */}
-        <button type="submit" className="form-btn-submit form-btn-submit-mt" disabled={hasCheckingAccount}>
-            Add Checking Account
-        </button>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit form-btn-submit-mt" disabled={hasCheckingAccount}>
+              Add Checking Account
+          </button>
+        </div>
       </form>
     </div>
   );
@@ -994,9 +996,11 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
         </div>
 
         {/* Submit Button */}
-        <button type="submit" className="form-btn-submit form-btn-submit-mt">
-          Save Checking Account
-        </button>
+        <div className="form-footer">
+          <button type="submit" className="form-btn-submit form-btn-submit-mt">
+            Update Checking Account
+          </button>
+        </div>
       </form>
     </div>
   );
@@ -1301,11 +1305,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
-            Cancel
-          </button>
           <button type="submit" className="form-btn-submit">
-            Update Account
+            Update Taxable Investment Account
           </button>
         </div>
       </form>
@@ -1606,11 +1607,8 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
-            Cancel
-          </button>
           <button type="submit" className="form-btn-submit">
-            Update Account
+            Update Retirement Account
           </button>
         </div>
       </form>

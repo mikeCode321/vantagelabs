@@ -1,12 +1,48 @@
+import "./styles/SimulationControls.css";
 import { useState } from "react";
-import { simulate } from "@/app/visuals/simulate"
+import { simulate } from "@/app/visuals/simulate";
+import { Play, Trash2 } from "lucide-react";
 
 export default function SimulationControls({ state, setSimResult, activeTutorialStepId }) {
   const [hasResults, setHasResults] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
   async function runSimulation() {
+    setIsRunning(true);
     try {
-      // const API = "http://localhost:8000/api/finance/simulate";
+      const data = simulate(state);
+      setSimResult(data);
+      setHasResults(true);
+    } catch (err) {
+      console.error("Simulation error:", err);
+    } finally {
+      setIsRunning(false);
+    }
+  }
+
+  const clearSimulation = () => {
+    setSimResult(null);
+    setHasResults(false);
+  };
+
+  return (
+    <div className={`sim-controls${activeTutorialStepId === "results" ? " ts-tutorial-target" : ""}`}>
+      <div className="sim-controls-actions">
+        <button className="sim-controls-btn sim-controls-btn-run" onClick={runSimulation} disabled={isRunning}>
+          <Play size={13} />
+          {isRunning ? "Running…" : "Simulate"}
+        </button>
+
+        <button className="sim-controls-btn sim-controls-btn-clear" onClick={clearSimulation} disabled={!hasResults}>
+          <Trash2 size={13} />
+          Clear
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// const API = "http://localhost:8000/api/finance/simulate";
 
       // const response = await fetch(API, {
       //   method: "POST",
@@ -15,29 +51,3 @@ export default function SimulationControls({ state, setSimResult, activeTutorial
       // });
 
       // const data = await response.json();
-
-      const data = simulate(state)
-
-      console.log(data);
-      setSimResult(data);
-      setHasResults(true);
-    } catch (err) {
-      console.error("Simulation error:", err);
-    }
-  }
-
-  const clearSimulation = () => {
-    setSimResult(null);
-    setHasResults(false);
-  };
-  return (
-    <div className={activeTutorialStepId === "results" ? "ts-tutorial-target" : ""} style={{ borderRadius: "16px" }}>
-      <div style={{marginTop:"25px"}}>
-        <button style={{marginRight:"25px"}} onClick={runSimulation}>Run Simulation</button>
-        <button onClick={clearSimulation} disabled={!hasResults}>
-          Clear Simulation Result
-        </button>
-      </div>
-    </div>
-  );
-}

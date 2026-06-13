@@ -14,7 +14,7 @@ export default function TopBar() {
           </span>
         </Link>
 
-        <Link href="/visuals" className="landing-try-btn">
+        <Link href="/dashboard" className="landing-try-btn">
           Try Now
         </Link>
       </div>

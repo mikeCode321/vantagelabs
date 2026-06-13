@@ -2,8 +2,8 @@ import './styles/EntityCard.css';
 
 import { useState} from "react";
 import { CircleDollarSign, HandCoins, PieChart, Landmark, } from 'lucide-react';
-import EntityModal from "@/app/visuals/EntityModal";
-import {formatNumberWithCommas} from "@/app/visuals/utils";
+import EntityModal from "@/app/dashboard/EntityModal";
+import {formatNumberWithCommas} from "@/app/dashboard/utils";
 
 const ENTITY_CARD_COPY = {
   account: {

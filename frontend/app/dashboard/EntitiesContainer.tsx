@@ -2,7 +2,7 @@ import "./styles/EntityCard.css";
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import EntityCard from "@/app/visuals/EntityCard";
+import EntityCard from "@/app/dashboard/EntityCard";
 
 /* --------------------  Entities Container -------------------- */
 

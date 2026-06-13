@@ -1,12 +1,12 @@
 import './styles/Forms.css'
 
 import { useState, useEffect } from "react";
-import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/visuals/utils";
+import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/dashboard/utils";
 import { CreditCard, ChartColumnIncreasing , Accessibility, DollarSign, Link } from 'lucide-react';
 import {
   TimelineAgeFields,
   getValidatedTimelinePayload,
-} from "@/app/visuals/TimelineAgeFields";
+} from "@/app/dashboard/TimelineAgeFields";
 
 // ─────────────────────────────────────────────
 // CORE

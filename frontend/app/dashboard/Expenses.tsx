@@ -1,9 +1,9 @@
 import './styles/Forms.css'
 
 import { useState } from "react";
-import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
-import { ID } from "@/app/visuals/Accounts";
-import {TimelineAgeFields,getValidatedTimelinePayload, } from "@/app/visuals/TimelineAgeFields";
+import { formatNumberWithCommas, handleNumberInput } from "@/app/dashboard/utils";
+import { ID } from "@/app/dashboard/Accounts";
+import {TimelineAgeFields,getValidatedTimelinePayload, } from "@/app/dashboard/TimelineAgeFields";
 import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Link } from 'lucide-react';
 
 // ─────────────────────────────────────────────

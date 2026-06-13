@@ -40,7 +40,7 @@
   border-radius: var(--radius-lg);
   box-shadow:
     0 0 0 3px rgba(109, 40, 217, 0.45),
-    0 0 0 7px var(--accent-muted);
+    0 0 0 7px var(--accent-muted) !important;
   transition: box-shadow 0.3s ease;
 }
 
@@ -996,6 +996,11 @@
   .ts-overlay-no-bg {
     background: none !important;
     backdrop-filter: none !important;
+    pointer-events: none;
+  }
+
+  .ts-overlay-no-bg > * {
+    pointer-events: auto;
   }
 
   .ts-modal {

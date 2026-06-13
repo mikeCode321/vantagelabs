@@ -616,11 +616,11 @@ export default function Dashboard() {
       <FeedbackFormModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
       <main className="dash-main">
-        <header className="dash-topbar">
+        {/* <header className="dash-topbar">
           <div>
             <h1 className="dash-page-title">AdVantage on Finances</h1>
           </div>
-        </header>
+        </header> */}
         
         {/* <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>

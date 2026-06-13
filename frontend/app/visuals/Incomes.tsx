@@ -806,10 +806,6 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
 
         {/* Footer */}
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
-            Cancel
-          </button>
-
           <button type="submit" className="form-btn-submit">
             Update Salary
           </button>
@@ -1032,9 +1028,6 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
 
         {/* Footer */}
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
-            Cancel
-          </button>
           <button type="submit" className="form-btn-submit">
             Update Hourly Income
           </button>
@@ -1171,9 +1164,6 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
 
         {/* Footer */}
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
-            Cancel
-          </button>
           <button type="submit" className="form-btn-submit">
             Update Side Hustle
           </button>

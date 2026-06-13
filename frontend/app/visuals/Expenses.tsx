@@ -362,16 +362,6 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
         </div>
 
         <div className="form-footer">
-          {onClose && (
-            <button
-              type="button"
-              onClick={onClose}
-              className="form-btn-secondary"
-            >
-              Cancel
-            </button>
-          )}
-
           <button type="submit" className="form-btn-submit">
             Add Home Loan
           </button>
@@ -620,12 +610,6 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
         </div>
 
         <div className="form-footer">
-          {onClose && (
-            <button type="button" onClick={onClose} className="form-btn-secondary">
-              Cancel
-            </button>
-          )}
-
           <button type="submit" className="form-btn-submit">
             Add Car Loan
           </button>
@@ -1192,8 +1176,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">Cancel</button>
-          <button type="submit" className="form-btn-submit">Save Car Loan</button>
+          <button type="submit" className="form-btn-submit">Update Car Loan</button>
         </div>
       </form>
     </div>
@@ -1542,16 +1525,8 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
         </div>
 
         <div className="form-footer">
-          <button
-            type="button"
-            onClick={onClose}
-            className="form-btn-cancel"
-          >
-            Cancel
-          </button>
-
           <button type="submit" className="form-btn-submit">
-            Save Home Loan
+            Update Home Loan
           </button>
         </div>
       </form>
@@ -1662,11 +1637,8 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
-            Cancel
-          </button>
           <button type="submit" className="form-btn-submit">
-            Save Living Expenses
+            Update Living Expenses
           </button>
         </div>
       </form>
@@ -1775,11 +1747,8 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
-            Cancel
-          </button>
           <button type="submit" className="form-btn-submit">
-            Save Rent
+            Update Rent
           </button>
         </div>
       </form>
@@ -1905,11 +1874,8 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-cancel">
-            Cancel
-          </button>
           <button type="submit" className="form-btn-submit">
-            Save Debt
+            Update Debt
           </button>
         </div>
       </form>

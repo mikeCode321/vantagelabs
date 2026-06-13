@@ -780,11 +780,8 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-secondary">
-            Cancel
-          </button>
           <button type="submit" className="form-btn-submit">
-            Save House
+            Update House
           </button>
         </div>
       </form>
@@ -1038,16 +1035,8 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
         </div>
 
         <div className="form-footer">
-          <button
-            type="button"
-            onClick={onClose}
-            className="form-btn-cancel"
-          >
-            Cancel
-          </button>
-
           <button type="submit" className="form-btn-submit">
-            Save Car
+            Update Car
           </button>
         </div>
       </form>

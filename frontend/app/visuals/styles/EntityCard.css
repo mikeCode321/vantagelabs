@@ -192,7 +192,7 @@
   margin: 0;
   font-size: var(--text-xs);
   letter-spacing: 0.02em;
-  color: var(--accent);
+  color: var(--text-secondary);
   display: flex;
   gap: 5px;
   align-items: center;
@@ -224,9 +224,6 @@
 
 .entity-row-btn-edit {
   font-size: var(--text-xs);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  font-weight: 600;
   border: 1px solid var(--accent-border);
   background: transparent;
   color: var(--primary);

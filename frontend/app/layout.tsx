@@ -8,11 +8,7 @@ const instrumentSans = Instrument_Sans({
   display: "swap",
 });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({children,}: {children: React.ReactNode;}) {
   return (
     <html lang="en" className={instrumentSans.variable}>
       <body>

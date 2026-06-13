@@ -255,6 +255,7 @@ const INITIAL_STATE: SimRequest = {
 };
 // our sim_request
 const LOCAL_STORAGE_KEY = "sim_request";
+const SIM_RESULT_KEY = "sim_result";
 const ENABLE_LOCAL_STORAGE_PERSISTENCE = true;
 
 const ENABLE_TUTORIAL = true;
@@ -271,13 +272,6 @@ function loadTutorialCompleted() {
   }
 }
 
-function saveTutorialCompleted() {
-  if (!ENABLE_TUTORIAL) return;
-  if (typeof window === "undefined") return;
-
-  localStorage.setItem(TUTORIAL_COMPLETED_KEY, "true");
-}
-
 function loadState(){
   if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return null;
   if (typeof window === "undefined") return null;
@@ -287,6 +281,35 @@ function loadState(){
   } catch {
     localStorage.removeItem(LOCAL_STORAGE_KEY);
     return null;
+  }
+}
+
+function loadSimResult() {
+  if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return null;
+  if (typeof window === "undefined") return null;
+  try {
+    const saved = localStorage.getItem(SIM_RESULT_KEY);
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    localStorage.removeItem(SIM_RESULT_KEY);
+    return null;
+  }
+}
+
+function saveTutorialCompleted() {
+  if (!ENABLE_TUTORIAL) return;
+  if (typeof window === "undefined") return;
+
+  localStorage.setItem(TUTORIAL_COMPLETED_KEY, "true");
+}
+
+function saveSimResult(result: unknown) {
+  if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return;
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(SIM_RESULT_KEY, JSON.stringify(result));
+  } catch (error) {
+    console.error("Failed to save sim result:", error);
   }
 }
 
@@ -536,7 +559,10 @@ export default function Dashboard() {
       dispatch({ type: "HYDRATE_FROM_LOCAL_STORAGE", payload: saved });
     }
 
+    const savedResult = loadSimResult();
+
     const timer = setTimeout(() => {
+      if (savedResult) setSimResult(savedResult);
       setIsSimLoading(false);
       const tutorialCompleted = loadTutorialCompleted();
       if (ENABLE_TUTORIAL && !tutorialCompleted) {
@@ -550,6 +576,10 @@ export default function Dashboard() {
   useEffect(() => {
     saveState(state);
   }, [state]);
+
+  useEffect(() => {
+    if (simResult) saveSimResult(simResult);
+  }, [simResult]);
 
   return (
     <div className="dash-root" data-active-tutorial-step={activeTutorialStepId ?? ""}>

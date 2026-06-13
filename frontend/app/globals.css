@@ -1,86 +1,117 @@
-
 * {
   box-sizing: border-box;
 }
 
 :root {
-  /* Fire Phin scheme — primary brand */
-  --primary:        #071b4d;
-  --primary-mid:    #0b3f91;
-  --accent:         #0d6efd;
-  --accent-dark:    #084db8;
-  --accent-soft:    #eaf3ff;
-  --accent-border:  rgba(13, 110, 253, 0.18);
-  --accent-muted:   rgba(13, 110, 253, 0.08);
+  /* ─── Primary Brand ───────────────────────────────── */
+  --primary:            #071b4d;
+  --primary-mid:        #0b3f91;
+
+  --accent:             #0d6efd;
+  --accent-dark:        #084db8;
+  --accent-soft:        #eaf3ff;
+  --accent-border:      rgba(13, 110, 253, 0.18);
+  --accent-muted:       rgba(13, 110, 253, 0.08);
   --accent-disabled-bg: #b8d7ff;
   --accent-disabled-fg: #eef6ff;
   --accent-hover:       #dcebff;
 
-  /* Fire Phin secondary brand */
-  --secondary:        #ff4b32;
-  --secondary-dark:   #dc2f1d;
-  --secondary-soft:   #fff0ed;
-  --secondary-border: rgba(255, 75, 50, 0.22);
-  --secondary-muted:  rgba(255, 75, 50, 0.09);
-  --secondary-hover:  #ffe1dc;
+  /* ─── Secondary Brand ────────────────────────────── */
+  --secondary:          #ff4b32;
+  --secondary-dark:     #dc2f1d;
+  --secondary-soft:     #fff0ed;
+  --secondary-border:   rgba(255, 75, 50, 0.22);
+  --secondary-muted:    rgba(255, 75, 50, 0.09);
+  --secondary-hover:    #ffe1dc;
 
-  /* Neutrals */
-  --white:          #ffffff;
-  --off-white:      #f8fbff;
-  --border-soft:    #e5edf7;
-
-  /* Semantic */
-  --error:          #dc2626;
-  --error-bg:       #fef2f2;
-  --error-border:   #fecaca;
-  --success:        #059669;
-
-  /* Legacy aliases — keeps old var() references working */
-  --teal:           var(--accent);
-  --soft-bg:        var(--accent-soft);
-
-  --font-primary: var(--font-instrument);
-  --font-serif: 'Georgia', serif;
-
+  /* ─── Neutrals ───────────────────────────────────── */
+  --white:              #ffffff;
+  --off-white:          #f8fbff;
+  --border-soft:        #e5edf7;
   --border-subtle:      rgba(15, 23, 42, 0.08);
 
-  --text-primary:   var(--primary);
-  --text-secondary: #6b7280;
-  --text-muted:     #9ca3af;
-  --text-body:      #4b5563;
-  --text-dark:      #374151;
-  --text-ui:        #111827;
+  /* ─── Semantic ───────────────────────────────────── */
+  --error:              #dc2626;
+  --error-dark:         #b91c1c;
+  --error-bg:           #fef2f2;
+  --error-border:       #fecaca;
 
-  --text-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
-  --text-sm: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
-  --text-base: clamp(1rem, 0.95rem + 0.4vw, 1.125rem);
-  --text-lg: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
-  --text-xl: clamp(1.5rem, 1.2rem + 1vw, 2.5rem);
-  --text-label: clamp(0.72rem, 0.68rem + 0.2vw, 0.8rem);
+  --success:            #059669;
+  --success-dark:       #15803d;
+  --success-bg:         rgba(22, 163, 74, 0.12);
 
+  --neutral-change-bg:  rgba(100, 116, 139, 0.10);
+  --neutral-change-fg:  #475569;
+
+  /* ─── Card Icon Tones ────────────────────────────── */
+  --card-icon-purple-bg: rgba(13, 110, 253, 0.16);
+  --card-icon-green:     #0f9f6e;
+  --card-icon-green-bg:  rgba(16, 185, 129, 0.16);
+  --card-icon-blue:      #1677ff;
+  --card-icon-blue-bg:   rgba(22, 119, 255, 0.14);
+  --card-icon-orange:    #ea6a12;
+  --card-icon-orange-bg: rgba(234, 106, 18, 0.14);
+
+  /* ─── Typography ─────────────────────────────────── */
+  --font-primary:       var(--font-instrument);
+  --font-serif:         'Georgia', serif;
+
+  --text-primary:       var(--primary);
+  --text-secondary:     #6b7280;
+  --text-muted:         #9ca3af;
+  --text-body:          #4b5563;
+  --text-dark:          #374151;
+  --text-ui:            #111827;
+
+  --text-xs:    clamp(0.75rem,  0.7rem  + 0.2vw, 0.875rem);
+  --text-sm:    clamp(0.875rem, 0.8rem  + 0.3vw, 1rem);
+  --text-base:  clamp(1rem,     0.95rem + 0.4vw, 1.125rem);
+  --text-lg:    clamp(1.125rem, 1rem    + 0.6vw, 1.5rem);
+  --text-xl:    clamp(1.5rem,   1.2rem  + 1vw,   2.5rem);
+  --text-label: clamp(0.72rem,  0.68rem + 0.2vw, 0.8rem);
+
+  /* ─── Iconography ────────────────────────────────── */
   --icon-color: var(--primary);
-  --icon-sm:        32px;
-  --icon-md:        44px;
-  --icon-lg:        58px;
+  --icon-sm:    32px;
+  --icon-md:    44px;
+  --icon-lg:    58px;
 
-  --radius-sm:      8px;
-  --radius-md:      12px;
-  --radius-lg:      16px;
-  --radius-pill:    999px;
+  /* ─── Radii ──────────────────────────────────────── */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-pill: 999px;
 
+  /* ─── Spacing / Layout ───────────────────────────── */
   --modal-padding:  24px;
   --header-height:  52px;
-
   --btn-close-size: 32px;
 
-  --shadow-overlay:     rgba(15, 23, 42, 0.14);
-  --shadow-card:        rgba(15, 23, 42, 0.2);
-  --shadow-card-ring:   rgba(15, 23, 42, 0.06);
-  --shadow-sheet:       rgba(15, 23, 42, 0.18);
+  /* ─── Shadows ────────────────────────────────────── */
+  --shadow-overlay:   rgba(15, 23, 42, 0.14);
+  --shadow-card:      rgba(15, 23, 42, 0.2);
+  --shadow-card-soft: rgba(20, 18, 35, 0.045);
+  --shadow-card-ring: rgba(15, 23, 42, 0.06);
+  --shadow-sheet:     rgba(15, 23, 42, 0.18);
 
-  --tooltip-bg:         #1e1b2e;
+  /* ─── Misc ───────────────────────────────────────── */
+  --tooltip-bg: #1e1b2e;
+
+  /* ─── Legacy aliases ─────────────────────────────── */
+  --teal:    var(--accent);
+  --soft-bg: var(--accent-soft);
 }
 
 body {
-  font-family: var(--font-instrument), sans-serif;
+  font-family: var(--font-primary), sans-serif;
+  color: var(--text-body);
+}
+
+/* ─── Global input zoom fix (iOS Safari) ─────────────── */
+@media (max-width: 860px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }

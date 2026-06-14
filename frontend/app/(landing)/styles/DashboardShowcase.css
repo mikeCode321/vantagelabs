@@ -1,0 +1,353 @@
+/* =========================
+   Landing Dashboard Showcase
+========================= */
+
+.landing-showcase {
+  position: relative;
+  padding: clamp(3rem, 5vw, 4rem) clamp(1rem, 2vw, 1.75rem) clamp(4rem, 6vw, 5rem);
+  background:
+    radial-gradient(circle at 18% 48%, var(--accent-muted), transparent 34%),
+    radial-gradient(circle at 84% 48%, var(--secondary-muted), transparent 30%),
+    var(--white);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  overflow: hidden;
+}
+
+.landing-showcase-inner {
+  width: min(100%, 92rem);
+  margin: 0 auto;
+}
+
+.landing-showcase-copy {
+  max-width: 52rem;
+  margin: 0 auto clamp(1rem, 2vw, 1.6rem);
+  text-align: center;
+}
+
+.landing-title {
+  margin: 0;
+  color: var(--primary);
+  font-size: clamp(3rem, 5vw, 3.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.065em;
+  font-weight: 900;
+}
+
+.landing-title span {
+  display: block;
+  color: var(--secondary);
+}
+
+.landing-subtitle {
+  max-width: 45rem;
+  margin: clamp(1rem, 1.5vw, 1.25rem) auto 0;
+  color: var(--text-secondary);
+  font-size: clamp(1rem, 1.35vw, 1.25rem);
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* =========================
+   Stage Layout
+========================= */
+
+.landing-showcase-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns:
+    clamp(17rem, 22vw, 24rem)
+    minmax(34rem, 44rem)
+    clamp(17rem, 22vw, 24rem);
+  align-items: start;
+  justify-content: center;
+  margin-top: clamp(0.5rem, 1vw, 1rem);
+}
+
+.landing-showcase-rail {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.landing-showcase-rail--left {
+    padding-top: 0;
+    transform: translateY(-8.5rem);
+  }
+  
+  .landing-showcase-rail--right {
+    padding-top: 0;
+    transform: translateY(-8rem);
+  }
+
+.landing-showcase-center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+}
+
+/* =========================
+   Background Orbs
+========================= */
+
+.landing-orb {
+  position: absolute;
+  border-radius: var(--radius-pill);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing-orb--left {
+  width: clamp(22rem, 40vw, 38rem);
+  height: clamp(22rem, 40vw, 38rem);
+  left: 4%;
+  top: 28%;
+  background: var(--accent-muted);
+}
+
+.landing-orb--right {
+  width: clamp(18rem, 30vw, 28rem);
+  height: clamp(18rem, 30vw, 28rem);
+  right: 5%;
+  top: 40%;
+  background: var(--secondary-muted);
+}
+
+/* =========================
+   Dashboard Screenshot
+========================= */
+
+.landing-dashboard-frame {
+  width: 100%;
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  box-shadow:
+    0 1.75rem 5rem rgba(15, 23, 42, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+}
+
+.landing-dashboard-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* =========================
+   Floating Screenshot Images
+========================= */
+
+.landing-floating-image {
+  width: 100%;
+  pointer-events: none;
+}
+
+.landing-floating-image-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: clamp(0.75rem, 1.4vw, 1.25rem);
+  filter: drop-shadow(0 20px 42px rgba(15, 23, 42, 0.12));
+}
+
+.landing-float-ending {
+  transform: rotate(3deg);
+}
+
+.landing-float-cagr {
+  transform: rotate(0deg);
+}
+
+.landing-float-peak {
+  transform: rotate(-3deg);
+  margin-left: 0.5rem;
+}
+
+.landing-float-drawdown {
+  transform: rotate(-3deg);
+}
+
+.landing-float-everything {
+  width: min(100%, 19rem);
+  align-self: center;
+  transform: rotate(0deg);
+}
+
+/* =========================
+   Mascot
+========================= */
+
+.landing-mascot {
+  width: clamp(7rem, 10vw, 9rem);
+  height: auto;
+  align-self: center;
+  margin-top: clamp(-0.5rem, -1vw, -0.25rem);
+  filter: drop-shadow(0 1.1rem 2.25rem rgba(13, 110, 253, 0.16));
+}
+
+/* =========================
+   CTA
+========================= */
+
+.landing-showcase-actions {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.landing-primary-btn {
+  min-height: 3.625rem;
+  padding: 0 2.125rem;
+  border-radius: var(--radius-lg);
+  background: var(--accent);
+  color: var(--white);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.125rem;
+  font-size: 1.0625rem;
+  font-weight: 900;
+  box-shadow: 0 1.125rem 2.375rem rgba(13, 110, 253, 0.22);
+  transition:
+    background 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.landing-primary-btn:hover {
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 1.375rem 3rem rgba(13, 110, 253, 0.28);
+}
+
+.landing-primary-btn:active {
+  transform: translateY(0);
+}
+
+.landing-showcase-actions p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* =========================
+   Small Desktop / Tablet
+========================= */
+
+@media (max-width: 1180px) {
+  .landing-showcase-stage {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .landing-showcase-center {
+    order: 1;
+    padding-top: 1rem;
+  }
+
+  .landing-showcase-rail {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .landing-showcase-rail--left {
+    order: 2;
+    padding-top: 0;
+  }
+
+  .landing-showcase-rail--right {
+    order: 3;
+    padding-top: 0;
+  }
+
+  .landing-floating-image {
+    max-width: 22rem;
+    justify-self: center;
+  }
+
+  .landing-float-ending,
+  .landing-float-cagr,
+  .landing-float-peak,
+  .landing-float-drawdown,
+  .landing-float-everything {
+    width: 100%;
+    transform: none;
+    margin-left: 0;
+  }
+
+  .landing-mascot {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin-top: 0.25rem;
+  }
+}
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 700px) {
+  .landing-showcase {
+    padding: 2.5rem 1rem 3.375rem;
+  }
+
+  .landing-showcase-copy {
+    margin-bottom: 1.25rem;
+  }
+
+  .landing-title {
+    font-size: clamp(2.35rem, 13vw, 3.6rem);
+    letter-spacing: -0.06em;
+  }
+
+  .landing-subtitle {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .landing-showcase-rail {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-floating-image {
+    max-width: 20rem;
+  }
+
+  .landing-float-cagr,
+  .landing-float-peak {
+    display: none;
+  }
+
+  .landing-dashboard-frame {
+    border-radius: 1.125rem;
+  }
+
+  .landing-mascot {
+    width: 7.5rem;
+  }
+
+  .landing-showcase-actions {
+    margin-top: 1.5rem;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .landing-primary-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 3.375rem;
+    font-size: 1rem;
+  }
+
+  .landing-showcase-actions p {
+    font-size: 0.875rem;
+  }
+}

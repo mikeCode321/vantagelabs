@@ -50,16 +50,25 @@ export default function LandingDashboardShowcase() {
         </div>
 
         <div className="landing-showcase-center">
-            <div className="landing-dashboard-frame">
+        <div className="landing-dashboard-frame">
             <Image
-                src="/temp/dashboard-mockup.png"
-                alt="Fire Phin dashboard preview"
-                width={1180}
-                height={720}
-                className="landing-dashboard-image"
-                priority
+            src="/temp/dashboard-mockup.png"
+            alt="Fire Phin dashboard preview"
+            width={1180}
+            height={720}
+            className="landing-dashboard-image"
+            priority
             />
-            </div>
+        </div>
+
+        <div className="landing-showcase-actions">
+            <a href="/dashboard" className="landing-primary-btn">
+            Start Your Free Simulation
+            <span aria-hidden="true">→</span>
+            </a>
+
+            <p>No credit card required</p>
+        </div>
         </div>
 
         <div className="landing-showcase-rail landing-showcase-rail--right">
@@ -79,24 +88,9 @@ export default function LandingDashboardShowcase() {
             className="landing-float-everything"
             />
 
-            <Image
-            src="/temp/mascot-looking-up.png"
-            alt="Fire Phin dolphin mascot"
-            width={220}
-            height={220}
-            className="landing-mascot"
-            />
         </div>
         </div>
 
-        <div className="landing-showcase-actions">
-          <a href="/visuals" className="landing-primary-btn">
-            Start Your Free Simulation
-            <span aria-hidden="true">→</span>
-          </a>
-
-          <p>No credit card required</p>
-        </div>
       </div>
     </section>
   );

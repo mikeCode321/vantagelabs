@@ -2,8 +2,8 @@
 import "./styles/TutorialSteps.css";
 
 import { useState, useEffect } from "react";
-import { CheckingAccountForm , EditCheckingAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm} from "@/app/visuals/Accounts";
-import { SalaryForm , EditSalaryForm} from "@/app/visuals/Incomes";
+import { CheckingAccountForm , EditCheckingAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm} from "@/app/dashboard/Accounts";
+import { SalaryForm , EditSalaryForm} from "@/app/dashboard/Incomes";
 
 export type FilingStatus =
   | "single"

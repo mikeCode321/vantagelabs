@@ -1,6 +1,6 @@
 import "./styles/SimulationHighlights.css";
 
-import { formatCompactMoney, } from "@/app/visuals/FinancialOverviewContainer";
+import { formatCompactMoney, } from "@/app/dashboard/FinancialOverviewContainer";
 import { CircleDollarSign, TrendingUpDown, ArrowBigDownDash, BanknoteArrowUp } from 'lucide-react';
 
 

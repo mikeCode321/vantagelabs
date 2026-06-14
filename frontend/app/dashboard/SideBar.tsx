@@ -15,19 +15,19 @@ export default function SideBar({setIsFeedbackOpen}) {
 
             <div className="dash-sidebar-header">
                 <div className={`dash-logo${sidebarCollapsed ? " dash-logo-hidden" : ""}`}>
-                    <Image src="/temp/firephin-logo-no-bg.png" alt="Vantage" width={120} height={82} className="dash-logo-img" priority />
+                    <Image src="/temp/firephin-logo-no-bg.png" alt="Vantage" width={80} height={28} className="dash-logo-img" priority />
                 </div>
                 <button type="button" className="dash-collapse-btn" onClick={() => setSidebarCollapsed(c => !c)} aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
-                    <svg className={`dash-collapse-icon${sidebarCollapsed ? " dash-collapse-icon-flipped" : ""}`} width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" >
-                        <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+                    <svg className={`dash-collapse-icon${sidebarCollapsed ? " dash-collapse-icon-flipped" : ""}`} width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                 </button>
             </div>
 
             <nav className="dash-nav" aria-label="Dashboard navigation">
-                <Link href="/visuals" className="dash-nav-item" title="Testing Visuals">
+                <Link href="/dashboard" className="dash-nav-item" title="Dashboard">
                     <span className="dash-nav-icon"><PieChart /></span> 
-                    <span className="dash-nav-label">Testing Visuals</span>
+                    <span className="dash-nav-label">Dashboard</span>
                 </Link>
             </nav>
 
@@ -51,9 +51,9 @@ export default function SideBar({setIsFeedbackOpen}) {
             {mobileNavOpen && (
             <div className="dash-mobile-dropdown">
                 <nav className="dash-mobile-nav">
-                    <Link href="/visuals" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
+                    <Link href="/dashboard" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
                         <span className="dash-nav-icon"><PieChart /></span>
-                        <span className="dash-nav-label">Testing Visuals</span>
+                        <span className="dash-nav-label">Dashboard</span>
                     </Link>
                 </nav>
                 <button type="button" className="dash-feedback-card" onClick={() => { setIsFeedbackOpen(true); setMobileNavOpen(false); }} >

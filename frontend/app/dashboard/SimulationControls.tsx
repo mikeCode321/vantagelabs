@@ -1,6 +1,6 @@
 import "./styles/SimulationControls.css";
 import { useState } from "react";
-import { simulate } from "@/app/visuals/simulate";
+import { simulate } from "@/app/dashboard/simulate";
 import { Play, Trash2 } from "lucide-react";
 
 export default function SimulationControls({ state, setSimResult, activeTutorialStepId }) {

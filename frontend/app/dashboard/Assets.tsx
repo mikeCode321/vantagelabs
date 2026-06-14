@@ -1,9 +1,9 @@
 import './styles/Forms.css'
 
 import { useState } from "react";
-import { formatNumberWithCommas, handleNumberInput } from "@/app/visuals/utils";
-import { ID } from "@/app/visuals/Accounts";
-import { TimelineAgeFields, getValidatedTimelinePayload, } from "@/app/visuals/TimelineAgeFields";
+import { formatNumberWithCommas, handleNumberInput } from "@/app/dashboard/utils";
+import { ID } from "@/app/dashboard/Accounts";
+import { TimelineAgeFields, getValidatedTimelinePayload, } from "@/app/dashboard/TimelineAgeFields";
 import { Link, HousePlus, ChartBarIncreasing, Car, ChartBarDecreasing } from 'lucide-react';
 
 
@@ -780,11 +780,8 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
         </div>
 
         <div className="form-footer">
-          <button type="button" onClick={onClose} className="form-btn-secondary">
-            Cancel
-          </button>
           <button type="submit" className="form-btn-submit">
-            Save House
+            Update House
           </button>
         </div>
       </form>
@@ -1038,16 +1035,8 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
         </div>
 
         <div className="form-footer">
-          <button
-            type="button"
-            onClick={onClose}
-            className="form-btn-cancel"
-          >
-            Cancel
-          </button>
-
           <button type="submit" className="form-btn-submit">
-            Save Car
+            Update Car
           </button>
         </div>
       </form>

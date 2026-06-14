@@ -4,25 +4,25 @@ import "./styles/Dashboard.css";
 import { useState, useReducer, useEffect } from "react";
 import { Audio } from "react-loader-spinner";
 // import JsonView from "@uiw/react-json-view";
-// import UserAgeForm from "@/app/visuals/UserAgeForm";
+// import UserAgeForm from "@/app/dashboard/UserAgeForm";
 
-import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/visuals/Accounts";
-import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/visuals/Incomes";
-import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/visuals/Expenses";
-import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/visuals/Assets";
-import { TutorialOnboarding, TutorialStepId } from "@/app/visuals/TutorialSteps";
+import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, LiquidAccount, CheckingAccountForm, TaxableInvestmentAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm, EditTaxableInvestmentAccountForm, EditCheckingAccountForm } from "@/app/dashboard/Accounts";
+import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/dashboard/Incomes";
+import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/dashboard/Expenses";
+import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/dashboard/Assets";
+import { TutorialOnboarding, TutorialStepId } from "@/app/dashboard/TutorialSteps";
 
-import FeedbackFormModal from "@/app/visuals/FeedbackFormModal";
-import SimulationControls from "@/app/visuals/SimulationControls";
-import ToastBanner from "@/app/visuals/ToastBanner";
-import EntitiesContainer from "@/app/visuals/EntitiesContainer";
-import SimulationHighlightsCard from "@/app/visuals/SimulationHighlightsCard";
+import FeedbackFormModal from "@/app/dashboard/FeedbackFormModal";
+import SimulationControls from "@/app/dashboard/SimulationControls";
+import ToastBanner from "@/app/dashboard/ToastBanner";
+import EntitiesContainer from "@/app/dashboard/EntitiesContainer";
+import SimulationHighlightsCard from "@/app/dashboard/SimulationHighlightsCard";
 
-import SideBar from '@/app/visuals/SideBar';
-import FinancialOverviewContainer from "@/app/visuals/FinancialOverviewContainer";
-import GrowthChart from '@/app/visuals/GrowthChart';
+import SideBar from '@/app/dashboard/SideBar';
+import FinancialOverviewContainer from "@/app/dashboard/FinancialOverviewContainer";
+import GrowthChart from '@/app/dashboard/GrowthChart';
 
-import { formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/visuals/FinancialOverviewContainer";
+import { formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/dashboard/FinancialOverviewContainer";
 import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 
 type SimRequest = {
@@ -616,11 +616,11 @@ export default function Dashboard() {
       <FeedbackFormModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
 
       <main className="dash-main">
-        <header className="dash-topbar">
+        {/* <header className="dash-topbar">
           <div>
             <h1 className="dash-page-title">AdVantage on Finances</h1>
           </div>
-        </header>
+        </header> */}
         
         {/* <div style={{ display: "flex", justifyContent: "space-between"}}>
           <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre>

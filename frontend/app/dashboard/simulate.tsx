@@ -5,7 +5,7 @@
 import {
   TaxService,
   STANDARD_DEDUCTION,
-} from "@/app/visuals/tax";
+} from "@/app/dashboard/tax";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // INTEREST CALCULATOR

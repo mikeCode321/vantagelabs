@@ -59,6 +59,17 @@ export default function LandingDashboardShowcase() {
             className="landing-dashboard-image"
             priority
             />
+
+            <Image
+            src="/temp/dashboard-phone.png"
+            alt="Fire Phin mobile dashboard preview"
+            width={450}
+            height={900}
+            className="landing-dashboard-image landing-dashboard-image--mobile"
+            priority
+            />
+
+            
         </div>
 
         <div className="landing-showcase-actions">
@@ -88,6 +99,40 @@ export default function LandingDashboardShowcase() {
             className="landing-float-everything"
             />
 
+        </div>
+
+        <div className="landing-mobile-card-stack">
+        <LandingFloatingImage
+            src="/temp/ending-net-worth.png"
+            alt="Ending net worth projection"
+            width={360}
+            height={170}
+            className="landing-mobile-card"
+        />
+
+        <LandingFloatingImage
+            src="/temp/peak-net-worth.png"
+            alt="Peak net worth metric"
+            width={360}
+            height={170}
+            className="landing-mobile-card"
+        />
+
+        <LandingFloatingImage
+            src="/temp/max-drawdown.png"
+            alt="Max drawdown metric"
+            width={360}
+            height={170}
+            className="landing-mobile-card"
+        />
+
+        <LandingFloatingImage
+            src="/temp/overview.png"
+            alt="Everything in one place summary"
+            width={360}
+            height={520}
+            className="landing-mobile-card landing-mobile-card--overview"
+        />
         </div>
         </div>
 

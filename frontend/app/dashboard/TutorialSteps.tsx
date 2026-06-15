@@ -20,15 +20,61 @@ export type UserProfile = {
 
 export type TutorialMode = "full" | "skipped";
 
-const US_STATES = [
-  "California",
-  "New York",
-  "Michigan",
-  "Texas",
-  "Florida",
+export const US_STATES = [
+  { name: "Alabama", code: "AL" },
+  { name: "Alaska", code: "AK" },
+  { name: "Arizona", code: "AZ" },
+  { name: "Arkansas", code: "AR" },
+  { name: "California", code: "CA" },
+  { name: "Colorado", code: "CO" },
+  { name: "Connecticut", code: "CT" },
+  { name: "Delaware", code: "DE" },
+  { name: "Florida", code: "FL" },
+  { name: "Georgia", code: "GA" },
+  { name: "Hawaii", code: "HI" },
+  { name: "Idaho", code: "ID" },
+  { name: "Illinois", code: "IL" },
+  { name: "Indiana", code: "IN" },
+  { name: "Iowa", code: "IA" },
+  { name: "Kansas", code: "KS" },
+  { name: "Kentucky", code: "KY" },
+  { name: "Louisiana", code: "LA" },
+  { name: "Maine", code: "ME" },
+  { name: "Maryland", code: "MD" },
+  { name: "Massachusetts", code: "MA" },
+  { name: "Michigan", code: "MI" },
+  { name: "Minnesota", code: "MN" },
+  { name: "Mississippi", code: "MS" },
+  { name: "Missouri", code: "MO" },
+  { name: "Montana", code: "MT" },
+  { name: "Nebraska", code: "NE" },
+  { name: "Nevada", code: "NV" },
+  { name: "New Hampshire", code: "NH" },
+  { name: "New Jersey", code: "NJ" },
+  { name: "New Mexico", code: "NM" },
+  { name: "New York", code: "NY" },
+  { name: "North Carolina", code: "NC" },
+  { name: "North Dakota", code: "ND" },
+  { name: "Ohio", code: "OH" },
+  { name: "Oklahoma", code: "OK" },
+  { name: "Oregon", code: "OR" },
+  { name: "Pennsylvania", code: "PA" },
+  { name: "Rhode Island", code: "RI" },
+  { name: "South Carolina", code: "SC" },
+  { name: "South Dakota", code: "SD" },
+  { name: "Tennessee", code: "TN" },
+  { name: "Texas", code: "TX" },
+  { name: "Utah", code: "UT" },
+  { name: "Vermont", code: "VT" },
+  { name: "Virginia", code: "VA" },
+  { name: "Washington", code: "WA" },
+  { name: "West Virginia", code: "WV" },
+  { name: "Wisconsin", code: "WI" },
+  { name: "Wyoming", code: "WY" },
+  { name: "District of Columbia", code: "DC" },
 ];
 
-const FILING_STATUS_OPTIONS: { value: FilingStatus; label: string; description: string }[] = [
+export const FILING_STATUS_OPTIONS: { value: FilingStatus; label: string; description: string }[] = [
   {
     value: "single",
     label: "Single",
@@ -356,8 +402,8 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
             >
               <option value="">Select a state…</option>
               {US_STATES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
+                <option key={s.code} value={s.code}>
+                  {s.name}
                 </option>
               ))}
             </select>
@@ -388,7 +434,7 @@ function ProfileSetupScreen({ onBack, onComplete, mode }) {
   );
 }
 
-export function TutorialOnboarding({ state, dispatch, onComplete, onProfileComplete, onStepChange, onToast }) {
+export function TutorialOnboarding({ state, dispatch, onComplete, onStepChange, onToast }) {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
     const step = tutorialSteps[currentStepIndex];
@@ -399,6 +445,19 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
     const back = () => setCurrentStepIndex(i => Math.max(i - 1, 0));
     const finish = () => onComplete();
     const skip = () => onComplete();
+
+    const handleProfileComplete = (profile, mode) => {
+      dispatch({
+        type: "UPDATE_USER_PROFILE",
+        payload: {
+          user_start_age: profile.current_age,
+          user_retirement_age: profile.retirement_age,
+          filing_status: profile.filing_status,
+          state_of_residence: profile.state_of_residence,
+        },
+      });
+      if (mode === "skipped") onComplete();
+    };
 
     useEffect(() => {
       onStepChange?.(step.id);
@@ -444,7 +503,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onProfileCompl
               <ProfileSetupScreen
                 onBack={back}
                 onComplete={(profile) => {
-                  onProfileComplete(profile, "full");
+                  handleProfileComplete(profile, "full");
                   next();
                 }}
                 mode="full"

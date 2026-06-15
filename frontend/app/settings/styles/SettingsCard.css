@@ -1,0 +1,95 @@
+
+.settings-card {
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 30px var(--shadow-card-soft);
+  padding: 24px;
+}
+
+.settings-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.settings-card-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: var(--accent-muted);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+}
+
+.settings-card-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.settings-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-card-title {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+
+.settings-card-desc {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.settings-card-body {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--accent-border);
+}
+
+.settings-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--accent-border);
+}
+
+/* ─── Coming soon / disabled state ────────────────── */
+
+.settings-card-disabled .settings-card-body,
+.settings-card-disabled .settings-card-footer {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(0.3);
+}
+
+.settings-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-pill);
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .settings-card {
+    padding: 18px;
+  }
+}

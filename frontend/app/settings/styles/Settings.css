@@ -1,0 +1,81 @@
+
+.settings-root {
+  display: flex;
+  height: 100dvh;
+  overflow: hidden;
+  font-family: var(--font-primary), monospace;
+}
+
+.settings-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+  height: 100dvh;
+  position: relative;
+}
+
+.settings-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-header {
+  margin-bottom: 4px;
+}
+
+.settings-header h1 {
+  margin: 0 0 4px 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+
+.settings-header p {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 860px) {
+  .settings-root {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .settings-main {
+    height: auto;
+    overflow-y: visible;
+  }
+
+  .settings-page {
+    padding: 24px 16px 48px;
+    gap: 16px;
+  }
+
+  .settings-card {
+    padding: 18px;
+  }
+
+  .settings-card-header {
+    gap: 12px;
+  }
+
+  .settings-card-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-page {
+    padding: 20px 16px 48px;
+  }
+}

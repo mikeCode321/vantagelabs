@@ -1,7 +1,7 @@
 "use client";
 import "./styles/Dashboard.css";
 
-import { useState, useReducer, useEffect } from "react";
+import { useState, useReducer, useEffect, useRef } from "react";
 import { Audio } from "react-loader-spinner";
 // import JsonView from "@uiw/react-json-view";
 // import UserAgeForm from "@/app/dashboard/UserAgeForm";
@@ -10,9 +10,8 @@ import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount, L
 import { SalaryIncome, HourlyWageIncome, SideHustleIncome, IncomeSource, SalaryForm, HourlyWageForm, SideHustleForm, EditSalaryForm, EditHourlyWageForm, EditSideHustleForm } from "@/app/dashboard/Incomes";
 import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, ExpenseSource, LivingExpensesForm, RentExpenseForm, DebtExpenseForm, HouseLoanExpenseForm, CarLoanExpenseForm, EditHouseLoanExpenseForm, EditCarLoanExpenseForm, EditLivingExpensesForm, EditRentExpenseForm, EditDebtExpenseForm } from "@/app/dashboard/Expenses";
 import { HouseAsset, CarAsset, AssetSource, HouseAssetForm, CarAssetForm, EditHouseAssetForm, EditCarAssetForm } from "@/app/dashboard/Assets";
-import { TutorialOnboarding, TutorialStepId } from "@/app/dashboard/TutorialSteps";
+import { TutorialOnboarding, TutorialStepId, FilingStatus } from "@/app/dashboard/TutorialSteps";
 
-import FeedbackFormModal from "@/app/dashboard/FeedbackFormModal";
 import SimulationControls from "@/app/dashboard/SimulationControls";
 import ToastBanner from "@/app/dashboard/ToastBanner";
 import EntitiesContainer from "@/app/dashboard/EntitiesContainer";
@@ -25,35 +24,10 @@ import GrowthChart from '@/app/dashboard/GrowthChart';
 import { formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/dashboard/FinancialOverviewContainer";
 import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 
-type SimRequest = {
-  user_start_age: number;
-  sim_end_age: number;
-  user_retirement_age: number;
-  accounts: {
-    checking: CheckingAccount[];
-    taxable_investments: TaxableInvestmentAccount[];
-    employer_retirement: EmployerRetirementAccount[];
-  }
-  incomes: {
-    salary: SalaryIncome[];
-    hourly: HourlyWageIncome[];
-    side: SideHustleIncome[];
-  };
-  expenses: {
-    living: LivingExpense[]; 
-    rent: RentExpense[];
-    car_loan: CarLoanExpense[];
-    house_loan: HouseLoanExpense[];
-    debt: DebtExpense[];
-  };
-  assets: {
-    house: HouseAsset[];
-    car: CarAsset[];
-  };
-};
+import { SimRequest, INITIAL_STATE, ENABLE_LOCAL_STORAGE_PERSISTENCE, loadState, saveState } from "./utils";
+
 
 type Action =
-  | { type: "HYDRATE_FROM_LOCAL_STORAGE"; payload: SimRequest }
   | { type: "ADD_ACCOUNT"; payload: LiquidAccount }
   | { type: "UPDATE_ACCOUNT"; payload: LiquidAccount }
   | { type: "DELETE_ACCOUNT"; payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" } }
@@ -67,13 +41,10 @@ type Action =
   | { type: "UPDATE_ASSET"; payload: AssetSource }
   | { type: "DELETE_ASSET"; payload: { id: string; variant: "house" | "car" } }
   | { type: "UPDATE_SIMULATION_BOUNDS"; payload: { user_start_age: number; user_retirement_age: number } }
+  | { type: "UPDATE_USER_PROFILE"; payload: { user_start_age: number; user_retirement_age: number; filing_status: FilingStatus; state_of_residence: string } }
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
-
-    case "HYDRATE_FROM_LOCAL_STORAGE": {
-      return action.payload
-    }
 
     case "ADD_ACCOUNT": {
       const account = action.payload;
@@ -228,42 +199,24 @@ function simReducer(state: SimRequest, action: Action): SimRequest {
       };
     }
 
+    case "UPDATE_USER_PROFILE": {
+      const { user_start_age, user_retirement_age, filing_status, state_of_residence } = action.payload;
+      return {
+        ...state,
+        user_start_age,
+        user_retirement_age,
+        filing_status,
+        state_of_residence,
+        sim_end_age: user_start_age + 100,
+      };
+    }
+
     default:
       return state;
   }
 }
 
-const INITIAL_STATE: SimRequest = {
-  user_start_age: 25,
-  sim_end_age: 125, // TODO: rename to sim_end_age
-  user_retirement_age: 65,
-
-  accounts: {
-    checking: [],
-    taxable_investments: [],
-    employer_retirement: [],
-  },
-  incomes: {
-    salary: [],
-    hourly: [],
-    side: [],
-  },
-  expenses: {
-    living: [],
-    rent: [],
-    house_loan: [],
-    car_loan: [],
-    debt: [],
-  },
-  assets: {
-    house: [],
-    car: [],
-  },
-};
-// our sim_request
-const LOCAL_STORAGE_KEY = "sim_request";
 const SIM_RESULT_KEY = "sim_result";
-const ENABLE_LOCAL_STORAGE_PERSISTENCE = true;
 
 const ENABLE_TUTORIAL = true;
 const TUTORIAL_COMPLETED_KEY = "tutorial_v1_completed";
@@ -276,18 +229,6 @@ function loadTutorialCompleted() {
     return saved === "true";
   } catch {
     return false;
-  }
-}
-
-function loadState(){
-  if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return null;
-  if (typeof window === "undefined") return null;
-  try {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return saved ? (JSON.parse(saved) as SimRequest) : null;
-  } catch {
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-    return null;
   }
 }
 
@@ -317,16 +258,6 @@ function saveSimResult(result: unknown) {
     localStorage.setItem(SIM_RESULT_KEY, JSON.stringify(result));
   } catch (error) {
     console.error("Failed to save sim result:", error);
-  }
-}
-
-function saveState(state: SimRequest) {
-  if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return;
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
-  } catch (error) {
-    console.error("Failed to save simulation request:", error);
   }
 }
 
@@ -456,12 +387,14 @@ const ENTITY_CONFIG = {
 
 export default function Dashboard() {
   // const sim = useSimulation();
-  const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
+  const [state, dispatch] = useReducer(simReducer, undefined, () => {
+    return loadState() ?? INITIAL_STATE;
+  });
   const [simResult, setSimResult] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [isSimLoading, setIsSimLoading] = useState(true);
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-
+  const isHydrated = useRef(false); 
+  
   //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
   const [activeTutorialStepId, setActiveTutorialStepId] = useState<TutorialStepId | null>(null);
@@ -561,14 +494,8 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    const saved = loadState();
-    if (saved) {
-      dispatch({ type: "HYDRATE_FROM_LOCAL_STORAGE", payload: saved });
-    }
-
-    const savedResult = loadSimResult();
-
     const timer = setTimeout(() => {
+      const savedResult = loadSimResult();
       if (savedResult) setSimResult(savedResult);
       setIsSimLoading(false);
       const tutorialCompleted = loadTutorialCompleted();
@@ -592,7 +519,7 @@ export default function Dashboard() {
     <div className="dash-root" data-active-tutorial-step={activeTutorialStepId ?? ""}>
       {isSimLoading && ENABLE_LOCAL_STORAGE_PERSISTENCE && (
         <div className="dash-loading-overlay">
-          <Audio height="100" width="100" color="#6d28d9" ariaLabel="audio-loading" visible={true} />
+          <Audio height="100" width="100" color="var(--accent)" ariaLabel="audio-loading" visible={true} />
         </div>
       )}
 
@@ -603,19 +530,12 @@ export default function Dashboard() {
           onComplete={handleTutorialComplete}
           onToast={showToast}
           onStepChange={setActiveTutorialStepId}
-          onProfileComplete={(profile, mode) => {
-            dispatch({
-              type: "UPDATE_SIMULATION_BOUNDS", payload: {user_start_age: profile.current_age,user_retirement_age: profile.retirement_age}
-            });
-            if (mode === "skipped") handleTutorialComplete();
-          }}
         />
       )}
 
-      <SideBar setIsFeedbackOpen={setIsFeedbackOpen} />
-      <FeedbackFormModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
+      <SideBar />
 
-      <main className="dash-main">
+      <div className="dash-main">
         {/* <header className="dash-topbar">
           <div>
             <h1 className="dash-page-title">AdVantage on Finances</h1>
@@ -651,7 +571,7 @@ export default function Dashboard() {
 
         <EntitiesContainer state={state} dispatch={dispatch} onToast={showToast} tutorialStepId={activeTutorialStepId} ENTITY_CONFIG={ENTITY_CONFIG} />
         <ToastBanner toasts={toasts} setToasts={setToasts} />
-      </main>
+      </div>
     </div>
   );
 }

@@ -105,6 +105,7 @@
 body {
   font-family: var(--font-primary), sans-serif;
   color: var(--text-body);
+  margin: 0;
 }
 
 /* ─── Global input zoom fix (iOS Safari) ─────────────── */

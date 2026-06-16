@@ -32,12 +32,11 @@ export default function SideBar() {
                         <span className="dash-nav-icon"><PieChart /></span> 
                         <span className="dash-nav-label">Dashboard</span>
                     </Link>
+                    <Link href="/settings" className="dash-nav-item" title="Settings">
+                        <span className="dash-nav-icon"><Settings /></span>
+                        <span className="dash-nav-label">Settings</span>
+                    </Link>
                 </nav>
-
-                <Link href="/settings" className="dash-nav-item" title="Settings">
-                    <span className="dash-nav-icon"><Settings /></span>
-                    <span className="dash-nav-label">Settings</span>
-                </Link>
 
                 <button type="button" className="dash-feedback-card" onClick={() => setIsFeedbackOpen(true)} title="Leave feedback">
                     <span className="dash-feedback-icon">✦</span>
@@ -63,13 +62,12 @@ export default function SideBar() {
                             <span className="dash-nav-icon"><PieChart /></span>
                             <span className="dash-nav-label">Dashboard</span>
                         </Link>
+                        <Link href="/settings" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
+                            <span className="dash-nav-icon"><Settings /></span>
+                            <span className="dash-nav-label">Settings</span>
+                        </Link>
                     </nav>
 
-                    <Link href="/settings" className="dash-nav-item" onClick={() => setMobileNavOpen(false)}>
-                        <span className="dash-nav-icon"><Settings /></span>
-                        <span className="dash-nav-label">Settings</span>
-                    </Link>
-                    
                     <button type="button" className="dash-feedback-card" onClick={() => { setIsFeedbackOpen(true); setMobileNavOpen(false); }} >
                         <span className="dash-feedback-icon">✦</span>
                         <span className="dash-feedback-copy">

@@ -393,7 +393,7 @@ export default function Dashboard() {
   const [simResult, setSimResult] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [isSimLoading, setIsSimLoading] = useState(true);
-  const isHydrated = useRef(false); 
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);  
   
   //tutorial stuff
   const [showTutorial, setShowTutorial] = useState(false);
@@ -411,23 +411,24 @@ export default function Dashboard() {
   };
 
   const simData = Array.isArray(simResult) ? null : simResult;
-
   const firstYear = simData?.year_results[0];
-  const lastYear  = simData?.year_results[simData.year_results.length - 1];
+  const selectedYearData = simResult?.year_results?.find(yr => yr.year === selectedYear)
+    ?? simResult?.year_results?.[simResult.year_results.length - 1]
+    ?? null;
 
-  const startingNetWorth = simData?.metrics.starting_net_worth ?? 0;
-  const endingNetWorth   = simData?.metrics.ending_net_worth   ?? 0;
+  const startingNetWorth    = simData?.metrics.starting_net_worth ?? 0;
+  const endingNetWorth      = selectedYearData?.net_worth ?? 0;
 
-  const startingCashFlow = firstYear?.income_earned.net ?? 0;
-  const endingCashFlow   = lastYear?.income_earned.net  ?? 0;
+  const startingCashFlow    = firstYear?.income_earned.net ?? 0;
+  const endingCashFlow      = selectedYearData?.income_earned.net ?? 0;
 
-  const startingAssets   = firstYear?.assets.total_value ?? 0;
-  const totalAssets      = lastYear?.assets.total_value  ?? 0;
+  const startingAssets      = firstYear?.assets.total_value ?? 0;
+  const totalAssets         = selectedYearData?.assets.total_value ?? 0;
 
   const startingLiabilities = (firstYear?.expenses.total_monthly ?? 0) * 12;
-  const totalLiabilities    = (lastYear?.expenses.total_monthly  ?? 0) * 12;
+  const totalLiabilities    = (selectedYearData?.expenses.total_monthly ?? 0) * 12;
 
-  const annualCashFlow = endingCashFlow - totalLiabilities;
+  const annualCashFlow      = endingCashFlow - totalLiabilities;
 
   const netWorthChange  = getPercentChange(startingNetWorth,   endingNetWorth);
   const cashFlowChange  = getPercentChange(startingCashFlow,   endingCashFlow);
@@ -452,8 +453,8 @@ export default function Dashboard() {
       value: formatCompactMoney(annualCashFlow),
       change: formatSignedPercent(cashFlowChange),
       changeLabel: "vs first year",
-      meta: lastYear
-        ? `Inflows ${formatCompactMoney(lastYear.income_earned.gross)} · Taxes ${formatCompactMoney(lastYear.income_earned.taxes_paid)}`
+      meta: selectedYearData
+        ? `Inflows ${formatCompactMoney(selectedYearData.income_earned.gross)} · Taxes ${formatCompactMoney(selectedYearData.income_earned.taxes_paid)}`
         : "Run simulation to see data",
       icon: <CircleDollarSign/>,
       tone: "green",
@@ -465,8 +466,8 @@ export default function Dashboard() {
       value: formatCompactMoney(totalAssets),
       change: formatSignedPercent(assetChange),
       changeLabel: "vs start",
-      meta: lastYear
-        ? `${lastYear.assets.assets.length} assets`
+      meta: selectedYearData
+        ? `${selectedYearData.assets.assets.length} assets`
         : "Run simulation to see data",
       icon: <ChartPie/>,
       tone: "blue",
@@ -478,8 +479,8 @@ export default function Dashboard() {
       value: formatCompactMoney(totalLiabilities),
       change: formatSignedPercent(liabilityChange),
       changeLabel: "vs start",
-      meta: lastYear
-        ? `${lastYear.expenses.expenses.length} liabilities`
+      meta: selectedYearData
+        ? `${selectedYearData.expenses.expenses.length} liabilities`
         : "Run simulation to see data",
       icon: <HandCoins/>,
       tone: "orange",
@@ -559,8 +560,8 @@ export default function Dashboard() {
         <section className="simulation-results-grid">
           <GrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />
           <div>
-            <SimulationHighlightsCard data={simData} tutorialActive={activeTutorialStepId === "results"}/>
-            <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} />
+            <SimulationHighlightsCard data={simData} tutorialActive={activeTutorialStepId === "results"} selectedYearData={selectedYearData}/>
+            <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} simResult={simResult} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
           </div>
         </section>
 

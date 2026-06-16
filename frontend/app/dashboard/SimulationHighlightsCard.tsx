@@ -73,39 +73,41 @@ function SimulationHighlightRow({ item }: { item: HighlightItem }) {
   );
 }
   
-export default function SimulationHighlightsCard({ data, tutorialActive = false }) {
-    const metrics = data?.metrics;
-    const yearResults = data?.year_results;
+export default function SimulationHighlightsCard({ data, tutorialActive = false, selectedYearData = null }) {
+  const metrics = data?.metrics;
+  const yearResults = data?.year_results;
 
-    const finalYear = yearResults && yearResults.length > 0 ? yearResults[yearResults.length - 1] : null;
+  const totalYears = metrics?.total_years ?? 0;
+  const startingNetWorth = metrics?.starting_net_worth ?? 0;
 
-    const totalYears = metrics?.total_years ?? 0;
+  // Use selectedYearData if available, otherwise fall back to final year
+  const displayYear = selectedYearData ?? (yearResults?.[yearResults.length - 1] ?? null);
+  const displayNetWorth = selectedYearData?.net_worth ?? metrics?.ending_net_worth ?? 0;
+  const displayYearsElapsed = selectedYearData && yearResults
+    ? yearResults.findIndex(yr => yr.year === selectedYearData.year) + 1
+    : totalYears;
 
-    const endingNetWorth = metrics?.ending_net_worth ?? 0;
-    const startingNetWorth = metrics?.starting_net_worth ?? 0;
+  const cagr = data && displayYearsElapsed > 0
+    ? getCagr(startingNetWorth, displayNetWorth, displayYearsElapsed)
+    : 0;
 
-    const cagr = data && totalYears > 0 ? getCagr(startingNetWorth, endingNetWorth, totalYears) : 0;
-
-    const lowestCashBalance = metrics?.lowest_cash_balance ?? 0;
-
-    const isCashDrawdown = data && lowestCashBalance < startingNetWorth;
-
-    const drawdownAmount = lowestCashBalance - startingNetWorth;
-
+  const lowestCashBalance = metrics?.lowest_cash_balance ?? 0;
+  const isCashDrawdown = data && lowestCashBalance < startingNetWorth;
+  const drawdownAmount = lowestCashBalance - startingNetWorth;
   
   const highlights: HighlightItem[] = [
     {
       id: "ending-net-worth",
       label: "Ending Net Worth",
-      sublabel: finalYear ? `In year ${finalYear.age} (${finalYear.year})` : "Run a simulation",
-      value: data ? formatCompactMoney(endingNetWorth) : "-",
+      sublabel: displayYear ? `At age ${displayYear.age} (${displayYear.year})` : "Run a simulation",
+      value: data ? formatCompactMoney(displayNetWorth) : "-",
       icon: <TrendingUpDown />,
       tone: "purple",
     },
     {
       id: "cagr-net-worth",
       label: "CAGR (Net Worth)",
-      sublabel: "Annualized growth rate",
+      sublabel: displayYear ? `Over ${displayYearsElapsed} years` : "Annualized growth rate",
       value: data ? `${cagr.toFixed(1)}%` : "-",
       icon: <CircleDollarSign/>,
       tone: "green",

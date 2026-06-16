@@ -1,0 +1,104 @@
+
+.sim-controls-slider-wrap {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sim-controls-slider-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.sim-controls-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-label);
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.sim-controls-slider {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.sim-controls {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-lg);
+  background: var(--off-white);
+}
+
+.sim-controls-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--success);
+  font-family: var(--font-primary), monospace;
+  font-weight: 600;
+}
+
+.sim-controls-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--success);
+}
+
+.sim-controls-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sim-controls-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  font-size: var(--text-xs);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-family: var(--font-primary), monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.sim-controls-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.sim-controls-btn-run {
+  flex: 1;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--white);
+  border-color: var(--accent);
+}
+
+.sim-controls-btn-run:hover:not(:disabled) {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.sim-controls-btn-clear {
+  background: var(--white);
+  color: var(--text-secondary);
+  border-color: var(--border-soft);
+}
+
+.sim-controls-btn-clear:hover:not(:disabled) {
+  color: var(--error);
+  border-color: var(--error-border);
+  background: var(--error-bg);
+}

@@ -1,0 +1,426 @@
+/* =========================
+   Landing Dashboard Showcase
+========================= */
+
+.landing-showcase {
+  position: relative;
+  padding: clamp(3rem, 5vw, 4rem) clamp(1rem, 2vw, 1.75rem) clamp(4rem, 6vw, 5rem);
+  background:
+    radial-gradient(circle at 18% 48%, var(--accent-muted), transparent 34%),
+    radial-gradient(circle at 84% 48%, var(--secondary-muted), transparent 30%),
+    var(--white);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  overflow: hidden;
+}
+
+.landing-showcase-inner {
+  width: min(100%, 92rem);
+  margin: 0 auto;
+}
+
+.landing-showcase-copy {
+  max-width: 52rem;
+  margin: 0 auto clamp(1rem, 2vw, 1.6rem);
+  text-align: center;
+}
+
+.landing-title {
+  margin: 0;
+  color: var(--primary);
+  font-size: clamp(3rem, 5vw, 3.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.065em;
+  font-weight: 900;
+}
+
+.landing-title span {
+  display: block;
+  color: var(--secondary);
+}
+
+.landing-subtitle {
+  max-width: 45rem;
+  margin: clamp(1rem, 1.5vw, 1.25rem) auto 0;
+  color: var(--text-secondary);
+  font-size: clamp(1rem, 1.35vw, 1.25rem);
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* =========================
+   Stage Layout
+========================= */
+
+.landing-showcase-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns:
+    clamp(17rem, 22vw, 24rem)
+    minmax(34rem, 44rem)
+    clamp(17rem, 22vw, 24rem);
+  align-items: start;
+  justify-content: center;
+  margin-top: clamp(0.5rem, 1vw, 1rem);
+}
+
+.landing-showcase-rail {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.landing-showcase-rail--left {
+    padding-top: 0;
+    transform: translateY(-8.5rem);
+  }
+  
+  .landing-showcase-rail--right {
+    padding-top: 0;
+    transform: translateY(-8rem);
+  }
+
+.landing-showcase-center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: clamp(2.5rem, 4vw, 4rem);
+}
+
+/* =========================
+   Background Orbs
+========================= */
+
+.landing-orb {
+  position: absolute;
+  border-radius: var(--radius-pill);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing-orb--left {
+  width: clamp(22rem, 40vw, 38rem);
+  height: clamp(22rem, 40vw, 38rem);
+  left: 4%;
+  top: 28%;
+  background: var(--accent-muted);
+}
+
+.landing-orb--right {
+  width: clamp(18rem, 30vw, 28rem);
+  height: clamp(18rem, 30vw, 28rem);
+  right: 5%;
+  top: 40%;
+  background: var(--secondary-muted);
+}
+
+/* =========================
+   Dashboard Screenshot
+========================= */
+
+.landing-dashboard-frame {
+    width: 100%;
+    max-width: 48rem;
+    border-radius: clamp(1rem, 2vw, 1.5rem);
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+    box-shadow:
+      0 1.75rem 5rem rgba(15, 23, 42, 0.12),
+      0 0 0 1px rgba(255, 255, 255, 0.8);
+    overflow: hidden;
+  }
+  
+  .landing-dashboard-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+
+/* =========================
+   Floating Screenshot Images
+========================= */
+
+.landing-floating-image {
+  width: 100%;
+  pointer-events: none;
+}
+
+.landing-floating-image-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: clamp(0.75rem, 1.4vw, 1.25rem);
+  filter: drop-shadow(0 20px 42px rgba(15, 23, 42, 0.12));
+}
+
+.landing-float-ending {
+  transform: rotate(3deg);
+}
+
+.landing-float-cagr {
+  transform: rotate(0deg);
+}
+
+.landing-float-peak {
+  transform: rotate(-3deg);
+  margin-left: 0.5rem;
+}
+
+.landing-float-drawdown {
+  transform: rotate(-3deg);
+}
+
+.landing-float-everything {
+  width: min(100%, 19rem);
+  align-self: center;
+  transform: rotate(0deg);
+}
+
+/* =========================
+   Mascot
+========================= */
+
+.landing-mascot {
+  width: clamp(7rem, 10vw, 9rem);
+  height: auto;
+  align-self: center;
+  margin-top: clamp(-0.5rem, -1vw, -0.25rem);
+  filter: drop-shadow(0 1.1rem 2.25rem rgba(13, 110, 253, 0.16));
+}
+
+/* =========================
+   CTA
+========================= */
+
+.landing-showcase-actions {
+    margin-top: clamp(1.25rem, 2vw, 1.75rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+  
+  .landing-primary-btn {
+    min-height: 3.625rem;
+    padding: 0 2.125rem;
+    border-radius: var(--radius-lg);
+    background: var(--accent);
+    color: var(--white);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.125rem;
+    font-size: 1.0625rem;
+    font-weight: 900;
+    box-shadow: 0 1.125rem 2.375rem rgba(13, 110, 253, 0.22);
+    transition:
+      background 160ms ease,
+      transform 160ms ease,
+      box-shadow 160ms ease;
+  }
+  
+  .landing-primary-btn:hover {
+    background: var(--accent-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 1.375rem 3rem rgba(13, 110, 253, 0.28);
+  }
+
+.landing-primary-btn:active {
+  transform: translateY(0);
+}
+
+.landing-showcase-actions p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.landing-dashboard-image--mobile {
+    display: none;
+  }
+  
+  .landing-mobile-card-stack {
+    display: none;
+  }
+
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 700px) {
+    .landing-showcase {
+      padding: 2.5rem 1rem 3.375rem;
+    }
+  
+    .landing-showcase-copy {
+      margin-bottom: 1.25rem;
+    }
+  
+    .landing-title {
+      font-size: clamp(2.35rem, 12vw, 2rem);
+      line-height: 1;
+      letter-spacing: -0.06em;
+    }
+  
+    .landing-subtitle {
+      max-width: 24rem;
+      font-size: 0.8rem;
+      line-height: 1.55;
+    }
+  
+    /* Two-column: left=dashboard+CTA, right=card stack */
+    .landing-showcase-stage {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 9.5rem;
+      align-items: start;
+      gap: 0 0.5rem;
+    }
+  
+    /* Hide desktop rails */
+    .landing-showcase-rail--left,
+    .landing-showcase-rail--right {
+      display: none;
+    }
+  
+    /* Center column = left column on mobile */
+    .landing-showcase-center {
+      width: 100%;
+      padding-top: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .landing-dashboard-frame {
+      width: 100%;
+      max-width: none;
+      border-radius: 1.05rem;
+    }
+  
+    .landing-dashboard-image {
+      display: none;
+    }
+  
+    .landing-dashboard-image--mobile {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  
+    /* CTA sits below the dashboard frame */
+    .landing-showcase-actions {
+      width: 100%;
+      margin-top: 0.75rem;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .landing-primary-btn {
+      width: 100%;
+      justify-content: center;
+      min-height: 3.25rem;
+      padding: 0 1rem;
+      font-size: 0.9rem;
+      border-radius: 1rem;
+    }
+  
+    .landing-showcase-actions p {
+      font-size: 0.8rem;
+      text-align: center;
+    }
+  
+    /* Card stack — right column */
+    .landing-mobile-card-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      align-self: start;
+      width: 100%;
+    }
+  
+    /*
+      Each stat card wrapper: fixed height so we can crop
+      the PNG's dead space with object-fit + object-position
+    */
+    .landing-mobile-card-stack .landing-floating-image {
+      width: 100%;
+      height: 5.5rem;
+      border-radius: 0.85rem;
+      overflow: hidden;
+      background: var(--white);
+      box-shadow: 0 0.5rem 1.2rem rgba(15, 23, 42, 0.08);
+      line-height: 0;
+    }
+  
+    .landing-mobile-card-stack .landing-floating-image-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /*
+        This is the key fix for dead space.
+        "center top" crops from the top center of the PNG content.
+        If your cards have padding at the top, shift down: "center 15%"
+        If padding is at the bottom, shift up: "center 85%"
+        Tune per card using the sibling selectors below.
+      */
+      object-position: center 20%;
+      display: block;
+      border-radius: 0.85rem;
+      filter: none;
+    }
+  
+    /* Per-card position tuning — adjust % until content is centered */
+    .landing-mobile-card-stack .landing-floating-image:nth-child(1) .landing-floating-image-img {
+      object-position: center 15%;
+    }
+    .landing-mobile-card-stack .landing-floating-image:nth-child(2) .landing-floating-image-img {
+      object-position: center 30%;
+    }
+    .landing-mobile-card-stack .landing-floating-image:nth-child(3) .landing-floating-image-img {
+      object-position: center 30%;
+    }
+  
+    /* Overview card — taller, shows more content */
+    .landing-mobile-card--overview {
+      height: 13rem !important;
+    }
+  
+    .landing-mobile-card--overview .landing-floating-image-img {
+      object-position: center top;
+    }
+  
+    /* Remove transforms on mobile — no rotation */
+    .landing-mobile-card {
+      transform: none;
+      margin-left: 0;
+    }
+  
+    /* Hide mascot */
+    .landing-mascot {
+      display: none;
+    }
+  
+    /* Orbs */
+    .landing-orb--left {
+      width: 22rem;
+      height: 22rem;
+      left: -11rem;
+      top: 20rem;
+    }
+  
+    .landing-orb--right {
+      width: 20rem;
+      height: 20rem;
+      right: -10rem;
+      top: 36rem;
+    }
+  }

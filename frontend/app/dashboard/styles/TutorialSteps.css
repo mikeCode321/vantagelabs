@@ -1,0 +1,1248 @@
+/* OVERLAY */
+.ts-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  animation: ts-fade-in 0.2s ease;
+  z-index: 1000;
+}
+
+@keyframes ts-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* MODAL SHELL */
+.ts-modal {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  box-shadow:
+    0 0 0 1px var(--shadow-card-ring),
+    0 24px 64px var(--shadow-overlay);
+  animation: ts-slide-up 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  scrollbar-width: none;
+}
+
+.ts-modal::-webkit-scrollbar {
+  display: none;
+}
+
+.ts-tutorial-target {
+  position: relative;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 0 0 3px rgba(109, 40, 217, 0.45),
+    0 0 0 7px var(--accent-muted) !important;
+  transition: box-shadow 0.3s ease;
+}
+
+@keyframes ts-slide-up {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* ─────────────────────────────────────────────
+   WELCOME SCREEN
+───────────────────────────────────────────── */
+
+.ts-welcome {
+  border: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 48px 40px 40px;
+  background: radial-gradient(circle at 50% 0%, var(--accent-muted) 0%, transparent 70%), var(--white);
+  border-radius: var(--radius-lg);
+}
+
+.ts-welcome-badge {
+  color: var(--accent);
+  background: var(--accent-muted);
+  border: 1px solid var(--accent-border);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  border-radius: 2px;
+  padding: 4px 10px;
+  margin-bottom: 20px;
+  font-family: var(--font-primary), monospace;
+  text-transform: uppercase;
+}
+
+.ts-welcome-wordmark {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--primary-mid);
+  line-height: 1;
+  margin-bottom: 8px;
+  font-family: var(--font-serif);
+}
+
+.ts-welcome-wordmark-v {
+  color: var(--accent);
+}
+
+.ts-welcome-tagline {
+  font-size: var(--text-xs);
+  color: var(--accent);
+  margin: 0 0 24px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: var(--font-primary), monospace;
+}
+
+.ts-welcome-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--accent-border);
+  margin-bottom: 24px;
+}
+
+.ts-welcome-body {
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 400px;
+  margin: 0 0 24px;
+  font-family: var(--font-primary), monospace;
+}
+
+.ts-welcome-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+/* ─────────────────────────────────────────────
+   PROFILE SETUP SCREEN
+───────────────────────────────────────────── */
+
+.ts-profile {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 40px 40px;
+}
+
+.ts-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--accent-border);
+}
+
+.ts-profile-step-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-family: var(--font-primary), monospace;
+}
+
+.ts-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+  font-family: var(--font-primary), monospace;
+  letter-spacing: 0.06em;
+}
+
+.ts-back-btn:hover {
+  color: var(--primary-mid);
+}
+
+.ts-profile-title-block {
+  margin-bottom: 28px;
+}
+
+.ts-profile-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--primary-mid);
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+  font-family: var(--font-primary), monospace;
+}
+
+.ts-profile-subtitle {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  font-family: var(--font-primary), monospace;
+}
+
+/* FORM */
+.ts-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+/* FIELD */
+.ts-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ts-field-error .ts-input,
+.ts-field-error .ts-select {
+  border-color: rgba(220, 38, 38, 0.5);
+  background: rgba(220, 38, 38, 0.02);
+}
+
+.ts-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-primary), monospace;
+}
+
+.ts-label-hint {
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.ts-input-wrapper {
+  position: relative;
+}
+
+.ts-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--white);
+  border: 1px solid var(--accent-border);
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-size: var(--text-xs);
+  color: var(--primary-mid);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: var(--font-primary), monospace;
+  -moz-appearance: textfield;
+}
+
+.ts-input::placeholder {
+  color: var(--text-muted);
+}
+
+.ts-input:hover {
+  border-color: rgba(109, 40, 217, 0.3);
+}
+
+.ts-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-muted);
+}
+
+.ts-field-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.ts-field-row > .ts-field {
+  flex: 1 1 0;
+  width: 100%;
+}
+
+.ts-field-row-sep {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 42px;
+  line-height: 38px;
+}
+
+.ts-field-row-errors {
+  display: flex;
+  gap: 12px;
+}
+
+.ts-field-row-errors > .ts-field-error {
+  flex: 1 1 0;
+  min-height: 1em;
+}
+
+.ts-field-error {
+  font-size: var(--text-xs);
+  color: var(--error);
+  font-family: var(--font-primary), monospace;
+}
+
+.ts-field-hint {
+  font-size: var(--text-xs);
+  color: var(--accent);
+  font-family: var(--font-primary), monospace;
+}
+
+/* FILING STATUS GRID */
+.ts-filing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.ts-filing-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 10px 12px;
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.ts-filing-card:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-muted);
+}
+
+.ts-filing-card-selected {
+  border-color: var(--accent);
+  background: var(--accent-muted);
+  box-shadow: 0 0 0 1px var(--accent-border);
+}
+
+.ts-filing-card-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--primary-mid);
+  font-family: var(--font-primary), monospace;
+  letter-spacing: 0.02em;
+  -webkit-text-fill-color: var(--primary-mid);
+}
+
+.ts-filing-card-desc {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: 1.4;
+  font-family: var(--font-primary), monospace;
+  -webkit-text-fill-color: var(--text-secondary);
+}
+
+.ts-filing-card-check {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* SELECT */
+.ts-select-wrapper {
+  position: relative;
+}
+
+.ts-select {
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  background: var(--white);
+  border: 1px solid var(--accent-border);
+  border-radius: 3px;
+  padding: 10px 36px 10px 12px;
+  font-size: var(--text-xs);
+  color: var(--primary-mid);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: var(--font-primary), monospace;
+}
+
+.ts-select:hover {
+  border-color: rgba(109, 40, 217, 0.3);
+}
+
+.ts-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-muted);
+}
+
+.ts-select option {
+  background: var(--white);
+  color: var(--primary-mid);
+}
+
+.ts-select-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--accent);
+}
+
+/* ACTIONS */
+.ts-profile-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.ts-profile-skip-note {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0;
+  font-family: var(--font-primary), monospace;
+  letter-spacing: 0.04em;
+}
+
+/* ─────────────────────────────────────────────
+   SHARED BUTTONS
+───────────────────────────────────────────── */
+
+.ts-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 4px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  width: 100%;
+  font-family: var(--font-primary), monospace;
+}
+
+.ts-btn-primary {
+  background: var(--accent);
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
+}
+
+.ts-btn-primary:disabled {
+  background: var(--accent-disabled-bg);
+  color: var(--accent-disabled-fg);
+  border-color: transparent;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.ts-btn-primary:hover {
+  background: var(--accent-dark);
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
+  transform: translateY(-1px);
+}
+
+.ts-btn-primary:active {
+  transform: translateY(0);
+}
+
+.ts-btn-secondary {
+  background: var(--white);
+  color: var(--primary);
+  border: 1px solid var(--border-soft);
+}
+
+.ts-btn-secondary:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-muted);
+  color: var(--primary);
+}
+
+.ts-btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-soft);
+}
+
+.ts-btn-ghost:hover {
+  color: var(--primary);
+  border-color: var(--accent-border);
+  background: var(--accent-muted);
+}
+
+/* ─────────────────────────────────────────────
+   STEP PANEL
+───────────────────────────────────────────── */
+
+.ts-step-count {
+  margin: 0 0 18px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.ts-step-title {
+  margin: 0;
+  max-width: 260px;
+  font-size: var(--text-xl);
+  line-height: 1.05;
+  font-weight: 800;
+  color: var(--text-ui);
+}
+
+.ts-step-description {
+  margin: 18px 0 28px;
+  max-width: 260px;
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--text-body);
+}
+
+.ts-step-list {
+  display: grid;
+  gap: 16px;
+  margin: 0 0 36px;
+}
+
+.ts-step-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  color: var(--text-dark);
+}
+
+.ts-step-list-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-muted);
+  color: var(--accent-dark);
+  flex: 0 0 auto;
+}
+
+.ts-step-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.ts-step-skip {
+  display: block;
+  width: fit-content;
+  margin: 18px auto 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-dark);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ts-step-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+  z-index: 2;
+}
+
+.ts-step-close:hover {
+  color: var(--primary);
+  background: var(--accent-muted);
+}
+
+/* ─────────────────────────────────────────────
+   SPLIT STEP / TUTORIAL FORM
+───────────────────────────────────────────── */
+
+.ts-modal-split-step {
+  width: min(1120px, calc(100vw - 48px));
+  min-height: 560px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 16px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.ts-tutorial-form {
+  padding: 36px;
+  background: var(--white);
+  overflow-y: auto;
+  max-height: calc(100vh - 96px);
+}
+
+.ts-step-panel {
+  position: relative;
+  padding: 48px 36px;
+  border-right: 1px solid var(--border-subtle);
+  background:
+    radial-gradient(circle at top left, var(--accent-muted), transparent 34%),
+    rgba(255, 255, 255, 0.96);
+}
+
+.ts-step-progress {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.ts-step-progress-dot {
+  width: 28px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-muted);
+  flex-shrink: 0;
+}
+
+.ts-step-progress-dot-active {
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--accent-border);
+  background: var(--accent-dark);
+  border-radius: var(--radius-pill);
+}
+
+/* ─────────────────────────────────────────────
+   HIGHLIGHT CARD
+───────────────────────────────────────────── */
+
+.ts-highlight-step {
+  position: absolute;
+  top: 420px;
+  left: 320px;
+  z-index: 30000;
+  width: auto;
+  height: auto;
+  display: block;
+  pointer-events: none;
+}
+
+.ts-highlight-card {
+  pointer-events: auto;
+  position: relative;
+  z-index: 30001;
+  width: min(500px, calc(100vw - 48px));
+  min-height: 260px;
+  padding: 38px 36px 26px;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow:
+    0 24px 70px var(--shadow-card),
+    0 0 0 1px var(--shadow-card-ring);
+}
+
+.ts-highlight-logo {
+  width: 64px;
+  height: 64px;
+  font-size: 48px;
+}
+
+.ts-highlight-title {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+
+.ts-highlight-description {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.ts-highlight-copy {
+  min-width: 0;
+}
+
+.ts-highlight-actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 132px 132px;
+  gap: 16px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.ts-highlight-skip {
+  justify-self: center;
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────
+   TOOLTIP
+───────────────────────────────────────────── */
+
+.ts-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.ts-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--tooltip-bg);
+  color: var(--white);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+}
+
+.ts-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--tooltip-bg);
+}
+
+.ts-tooltip-wrap-active:hover .ts-tooltip {
+  opacity: 1;
+}
+
+/* ─────────────────────────────────────────────
+   RESULTS SIDE CARD
+───────────────────────────────────────────── */
+
+.ts-results-side-step {
+  position: absolute;
+  inset: 0;
+  z-index: 30000;
+  pointer-events: none;
+}
+
+.ts-results-side-card {
+  position: absolute;
+  z-index: 30001;
+  pointer-events: auto;
+  left: 40px;
+  top: 300px;
+  width: 420px;
+  min-height: 260px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 36px 32px 30px;
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow:
+    0 28px 90px var(--shadow-card),
+    0 0 0 1px var(--shadow-card-ring);
+}
+
+.ts-results-title {
+  margin: 0 0 14px;
+  color: var(--text-ui);
+  font-size: var(--text-xl);
+  line-height: 1.12;
+  font-weight: 800;
+}
+
+.ts-results-description {
+  margin: 0;
+  color: var(--text-body);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.ts-results-side-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+/* ─────────────────────────────────────────────
+   MOBILE PANEL
+───────────────────────────────────────────── */
+
+.ts-panel-mobile { display: none; }
+.ts-panel-desktop { display: contents; }
+
+/* ─────────────────────────────────────────────
+   MEDIA QUERIES
+───────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .ts-field-row {
+    flex-direction: column;
+  }
+
+  .ts-field-row-sep {
+    display: none;
+  }
+
+  .ts-welcome-features {
+    gap: 12px;
+  }
+
+  .ts-step-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-highlight-logo {
+    width: 48px;
+    height: 48px;
+    font-size: 36px;
+  }
+
+  .ts-modal {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 32px);
+    border-radius: var(--radius-lg);
+  }
+
+  .ts-welcome {
+    padding: 28px 20px 24px;
+  }
+
+  .ts-welcome-wordmark {
+    font-size: 30px;
+    margin-bottom: 6px;
+  }
+
+  .ts-welcome-tagline {
+    margin-bottom: 18px;
+  }
+
+  .ts-welcome-divider {
+    margin-bottom: 16px;
+  }
+
+  .ts-welcome-body {
+    margin-bottom: 18px;
+  }
+
+  .ts-profile {
+    padding: 20px 16px 28px;
+  }
+
+  .ts-profile-title {
+    font-size: var(--text-sm);
+  }
+
+  .ts-filing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-btn {
+    padding: 13px 20px;
+  }
+
+  .ts-modal-split-step {
+    width: calc(100vw - 8px);
+    border-radius: var(--radius-lg);
+  }
+
+  .ts-step-panel {
+    padding: 16px 16px 12px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .ts-tutorial-form {
+    padding: 16px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .ts-panel-mobile-meta .ts-step-title {
+    font-size: var(--text-sm);
+  }
+
+  .ts-highlight-card {
+    max-height: 60dvh;
+    padding: 20px 16px 28px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .ts-highlight-title {
+    font-size: var(--text-sm);
+  }
+
+  .ts-highlight-actions {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .ts-results-side-card {
+    max-height: 55dvh;
+    padding: 20px 16px 28px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .ts-results-title {
+    font-size: var(--text-lg);
+  }
+}
+
+@media (max-width: 760px) {
+  .form-input,
+  .ts-input,
+  .ts-select,
+  .ts-textarea,
+  .setup-input {
+    font-size: 16px !important; /* prevents iOS Safari zoom on focus */
+  }
+
+  .ts-modal-split-step {
+    width: min(560px, calc(100vw - 32px));
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+
+  .ts-checking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-step-panel {
+    padding: 28px 24px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .ts-step-title {
+    font-size: var(--text-lg);
+    max-width: none;
+  }
+
+  .ts-step-description {
+    max-width: none;
+  }
+
+  .ts-tutorial-form {
+    padding: 24px;
+    max-height: unset;
+  }
+
+  .ts-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .ts-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .ts-overlay {
+    background: rgba(0, 0, 0, 0.35);
+  }
+
+  .ts-overlay-no-bg {
+    background: none !important;
+    backdrop-filter: none !important;
+    pointer-events: none;
+  }
+
+  .ts-overlay-no-bg > * {
+    pointer-events: auto;
+  }
+
+  .ts-modal {
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 48px);
+    border-radius: 20px;
+  }
+
+  .ts-welcome {
+    padding: 36px 28px 32px;
+  }
+
+  .ts-welcome-wordmark {
+    font-size: 36px;
+  }
+
+  .ts-welcome-features {
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .ts-profile {
+    padding: 24px 24px 32px;
+  }
+
+  .ts-profile-title {
+    font-size: var(--text-base);
+  }
+
+  .ts-filing-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ts-modal-split-step {
+    grid-template-columns: 1fr;
+    width: calc(100vw - 16px);
+    min-height: unset;
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    gap: 0;
+    border-radius: 20px;
+  }
+
+  .ts-panel-desktop { display: none; }
+  .ts-panel-mobile  { display: block; }
+
+  .ts-step-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 20px 20px 16px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .ts-step-panel .ts-step-close {
+    display: none;
+  }
+
+  .ts-panel-mobile-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .ts-panel-mobile-meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ts-panel-mobile-meta .ts-step-count {
+    margin-bottom: 4px;
+  }
+
+  .ts-panel-mobile-meta .ts-step-title {
+    font-size: var(--text-base);
+    max-width: none;
+    margin: 0;
+  }
+
+  .ts-info-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    margin-top: 4px;
+    padding: 6px 12px;
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-pill);
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .ts-info-toggle:hover {
+    background: var(--accent-hover);
+    border-color: rgba(109, 40, 217, 0.35);
+  }
+
+  .ts-info-toggle svg {
+    transition: transform 0.2s ease;
+  }
+
+  .ts-info-toggle-open svg {
+    transform: rotate(180deg);
+  }
+
+  .ts-panel-mobile-info {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-subtle);
+    animation: ts-slide-up 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ts-panel-mobile-info .ts-step-description {
+    max-width: none;
+    margin: 0 0 14px;
+  }
+
+  .ts-panel-mobile-info .ts-step-list {
+    margin: 0;
+  }
+
+  .ts-step-actions {
+    grid-template-columns: 1fr 1fr;
+    margin-top: 16px;
+  }
+
+  .ts-tutorial-form {
+    padding: 20px;
+    max-height: unset;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .ts-step-panel .ts-step-progress {
+    margin-bottom: 10px;
+  }
+
+  .ts-highlight-step {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    width: 100%;
+    z-index: 30000;
+    pointer-events: none;
+    padding: 0;
+  }
+
+  .ts-highlight-card {
+    pointer-events: auto;
+    width: 100%;
+    min-height: unset;
+    max-height: 55dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    grid-template-columns: 1fr;
+    gap: 0;
+
+    padding: 24px 20px 32px;
+    border-radius: 0 0 20px 20px;
+    box-shadow:
+      0 8px 40px var(--shadow-sheet),
+      0 0 0 1px var(--shadow-card-ring);
+
+    animation: ts-sheet-down 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ts-highlight-logo {
+    display: none;
+  }
+
+  .ts-highlight-title {
+    font-size: var(--text-base);
+    margin-bottom: 8px;
+  }
+
+  .ts-highlight-description {
+    margin-bottom: 8px;
+  }
+
+  .ts-highlight-actions {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .ts-highlight-skip {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+
+  .ts-results-side-step {
+    position: fixed;
+    inset: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30000;
+    pointer-events: none;
+  }
+
+  .ts-results-side-card {
+    position: static;
+    pointer-events: auto;
+    width: 100%;
+    min-height: unset;
+    max-height: 50dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    left: auto;
+    top: auto;
+    padding: 24px 20px 32px;
+    border-radius: 20px 20px 0 0;
+    box-shadow:
+      0 -8px 40px var(--shadow-sheet),
+      0 0 0 1px var(--shadow-card-ring);
+    animation: ts-sheet-up 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ts-results-title {
+    font-size: var(--text-lg);
+    margin-bottom: 10px;
+  }
+
+  .ts-results-side-actions {
+    margin-top: 20px;
+  }
+}
+
+@keyframes ts-sheet-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes ts-sheet-down {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}

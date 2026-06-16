@@ -1,0 +1,144 @@
+/* =========================
+   Landing FIRE CTA
+========================= */
+
+.landing-fire-cta {
+  position: relative;
+  padding: clamp(4rem, 8vw, 7rem) 1rem 0;
+  background:
+    radial-gradient(circle at 18% 86%, var(--accent-muted), transparent 28%),
+    radial-gradient(circle at 82% 88%, var(--secondary-muted), transparent 28%),
+    var(--white);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  overflow: hidden;
+}
+
+.landing-fire-cta-inner {
+  width: min(100%, 72rem);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.landing-fire-title {
+  margin: 0;
+  color: var(--primary);
+  font-size: clamp(2.75rem, 6vw, 5.25rem);
+  line-height: 1;
+  letter-spacing: -0.065em;
+  font-weight: 900;
+}
+
+.landing-fire-title span {
+  display: block;
+  color: var(--secondary);
+}
+
+.landing-fire-btn {
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  min-height: 3.75rem;
+  padding: 0 3rem;
+  border-radius: var(--radius-lg);
+  background: var(--accent);
+  color: var(--white);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-base);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  box-shadow: 0 1.125rem 2.375rem var(--accent-muted);
+  transition:
+    background 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.landing-fire-btn:hover {
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 1.375rem 3rem var(--accent-border);
+}
+
+.landing-fire-btn:active {
+  transform: translateY(0);
+}
+
+.landing-fire-mascot-wrap {
+  position: relative;
+  margin: clamp(2rem, 4vw, 3rem) auto 0;
+  width: min(100%, 24rem);
+  min-height: clamp(10rem, 24vw, 16rem);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.landing-fire-mascot {
+  width: clamp(11rem, 22vw, 16rem);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 1.25rem 2.5rem var(--accent-muted));
+}
+
+/* bottom wave shapes */
+
+.landing-fire-cta::before,
+.landing-fire-cta::after {
+  content: "";
+  position: absolute;
+  bottom: -8rem;
+  width: clamp(18rem, 38vw, 36rem);
+  height: clamp(12rem, 24vw, 22rem);
+  border-radius: var(--radius-pill) var(--radius-pill) 0 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing-fire-cta::before {
+  left: -7rem;
+  background: var(--accent-soft);
+}
+
+.landing-fire-cta::after {
+  right: -7rem;
+  background: var(--secondary-soft);
+}
+
+.landing-fire-cta-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 700px) {
+  .landing-fire-cta {
+    padding: 3.75rem 1rem 0;
+  }
+
+  .landing-fire-title {
+    font-size: clamp(2.35rem, 12vw, 3.5rem);
+    letter-spacing: -0.06em;
+  }
+
+  .landing-fire-btn {
+    width: 100%;
+    max-width: 22rem;
+    min-height: 3.5rem;
+    padding: 0 1.5rem;
+    font-size: 1rem;
+  }
+
+  .landing-fire-mascot-wrap {
+    min-height: 10rem;
+  }
+
+  .landing-fire-mascot {
+    width: clamp(9.5rem, 42vw, 13rem);
+  }
+}

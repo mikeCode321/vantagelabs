@@ -1,4 +1,4 @@
-import "./styles/FinancialOverviewCards.css";
+import "./styles/FinancialOverviewContainer.css";
 
 // ─── Helpers (moved from page.tsx) ───────────────────────────────────────────
 export function formatCompactMoney(value: number) {
@@ -50,10 +50,8 @@ function FinancialOverviewCard({ card }) {
 
         <div className="overview-card-content">
           <p className="overview-card-label">{card.label}</p>
-
           <div className="overview-card-value-row">
             <h3 className="overview-card-value">{card.value}</h3>
-
             <div className={`overview-card-change overview-card-change-${direction}`}>
               <span>
                 {getDirectionArrow(direction)} {card.change}
@@ -61,6 +59,7 @@ function FinancialOverviewCard({ card }) {
               <small>{card.changeLabel}</small>
             </div>
           </div>
+          <div className="overview-card-mobile-icon">{card.icon}</div>
         </div>
       </div>
     </article>

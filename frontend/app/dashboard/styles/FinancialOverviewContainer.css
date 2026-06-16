@@ -139,27 +139,81 @@
   background: var(--card-icon-orange-bg);
 }
 
+.overview-card-mobile-icon {
+  display: none;
+}
+
 @media (max-width: 860px) {
   .overview-cards {
-    grid-template-columns: 1fr;
-    padding-left: 16px;
-    padding-right: 16px;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 16px;
+    gap: 10px;
   }
 
   .overview-card {
     border-radius: var(--radius-md);
     padding: 12px;
-  }
-
-  .overview-card-top {
-    gap: 14px;
+    position: relative;
   }
 
   .overview-card-icon {
-    width: 48px;
-    height: 48px;
-    flex-basis: 48px;
-    border-radius: var(--radius-md);
+    display: none;
+  }
+
+  .overview-card-top {
+    gap: 0;
+  }
+
+  .overview-card-value-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .overview-card-change {
+    align-items: flex-start;
+  }
+
+  .overview-card-change small {
+    display: none;
+  }
+
+  .overview-card-mobile-icon {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    font-size: 10px;
+    flex-shrink: 0;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  .overview-card-mobile-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .overview-card-purple .overview-card-mobile-icon {
+    color: var(--accent);
+    background: var(--card-icon-purple-bg);
+  }
+
+  .overview-card-green .overview-card-mobile-icon {
+    color: var(--card-icon-green);
+    background: var(--card-icon-green-bg);
+  }
+
+  .overview-card-blue .overview-card-mobile-icon {
+    color: var(--card-icon-blue);
+    background: var(--card-icon-blue-bg);
+  }
+
+  .overview-card-orange .overview-card-mobile-icon {
+    color: var(--card-icon-orange);
+    background: var(--card-icon-orange-bg);
   }
 }
 
@@ -169,6 +223,18 @@
   }
 
   .overview-card-label {
-    font-size: 12px;
+    font-size: 10px;
+  }
+
+  .overview-card-mobile-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    font-size: 9px;
+  }
+
+  .overview-card-mobile-icon svg {
+    width: 16px;
+    height: 16px;
   }
 }

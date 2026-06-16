@@ -53,17 +53,17 @@
 }
 
 .income-chart-select {
-  min-width: 130px;
-  width: 150px;
-  padding: 9px 12px;
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-sm);
   background: var(--white);
   color: var(--primary);
   font-size: var(--text-xs);
-  font-weight: 600;
   font-family: var(--font-primary), monospace;
+  font-weight: 600;
   cursor: pointer;
+  padding: 8px 10px;
+  min-width: 130px;
+  width: 150px;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -173,21 +173,41 @@
   font-size: var(--text-xs);
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1050px) {
   .income-chart-top {
-    flex-direction: column;
-    gap: 14px;
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .income-chart-select {
+    min-width: 0;
+    padding: 6px 8px;
+    font-weight: 100;
   }
 
   .income-chart-stats {
     width: 100%;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .income-stat {
+    min-width: 0;
+    padding: 8px 10px;
+  }
+
+  .income-stat span {
+    font-size: var(--text-label);
+    margin-bottom: 4px;
+  }
+
+  .income-stat strong {
+    font-size: var(--text-xs);
   }
 
   .income-chart-wrap {
-    height: 260px;
+    height: 240px;
   }
 
   .income-chart-card {
@@ -195,41 +215,35 @@
     padding: 14px;
   }
 
-  .income-chart-pill-groups {
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .income-stat {
-    min-width: 90px;
-    padding: 8px 10px;
+  .income-chart-controls {
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
-  .income-chart-card {
-    padding: 12px;
-  }
-
   .income-chart-stats {
-    flex-direction: column;
-    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
   }
 
   .income-stat {
-    min-width: 0;
-    width: 100%;
+    padding: 6px 8px;
+  }
+
+  .income-stat span {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .income-stat strong {
+    font-size: var(--text-label);
   }
 
   .income-chart-wrap {
     height: 200px;
   }
 
-  .income-chart-footer {
-    padding: 10px 12px;
-  }
-
-  .income-chart-empty-title {
-    font-size: var(--text-xs);
+  .income-chart-card {
+    padding: 12px;
   }
 }

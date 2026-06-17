@@ -10,11 +10,11 @@ export default function EntitiesContainer({ state, dispatch, onToast, tutorialSt
   const ref = useRef<HTMLDivElement | null>(null);
   const expenseRef = useRef<HTMLDivElement | null>(null);
   
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const [showArrows, setShowArrows] = useState(false);
+  // const [canScrollLeft, setCanScrollLeft] = useState(false);
+  // const [canScrollRight, setCanScrollRight] = useState(true);
+  // const [showArrows, setShowArrows] = useState(false);
 
-  const STEP_SIZE = 266;
+  // const STEP_SIZE = 266;
 
   useEffect(() => {
     if (tutorialStepId === "expenses-assets" && expenseRef.current) {
@@ -22,48 +22,48 @@ export default function EntitiesContainer({ state, dispatch, onToast, tutorialSt
     }
   }, [tutorialStepId]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setShowArrows(window.innerWidth <= 1250);
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setShowArrows(window.innerWidth <= 1250);
+  //   };
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
+  //   handleResize();
+  //   window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
 
-  const updateScrollState = () => {
-    const el = ref.current;
-    if (!el) return;
+  // const updateScrollState = () => {
+  //   const el = ref.current;
+  //   if (!el) return;
 
-    const { scrollLeft, scrollWidth, clientWidth } = el;
+  //   const { scrollLeft, scrollWidth, clientWidth } = el;
 
-    setCanScrollLeft(scrollLeft > 5);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
-  };
+  //   setCanScrollLeft(scrollLeft > 5);
+  //   setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
+  // };
 
-  useEffect(() => {
-    updateScrollState();
-  }, []);
+  // useEffect(() => {
+  //   updateScrollState();
+  // }, []);
 
-  const scrollByStep = (direction) => {
-    const el = ref.current;
-    if (!el) return;
+  // const scrollByStep = (direction) => {
+  //   const el = ref.current;
+  //   if (!el) return;
 
-    const amount = direction === "left" ? -STEP_SIZE : STEP_SIZE;
+  //   const amount = direction === "left" ? -STEP_SIZE : STEP_SIZE;
 
-    el.scrollBy({
-      left: amount,
-      behavior: "smooth",
-    });
+  //   el.scrollBy({
+  //     left: amount,
+  //     behavior: "smooth",
+  //   });
 
-    setTimeout(updateScrollState, 300);
-  };
+  //   setTimeout(updateScrollState, 300);
+  // };
 
   return (
     <div className="entities-wrapper">
-      {showArrows && canScrollLeft && (
+      {/* {showArrows && canScrollLeft && (
         <button className="entities-arrow entities-arrow-left" onClick={() => scrollByStep("left")}>
           <ChevronLeft/>
         </button>
@@ -73,9 +73,10 @@ export default function EntitiesContainer({ state, dispatch, onToast, tutorialSt
         <button className="entities-arrow entities-arrow-right" onClick={() => scrollByStep("right")}>
           <ChevronRight/>
         </button>
-      )}
+      )} */}
 
-      <div ref={ref} className="entities-scroll" onScroll={updateScrollState}>
+      {/* <div ref={ref} className="entities-scroll" onScroll={updateScrollState}> */}
+      <div ref={ref} className="entities-scroll">
         <div className="entities-item">
           <EntityCard state={state} ENTITY_CONFIG={ENTITY_CONFIG} category="account" dispatch={dispatch} onToast={onToast} tutorialActive={false}/>
         </div>

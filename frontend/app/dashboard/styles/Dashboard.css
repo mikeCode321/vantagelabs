@@ -107,11 +107,28 @@ h3 {
 .simulation-results-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
+  grid-template-rows: auto auto;
   gap: 8px;
   align-items: start;
   width: 100%;
   margin-top: 10px;
   margin-bottom: 16px;
+}
+
+.simulation-results-grid > .overview-cards {
+  grid-column: 1 / -1; /* spans full width above chart */
+}
+
+.simulation-results-grid > .income-chart-card {
+  grid-column: 1;
+}
+
+.sim-grid-right {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 @media (max-width: 860px) {
@@ -124,7 +141,6 @@ h3 {
   .dash-main {
     height: auto;
     overflow: visible;
-    padding-bottom: 32px;
   }
 
   .dash-topbar {
@@ -136,10 +152,26 @@ h3 {
   }
 
   .simulation-results-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
-  .simulation-results-grid,
+  .simulation-results-grid > .income-chart-card { 
+    order: 1; 
+  }
+  
+  .simulation-results-grid > .overview-cards { 
+    order: 2; 
+    width: 100%;
+  }
+
+  .sim-grid-right { 
+    order: 3; 
+    width: 100%; 
+  }
+
   .simulation-section-header {
     padding-left: 16px;
     padding-right: 16px;

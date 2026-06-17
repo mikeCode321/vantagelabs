@@ -28,6 +28,7 @@ import { SimRequest, INITIAL_STATE, ENABLE_LOCAL_STORAGE_PERSISTENCE, loadState,
 
 
 type Action =
+  | { type: "HYDRATE"; payload: SimRequest }
   | { type: "ADD_ACCOUNT"; payload: LiquidAccount }
   | { type: "UPDATE_ACCOUNT"; payload: LiquidAccount }
   | { type: "DELETE_ACCOUNT"; payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" } }
@@ -45,6 +46,9 @@ type Action =
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
+
+    case "HYDRATE":
+      return action.payload;
 
     case "ADD_ACCOUNT": {
       const account = action.payload;
@@ -387,9 +391,7 @@ const ENTITY_CONFIG = {
 
 export default function Dashboard() {
   // const sim = useSimulation();
-  const [state, dispatch] = useReducer(simReducer, undefined, () => {
-    return loadState() ?? INITIAL_STATE;
-  });
+  const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
   const [simResult, setSimResult] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [isSimLoading, setIsSimLoading] = useState(true);
@@ -506,6 +508,11 @@ export default function Dashboard() {
     }, 2000);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const saved = loadState();
+    if (saved) dispatch({ type: "HYDRATE", payload: saved });
   }, []);
 
   useEffect(() => {

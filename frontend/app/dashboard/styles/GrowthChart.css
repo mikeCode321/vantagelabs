@@ -173,6 +173,13 @@
   font-size: var(--text-xs);
 }
 
+.income-chart-wrap-area { display: none; }
+
+@media (max-width: 1024px) {
+  .income-chart-wrap-bar  { display: none; }
+  .income-chart-wrap-area { display: block; }
+}
+
 @media (max-width: 1050px) {
   .income-chart-top {
     flex-direction: column-reverse;

@@ -6,6 +6,8 @@ type TimelineAgeFieldsProps = {
   endAge: string;
   setStartAge: (value: string) => void;
   setEndAge: (value: string) => void;
+  startAgeLabel?: string;
+  endAgeLabel?: string;
 };
 
 function getTimelineBounds(state: any) {
@@ -80,6 +82,8 @@ export function TimelineAgeFields({
   endAge,
   setStartAge,
   setEndAge,
+  startAgeLabel = "Start Age",
+  endAgeLabel = "End Age",
 }: TimelineAgeFieldsProps) {
   const { minAge, maxAge } = getTimelineBounds(state);
 
@@ -91,7 +95,7 @@ export function TimelineAgeFields({
     <>
       <div className="form-year-grid">
         <div className="form-field">
-          <label className="form-label">Start Age</label>
+          <label className="form-label">{startAgeLabel}</label>
           <input
             value={startAge}
             onChange={(e) => {
@@ -120,7 +124,7 @@ export function TimelineAgeFields({
         </div>
 
         <div className="form-field">
-          <label className="form-label">End Age</label>
+          <label className="form-label">{endAgeLabel}</label>
           <input
             value={endAge}
             onChange={(e) => setEndAge(e.target.value)}

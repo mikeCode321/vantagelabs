@@ -449,7 +449,7 @@ export default function Dashboard() {
     },
     {
       id: "cash-flow",
-      label: "Cash Flow (Annual)",
+      label: "Cash Flow",
       value: formatCompactMoney(annualCashFlow),
       change: formatSignedPercent(cashFlowChange),
       changeLabel: "vs first year",
@@ -462,7 +462,7 @@ export default function Dashboard() {
     },
     {
       id: "total-assets",
-      label: "Total Assets",
+      label: "Assets",
       value: formatCompactMoney(totalAssets),
       change: formatSignedPercent(assetChange),
       changeLabel: "vs start",
@@ -475,7 +475,7 @@ export default function Dashboard() {
     },
     {
       id: "total-liabilities",
-      label: "Total Liabilities",
+      label: "Liabilities",
       value: formatCompactMoney(totalLiabilities),
       change: formatSignedPercent(liabilityChange),
       changeLabel: "vs start",
@@ -556,10 +556,11 @@ export default function Dashboard() {
           <UserAgeForm state={state} dispatch={dispatch} />
         </div>  */}
        
-        <FinancialOverviewContainer cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
+        
         <section className="simulation-results-grid">
+          <FinancialOverviewContainer cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
           <GrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />
-          <div>
+          <div className="sim-grid-right">
             <SimulationHighlightsCard data={simData} tutorialActive={activeTutorialStepId === "results"} selectedYearData={selectedYearData}/>
             <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} simResult={simResult} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
           </div>

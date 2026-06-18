@@ -1,7 +1,7 @@
 "use client";
 import "./styles/GrowthChart.css";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, LabelList, Tooltip} from "recharts";
 
 function formatCurrency(value: number) {
@@ -103,7 +103,7 @@ export default function GrowthChart({ data, tutorialActive = false }) {
   const isEmpty = chartData.length === 0;
   const displayData = isEmpty ? PLACEHOLDER_DATA : chartData;
 
-  const renderCustomAreaLabel = (props) => {
+  const renderCustomAreaLabel = useCallback((props) => {
     const { x, y, index } = props;
 
     const row = displayData[index];
@@ -131,9 +131,9 @@ export default function GrowthChart({ data, tutorialActive = false }) {
         })}
       </g>
     );
-  };
+  }, [displayData]);
 
-  const CustomTooltip = (props) => {
+  const CustomTooltip = useCallback((props) => {
     const { active, payload, label } = props;
     if (!active || !payload?.length) return null;
 
@@ -149,7 +149,7 @@ export default function GrowthChart({ data, tutorialActive = false }) {
         </div>
       </div>
     );
-  };
+  }, []);
 
   return (
     <section className={`income-chart-card${tutorialActive ? " ts-tutorial-target" : ""}`}>

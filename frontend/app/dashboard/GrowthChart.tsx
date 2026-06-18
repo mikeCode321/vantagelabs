@@ -121,9 +121,9 @@ export default function GrowthChart({ data, tutorialActive = false }) {
               y={y - 20 - i * 16}
               textAnchor="middle"
               fontSize={16}
-              style={{ cursor: "pointer", userSelect: "none" }}
-              onMouseEnter={() => setHoveredEvent({ ...event, year: row.year, type: isStart ? "start" : "end" })}
-              onMouseLeave={() => setHoveredEvent(null)}
+              style={{ cursor: "pointer", userSelect: "none", touchAction: "none" }}
+              onPointerEnter={() => setHoveredEvent({ ...event, year: row.year, type: isStart ? "start" : "end" })}
+              onPointerLeave={() => setHoveredEvent(null)}
             >
               {event.icon}
             </text>
@@ -182,7 +182,7 @@ export default function GrowthChart({ data, tutorialActive = false }) {
         </div>
       </div>
 
-      <div ref={wrapRef} className="income-chart-wrap" style={{ position: "relative" }} onMouseLeave={() => setHoveredEvent(null)}>
+      <div ref={wrapRef} className="income-chart-wrap" style={{ position: "relative" }} onPointerLeave={() => setHoveredEvent(null)}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart key={activeKey} data={displayData} margin={{ top: 0, right: 20, bottom: 0, left: 0 }}>
             <defs>

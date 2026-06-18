@@ -1,4 +1,3 @@
-
 import { CheckingAccount, TaxableInvestmentAccount, EmployerRetirementAccount,} from "@/app/dashboard/Accounts";
 import { SalaryIncome, HourlyWageIncome, SideHustleIncome,  } from "@/app/dashboard/Incomes";
 import { LivingExpense, RentExpense, DebtExpense, CarLoanExpense, HouseLoanExpense, } from "@/app/dashboard/Expenses";
@@ -68,14 +67,13 @@ export const INITIAL_STATE: SimRequest = {
   },
 };
 
-export function loadState(){
+export function loadState() {
   if (!ENABLE_LOCAL_STORAGE_PERSISTENCE) return null;
   if (typeof window === "undefined") return null;
   try {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return saved ? (JSON.parse(saved) as SimRequest) : null;
+    const s = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return s ? JSON.parse(s) : null;
   } catch {
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
     return null;
   }
 }

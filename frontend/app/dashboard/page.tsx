@@ -22,12 +22,13 @@ import FinancialOverviewContainer from "@/app/dashboard/FinancialOverviewContain
 import GrowthChart from '@/app/dashboard/GrowthChart';
 
 import { formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/dashboard/FinancialOverviewContainer";
-import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, CreditCard, ChartColumnIncreasing , PiggyBank, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 
 import { SimRequest, INITIAL_STATE, ENABLE_LOCAL_STORAGE_PERSISTENCE, loadState, saveState } from "./utils";
 
 
 type Action =
+  | { type: "HYDRATE"; payload: SimRequest }
   | { type: "ADD_ACCOUNT"; payload: LiquidAccount }
   | { type: "UPDATE_ACCOUNT"; payload: LiquidAccount }
   | { type: "DELETE_ACCOUNT"; payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" } }
@@ -45,6 +46,9 @@ type Action =
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
+
+    case "HYDRATE":
+      return action.payload;
 
     case "ADD_ACCOUNT": {
       const account = action.payload;
@@ -283,7 +287,7 @@ const ENTITY_CONFIG = {
       id: "employer_retirement",
       name: "Employer Retirement Accounts",
       description: "Track your 401(k), 403(b), or pension and optionally link it to a job.",
-      emoji: <Accessibility/>,
+      emoji: <PiggyBank />,
       formComponent: EmployerRetirementAccountForm,
       editFormComponent: EditEmployerRetirementAccountForm,
     },
@@ -387,9 +391,7 @@ const ENTITY_CONFIG = {
 
 export default function Dashboard() {
   // const sim = useSimulation();
-  const [state, dispatch] = useReducer(simReducer, undefined, () => {
-    return loadState() ?? INITIAL_STATE;
-  });
+  const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
   const [simResult, setSimResult] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [isSimLoading, setIsSimLoading] = useState(true);
@@ -506,6 +508,11 @@ export default function Dashboard() {
     }, 2000);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const saved = loadState();
+    if (saved) dispatch({ type: "HYDRATE", payload: saved });
   }, []);
 
   useEffect(() => {

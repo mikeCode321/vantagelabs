@@ -2,7 +2,7 @@ import './styles/Forms.css'
 
 import { useState, useEffect } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/dashboard/utils";
-import { CreditCard, ChartColumnIncreasing , Accessibility, DollarSign, Link } from 'lucide-react';
+import { CreditCard, ChartColumnIncreasing , DollarSign, Link, PiggyBank } from 'lucide-react';
 import {
   TimelineAgeFields,
   getValidatedTimelinePayload,
@@ -679,7 +679,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon"><Accessibility/></div>
+        <div className="form-header-icon"><PiggyBank/></div>
         <div>
           <h3 className="form-header-title">Add Employer Retirement Account</h3>
           <p className="form-header-desc">Track your 401(k), 403(b), or pension and optionally link it to a job.</p>
@@ -1427,7 +1427,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon"><Building/></div>
+        <div className="form-header-icon"><PiggyBank/></div>
         <div>
           <h3 className="form-header-title">Edit Employer Retirement Account</h3>
           <p className="form-header-desc">Update your 401(k), 403(b), or pension details.</p>

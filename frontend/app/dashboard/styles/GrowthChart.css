@@ -242,6 +242,11 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.income-chart-wrap {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 .income-chart-wrap-area { display: none; }
 
 @media (max-width: 1024px) {

@@ -121,11 +121,9 @@ export default function GrowthChart({ data, tutorialActive = false }) {
               y={y - 20 - i * 16}
               textAnchor="middle"
               fontSize={16}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", userSelect: "none" }}
               onMouseEnter={() => setHoveredEvent({ ...event, year: row.year, type: isStart ? "start" : "end" })}
               onMouseLeave={() => setHoveredEvent(null)}
-              onTouchStart={(e) => { e.preventDefault(); setHoveredEvent({ ...event, year: row.year, type: isStart ? "start" : "end" }); }}
-              onTouchEnd={(e) => { e.preventDefault(); setTimeout(() => setHoveredEvent(null), 1500); }}
             >
               {event.icon}
             </text>

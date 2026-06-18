@@ -2,7 +2,7 @@
 import "./styles/GrowthChart.css";
 
 import { useState, useMemo, useRef, useCallback } from "react";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, LabelList, Tooltip} from "recharts";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip} from "recharts";
 
 function formatCurrency(value: number) {
   if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
@@ -78,6 +78,19 @@ export default function GrowthChart({ data, tutorialActive = false }) {
   const [activeKey, setActiveKey] = useState("netWorth");
   const [hoveredEvent, setHoveredEvent] = useState(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+  // Ref-based tooltip for touch — avoids re-rendering SVG on state change
+  const tooltipRef = useRef<HTMLDivElement>(null);
+
+  const showTooltipDOM = useCallback((event) => {
+    if (!tooltipRef.current) return;
+    tooltipRef.current.innerHTML = `<div>${event.type}: <b>${event.name}</b></div><div>year: ${event.year}</div>`;
+    tooltipRef.current.style.display = "block";
+  }, []);
+
+  const hideTooltipDOM = useCallback(() => {
+    if (!tooltipRef.current) return;
+    tooltipRef.current.style.display = "none";
+  }, []);
 
   const chartData = useMemo(() => {
     if (!data?.year_results) return [];
@@ -113,6 +126,7 @@ export default function GrowthChart({ data, tutorialActive = false }) {
       <g>
         {row.events.map((event, i) => {
           const isStart = event.kind === "start";
+          const eventData = { ...event, year: row.year, type: isStart ? "start" : "end" };
 
           return (
             <text
@@ -122,15 +136,12 @@ export default function GrowthChart({ data, tutorialActive = false }) {
               textAnchor="middle"
               fontSize={16}
               style={{ cursor: "pointer", userSelect: "none" }}
-              onMouseEnter={() => setHoveredEvent({ ...event, year: row.year, type: isStart ? "start" : "end" })}
+              // Desktop: mouse events set React state normally (no re-render problem on desktop)
+              onMouseEnter={() => setHoveredEvent(eventData)}
               onMouseLeave={() => setHoveredEvent(null)}
-              onClick={(e) => {
-                e.stopPropagation();
-                const next = { ...event, year: row.year, type: isStart ? "start" : "end" };
-                setHoveredEvent((prev) =>
-                  prev?.name === next.name && prev?.year === next.year ? null : next
-                );
-              }}
+              // Touch: write directly to DOM via ref — zero re-render, no flicker
+              onTouchStart={(e) => { e.preventDefault(); showTooltipDOM(eventData); }}
+              onTouchEnd={(e) => { e.preventDefault(); hideTooltipDOM(); }}
             >
               {event.icon}
             </text>
@@ -138,7 +149,7 @@ export default function GrowthChart({ data, tutorialActive = false }) {
         })}
       </g>
     );
-  }, [displayData]);
+  }, [displayData, showTooltipDOM, hideTooltipDOM]);
 
   const CustomTooltip = useCallback((props) => {
     const { active, payload, label } = props;
@@ -189,7 +200,7 @@ export default function GrowthChart({ data, tutorialActive = false }) {
         </div>
       </div>
 
-      <div ref={wrapRef} className="income-chart-wrap" style={{ position: "relative" }} onClick={() => setHoveredEvent(null)}>
+      <div ref={wrapRef} className="income-chart-wrap" style={{ position: "relative" }} onMouseLeave={() => setHoveredEvent(null)}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart key={activeKey} data={displayData} margin={{ top: 0, right: 20, bottom: 0, left: 0 }}>
             <defs>
@@ -228,20 +239,26 @@ export default function GrowthChart({ data, tutorialActive = false }) {
               fill={isEmpty ? "#F3F4F6" : `url(#${view.gradientId})`}
               dot={false}
               activeDot={isEmpty ? false : { r: 4, fill: view.colors[0] }}
-              label={renderCustomAreaLabel} 
+              label={renderCustomAreaLabel}
             />
-              {/* <LabelList content={renderCustomAreaLabel} />
-            </Area> */}
             <Tooltip content={CustomTooltip}/>
           </AreaChart>
         </ResponsiveContainer>
 
+        {/* Desktop hover tooltip — driven by React state */}
         {hoveredEvent && (
           <div className="chart-event-tooltip">
             <div>{hoveredEvent.type}: <b>{hoveredEvent.name}</b></div>
             <div>year: {hoveredEvent.year}</div>
           </div>
         )}
+
+        {/* Touch tooltip — driven by direct DOM writes, never causes a re-render */}
+        <div
+          ref={tooltipRef}
+          className="chart-event-tooltip"
+          style={{ display: "none" }}
+        />
 
         {isEmpty && (
           <div className="income-chart-empty">

@@ -216,7 +216,7 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} startAgeLabel="Buy Age" endAgeLabel="Sell Age"/>
 
             <div className="link-card">
               <div className="link-card-header">
@@ -463,6 +463,8 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
               endAge={endAge}
               setStartAge={setStartAge}
               setEndAge={setEndAge}
+              startAgeLabel="Buy Age" 
+              endAgeLabel="Sell Age"
             />
 
             <div className="link-card">
@@ -697,6 +699,8 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
             endAge={endAge}
             setStartAge={setStartAge}
             setEndAge={setEndAge}
+            startAgeLabel="Buy Age" 
+            endAgeLabel="Sell Age"
           />
 
             <div className="link-card">
@@ -959,7 +963,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} startAgeLabel="Buy Age" endAgeLabel="Sell Age" />
 
             <div className="link-card">
               <div className="link-card-header">

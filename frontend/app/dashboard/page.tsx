@@ -22,7 +22,7 @@ import FinancialOverviewContainer from "@/app/dashboard/FinancialOverviewContain
 import GrowthChart from '@/app/dashboard/GrowthChart';
 
 import { formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/dashboard/FinancialOverviewContainer";
-import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, CreditCard, ChartColumnIncreasing , PiggyBank, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 
 import { SimRequest, INITIAL_STATE, ENABLE_LOCAL_STORAGE_PERSISTENCE, loadState, saveState } from "./utils";
 
@@ -287,7 +287,7 @@ const ENTITY_CONFIG = {
       id: "employer_retirement",
       name: "Employer Retirement Accounts",
       description: "Track your 401(k), 403(b), or pension and optionally link it to a job.",
-      emoji: <Accessibility/>,
+      emoji: <PiggyBank />,
       formComponent: EmployerRetirementAccountForm,
       editFormComponent: EditEmployerRetirementAccountForm,
     },

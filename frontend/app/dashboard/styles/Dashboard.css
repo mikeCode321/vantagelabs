@@ -151,30 +151,45 @@ h3 {
     font-size: var(--text-xs);
   }
 
-  .simulation-results-grid {
+  /* .simulation-results-grid {
     display: flex;
     flex-direction: column;
     padding-left: 16px;
     padding-right: 16px;
+  } */
+
+  .simulation-results-grid {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
   }
 
   .simulation-results-grid > .income-chart-card { 
-    order: 1; 
+    order: 1;
+    padding-left: 0;
+    padding-right: 0;
   }
   
   .simulation-results-grid > .overview-cards { 
     order: 2; 
     width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+    box-sizing: border-box;
   }
 
   .sim-grid-right { 
     order: 3; 
-    width: 100%; 
+    width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+    box-sizing: border-box;
   }
 
   .simulation-section-header {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 

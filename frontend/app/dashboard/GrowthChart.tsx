@@ -40,9 +40,7 @@ const ICONS = {
 function buildEventsByYear(req) {
   if (!req) return {};
   const byYear = {};
-
   const ageToYear = (age) => req.user_start_age ? new Date().getFullYear() + (age - req.user_start_age) : age;
-
   const allEntities = [
     ...(req.accounts?.checking ?? []),
     ...(req.accounts?.taxable_investments ?? []),
@@ -58,7 +56,6 @@ function buildEventsByYear(req) {
     ...(req.assets?.house ?? []),
     ...(req.assets?.car ?? []),
   ];
-
   for (const e of allEntities) {
     const icon = ICONS[e.variant] ?? "📌";
     for (const ev of [
@@ -69,33 +66,31 @@ function buildEventsByYear(req) {
       byYear[ev.year].push({ icon, name: e.name, kind: ev.kind });
     }
   }
-
   return byYear;
 }
 
 
 export default function GrowthChart({ data, tutorialActive = false }) {
   const [activeKey, setActiveKey] = useState("netWorth");
-  const [hoveredEvent, setHoveredEvent] = useState(null);
   const wrapRef = useRef<HTMLDivElement>(null);
-  // Ref-based tooltip for touch — avoids re-rendering SVG on state change
   const tooltipRef = useRef<HTMLDivElement>(null);
 
-  const showTooltipDOM = useCallback((event) => {
-    if (!tooltipRef.current) return;
-    tooltipRef.current.innerHTML = `<div>${event.type}: <b>${event.name}</b></div><div>year: ${event.year}</div>`;
-    tooltipRef.current.style.display = "block";
+  const showTooltip = useCallback((eventData) => {
+    const el = tooltipRef.current;
+    if (!el) return;
+    el.innerHTML = `<div>${eventData.type}: <b>${eventData.name}</b></div><div>year: ${eventData.year}</div>`;
+    el.style.display = "block";
   }, []);
 
-  const hideTooltipDOM = useCallback(() => {
-    if (!tooltipRef.current) return;
-    tooltipRef.current.style.display = "none";
+  const hideTooltip = useCallback(() => {
+    const el = tooltipRef.current;
+    if (!el) return;
+    el.style.display = "none";
   }, []);
 
   const chartData = useMemo(() => {
     if (!data?.year_results) return [];
     const eventsByYear = buildEventsByYear(data.request);
-
     return data.year_results.map((yr) => ({
       year:        yr.year,
       age:         yr.age,
@@ -118,7 +113,6 @@ export default function GrowthChart({ data, tutorialActive = false }) {
 
   const renderCustomAreaLabel = useCallback((props) => {
     const { x, y, index } = props;
-
     const row = displayData[index];
     if (!row?.events?.length) return null;
 
@@ -135,13 +129,11 @@ export default function GrowthChart({ data, tutorialActive = false }) {
               y={y - 20 - i * 16}
               textAnchor="middle"
               fontSize={16}
-              style={{ cursor: "pointer", userSelect: "none" }}
-              // Desktop: mouse events set React state normally (no re-render problem on desktop)
-              onMouseEnter={() => setHoveredEvent(eventData)}
-              onMouseLeave={() => setHoveredEvent(null)}
-              // Touch: write directly to DOM via ref — zero re-render, no flicker
-              onTouchStart={(e) => { e.preventDefault(); showTooltipDOM(eventData); }}
-              onTouchEnd={(e) => { e.preventDefault(); hideTooltipDOM(); }}
+              style={{ cursor: "pointer", userSelect: "none", touchAction: "none" }}
+              onMouseEnter={() => showTooltip(eventData)}
+              onMouseLeave={() => hideTooltip()}
+              onTouchStart={(e) => { e.preventDefault(); showTooltip(eventData); }}
+              onTouchEnd={(e) => { e.preventDefault(); hideTooltip(); }}
             >
               {event.icon}
             </text>
@@ -149,16 +141,14 @@ export default function GrowthChart({ data, tutorialActive = false }) {
         })}
       </g>
     );
-  }, [displayData, showTooltipDOM, hideTooltipDOM]);
+  }, [displayData, showTooltip, hideTooltip]);
 
   const CustomTooltip = useCallback((props) => {
     const { active, payload, label } = props;
     if (!active || !payload?.length) return null;
-
     const value = payload[0].value;
     const dataKey = payload[0].dataKey;
     const view = VIEWS.find((v) => v.dataKey === dataKey);
-
     return (
       <div className="chart-tooltip">
         <div className="chart-tooltip-label">Year: {label}</div>
@@ -200,7 +190,7 @@ export default function GrowthChart({ data, tutorialActive = false }) {
         </div>
       </div>
 
-      <div ref={wrapRef} className="income-chart-wrap" style={{ position: "relative" }} onMouseLeave={() => setHoveredEvent(null)}>
+      <div ref={wrapRef} className="income-chart-wrap" style={{ position: "relative", touchAction: "none" }} onMouseLeave={() => hideTooltip()}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart key={activeKey} data={displayData} margin={{ top: 0, right: 20, bottom: 0, left: 0 }}>
             <defs>
@@ -211,7 +201,6 @@ export default function GrowthChart({ data, tutorialActive = false }) {
                 </linearGradient>
               ))}
             </defs>
-
             <CartesianGrid strokeDasharray="4 4" vertical={false} />
             <XAxis
               dataKey="year"
@@ -245,15 +234,7 @@ export default function GrowthChart({ data, tutorialActive = false }) {
           </AreaChart>
         </ResponsiveContainer>
 
-        {/* Desktop hover tooltip — driven by React state */}
-        {hoveredEvent && (
-          <div className="chart-event-tooltip">
-            <div>{hoveredEvent.type}: <b>{hoveredEvent.name}</b></div>
-            <div>year: {hoveredEvent.year}</div>
-          </div>
-        )}
-
-        {/* Touch tooltip — driven by direct DOM writes, never causes a re-render */}
+        {/* Tooltip is always mounted — shown/hidden via direct DOM writes, never via state */}
         <div
           ref={tooltipRef}
           className="chart-event-tooltip"

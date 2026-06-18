@@ -121,6 +121,9 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   const [linkError, setLinkError] = useState("");
 
   const availableHouses = state?.assets?.house || [];
+  const selectedLinkedHouse = linkedAssetId
+  ? availableHouses.find((house) => house.id === linkedAssetId)
+  : null;
 
   const handleHouseSelect = (assetId: string) => {
     setLinkError("");
@@ -143,6 +146,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
     if (selectedHouse) {
       setName(`${selectedHouse.name} Loan`);
       setStartAge(selectedHouse.start_age.toString());
+      setEndAge(selectedHouse.end_age?.toString() || "");
 
       const principal = Number(selectedHouse.asset_value || 0) - Number(selectedHouse.down_payment || 0);
 
@@ -282,6 +286,13 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             endAge={endAge}
             setStartAge={setStartAge}
             setEndAge={setEndAge}
+            minAgeOverride={selectedLinkedHouse?.start_age}
+            maxAgeOverride={selectedLinkedHouse?.end_age}
+            helperText={
+              selectedLinkedHouse
+                ? `Loan timeline must stay within ${selectedLinkedHouse.name}'s ownership timeline: ages ${selectedLinkedHouse.start_age}–${selectedLinkedHouse.end_age}.`
+                : undefined
+            }
           />
 
             <div className="link-card">
@@ -385,6 +396,10 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
   const availableCars = state?.assets?.car || [];
 
+  const selectedLinkedCar = linkedAssetId
+  ? availableCars.find((car) => car.id === linkedAssetId)
+  : null;
+
   const handleCarSelect = (assetId: string) => {
     setLinkError("");
 
@@ -406,6 +421,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
     if (selectedCar) {
       setName(`${selectedCar.name} Loan`);
       setStartAge(selectedCar.start_age.toString());
+      setEndAge(selectedCar.end_age?.toString() || "");
 
       const principal = Number(selectedCar.asset_value || 0) - Number(selectedCar.down_payment || 0);
       setOriginalPrincipal(principal.toString());
@@ -530,6 +546,13 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             endAge={endAge}
             setStartAge={setStartAge}
             setEndAge={setEndAge}
+            minAgeOverride={selectedLinkedCar?.start_age}
+            maxAgeOverride={selectedLinkedCar?.end_age}
+            helperText={
+              selectedLinkedCar
+                ? `Loan timeline must stay within ${selectedLinkedCar.name}'s ownership timeline: ages ${selectedLinkedCar.start_age}–${selectedLinkedCar.end_age}.`
+                : undefined
+            }
           />
 
             <div className="link-card">
@@ -994,6 +1017,9 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
   const [linkError, setLinkError] = useState("");
 
   const availableCars = state?.assets?.car || [];
+  const selectedLinkedCar = linkedAssetId
+  ? availableCars.find((car) => car.id === linkedAssetId)
+  : null;
 
   const monthlyExpense = Number(originalPrincipal) > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0
     ? calculateMonthlyLoanPayment(Number(originalPrincipal), Number(interestRate) / 100, Number(loanTermYears))
@@ -1015,6 +1041,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
     if (selectedCar) {
       setName(`${selectedCar.name} Loan`);
       setStartAge(selectedCar.start_age.toString());
+      setEndAge(selectedCar.end_age?.toString() || "");
       const principal = Number(selectedCar.asset_value || 0) - Number(selectedCar.down_payment || 0);
       setOriginalPrincipal(principal.toString());
 
@@ -1116,6 +1143,13 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
             endAge={endAge}
             setStartAge={setStartAge}
             setEndAge={setEndAge}
+            minAgeOverride={selectedLinkedCar?.start_age}
+            maxAgeOverride={selectedLinkedCar?.end_age}
+            helperText={
+              selectedLinkedCar
+                ? `Loan timeline must stay within ${selectedLinkedCar.name}'s ownership timeline: ages ${selectedLinkedCar.start_age}–${selectedLinkedCar.end_age}.`
+                : undefined
+            }
           />
 
             <div className="link-card">
@@ -1211,6 +1245,9 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
   const [linkError, setLinkError] = useState("");
 
   const availableHouses = state?.assets?.house || [];
+  const selectedLinkedHouse = linkedAssetId
+  ? availableHouses.find((house) => house.id === linkedAssetId)
+  : null;
 
   const linkedHouse = linkedAssetId
   ? availableHouses.find((house) => house.id === linkedAssetId)
@@ -1259,6 +1296,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
     if (selectedHouse) {
       setName(`${selectedHouse.name} Loan`);
       setStartAge(selectedHouse.start_age.toString());
+      setEndAge(selectedHouse.end_age?.toString() || "");
 
       const principal = Number(selectedHouse.asset_value || 0) - Number(selectedHouse.down_payment || 0);
 
@@ -1442,6 +1480,13 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
             endAge={endAge}
             setStartAge={setStartAge}
             setEndAge={setEndAge}
+            minAgeOverride={selectedLinkedHouse?.start_age}
+            maxAgeOverride={selectedLinkedHouse?.end_age}
+            helperText={
+              selectedLinkedHouse
+                ? `Loan timeline must stay within ${selectedLinkedHouse.name}'s ownership timeline: ages ${selectedLinkedHouse.start_age}–${selectedLinkedHouse.end_age}.`
+                : undefined
+            }
           />
 
             <div className="link-card">

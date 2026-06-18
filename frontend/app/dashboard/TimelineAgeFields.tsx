@@ -8,6 +8,10 @@ type TimelineAgeFieldsProps = {
   setEndAge: (value: string) => void;
   startAgeLabel?: string;
   endAgeLabel?: string;
+
+  minAgeOverride?: number;
+  maxAgeOverride?: number;
+  helperText?: string;
 };
 
 function getTimelineBounds(state: any) {
@@ -84,8 +88,15 @@ export function TimelineAgeFields({
   setEndAge,
   startAgeLabel = "Start Age",
   endAgeLabel = "End Age",
+
+  minAgeOverride,
+  maxAgeOverride,
+  helperText,
 }: TimelineAgeFieldsProps) {
-  const { minAge, maxAge } = getTimelineBounds(state);
+
+  const timelineBounds = getTimelineBounds(state);
+  const minAge = minAgeOverride ?? timelineBounds.minAge;
+  const maxAge = maxAgeOverride ?? timelineBounds.maxAge;
 
   const startAgeInvalid = isStartAgeInvalid(startAge, minAge, maxAge);
   const endAgeInvalid = isEndAgeInvalid(endAge, startAge, minAge, maxAge);
@@ -142,6 +153,7 @@ export function TimelineAgeFields({
           />
         </div>
       </div>
+      {helperText && <p className="form-helper">{helperText}</p>}
 
       {timelineInvalid && (
         <p className="form-field-error">

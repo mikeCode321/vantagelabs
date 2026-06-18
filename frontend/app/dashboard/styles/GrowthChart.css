@@ -316,6 +316,10 @@
 }
 
 @media (max-width: 480px) {
+  .income-chart-card {
+    border: none;
+  }
+
   .income-chart-top {
     gap: 6px;
   }

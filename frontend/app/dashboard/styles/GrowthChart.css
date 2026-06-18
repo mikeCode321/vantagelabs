@@ -235,6 +235,13 @@
   }
 }
 
+.income-chart-wrap .recharts-surface,
+.income-chart-wrap .recharts-wrapper,
+.income-chart-wrap [tabindex] {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .income-chart-wrap-area { display: none; }
 
 @media (max-width: 1024px) {
@@ -338,6 +345,7 @@
   }
 
   .income-chart-wrap {
+    height: 280px;
     min-height: 0;
   }
 }

@@ -1,4 +1,5 @@
 "use client";
+import { BriefcaseBusiness, Car, ChartNoAxesColumnIncreasing, CreditCard, House, Landmark, ShoppingCart } from "lucide-react";
 import "./styles/GrowthChart.css";
 
 import { useState, useMemo, useRef, useCallback } from "react";
@@ -15,26 +16,27 @@ const VIEWS = [
   { group: "Income", key: "net",      label: "Net Income",   dataKey: "netIncome",   gradientId: "gradNet",     colors: ["#0EA5E9", "#7DD3FC"] },
   { group: "Income", key: "taxes",    label: "Taxes Paid",   dataKey: "taxesPaid",   gradientId: "gradTaxes",   colors: ["#F43F5E", "#FDA4AF"] },
   { group: "Wealth", key: "netWorth", label: "Net Worth",    dataKey: "netWorth",    gradientId: "gradWealth",  colors: ["#10B981", "#6EE7B7"] },
+  { group: "Expense", key: "expense", label: "Total Expenses",    dataKey: "expense",    gradientId: "gradExpense",  colors: ["#c90000", "#6d2727"] },
 ];
 
 const PLACEHOLDER_DATA = [
-  { age: 25, year: 25, value: 42000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
-  { age: 26, year: 26, value: 55000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
-  { age: 27, year: 27, value: 48000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
-  { age: 28, year: 28, value: 63000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
-  { age: 29, year: 29, value: 71000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
-  { age: 30, year: 30, value: 78000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, events: [] },
+  { age: 25, year: 25, value: 42000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, expense: 0,events: [] },
+  { age: 26, year: 26, value: 55000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0,expense: 0, events: [] },
+  { age: 27, year: 27, value: 48000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, expense:0, events: [] },
+  { age: 28, year: 28, value: 63000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0, expense:0,events: [] },
+  { age: 29, year: 29, value: 71000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0,expense:0, events: [] },
+  { age: 30, year: 30, value: 78000, grossIncome: 0, netIncome: 0, taxesPaid: 0, netWorth: 0,expense:0, events: [] },
 ];
 
 const VIEW_MAP = Object.fromEntries(VIEWS.map((v) => [v.key, v]));
 const GROUPS   = [...new Set(VIEWS.map((v) => v.group))];
 const ICONS = {
-  checking: "🏦", savings: "🏦",
-  salary: "💼", hourly: "💼", side: "💼",
-  employer_retirement: "📈", taxable_investments: "📈",
-  rent: "🏠", house_loan: "🏠", house: "🏠",
-  car: "🚗", car_loan: "🚗",
-  debt: "💳", living: "🛒",
+  checking: <Landmark/>, savings: <Landmark/>,
+  salary: <BriefcaseBusiness />, hourly: <BriefcaseBusiness/>, side: <BriefcaseBusiness />,
+  employer_retirement: <ChartNoAxesColumnIncreasing />, taxable_investments: <ChartNoAxesColumnIncreasing/>,
+  rent: <House/>, house_loan: <House/>, house: <House/>,
+  car: <Car/>, car_loan: <Car/>,
+  debt: <CreditCard/>, living: <ShoppingCart/>,
 };
 
 function buildEventsByYear(req) {
@@ -89,17 +91,24 @@ export default function GrowthChart({ data, tutorialActive = false }) {
   }, []);
 
   const chartData = useMemo(() => {
-    if (!data?.year_results) return [];
+    if (!data?.year_results) return [];  
     const eventsByYear = buildEventsByYear(data.request);
-    return data.year_results.map((yr) => ({
-      year:        yr.year,
-      age:         yr.age,
-      grossIncome: yr.income_earned.gross,
-      netIncome:   yr.income_earned.net,
-      taxesPaid:   yr.income_earned.taxes_paid,
-      netWorth:    yr.net_worth,
-      events:      eventsByYear[yr.year] ?? [],
-    }));
+  
+    return data.year_results.map((yr) => {
+      const monthlyExpenses = Number(yr.expenses?.total_monthly ?? 0);
+      const annualExpenses = monthlyExpenses * 12;
+  
+      return {
+        year: yr.year,
+        age: yr.age,
+        grossIncome: yr.income_earned.gross,
+        netIncome: yr.income_earned.net,
+        taxesPaid: yr.income_earned.taxes_paid,
+        netWorth: yr.net_worth,
+        expense: annualExpenses,
+        events: eventsByYear[yr.year] ?? [],
+      };
+    });
   }, [data]);
 
   const view = VIEW_MAP[activeKey];
@@ -115,28 +124,32 @@ export default function GrowthChart({ data, tutorialActive = false }) {
     const { x, y, index } = props;
     const row = displayData[index];
     if (!row?.events?.length) return null;
-
     return (
       <g>
         {row.events.map((event, i) => {
           const isStart = event.kind === "start";
           const eventData = { ...event, year: row.year, type: isStart ? "start" : "end" };
-
+          const size = 20;
+  
           return (
-            <text
+            <foreignObject
               key={i}
-              x={x}
-              y={y - 20 - i * 16}
-              textAnchor="middle"
-              fontSize={16}
-              style={{ cursor: "pointer", userSelect: "none", touchAction: "none" }}
+              x={x - size / 2}
+              y={y - size - 4 - i * (size + 4)}
+              width={size}
+              height={size}
+              style={{ cursor: "pointer", overflow: "visible" }}
               onMouseEnter={() => showTooltip(eventData)}
               onMouseLeave={() => hideTooltip()}
               onTouchStart={(e) => { e.preventDefault(); showTooltip(eventData); }}
               onTouchEnd={(e) => { e.preventDefault(); hideTooltip(); }}
             >
-              {event.icon}
-            </text>
+              <div xmlns="http://www.w3.org/1999/xhtml"
+                style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", color: "#6B7280" }}
+              >
+                {event.icon}
+              </div>
+            </foreignObject>
           );
         })}
       </g>

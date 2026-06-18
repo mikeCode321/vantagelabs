@@ -4,7 +4,7 @@ import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/dashboard/utils";
 import { ID } from "@/app/dashboard/Accounts";
 import {TimelineAgeFields,getValidatedTimelinePayload, } from "@/app/dashboard/TimelineAgeFields";
-import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Link } from 'lucide-react';
+import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Link, HouseIcon, LinkIcon, Building2, CreditCard } from 'lucide-react';
 
 // ─────────────────────────────────────────────
 // EXPENSES
@@ -1342,7 +1342,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🏦</div>
+        <div className="form-header-icon"><House/></div>
         <div>
           <h3 className="form-header-title">Edit Home Loan</h3>
           <p className="form-header-desc">
@@ -1447,7 +1447,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
             <div className="link-card">
               <div className="link-card-header">
                 <div className="link-card-info">
-                  <span className="preview-icon">🏡</span>
+                  <span className="preview-icon"><House/></span>
                   <div>
                     <div className="link-card-title">
                       Link to a House Asset
@@ -1466,7 +1466,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
                   </p>
                 ) : isAlreadyLinked ? (
                   <div className="link-card-synced">
-                    🔗 Linked to {linkedHouse?.name || "House asset"}
+                    <Link/> Linked to {linkedHouse?.name || "House asset"}
 
                     <p className="form-inline-muted">Delete the linked house to reassign</p>
                   </div>
@@ -1498,7 +1498,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card-synced">
-                        🔗 Linked to {linkedHouse?.name}
+                        <Link/> Linked to {linkedHouse?.name}
                       </div>
                     )}
                   </div>
@@ -1624,7 +1624,7 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
             {/* Annual Cost Preview */}
             <div className="preview-card">
               <div className="preview-card-header">
-                <span className="preview-icon">💸</span>
+                <span className="preview-icon"><DollarSign/></span>
                 <span className="preview-card-label">Annual Cost</span>
               </div>
               <div className="preview-card-amount">
@@ -1685,7 +1685,7 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">🏢</div>
+        <div className="form-header-icon"><Building2/></div>
         <div>
           <h3 className="form-header-title">Edit Rent</h3>
           <p className="form-header-desc">Update monthly rent and annual growth rate.</p>
@@ -1731,7 +1731,7 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
             {/* Annual Cost Preview */}
             <div className="preview-card">
               <div className="preview-card-header">
-                <span className="preview-icon">💸</span>
+                <span className="preview-icon"><DollarSign/></span>
                 <span className="preview-card-label">Annual Rent Cost</span>
               </div>
               <div className="preview-card-amount">
@@ -1797,7 +1797,7 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💳</div>
+        <div className="form-header-icon"><CreditCard/></div>
         <div>
           <h3 className="form-header-title">Edit Debt</h3>
           <p className="form-header-desc">Update loan balance, monthly payment, and interest rate.</p>
@@ -1858,7 +1858,7 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
             {/* Annual Payment Preview */}
             <div className="preview-card">
               <div className="preview-card-header">
-                <span className="preview-icon">💸</span>
+                <span className="preview-icon"><DollarSign/></span>
                 <span className="preview-card-label">Annual Payment</span>
               </div>
               <div className="preview-card-amount">

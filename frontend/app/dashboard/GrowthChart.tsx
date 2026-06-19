@@ -106,6 +106,8 @@ export default function GrowthChart({ data, tutorialActive = false }) {
         taxesPaid: yr.income_earned.taxes_paid,
         netWorth: yr.net_worth,
         expense: annualExpenses,
+        incomesSummary: yr.incomes_summary,
+        incomeEarned: yr.income_earned,
         events: eventsByYear[yr.year] ?? [],
       };
     });
@@ -156,18 +158,40 @@ export default function GrowthChart({ data, tutorialActive = false }) {
     );
   }, [displayData, showTooltip, hideTooltip]);
 
+  function formatVariantLabel(variant: string) {
+    return variant
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+
   const CustomTooltip = useCallback((props) => {
     const { active, payload, label } = props;
     if (!active || !payload?.length) return null;
     const value = payload[0].value;
     const dataKey = payload[0].dataKey;
     const view = VIEWS.find((v) => v.dataKey === dataKey);
+    const row = payload[0].payload;
+    const incomeByVariant = row?.incomesSummary?.by_variant;
+    const showGrossIncomeBreakdown = dataKey === "grossIncome" && incomeByVariant;
     return (
       <div className="chart-tooltip">
         <div className="chart-tooltip-label">Year: {label}</div>
         <div className="chart-tooltip-value" style={{ color: view?.colors[0] }}>
           {view?.label}: {formatCurrency(value)}
         </div>
+        {showGrossIncomeBreakdown && (
+          <div className="chart-tooltip-breakdown">
+            {Object.entries(incomeByVariant)
+              .filter(([, amount]) => Number(amount) > 0)
+              .map(([variant, amount]) => (
+                <div key={variant} className="chart-tooltip-breakdown-row">
+                  <span>{formatVariantLabel(variant)}</span>
+                  <strong>{formatCurrency(Number(amount))}</strong>
+                </div>
+              ))}
+          </div>
+        )}
       </div>
     );
   }, []);

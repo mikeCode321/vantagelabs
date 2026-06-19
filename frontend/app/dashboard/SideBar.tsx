@@ -42,7 +42,7 @@ export default function SideBar() {
                     <span className="dash-feedback-icon">✦</span>
                     <span className="dash-feedback-copy">
                         <strong>Leave feedback</strong>
-                        <p>Help us improve Vantage</p>
+                        <p>Help us improve Firephin</p>
                     </span>
                 </button>
                 </div>
@@ -72,7 +72,7 @@ export default function SideBar() {
                         <span className="dash-feedback-icon">✦</span>
                         <span className="dash-feedback-copy">
                             <strong>Leave feedback</strong>
-                            <p>Help us improve Vantage</p>
+                            <p>Help us improve Firephin</p>
                         </span>
                     </button>
                 </div>

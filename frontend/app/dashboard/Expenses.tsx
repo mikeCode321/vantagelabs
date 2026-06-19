@@ -281,19 +281,13 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-            minAgeOverride={selectedLinkedHouse?.start_age}
-            maxAgeOverride={selectedLinkedHouse?.end_age}
-            helperText={
-              selectedLinkedHouse
-                ? `Loan timeline must stay within ${selectedLinkedHouse.name}'s ownership timeline: ages ${selectedLinkedHouse.start_age}–${selectedLinkedHouse.end_age}.`
-                : undefined
-            }
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+              readOnly={linkedAssetId !== ""}
+            />
 
             <div className="link-card">
               <div className="link-card-header">
@@ -541,19 +535,13 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-            minAgeOverride={selectedLinkedCar?.start_age}
-            maxAgeOverride={selectedLinkedCar?.end_age}
-            helperText={
-              selectedLinkedCar
-                ? `Loan timeline must stay within ${selectedLinkedCar.name}'s ownership timeline: ages ${selectedLinkedCar.start_age}–${selectedLinkedCar.end_age}.`
-                : undefined
-            }
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+              readOnly={linkedAssetId !== ""}
+            />
 
             <div className="link-card">
               <div className="link-card-header">
@@ -1138,19 +1126,13 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-            minAgeOverride={selectedLinkedCar?.start_age}
-            maxAgeOverride={selectedLinkedCar?.end_age}
-            helperText={
-              selectedLinkedCar
-                ? `Loan timeline must stay within ${selectedLinkedCar.name}'s ownership timeline: ages ${selectedLinkedCar.start_age}–${selectedLinkedCar.end_age}.`
-                : undefined
-            }
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+              readOnly={linkedAssetId !== ""}
+            />
 
             <div className="link-card">
               <div className="link-card-header">
@@ -1239,7 +1221,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
   );
 
 
-  const isAlreadyLinked = !!item.linked_asset_id;
+  const isAlreadyLinked = item.linked_asset_id !== null && item.linked_asset_id !== undefined && item.linked_asset_id !== "";
 
   const [linkedAssetId, setLinkedAssetId] = useState("");
   const [linkError, setLinkError] = useState("");
@@ -1475,19 +1457,13 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-            minAgeOverride={selectedLinkedHouse?.start_age}
-            maxAgeOverride={selectedLinkedHouse?.end_age}
-            helperText={
-              selectedLinkedHouse
-                ? `Loan timeline must stay within ${selectedLinkedHouse.name}'s ownership timeline: ages ${selectedLinkedHouse.start_age}–${selectedLinkedHouse.end_age}.`
-                : undefined
-            }
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+              readOnly={linkedAssetId !== ""}
+            />
 
             <div className="link-card">
               <div className="link-card-header">

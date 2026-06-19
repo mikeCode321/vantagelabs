@@ -1,7 +1,7 @@
 
 .toast-banner-wrapper {
   position: fixed;
-  bottom: 24px;
+  top: 24px;
   right: 24px;
   display: flex;
   flex-direction: column;
@@ -142,6 +142,8 @@
 
 @media (max-width: 640px) {
   .toast-banner-wrapper {
+    top:auto;
+    width: auto;
     bottom: 16px;
     right: 16px;
     left: 16px;

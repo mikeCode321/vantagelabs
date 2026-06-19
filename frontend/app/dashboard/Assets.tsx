@@ -636,6 +636,20 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
       payload: updatedHouseAsset,
     });
 
+    if (updatedHouseAsset.linked_loan_id) {
+      const linkedLoan = availableHouseLoans.find((loan) => loan.id === updatedHouseAsset.linked_loan_id);
+      if (linkedLoan) {
+        dispatch({
+          type: "UPDATE_EXPENSE",
+          payload: {
+            ...linkedLoan,
+            start_age: timeline.start,
+            end_age: timeline.end,
+          },
+        });
+      }
+    }
+
     onToast(name,"edited");
     
     onClose();
@@ -900,6 +914,20 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
       type: "UPDATE_ASSET",
       payload: updatedCarAsset,
     });
+
+    if (updatedCarAsset.linked_loan_id) {
+      const linkedLoan = availableCarLoans.find((loan) => loan.id === updatedCarAsset.linked_loan_id);
+      if (linkedLoan) {
+        dispatch({
+          type: "UPDATE_EXPENSE",
+          payload: {
+            ...linkedLoan,
+            start_age: timeline.start,
+            end_age: timeline.end,
+          },
+        });
+      }
+    }
 
     onToast(name,"edited");
     

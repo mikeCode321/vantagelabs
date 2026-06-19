@@ -118,7 +118,7 @@ export function TimelineAgeFields({state, startAge, endAge, setStartAge, setEndA
       </div>
 
       {readOnly && (
-        <p className="form-helper">Inherited from linked asset — edit the asset to change these dates.</p>
+        <p className="form-helper">Inherited from linked asset - edit the asset to change these dates.</p>
       )}
 
       {timelineInvalid && (

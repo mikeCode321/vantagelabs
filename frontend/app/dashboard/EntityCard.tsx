@@ -226,7 +226,9 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
     }
   
     if (item.monthly_expense != null) {
-      return `$${formatNumberWithCommas(item.monthly_expense.toString())}/mo`;
+      const monthlyExpense = Math.round(Number(item.monthly_expense));
+
+      return `$${formatNumberWithCommas(monthlyExpense.toString())}/mo`;
     }
   
     if (item.asset_value != null) {

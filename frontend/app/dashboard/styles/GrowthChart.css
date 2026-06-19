@@ -358,3 +358,23 @@
     min-height: 0;
   }
 }
+
+.chart-tooltip-breakdown {
+  padding-top: 8px;
+}
+
+.chart-tooltip-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.chart-tooltip-breakdown-row + .chart-tooltip-breakdown-row {
+  margin-top: 4px;
+}
+
+.chart-tooltip-breakdown-row strong {
+  color: var(--text-primary);
+  font-weight: bolder;
+}

@@ -108,7 +108,7 @@ export default function FeedbackFormModal({ isOpen, onClose }: { isOpen: boolean
           </label>
 
           <label className="feedback-label">
-            Email Optional
+            Email (Optional)
             <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Only if you want a follow-up" className="feedback-input" />
           </label>
 

@@ -18,11 +18,15 @@
 
   /* ─── Secondary Brand ────────────────────────────── */
   --secondary:          #ff4b32;
+  --secondary-light:    #ff8a5c;
   --secondary-dark:     #dc2f1d;
   --secondary-soft:     #fff0ed;
   --secondary-border:   rgba(255, 75, 50, 0.22);
   --secondary-muted:    rgba(255, 75, 50, 0.09);
   --secondary-hover:    #ffe1dc;
+
+  --gradient-warm:      linear-gradient(135deg, var(--secondary-light) 0%, var(--secondary) 55%, var(--secondary-dark) 100%);
+  --gradient-firephin:  linear-gradient(90deg, var(--secondary-light) 0%, var(--secondary) 28%, var(--secondary) 45%, var(--accent) 62%, var(--accent-dark) 100%);
 
   /* ─── Neutrals ───────────────────────────────────── */
   --white:              #ffffff;

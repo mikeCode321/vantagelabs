@@ -60,7 +60,7 @@
   align-items: center;
   text-align: center;
   padding: 48px 40px 40px;
-  background: radial-gradient(circle at 50% 0%, var(--accent-muted) 0%, transparent 70%), var(--white);
+  background: linear-gradient(180deg, var(--off-white) 0%, var(--white) 55%);
   border-radius: var(--radius-lg);
 }
 
@@ -79,42 +79,42 @@
 }
 
 .ts-welcome-wordmark {
-  font-size: 44px;
+  font-size: 42px;
   font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--primary-mid);
-  line-height: 1;
-  margin-bottom: 8px;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
   font-family: var(--font-serif);
-}
-
-.ts-welcome-wordmark-v {
-  color: var(--accent);
+  background: var(--gradient-firephin);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .ts-welcome-tagline {
-  font-size: var(--text-xs);
-  color: var(--accent);
-  margin: 0 0 24px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-family: var(--font-primary), monospace;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0 22px;
+  letter-spacing: 0;
+  text-transform: none;
+  font-family: var(--font-primary), sans-serif;
 }
 
 .ts-welcome-divider {
-  width: 40px;
+  width: 32px;
   height: 1px;
-  background: var(--accent-border);
-  margin-bottom: 24px;
+  background: var(--border-soft);
+  margin-bottom: 22px;
 }
 
 .ts-welcome-body {
   font-size: var(--text-sm);
-  line-height: 1.7;
+  line-height: 1.65;
   color: var(--text-secondary);
-  max-width: 400px;
-  margin: 0 0 24px;
-  font-family: var(--font-primary), monospace;
+  max-width: 380px;
+  margin: 0 0 28px;
+  font-family: var(--font-primary), sans-serif;
 }
 
 .ts-welcome-actions {

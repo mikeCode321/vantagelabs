@@ -204,18 +204,21 @@ function WelcomeScreen({ onGetStarted }) {
   return (
     <div className="ts-welcome">
       <div className="ts-welcome-wordmark">
-        <span className="ts-welcome-wordmark-v">Fire</span>phin
+        firephin
       </div>
 
       <p className="ts-welcome-tagline">
-        Retire early. Model the path.
+        Financial{" "}
+        Independence.{" "}
+        Retire{" "}
+        Early.
       </p>
 
       <div className="ts-welcome-divider" />
 
       <p className="ts-welcome-body">
-        Firephin projects your financial life from today through retirement —
-        model your accounts, income, expenses, and assets to see exactly where you'll end up.
+        Add your accounts, income, expenses, and assets, and see exactly
+        where you'll land, from today through retirement.
       </p>
 
       <div className="ts-welcome-actions">

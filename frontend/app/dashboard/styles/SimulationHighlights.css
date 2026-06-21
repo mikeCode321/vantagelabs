@@ -139,6 +139,9 @@
 }
 
 @media (max-width: 480px) {
+  .simulation-highlight-row-label{
+    font-size: 10px;
+  }
   .simulation-highlights-card {
     padding: 14px;
   }

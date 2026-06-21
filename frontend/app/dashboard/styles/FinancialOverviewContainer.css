@@ -146,18 +146,18 @@
 @media (max-width: 860px) {
   .overview-cards {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1.15fr);
     padding: 0 16px;
     gap: 8px;
     margin: 8px 0;
   }
 
   .overview-card {
-    border-radius: var(--radius-md);
-    padding: 8px 6px;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 128px;
+    padding: 14px 12px;
     position: relative;
-    min-width: 0;
-    max-width: none;
   }
 
   .overview-card-icon {
@@ -175,17 +175,15 @@
   }
 
   .overview-card-value {
-    font-size: clamp(11px, 2vw, 15px);
-    white-space: nowrap;
-    overflow: hidden;
+    line-height: 1;
+    margin-top: 12px;
     text-overflow: ellipsis;
   }
 
   .overview-card-label {
-    font-size: 9px;
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
+    font-size: 13px;
+    margin: 0;
+    padding-right: 10px;
     text-overflow: ellipsis;
   }
 
@@ -198,8 +196,7 @@
   }
 
   .overview-card-change span {
-    font-size: 9px;
-    padding: 1px 4px;
+    font-size: 11px;  
   }
 
   .overview-card-mobile-icon {
@@ -225,7 +222,7 @@
   .overview-card-orange .overview-card-mobile-icon { color: var(--card-icon-orange); background: var(--card-icon-orange-bg); }
 }
 
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   .overview-cards {
     gap: 6px;
     padding: 0;
@@ -254,5 +251,12 @@
   .overview-card-mobile-icon svg {
     width: 9px;
     height: 9px;
+  }
+} */
+
+
+@media (max-width: 480px){
+  .overview-card-value {
+    font-size: clamp(15px, 3.2vw, 21px);
   }
 }

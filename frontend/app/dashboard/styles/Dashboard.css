@@ -159,32 +159,46 @@ h3 {
   } */
 
   .simulation-results-grid {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "chart chart"
+      "overview highlights"
+      "controls controls";
+    gap: 12px;
   }
 
   .simulation-results-grid > .income-chart-card { 
-    order: 1;
+    grid-area: chart;
     padding-left: 0;
     padding-right: 0;
   }
   
   .simulation-results-grid > .overview-cards { 
-    order: 2; 
+    grid-area: overview;
     width: 100%;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding: 0;
     box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    height: 100%;
+    align-self: stretch;
   }
 
-  .sim-grid-right { 
-    order: 3; 
+  .sim-grid-right > .simulation-highlights-card {
+    grid-area: highlights;
     width: 100%;
-    padding-left: 12px;
-    padding-right: 12px;
+  }
+  
+  .sim-grid-right > .sim-controls {
+    grid-area: controls;
+    width: 100%;
+    max-width: none;
     box-sizing: border-box;
+  }
+  .sim-grid-right { 
+    display: contents;
   }
 
   .simulation-section-header {

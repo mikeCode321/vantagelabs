@@ -146,8 +146,11 @@ export default function GrowthChart({ data, tutorialActive = false }) {
               onTouchStart={(e) => { e.preventDefault(); showTooltip(eventData); }}
               onTouchEnd={(e) => { e.preventDefault(); hideTooltip(); }}
             >
-              <div xmlns="http://www.w3.org/1999/xhtml"
-                style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", color: "#6B7280" }}
+              <div
+                xmlns="http://www.w3.org/1999/xhtml"
+                className="chart-event-icon"
+                data-kind={event.kind}
+                style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 {event.icon}
               </div>

@@ -132,6 +132,13 @@
   box-sizing: border-box;
 }
 
+.form-input-readonly {
+  background: var(--off-white);
+  color: var(--text-secondary);
+  cursor: default;
+  pointer-events: none;
+}
+
 .form-input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.12);

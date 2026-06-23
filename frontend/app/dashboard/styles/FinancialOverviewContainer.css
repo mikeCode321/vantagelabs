@@ -145,14 +145,16 @@
 
 @media (max-width: 860px) {
   .overview-cards {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     padding: 0 16px;
-    gap: 10px;
+    gap: 8px;
+    margin: 8px 0;
+    align-items: start;
   }
 
   .overview-card {
-    border-radius: var(--radius-md);
-    padding: 12px;
+    min-height: 0;
+    padding: 12px 10px 10px;
     position: relative;
   }
 
@@ -164,14 +166,32 @@
     gap: 0;
   }
 
+  .overview-card-label {
+    font-size: 11px;
+    margin: 0 0 8px;
+    padding-right: 20px;
+  }
+
   .overview-card-value-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
 
+
+  .overview-card-value {
+    font-size: clamp(14px, 2.8vw, 18px);
+    margin-top: 0;
+    line-height: 1.1;
+  }
+
   .overview-card-change {
     align-items: flex-start;
+  }
+
+  .overview-card-change span {
+    font-size: 10px;
+    padding: 2px 6px;
   }
 
   .overview-card-change small {
@@ -181,60 +201,47 @@
   .overview-card-mobile-icon {
     display: grid;
     place-items: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 5px;
-    font-size: 10px;
-    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 8px;
+    right: 8px;
   }
 
   .overview-card-mobile-icon svg {
-    width: 20px;
-    height: 20px;
+    width: 10px;
+    height: 10px;
   }
 
-  .overview-card-purple .overview-card-mobile-icon {
-    color: var(--accent);
-    background: var(--card-icon-purple-bg);
-  }
-
-  .overview-card-green .overview-card-mobile-icon {
-    color: var(--card-icon-green);
-    background: var(--card-icon-green-bg);
-  }
-
-  .overview-card-blue .overview-card-mobile-icon {
-    color: var(--card-icon-blue);
-    background: var(--card-icon-blue-bg);
-  }
-
-  .overview-card-orange .overview-card-mobile-icon {
-    color: var(--card-icon-orange);
-    background: var(--card-icon-orange-bg);
-  }
+  .overview-card-purple .overview-card-mobile-icon { color: var(--accent);           background: var(--card-icon-purple-bg); }
+  .overview-card-green  .overview-card-mobile-icon { color: var(--card-icon-green);  background: var(--card-icon-green-bg);  }
+  .overview-card-blue   .overview-card-mobile-icon { color: var(--card-icon-blue);   background: var(--card-icon-blue-bg);   }
+  .overview-card-orange .overview-card-mobile-icon { color: var(--card-icon-orange); background: var(--card-icon-orange-bg); }
 }
 
 @media (max-width: 480px) {
+  .overview-cards {
+    gap: 6px;
+    padding: 0 12px;
+  }
+
   .overview-card {
-    padding: 10px;
+    padding: 10px 8px 8px;
+    border-radius: var(--radius-md);
   }
 
   .overview-card-label {
     font-size: 10px;
+    margin-bottom: 6px;
   }
 
-  .overview-card-mobile-icon {
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
+  .overview-card-value {
+    font-size: clamp(13px, 3vw, 16px);
+  }
+
+  .overview-card-change span {
     font-size: 9px;
-  }
-
-  .overview-card-mobile-icon svg {
-    width: 16px;
-    height: 16px;
+    padding: 2px 5px;
   }
 }

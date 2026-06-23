@@ -22,12 +22,13 @@ import FinancialOverviewContainer from "@/app/dashboard/FinancialOverviewContain
 import GrowthChart from '@/app/dashboard/GrowthChart';
 
 import { formatCompactMoney, formatSignedPercent, getPercentChange, getChangeDirection, getReadableTrend, } from "@/app/dashboard/FinancialOverviewContainer";
-import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, CreditCard, ChartColumnIncreasing , Accessibility, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
+import { CircleDollarSign,ChartNoAxesCombined ,ChartPie , HandCoins, CreditCard, ChartColumnIncreasing , PiggyBank, Luggage, Clock, Rocket, House,BanknoteArrowDown,ShoppingCart ,Car, HousePlus } from 'lucide-react';
 
 import { SimRequest, INITIAL_STATE, ENABLE_LOCAL_STORAGE_PERSISTENCE, loadState, saveState } from "./utils";
 
 
 type Action =
+  | { type: "HYDRATE"; payload: SimRequest }
   | { type: "ADD_ACCOUNT"; payload: LiquidAccount }
   | { type: "UPDATE_ACCOUNT"; payload: LiquidAccount }
   | { type: "DELETE_ACCOUNT"; payload: { id: string; variant: "checking" | "taxable_investments" | "employer_retirement" } }
@@ -45,6 +46,9 @@ type Action =
 
 function simReducer(state: SimRequest, action: Action): SimRequest {
   switch (action.type) {
+
+    case "HYDRATE":
+      return action.payload;
 
     case "ADD_ACCOUNT": {
       const account = action.payload;
@@ -283,7 +287,7 @@ const ENTITY_CONFIG = {
       id: "employer_retirement",
       name: "Employer Retirement Accounts",
       description: "Track your 401(k), 403(b), or pension and optionally link it to a job.",
-      emoji: <Accessibility/>,
+      emoji: <PiggyBank />,
       formComponent: EmployerRetirementAccountForm,
       editFormComponent: EditEmployerRetirementAccountForm,
     },
@@ -387,9 +391,7 @@ const ENTITY_CONFIG = {
 
 export default function Dashboard() {
   // const sim = useSimulation();
-  const [state, dispatch] = useReducer(simReducer, undefined, () => {
-    return loadState() ?? INITIAL_STATE;
-  });
+  const [state, dispatch] = useReducer(simReducer, INITIAL_STATE);
   const [simResult, setSimResult] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [isSimLoading, setIsSimLoading] = useState(true);
@@ -449,7 +451,7 @@ export default function Dashboard() {
     },
     {
       id: "cash-flow",
-      label: "Cash Flow (Annual)",
+      label: "Cash Flow",
       value: formatCompactMoney(annualCashFlow),
       change: formatSignedPercent(cashFlowChange),
       changeLabel: "vs first year",
@@ -462,7 +464,7 @@ export default function Dashboard() {
     },
     {
       id: "total-assets",
-      label: "Total Assets",
+      label: "Assets",
       value: formatCompactMoney(totalAssets),
       change: formatSignedPercent(assetChange),
       changeLabel: "vs start",
@@ -475,7 +477,7 @@ export default function Dashboard() {
     },
     {
       id: "total-liabilities",
-      label: "Total Liabilities",
+      label: "Liabilities",
       value: formatCompactMoney(totalLiabilities),
       change: formatSignedPercent(liabilityChange),
       changeLabel: "vs start",
@@ -506,6 +508,11 @@ export default function Dashboard() {
     }, 2000);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const saved = loadState();
+    if (saved) dispatch({ type: "HYDRATE", payload: saved });
   }, []);
 
   useEffect(() => {
@@ -556,12 +563,12 @@ export default function Dashboard() {
           <UserAgeForm state={state} dispatch={dispatch} />
         </div>  */}
        
-        <FinancialOverviewContainer cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
+        
         <section className="simulation-results-grid">
-          <GrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />
-          <div>
-            <SimulationHighlightsCard data={simData} tutorialActive={activeTutorialStepId === "results"} selectedYearData={selectedYearData}/>
-            <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} simResult={simResult} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+          <FinancialOverviewContainer cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
+          <GrowthChart data={simResult} selectedYear={selectedYear} tutorialActive={activeTutorialStepId === "results"} />          <div className="sim-grid-right">
+          <SimulationHighlightsCard data={simData} tutorialActive={activeTutorialStepId === "results"} selectedYearData={selectedYearData}/>
+          <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} simResult={simResult} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
           </div>
         </section>
 

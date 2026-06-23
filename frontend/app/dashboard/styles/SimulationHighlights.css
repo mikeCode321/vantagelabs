@@ -135,15 +135,48 @@
   .simulation-highlights-card {
     order: -1;
     border-radius: var(--radius-md);
+    padding: 16px;
+  }
+
+  .simulation-highlight-row-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    border-radius: 6px;
+  }
+
+  .simulation-highlight-row {
+    padding: 10px 0;
+    gap: 10px;
   }
 }
 
 @media (max-width: 480px) {
   .simulation-highlights-card {
-    padding: 14px;
+    padding: 12px;
+  }
+
+  .simulation-highlight-row-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
   }
 
   .simulation-highlight-row {
-    align-items: flex-start;
+    padding: 8px 0;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .simulation-highlight-row-label {
+    font-size: 11px;
+  }
+
+  .simulation-highlight-row-sublabel {
+    font-size: 10px;
+  }
+
+  .simulation-highlight-row-value {
+    font-size: 11px;
   }
 }

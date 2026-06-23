@@ -24,8 +24,6 @@ const ADDITIONAL_MEDICARE_THRESHOLD = {
 const ADDITIONAL_MEDICARE_RATE = 0.009;
 
 class TaxService {
-    filingStatus;
-    state;
   constructor(filingStatus, state) {
     this.filingStatus = filingStatus;
     this.state = state;

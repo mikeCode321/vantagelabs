@@ -107,11 +107,28 @@ h3 {
 .simulation-results-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
+  grid-template-rows: auto auto;
   gap: 8px;
   align-items: start;
   width: 100%;
   margin-top: 10px;
   margin-bottom: 16px;
+}
+
+.simulation-results-grid > .overview-cards {
+  grid-column: 1 / -1; /* spans full width above chart */
+}
+
+.simulation-results-grid > .income-chart-card {
+  grid-column: 1;
+}
+
+.sim-grid-right {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 @media (max-width: 860px) {
@@ -124,7 +141,6 @@ h3 {
   .dash-main {
     height: auto;
     overflow: visible;
-    padding-bottom: 32px;
   }
 
   .dash-topbar {
@@ -135,14 +151,59 @@ h3 {
     font-size: var(--text-xs);
   }
 
-  .simulation-results-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .simulation-results-grid,
-  .simulation-section-header {
+  /* .simulation-results-grid {
+    display: flex;
+    flex-direction: column;
     padding-left: 16px;
     padding-right: 16px;
+  } */
+
+  .simulation-results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "chart chart"
+      "overview highlights"
+      "controls controls";
+    gap: 12px;
+  }
+
+  .simulation-results-grid > .income-chart-card { 
+    grid-area: chart;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  .simulation-results-grid > .overview-cards { 
+    grid-area: overview;
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    /* height: 100%; */
+    align-self: stretch;
+  }
+
+  .sim-grid-right > .simulation-highlights-card {
+    grid-area: highlights;
+    width: 100%;
+  }
+  
+  .sim-grid-right > .sim-controls {
+    grid-area: controls;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+  }
+  .sim-grid-right { 
+    display: contents;
+  }
+
+  .simulation-section-header {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 

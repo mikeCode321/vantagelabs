@@ -4,6 +4,7 @@ import "./styles/TutorialSteps.css";
 import { useState, useEffect } from "react";
 import { CheckingAccountForm , EditCheckingAccountForm, EmployerRetirementAccountForm, EditEmployerRetirementAccountForm} from "@/app/dashboard/Accounts";
 import { SalaryForm , EditSalaryForm} from "@/app/dashboard/Incomes";
+import { Briefcase, Clock, DollarSign, House , Landmark, Lightbulb, Luggage} from "lucide-react";
 
 export type FilingStatus =
   | "single"
@@ -107,9 +108,9 @@ function TutorialProgress({ currentStepIndex, totalSteps }) {
     );
   }
 
-function TutorialStepPanel({currentStepIndex, totalSteps, title, description, items = [], onBack, onNext, onSkip, className = '', nextDisabled = false, isMobileInfoOpen = false, onToggleInfo, }) {
-  const nextLabel = currentStepIndex === totalSteps - 1 ? "Finish" : "Next";
+function TutorialStepPanel({currentStepIndex, totalSteps, title, description, items = [], onBack, onNext, onSkip, className = '', nextDisabled = false,nextLabel, isMobileInfoOpen = false, onToggleInfo,  }) {
   const showSkip = currentStepIndex > 0; // hide skip on welcome
+  const computedNextLabel =nextLabel ?? (currentStepIndex === totalSteps - 1 ? "Finish" : "Next");
 
   return (
     <aside className={`ts-step-panel ${className}`}>
@@ -180,7 +181,7 @@ function TutorialStepPanel({currentStepIndex, totalSteps, title, description, it
         </button>
         <div className={`ts-tooltip-wrap${nextDisabled ? " ts-tooltip-wrap-active" : ""}`}>
           <button type="button" className="ts-btn ts-btn-primary" onClick={onNext} disabled={nextDisabled}>
-            {nextLabel}
+            {computedNextLabel}
           </button>
           {nextDisabled && (
             <span className="ts-tooltip" role="tooltip">
@@ -192,7 +193,7 @@ function TutorialStepPanel({currentStepIndex, totalSteps, title, description, it
 
       {showSkip && (
         <button type="button" className="ts-step-skip" onClick={onSkip}>
-          Skip
+          Skip Tutorial
         </button>
       )}
     </aside>
@@ -204,18 +205,21 @@ function WelcomeScreen({ onGetStarted }) {
   return (
     <div className="ts-welcome">
       <div className="ts-welcome-wordmark">
-        <span className="ts-welcome-wordmark-v">Fire</span>phin
+        firephin
       </div>
 
       <p className="ts-welcome-tagline">
-        Retire early. Model the path.
+        Financial{" "}
+        Independence.{" "}
+        Retire{" "}
+        Early.
       </p>
 
       <div className="ts-welcome-divider" />
 
       <p className="ts-welcome-body">
-        Firephin projects your financial life from today through retirement —
-        model your accounts, income, expenses, and assets to see exactly where you'll end up.
+        Add your accounts, income, expenses, and assets, and see exactly
+        where you'll land, from today through retirement.
       </p>
 
       <div className="ts-welcome-actions">
@@ -517,10 +521,10 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onStepChange, 
             <FormTutorialStep
               {...commonProps}
               items={[
-                { icon: "🏦", label: "Name your account" },
-                { icon: "💰", label: "Set your starting balance" },
-                { icon: "📅", label: "Define your timeline" },
-                { icon: "⌁",  label: "Interest tiers are optional for advanced detail." },
+                { icon: <House/>, label: "Name your account" },
+                { icon: <DollarSign/>, label: "Set your starting balance" },
+                { icon: <Clock/>, label: "Define your timeline" },
+                { icon: <Landmark/>,  label: "Interest tiers are optional for advanced detail." },
               ]}
               existingItem={state.accounts.checking[0]}
               AddForm={CheckingAccountForm}
@@ -537,6 +541,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onStepChange, 
               existingItem={state.incomes.salary[0]}
               AddForm={SalaryForm}
               EditForm={EditSalaryForm}
+              nextLabel={state.incomes.salary[0] ? "Next" : "Skip"}
             />
           </div>
         )}
@@ -546,13 +551,14 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onStepChange, 
             <FormTutorialStep
               {...commonProps}
               items={[
-                { icon: "🔗", label: "Connect retirement accounts to jobs." },
-                { icon: "💼", label: "Keep contribution assumptions tied to income." },
-                { icon: "⌁",  label: "The same idea applies to other linked simulator items." },
+                { icon: <Luggage/>, label: "Connect retirement accounts to jobs." },
+                { icon: <Briefcase/>, label: "Keep contribution assumptions tied to income." },
+                { icon: <Lightbulb/>,  label: "The same idea applies to other linked simulator items." },
               ]}
               existingItem={state.accounts.employer_retirement[0]}
               AddForm={EmployerRetirementAccountForm}
               EditForm={EditEmployerRetirementAccountForm}
+              nextLabel={state.accounts.employer_retirement[0] ? "Next" : "Skip"}
             />
           </div>
         )}
@@ -572,7 +578,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onStepChange, 
       
   )};
 
-  function FormTutorialStep({ step, currentStepIndex, totalSteps, onBack, onNext, onSkip, onToast, items = [], existingItem, EditForm, AddForm, state, dispatch, nextDisabled = false }) {
+  function FormTutorialStep({ step, currentStepIndex, totalSteps, onBack, onNext, onSkip, onToast, items = [], existingItem, EditForm, AddForm, state, dispatch, nextDisabled = false, nextLabel, }) {
     const [isInfoOpen, setIsInfoOpen] = useState(false);
 
     return (
@@ -587,6 +593,7 @@ export function TutorialOnboarding({ state, dispatch, onComplete, onStepChange, 
           onNext={onNext}
           onSkip={onSkip}
           nextDisabled={nextDisabled}
+          nextLabel= {nextLabel}
           isMobileInfoOpen={isInfoOpen}
           onToggleInfo={() => setIsInfoOpen(o => !o)}
         />

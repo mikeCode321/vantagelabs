@@ -4,7 +4,7 @@ import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/dashboard/utils";
 import { ID } from "@/app/dashboard/Accounts";
 import {TimelineAgeFields,getValidatedTimelinePayload, } from "@/app/dashboard/TimelineAgeFields";
-import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Link } from 'lucide-react';
+import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Link, HouseIcon, LinkIcon, Building2, CreditCard } from 'lucide-react';
 
 // ─────────────────────────────────────────────
 // EXPENSES
@@ -121,6 +121,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   const [linkError, setLinkError] = useState("");
 
   const availableHouses = state?.assets?.house || [];
+  const hasAvailableHouse = availableHouses.some((h) => h.linked_loan_id === null || h.linked_loan_id === undefined || h.linked_loan_id === "");
 
   const handleHouseSelect = (assetId: string) => {
     setLinkError("");
@@ -143,6 +144,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
     if (selectedHouse) {
       setName(`${selectedHouse.name} Loan`);
       setStartAge(selectedHouse.start_age.toString());
+      setEndAge(selectedHouse.end_age?.toString() || "");
 
       const principal = Number(selectedHouse.asset_value || 0) - Number(selectedHouse.down_payment || 0);
 
@@ -166,8 +168,6 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
           Number(loanTermYears)
         )
       : 0;
-
-  const calculatedEndYear = startAge && loanTermYears ? Number(startAge) + Number(loanTermYears) : "";
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -233,6 +233,11 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
           </p>
         </div>
       </div>
+      {!hasAvailableHouse && (
+        <div className="form-warning">
+          No available house assets to link. Add a house asset first, or remove an existing loan link before adding another.
+        </div>
+      )}
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -277,12 +282,13 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+              readOnly={linkedAssetId !== ""}
+            />
 
             <div className="link-card">
               <div className="link-card-header">
@@ -362,7 +368,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
         </div>
 
         <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
+          <button type="submit" className="form-btn-submit" disabled={!hasAvailableHouse}>
             Add Home Loan
           </button>
         </div>
@@ -384,6 +390,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
   const [linkError, setLinkError] = useState("");
 
   const availableCars = state?.assets?.car || [];
+  const hasAvailableCar = availableCars.some((c) => c.linked_loan_id === null || c.linked_loan_id === undefined || c.linked_loan_id === "");
 
   const handleCarSelect = (assetId: string) => {
     setLinkError("");
@@ -406,6 +413,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
     if (selectedCar) {
       setName(`${selectedCar.name} Loan`);
       setStartAge(selectedCar.start_age.toString());
+      setEndAge(selectedCar.end_age?.toString() || "");
 
       const principal = Number(selectedCar.asset_value || 0) - Number(selectedCar.down_payment || 0);
       setOriginalPrincipal(principal.toString());
@@ -427,8 +435,6 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
           Number(loanTermYears)
         )
       : 0;
-
-  const calculatedEndYear = startAge && loanTermYears ? Number(startAge) + Number(loanTermYears) : "";
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -492,6 +498,12 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
         </div>
       </div>
 
+      {!hasAvailableCar && (
+        <div className="form-warning">
+          No available car assets to link. Add a car asset first, or remove an existing loan link before adding another.
+        </div>
+      )}
+
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
           <div className="form-col">
@@ -525,12 +537,13 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+              readOnly={linkedAssetId !== ""}
+            />
 
             <div className="link-card">
               <div className="link-card-header">
@@ -610,7 +623,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
         </div>
 
         <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
+          <button type="submit" className="form-btn-submit" disabled={!hasAvailableCar}>
             Add Car Loan
           </button>
         </div>
@@ -998,7 +1011,6 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
   const monthlyExpense = Number(originalPrincipal) > 0 && Number(interestRate) >= 0 && Number(loanTermYears) > 0
     ? calculateMonthlyLoanPayment(Number(originalPrincipal), Number(interestRate) / 100, Number(loanTermYears))
     : 0;
-  const calculatedEndYear = Number(startAge) + Number(loanTermYears);
 
   const handleCarSelect = (assetId: string) => {
     setLinkError("");
@@ -1015,6 +1027,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
     if (selectedCar) {
       setName(`${selectedCar.name} Loan`);
       setStartAge(selectedCar.start_age.toString());
+      setEndAge(selectedCar.end_age?.toString() || "");
       const principal = Number(selectedCar.asset_value || 0) - Number(selectedCar.down_payment || 0);
       setOriginalPrincipal(principal.toString());
 
@@ -1111,12 +1124,13 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+              readOnly={linkedAssetId !== ""}
+            />
 
             <div className="link-card">
               <div className="link-card-header">
@@ -1186,36 +1200,17 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
 export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name || "Home Loan");
   const [originalPrincipal, setOriginalPrincipal] = useState(item.original_principal?.toString() || "" );
-  const [interestRate, setInterestRate] = useState(
-    item.interest_rate == null ? "" : (item.interest_rate * 100).toString()
-  );
-  const [loanTermYears, setLoanTermYears] = useState(
-    item.loan_term_years?.toString() || "30"
-  );
-  const [extraMonthlyPayment, setExtraMonthlyPayment] = useState(
-    item.extra_monthly_payment == null
-      ? ""
-      : item.extra_monthly_payment.toString()
-  );
-  const [startAge, setStartAge] = useState(
-    item.start_age?.toString() || ""
-  );
-  const [endAge, setEndAge] = useState(
-    item.end_age?.toString() || ""
-  );
-
-
-  const isAlreadyLinked = !!item.linked_asset_id;
-
+  const [interestRate, setInterestRate] = useState(item.interest_rate == null ? "" : (item.interest_rate * 100).toString());
+  const [loanTermYears, setLoanTermYears] = useState(item.loan_term_years?.toString() || "30");
+  const [extraMonthlyPayment, setExtraMonthlyPayment] = useState(item.extra_monthly_payment == null? "" : item.extra_monthly_payment.toString());
   const [linkedAssetId, setLinkedAssetId] = useState("");
   const [linkError, setLinkError] = useState("");
-
+  const [startAge, setStartAge] = useState(item.start_age?.toString() || "");
+  const [endAge, setEndAge] = useState(item.end_age?.toString() || "");
+  
+  const isAlreadyLinked = item.linked_asset_id !== null && item.linked_asset_id !== undefined && item.linked_asset_id !== "";
   const availableHouses = state?.assets?.house || [];
-
-  const linkedHouse = linkedAssetId
-  ? availableHouses.find((house) => house.id === linkedAssetId)
-  : null;
-
+  const linkedHouse = linkedAssetId ? availableHouses.find((house) => house.id === linkedAssetId) : null;
 
   const monthlyExpense =
     Number(originalPrincipal) > 0 &&
@@ -1227,11 +1222,6 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
           Number(loanTermYears)
         )
       : 0;
-
-  const calculatedEndYear =
-    startAge && loanTermYears
-      ? Number(startAge) + Number(loanTermYears)
-      : "";
 
   const handleHouseSelect = (assetId: string) => {
     setLinkError("");
@@ -1259,6 +1249,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
     if (selectedHouse) {
       setName(`${selectedHouse.name} Loan`);
       setStartAge(selectedHouse.start_age.toString());
+      setEndAge(selectedHouse.end_age?.toString() || "");
 
       const principal = Number(selectedHouse.asset_value || 0) - Number(selectedHouse.down_payment || 0);
 
@@ -1342,7 +1333,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon">🏦</div>
+        <div className="form-header-icon"><House/></div>
         <div>
           <h3 className="form-header-title">Edit Home Loan</h3>
           <p className="form-header-desc">
@@ -1437,17 +1428,18 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+              readOnly={linkedAssetId !== ""}
+            />
 
             <div className="link-card">
               <div className="link-card-header">
                 <div className="link-card-info">
-                  <span className="preview-icon">🏡</span>
+                  <span className="preview-icon"><House/></span>
                   <div>
                     <div className="link-card-title">
                       Link to a House Asset
@@ -1466,7 +1458,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
                   </p>
                 ) : isAlreadyLinked ? (
                   <div className="link-card-synced">
-                    🔗 Linked to {linkedHouse?.name || "House asset"}
+                    <Link/> Linked to {linkedHouse?.name || "House asset"}
 
                     <p className="form-inline-muted">Delete the linked house to reassign</p>
                   </div>
@@ -1498,7 +1490,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
                     {linkedAssetId && !linkError && (
                       <div className="link-card-synced">
-                        🔗 Linked to {linkedHouse?.name}
+                        <Link/> Linked to {linkedHouse?.name}
                       </div>
                     )}
                   </div>
@@ -1624,7 +1616,7 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
             {/* Annual Cost Preview */}
             <div className="preview-card">
               <div className="preview-card-header">
-                <span className="preview-icon">💸</span>
+                <span className="preview-icon"><DollarSign/></span>
                 <span className="preview-card-label">Annual Cost</span>
               </div>
               <div className="preview-card-amount">
@@ -1685,7 +1677,7 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">🏢</div>
+        <div className="form-header-icon"><Building2/></div>
         <div>
           <h3 className="form-header-title">Edit Rent</h3>
           <p className="form-header-desc">Update monthly rent and annual growth rate.</p>
@@ -1731,7 +1723,7 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
             {/* Annual Cost Preview */}
             <div className="preview-card">
               <div className="preview-card-header">
-                <span className="preview-icon">💸</span>
+                <span className="preview-icon"><DollarSign/></span>
                 <span className="preview-card-label">Annual Rent Cost</span>
               </div>
               <div className="preview-card-amount">
@@ -1797,7 +1789,7 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
     <div className="form-panel">
       {/* Header */}
       <div className="form-header">
-        <div className="form-header-icon">💳</div>
+        <div className="form-header-icon"><CreditCard/></div>
         <div>
           <h3 className="form-header-title">Edit Debt</h3>
           <p className="form-header-desc">Update loan balance, monthly payment, and interest rate.</p>
@@ -1858,7 +1850,7 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
             {/* Annual Payment Preview */}
             <div className="preview-card">
               <div className="preview-card-header">
-                <span className="preview-icon">💸</span>
+                <span className="preview-icon"><DollarSign/></span>
                 <span className="preview-card-label">Annual Payment</span>
               </div>
               <div className="preview-card-amount">

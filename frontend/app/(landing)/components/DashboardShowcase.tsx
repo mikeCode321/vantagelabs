@@ -52,7 +52,7 @@ export default function LandingDashboardShowcase() {
         <div className="landing-showcase-center">
         <div className="landing-dashboard-frame">
             <Image
-            src="/temp/dashboard-mockup.png"
+            src="/temp/firephin-dashboard.png"
             alt="Fire Phin dashboard preview"
             width={1180}
             height={720}
@@ -61,7 +61,7 @@ export default function LandingDashboardShowcase() {
             />
 
             <Image
-            src="/temp/dashboard-phone.png"
+            src="/temp/firephin-dashboard-phone.png"
             alt="Fire Phin mobile dashboard preview"
             width={450}
             height={900}

@@ -2,6 +2,7 @@ import "./styles/FeedbackFormModal.css"
 
 import React from "react";
 import { useState } from "react";
+//import { supabase } from "@/lib/supabaseClient";
 
 function getAnonymousId() {
   const storageKey = "vantage_anonymous_id";
@@ -21,31 +22,39 @@ export default function FeedbackFormModal({ isOpen, onClose }: { isOpen: boolean
   const [category, setCategory] = useState("General");
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSubmitError(null);
+    setIsSubmitting(true);
 
-    const feedbackPayload = {
-      userProvided: {
-        satisfaction: Number(rating),
-        category,
-        message,
-        email: email || null,
-      },
-      metaData: {
-        anonymousId: getAnonymousId(),
-        pageUrl: window.location.href,
-        path: window.location.pathname,
-        timestamp: new Date().toISOString(),
-        browserAndOS: navigator.userAgent,
-        referralSource: document.referrer || null,
-        utmParams: Object.fromEntries(new URLSearchParams(window.location.search).entries()),
-      },
+    const feedbackRow = {
+      satisfaction: Number(rating),
+      category,
+      message,
+      email: email || null,
+      anonymous_id: getAnonymousId(),
+      page_url: window.location.href,
+      path: window.location.pathname,
+      browser_and_os: navigator.userAgent,
+      referral_source: document.referrer || null,
+      utm_params: Object.fromEntries(new URLSearchParams(window.location.search).entries()),
     };
 
-    console.log("User Feedback Submitted:", feedbackPayload);
+    const { error } = await supabase.from("feedback_submissions").insert(feedbackRow);
+    console.log("success insert to feedback submissions")
+    
+    setIsSubmitting(false);
+
+    if (error) {
+      console.error("Feedback insert failed:", error);
+      setSubmitError("Something went wrong submitting your feedback. Please try again.");
+      return;
+    }
 
     setRating("");
     setCategory("General");
@@ -99,7 +108,7 @@ export default function FeedbackFormModal({ isOpen, onClose }: { isOpen: boolean
           </label>
 
           <label className="feedback-label">
-            Email Optional
+            Email (Optional)
             <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Only if you want a follow-up" className="feedback-input" />
           </label>
 
@@ -108,10 +117,12 @@ export default function FeedbackFormModal({ isOpen, onClose }: { isOpen: boolean
               Cancel
             </button>
 
-            <button type="submit" className="feedback-btn-primary">
-              Submit Feedback
+            <button type="submit" className="feedback-btn-primary" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit Feedback"}
             </button>
           </div>
+
+          {submitError && <p className="feedback-error">{submitError}</p>}
         </form>
       </div>
     </div>

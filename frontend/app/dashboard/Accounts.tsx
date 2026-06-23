@@ -2,7 +2,7 @@ import './styles/Forms.css'
 
 import { useState, useEffect } from "react";
 import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/dashboard/utils";
-import { CreditCard, ChartColumnIncreasing , Accessibility, DollarSign, Link } from 'lucide-react';
+import { CreditCard, ChartColumnIncreasing , DollarSign, Link, PiggyBank } from 'lucide-react';
 import {
   TimelineAgeFields,
   getValidatedTimelinePayload,
@@ -68,7 +68,8 @@ export type EmployerRetirementAccount = {
   contribution_percentage?: number;
 
   expected_return: number;
-  employer_match: number;
+  employer_match_rate: number;   // e.g. 1.0 = 100% dollar-for-dollar match
+  employer_match_limit: number;  // e.g. 0.04 = capped at 4% of gross salary
   linked_income_id?: string;
 };
 
@@ -559,7 +560,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
   const [monthlyContribution, setMonthlyContribution] = useState("");
   const [contributionPercentage, setContributionPercentage] = useState("");
   const [expectedReturn, setExpectedReturn] = useState("7");
-  const [employerMatch, setEmployerMatch] = useState("4");
+  const [matchRate, setMatchRate] = useState("100");   // % employer matches per $ contributed (100 = dollar-for-dollar)
+  const [matchLimit, setMatchLimit] = useState("4");   // % of gross salary cap
   const [startAge, setStartAge] = useState("");
   const [endAge, setEndAge] = useState("");
   const [linkedIncomeId, setLinkedIncomeId] = useState("");
@@ -582,11 +584,13 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
     return 0;
   };
 
-  // Calculate annual contribution preview
+  // Mirror Python's contribute_employer logic for the preview
   const monthlyNum = effectiveMonthlyContribution();
-  const matchPercent = Number(employerMatch) || 0;
+  const monthlyGross = selectedJob ? selectedJob.gross_income / 12 : 0;
+  const matchCap = monthlyGross * (Number(matchLimit) / 100);
+  const matchedAmount = Math.min(monthlyNum, matchCap);
   const annualEmployee = monthlyNum * 12;
-  const annualEmployer = (annualEmployee * matchPercent) / 100;
+  const annualEmployer = matchedAmount * (Number(matchRate) / 100) * 12;
   const annualTotal = annualEmployee + annualEmployer;
 
   const canUsePercentageMode = !!selectedJob;
@@ -654,7 +658,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
         monthly_contribution: effectiveMonthlyContribution(),
         contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
         expected_return: Number(expectedReturn) / 100,
-        employer_match: Number(employerMatch) / 100,
+        employer_match_rate: Number(matchRate) / 100,
+        employer_match_limit: Number(matchLimit) / 100,
         linked_income_id: linkedIncomeId || undefined,
       },
     });
@@ -667,7 +672,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
     setMonthlyContribution("");
     setContributionPercentage("");
     setExpectedReturn("7");
-    setEmployerMatch("4");
+    setMatchRate("100");
+    setMatchLimit("4");
     setStartAge("");
     setEndAge("");
     setLinkedIncomeId("");
@@ -679,7 +685,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon"><Accessibility/></div>
+        <div className="form-header-icon"><PiggyBank/></div>
         <div>
           <h3 className="form-header-title">Add Employer Retirement Account</h3>
           <p className="form-header-desc">Track your 401(k), 403(b), or pension and optionally link it to a job.</p>
@@ -751,10 +757,18 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 
             <div className="form-field-gap8">
               <div className="form-slider-header">
-                <label className="form-label">Employer Match</label>
-                <span className="form-slider-value">{Number(employerMatch).toFixed(1)}%</span>
+                <label className="form-label">Employer Match Rate</label>
+                <span className="form-slider-value">{Number(matchRate).toFixed(0)}%</span>
               </div>
-              <input type="range" min={0} max={10} step={0.1} value={employerMatch} onChange={(e) => setEmployerMatch(e.target.value)} className="form-slider" />
+              <input type="range" min={0} max={200} step={1} value={matchRate} onChange={(e) => setMatchRate(e.target.value)} className="form-slider" />
+            </div>
+
+            <div className="form-field-gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Employer Match Cap (% of salary)</label>
+                <span className="form-slider-value">{Number(matchLimit).toFixed(1)}%</span>
+              </div>
+              <input type="range" min={0} max={10} step={0.1} value={matchLimit} onChange={(e) => setMatchLimit(e.target.value)} className="form-slider" />
             </div>
           </div>
 
@@ -777,7 +791,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
                   <span className="preview-icon"><Link/></span>
                   <div>
                     <div className="link-card-title">Link to a job</div>
-                    <div className="link-card-sub">Required for percentage-based contributions</div>
+                    <div className="link-card-sub">Required for percentage-based contributions and employer match preview</div>
                   </div>
                 </div>
               </div>
@@ -809,7 +823,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
               </div>
             </div>
 
-            {/* Merged Contribution Preview - Only show in percentage mode */}
+            {/* Contribution Preview - percentage mode */}
             {contributionMode === "percentage" && selectedJob && (
               <div className="preview-card">
                 <div className="preview-card-header">
@@ -832,22 +846,21 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
               </div>
             )}
 
-            {/* Annual contribution preview with employer match */}
-            {contributionMode == "dollar" && (
-              <div className="preview-card">
-                <div className="preview-card-header preview-card-header-mb10">
-                  <span className="preview-icon"></span>
-                  <span className="preview-card-label">Annual Total</span>
-                </div>
-                <div className="preview-card-amount preview-card-amount-lg">
-                  ${annualTotal.toLocaleString()}
-                  <span className="preview-card-unit preview-card-unit-lg">/yr</span>
-                </div>
-                <div className="preview-card-sub">
-                  ${annualEmployee.toLocaleString()} you + ${annualEmployer.toLocaleString()} employer match
-                </div>
+            {/* Annual total preview with employer match */}
+            <div className="preview-card">
+              <div className="preview-card-header preview-card-header-mb10">
+                <span className="preview-icon"></span>
+                <span className="preview-card-label">Annual Total</span>
               </div>
-            )}
+              <div className="preview-card-amount preview-card-amount-lg">
+                ${Math.round(annualTotal).toLocaleString()}
+                <span className="preview-card-unit preview-card-unit-lg">/yr</span>
+              </div>
+              <div className="preview-card-sub">
+                ${Math.round(annualEmployee).toLocaleString()} you + ${Math.round(annualEmployer).toLocaleString()} employer match
+                {!selectedJob && annualEmployer === 0 && <span> (link a job to see match)</span>}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1321,7 +1334,8 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   const [monthlyContribution, setMonthlyContribution] = useState(item.monthly_contribution?.toString() || "");
   const [contributionPercentage, setContributionPercentage] = useState(item.contribution_percentage?.toString() || "");
   const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "7");
-  const [employerMatch, setEmployerMatch] = useState((item.employer_match * 100)?.toString() || "4");
+  const [matchRate, setMatchRate] = useState((item.employer_match_rate * 100)?.toString() || "100");
+  const [matchLimit, setMatchLimit] = useState((item.employer_match_limit * 100)?.toString() || "4");
   const [startAge, setStartAge] = useState(item.start_age.toString());
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [linkedIncomeId, setLinkedIncomeId] = useState(item.linked_income_id || "");
@@ -1344,9 +1358,11 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   };
 
   const monthlyNum = effectiveMonthlyContribution();
-  const matchPercent = Number(employerMatch) || 0;
+  const monthlyGross = selectedJob ? selectedJob.gross_income / 12 : 0;
+  const matchCap = monthlyGross * (Number(matchLimit) / 100);
+  const matchedAmount = Math.min(monthlyNum, matchCap);
   const annualEmployee = monthlyNum * 12;
-  const annualEmployer = (annualEmployee * matchPercent) / 100;
+  const annualEmployer = matchedAmount * (Number(matchRate) / 100) * 12;
   const annualTotal = annualEmployee + annualEmployer;
 
   const canUsePercentageMode = !!selectedJob;
@@ -1394,7 +1410,8 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
       monthly_contribution: effectiveMonthlyContribution(),
       contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
       expected_return: Number(expectedReturn) / 100,
-      employer_match: Number(employerMatch) / 100,
+      employer_match_rate: Number(matchRate) / 100,
+      employer_match_limit: Number(matchLimit) / 100,
       linked_income_id: linkedIncomeId || undefined,
     };
 
@@ -1427,7 +1444,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   return (
     <div className="form-panel">
       <div className="form-header">
-        <div className="form-header-icon"><Building/></div>
+        <div className="form-header-icon"><PiggyBank/></div>
         <div>
           <h3 className="form-header-title">Edit Employer Retirement Account</h3>
           <p className="form-header-desc">Update your 401(k), 403(b), or pension details.</p>
@@ -1499,10 +1516,18 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
 
             <div className="form-field-gap8">
               <div className="form-slider-header">
-                <label className="form-label">Employer Match</label>
-                <span className="form-slider-value">{Number(employerMatch).toFixed(1)}%</span>
+                <label className="form-label">Employer Match Rate</label>
+                <span className="form-slider-value">{Number(matchRate).toFixed(0)}%</span>
               </div>
-              <input type="range" min={0} max={10} step={0.1} value={employerMatch} onChange={(e) => setEmployerMatch(e.target.value)} className="form-slider" />
+              <input type="range" min={0} max={200} step={1} value={matchRate} onChange={(e) => setMatchRate(e.target.value)} className="form-slider" />
+            </div>
+
+            <div className="form-field-gap8">
+              <div className="form-slider-header">
+                <label className="form-label">Employer Match Cap (% of salary)</label>
+                <span className="form-slider-value">{Number(matchLimit).toFixed(1)}%</span>
+              </div>
+              <input type="range" min={0} max={10} step={0.1} value={matchLimit} onChange={(e) => setMatchLimit(e.target.value)} className="form-slider" />
             </div>
           </div>
 
@@ -1588,21 +1613,20 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
             )}
 
             {/* Annual contribution preview with employer match */}
-            {contributionMode == "dollar" && (
-              <div className="preview-card">
-                <div className="preview-card-header preview-card-header-mb10">
-                  <span className="preview-icon"></span>
-                  <span className="preview-card-label">Annual Total</span>
-                </div>
-                <div className="preview-card-amount preview-card-amount-lg">
-                  ${annualTotal.toLocaleString()}
-                  <span className="preview-card-unit preview-card-unit-lg">/yr</span>
-                </div>
-                <div className="preview-card-sub">
-                  ${annualEmployee.toLocaleString()} you + ${annualEmployer.toLocaleString()} employer match
-                </div>
+            <div className="preview-card">
+              <div className="preview-card-header preview-card-header-mb10">
+                <span className="preview-icon"></span>
+                <span className="preview-card-label">Annual Total</span>
               </div>
-            )}
+              <div className="preview-card-amount preview-card-amount-lg">
+                ${Math.round(annualTotal).toLocaleString()}
+                <span className="preview-card-unit preview-card-unit-lg">/yr</span>
+              </div>
+              <div className="preview-card-sub">
+                ${Math.round(annualEmployee).toLocaleString()} you + ${Math.round(annualEmployer).toLocaleString()} employer match
+                {!selectedJob && annualEmployer === 0 && <span> (link a job to see match)</span>}
+              </div>
+            </div>
           </div>
         </div>
 

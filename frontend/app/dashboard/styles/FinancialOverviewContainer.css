@@ -145,18 +145,16 @@
 
 @media (max-width: 860px) {
   .overview-cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1.15fr);
+    grid-template-columns: repeat(2, 1fr);
     padding: 0 16px;
     gap: 8px;
     margin: 8px 0;
+    align-items: start;
   }
 
   .overview-card {
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 128px;
-    padding: 14px 12px;
+    min-height: 0;
+    padding: 12px 10px 10px;
     position: relative;
   }
 
@@ -168,47 +166,47 @@
     gap: 0;
   }
 
+  .overview-card-label {
+    font-size: 11px;
+    margin: 0 0 8px;
+    padding-right: 20px;
+  }
+
   .overview-card-value-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
 
-  .overview-card-value {
-    line-height: 1;
-    margin-top: 12px;
-    text-overflow: ellipsis;
-  }
 
-  .overview-card-label {
-    font-size: 13px;
-    margin: 0;
-    padding-right: 10px;
-    text-overflow: ellipsis;
+  .overview-card-value {
+    font-size: clamp(14px, 2.8vw, 18px);
+    margin-top: 0;
+    line-height: 1.1;
   }
 
   .overview-card-change {
     align-items: flex-start;
   }
 
-  .overview-card-change small {
-    display: none;
+  .overview-card-change span {
+    font-size: 10px;
+    padding: 2px 6px;
   }
 
-  .overview-card-change span {
-    font-size: 11px;  
+  .overview-card-change small {
+    display: none;
   }
 
   .overview-card-mobile-icon {
     display: grid;
     place-items: center;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     border-radius: 4px;
-    flex-shrink: 0;
     position: absolute;
-    top: 6px;
-    right: 6px;
+    top: 8px;
+    right: 8px;
   }
 
   .overview-card-mobile-icon svg {
@@ -222,41 +220,28 @@
   .overview-card-orange .overview-card-mobile-icon { color: var(--card-icon-orange); background: var(--card-icon-orange-bg); }
 }
 
-/* @media (max-width: 480px) {
+@media (max-width: 480px) {
   .overview-cards {
     gap: 6px;
-    padding: 0;
-    margin: 0;
+    padding: 0 12px;
   }
 
   .overview-card {
-    padding: 6px 4px;
-  }
-
-  .overview-card-value {
-    font-size: 11px;
+    padding: 10px 8px 8px;
+    border-radius: var(--radius-md);
   }
 
   .overview-card-label {
-    font-size: 8px;
+    font-size: 10px;
+    margin-bottom: 6px;
   }
 
-  .overview-card-mobile-icon {
-    width: 12px;
-    height: 12px;
-    top: 4px;
-    right: 4px;
-  }
-
-  .overview-card-mobile-icon svg {
-    width: 9px;
-    height: 9px;
-  }
-} */
-
-
-@media (max-width: 480px){
   .overview-card-value {
-    font-size: clamp(15px, 3.2vw, 21px);
+    font-size: clamp(13px, 3vw, 16px);
+  }
+
+  .overview-card-change span {
+    font-size: 9px;
+    padding: 2px 5px;
   }
 }

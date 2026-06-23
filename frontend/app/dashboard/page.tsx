@@ -566,10 +566,9 @@ export default function Dashboard() {
         
         <section className="simulation-results-grid">
           <FinancialOverviewContainer cards={overviewCards} tutorialActive={activeTutorialStepId === "results"}/>
-          <GrowthChart data={simResult} tutorialActive={activeTutorialStepId === "results"} />
-          <div className="sim-grid-right">
-            <SimulationHighlightsCard data={simData} tutorialActive={activeTutorialStepId === "results"} selectedYearData={selectedYearData}/>
-            <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} simResult={simResult} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+          <GrowthChart data={simResult} selectedYear={selectedYear} tutorialActive={activeTutorialStepId === "results"} />          <div className="sim-grid-right">
+          <SimulationHighlightsCard data={simData} tutorialActive={activeTutorialStepId === "results"} selectedYearData={selectedYearData}/>
+          <SimulationControls state={state} setSimResult={setSimResult} activeTutorialStepId={activeTutorialStepId} simResult={simResult} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
           </div>
         </section>
 

@@ -3,7 +3,7 @@ import { BriefcaseBusiness, Car, ChartNoAxesColumnIncreasing, CreditCard, House,
 import "./styles/GrowthChart.css";
 
 import { useState, useMemo, useRef, useCallback } from "react";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip} from "recharts";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ReferenceArea } from "recharts";
 
 function formatCurrency(value: number) {
   if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
@@ -72,7 +72,7 @@ function buildEventsByYear(req) {
 }
 
 
-export default function GrowthChart({ data, tutorialActive = false }) {
+export default function GrowthChart({ data, selectedYear = null, tutorialActive = false }) {
   const [activeKey, setActiveKey] = useState("netWorth");
   const wrapRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -115,8 +115,10 @@ export default function GrowthChart({ data, tutorialActive = false }) {
 
   const view = VIEW_MAP[activeKey];
   const values = chartData.map((d) => d[view.dataKey]);
+  
   const startValue = view.key === "netWorth" ? (data?.metrics?.starting_net_worth ?? values[0] ?? 0) : (values[0] ?? 0);
-  const endValue = values[values.length - 1] ?? 0;
+  const selectedRow = chartData.find(d => d.year === selectedYear) ?? chartData[chartData.length - 1];
+  const endValue = selectedRow?.[view.dataKey] ?? 0;
   const growth = startValue ? ((endValue - startValue) / startValue) * 100 : 0;
 
   const isEmpty = chartData.length === 0;
@@ -220,7 +222,7 @@ export default function GrowthChart({ data, tutorialActive = false }) {
             <strong>{isEmpty ? "--" : formatCurrency(startValue)}</strong>
           </div>
           <div className="income-stat">
-            <span>Projected</span>
+            <span>{selectedYear && selectedYear !== displayData[displayData.length - 1]?.year ? `Year ${selectedYear}` : "Projected"}</span>
             <strong>{isEmpty ? "--" : formatCurrency(endValue)}</strong>
           </div>
           <div className="income-stat income-stat-positive">
@@ -260,6 +262,17 @@ export default function GrowthChart({ data, tutorialActive = false }) {
               })()}
             />
             <YAxis tickFormatter={formatCurrency} tickLine={false} axisLine={false} tick={{ fontSize: 8 }} width={36} domain={[0, (dataMax: number) => Math.round(dataMax * 1.5)]} />
+            
+            {selectedYear && !isEmpty && (
+              <ReferenceArea
+                x1={displayData[0].year}
+                x2={selectedYear}
+                fill={view.colors[0]}
+                fillOpacity={0.06}
+                strokeOpacity={0}
+              />
+            )}
+
             <Area
               type="monotone"
               dataKey={isEmpty ? "value" : view.dataKey}
@@ -270,6 +283,16 @@ export default function GrowthChart({ data, tutorialActive = false }) {
               activeDot={isEmpty ? false : { r: 4, fill: view.colors[0] }}
               label={renderCustomAreaLabel}
             />
+
+            {selectedYear && !isEmpty && (
+              <ReferenceLine
+                x={selectedYear}
+                stroke={view.colors[0]}
+                strokeWidth={1.5}
+                strokeDasharray="4 3"
+                strokeOpacity={0.7}
+              />
+            )}
             <Tooltip content={CustomTooltip}/>
           </AreaChart>
         </ResponsiveContainer>

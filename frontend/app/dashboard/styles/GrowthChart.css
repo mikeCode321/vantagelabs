@@ -249,6 +249,9 @@
 
 .income-chart-wrap-area { display: none; }
 
+.chart-event-icon[data-kind="start"] { color: var(--event-start); }
+.chart-event-icon[data-kind="end"]   { color: var(--event-end); }
+
 @media (max-width: 1024px) {
   .income-chart-wrap-bar  { display: none; }
   .income-chart-wrap-area { display: block; }

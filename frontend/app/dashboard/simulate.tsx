@@ -12,7 +12,8 @@ import {
 // ═══════════════════════════════════════════════════════════════════════════
 
 class InterestCalculator {
-    tiers;
+  tiers;
+
   constructor(tiers) {
     this.tiers = tiers;
   }
@@ -2001,6 +2002,17 @@ function simulate(req) {
     lowest_cash_balance_year: results.length > 0 ? results[lowestCashIndex].year : 0,
     lowest_cash_balance: results.length > 0 ? Math.round(Math.min(...results.map((r) => r.total_cash)) * 100) / 100 : 0,
   };
+
+  console.log({
+      total_years_simulated: req.sim_end_age - req.user_start_age,
+      request: req,
+      metrics,
+      year_results: results,
+      net_worth_trend: results.map((r) => r.net_worth),
+      cash_trend: results.map((r) => r.total_cash),
+      annual_income_trend: results.map((r) => r.current_gross_income),
+    }
+  )
 
   return {
     total_years_simulated: req.sim_end_age - req.user_start_age,

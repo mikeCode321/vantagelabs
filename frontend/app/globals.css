@@ -101,6 +101,10 @@
   /* ─── Misc ───────────────────────────────────────── */
   --tooltip-bg: #1e1b2e;
 
+  /* Icons on chart */
+  --event-start: #16a34a;
+  --event-end:   #dc2626;
+
   /* ─── Legacy aliases ─────────────────────────────── */
   --teal:    var(--accent);
   --soft-bg: var(--accent-soft);

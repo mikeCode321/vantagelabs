@@ -2,7 +2,7 @@ import "./styles/FeedbackFormModal.css"
 
 import React from "react";
 import { useState } from "react";
-//import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 
 function getAnonymousId() {
   const storageKey = "vantage_anonymous_id";

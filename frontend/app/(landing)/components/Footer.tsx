@@ -7,17 +7,17 @@ export default function LandingFooter() {
       <div className="landing-footer-inner">
    
         <div className="landing-footer-bottom">
-          <a href="/" className="landing-footer-brand" aria-label="FirePhin home">
+          <a href="/" className="landing-footer-brand" aria-label="Firephin home">
             <Image
               src="/temp/firephin-logo-no-bg.png"
-              alt="FirePhin"
+              alt="Firephin"
               width={44}
               height={44}
               className="landing-footer-logo"
             />
 
             <span className="landing-footer-wordmark">
-              <span>Fire</span>Phin
+              <span>fire</span>phin
             </span>
           </a>
 
@@ -27,7 +27,7 @@ export default function LandingFooter() {
           </nav>
 
           <p className="landing-footer-copy">
-            © 2026 FirePhin. Built for smarter financial planning.
+            © 2026 Firephin. Built for smarter financial planning.
           </p>
         </div>
       </div>

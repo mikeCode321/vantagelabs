@@ -17,7 +17,7 @@ export default function FireCta() {
         <div className="landing-fire-mascot-wrap">
           <Image
             src="/temp/mascot-looking-up.png"
-            alt="FirePhin mascot"
+            alt="Firephin mascot"
             width={260}
             height={260}
             className="landing-fire-mascot"

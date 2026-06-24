@@ -6,11 +6,11 @@ export default function TopBar() {
   return (
     <header className="landing-header">
       <div className="landing-header-inner">
-        <Link href="/" className="landing-logo" aria-label="Fire Phin home">
-          <Image src="/temp/firephin-logo-no-bg.png" alt="Fire Phin" className="landing-logo-mark" width={72}  height={72} priority/>
+        <Link href="/" className="landing-logo" aria-label="Firephin home">
+          <Image src="/temp/firephin-logo-no-bg.png" alt="Firephin" className="landing-logo-mark" width={72}  height={72} priority/>
           <span className="landing-logo-text">
-            <span className="landing-logo-fire">Fire</span>
-            <span className="landing-logo-phin">Phin</span>
+            <span className="landing-logo-fire">fire</span>
+            <span className="landing-logo-phin">phin</span>
           </span>
         </Link>
 

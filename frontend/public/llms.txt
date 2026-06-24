@@ -1,0 +1,10 @@
+# Firephin
+
+Firephin is a personal finance simulation tool that lets users model their financial future across income, expenses, investments, and net worth.
+
+## Pages
+- https://firephin.com — Landing page
+- https://firephin.com/dashboard — Financial simulation dashboard
+
+## About
+Firephin helps individuals run lifetime financial simulations to understand how decisions today affect their net worth over time.

@@ -8,6 +8,9 @@ import { Link, HousePlus, ChartBarIncreasing, Car, ChartBarDecreasing } from 'lu
 import FormSlider from "@/app/dashboard/components/FormSlider";
 import FormHeader from '@/app/dashboard/components/FormHeader';
 import LinkCard from '@/app/dashboard/components/LinkCard';
+import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
+import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
+
 // ─────────────────────────────────────────────
 // ASSET
 // ─────────────────────────────────────────────
@@ -182,20 +185,12 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
 
             <div className="form-field">
               <label className="form-label">House Value</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(houseValue)} onChange={(e) => handleNumberInput(e, setHouseValue)} className="form-input form-input-prefix-dollar" placeholder="400,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={houseValue} onChange={setHouseValue} placeholder="400,000" required />
             </div>
 
             <div className="form-field">
-              <label className="form-label">
-                Down Payment <span className="form-label-muted">(optional)</span>
-              </label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(downPayment)} onChange={(e) => handleNumberInput(e, setDownPayment)} className="form-input form-input-prefix-dollar" placeholder="80,000" type="text" inputMode="decimal" />
-              </div>
+              <label className="form-label">Down Payment <span className="form-label-muted">(optional)</span></label>
+              <FormDollarInput value={downPayment} onChange={setDownPayment} placeholder="80,000" />
             </div>
 
             <FormSlider label="Annual Appreciation" value={appreciation} onChange={setAppreciation} min={0} max={15} step={0.1} />
@@ -238,11 +233,7 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add House
-          </button>
-        </div>
+        <FormSubmitButton label="Add House" />
       </form>
     </div>
   );
@@ -368,20 +359,12 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Car Value</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(carValue)} onChange={(e) => handleNumberInput(e, setCarValue)} className="form-input form-input-prefix-dollar" placeholder="30,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={carValue} onChange={setCarValue} placeholder="30,000" required />
             </div>
 
             <div className="form-field">
-              <label className="form-label">
-                Down Payment <span className="form-label-muted">(optional)</span>
-              </label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(downPayment)} onChange={(e) => handleNumberInput(e, setDownPayment)} className="form-input form-input-prefix-dollar" placeholder="5,000" type="text" inputMode="decimal" />
-              </div>
+              <label className="form-label">Down Payment <span className="form-label-muted">(optional)</span></label>
+              <FormDollarInput value={downPayment} onChange={setDownPayment} placeholder="5,000" />
             </div>
 
             <FormSlider label="Annual Depreciation" value={depreciation} onChange={setDepreciation} min={0} max={40} step={0.1} />
@@ -433,11 +416,7 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Car
-          </button>
-        </div>
+        <FormSubmitButton label="Add Car" />
       </form>
     </div>
   );
@@ -565,20 +544,12 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
 
             <div className="form-field">
               <label className="form-label">House Value</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(houseValue)} onChange={(e) => handleNumberInput(e, setHouseValue)} className="form-input form-input-prefix-dollar" placeholder="400,000" type="text" inputMode="decimal" />
-              </div>
+              <FormDollarInput value={houseValue} onChange={setHouseValue} placeholder="400,000" required />
             </div>
 
             <div className="form-field">
-              <label className="form-label">
-                Down Payment <span className="form-label-muted">(optional)</span>
-              </label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(downPayment)} onChange={(e) => handleNumberInput(e, setDownPayment)} className="form-input form-input-prefix-dollar" placeholder="80,000" type="text" inputMode="decimal" />
-              </div>
+              <label className="form-label">Down Payment <span className="form-label-muted">(optional)</span></label>
+              <FormDollarInput value={downPayment} onChange={setDownPayment} placeholder="80,000" />
             </div>
 
             <FormSlider label="Annual Appreciation" value={appreciation} onChange={setAppreciation} min={0} max={15} step={0.1} />
@@ -632,11 +603,7 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update House
-          </button>
-        </div>
+        <FormSubmitButton label="Update House" />
       </form>
     </div>
   );
@@ -847,11 +814,7 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Car
-          </button>
-        </div>
+        <FormSubmitButton label="Update Car" />
       </form>
     </div>
   );

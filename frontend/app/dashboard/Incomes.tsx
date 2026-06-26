@@ -8,6 +8,7 @@ import { CircleDollarSign, Landmark,Handbag, Clock,Rocket,Link } from 'lucide-re
 import FormSlider from "@/app/dashboard/components/FormSlider";
 import FormHeader from "@/app/dashboard/components/FormHeader";
 import LinkCard from "@/app/dashboard/components/LinkCard";
+import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
 
 // ─────────────────────────────────────────────
 // INCOME
@@ -167,13 +168,9 @@ export function SalaryForm({ dispatch, state, onToast }) {
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Software Engineer" required />
             </div>
 
-            {/* Annual Income */}
             <div className="form-field">
               <label className="form-label">Annual Gross Income</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(grossIncome)} onChange={(e) => handleNumberInput(e, setGrossIncome)} className="form-input form-input-prefix-dollar" placeholder="120,000" type="text" required />
-              </div>
+              <FormDollarInput value={grossIncome} onChange={setGrossIncome} placeholder="120,000" required />
             </div>
 
             {/* Annual Growth */}
@@ -212,12 +209,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Salary
-          </button>
-        </div>
+        <FormSubmitButton label="Add Salary" />
       </form>
     </div>
   );
@@ -327,14 +319,9 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Barista" />
             </div>
 
-            {/* Hourly Rate */}
             <div className="form-field">
               <label className="form-label">Hourly Rate</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/hr</span>
-                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="25" type="text" step="0.01" />
-              </div>
+              <FormDollarInput value={hourlyRate} onChange={setHourlyRate} placeholder="25" suffix="/hr" />
             </div>
 
             {/* Hours Per Week */}
@@ -398,11 +385,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
         </div>
 
         {/* Footer */}
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Hourly Income
-          </button>
-        </div>
+        <FormSubmitButton label="Add Hourly Income" />
       </form>
     </div>
   );
@@ -471,13 +454,9 @@ export function SideHustleForm({ dispatch,state, onToast }) {
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Freelance Writing" />
             </div>
 
-            {/* Average Income Per Period */}
             <div className="form-field">
               <label className="form-label">Average Income Per Period</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(averageIncome)} onChange={(e) => handleNumberInput(e, setAverageIncome)} className="form-input form-input-prefix-dollar" placeholder="500" type="text" step="0.01" />
-              </div>
+              <FormDollarInput value={averageIncome} onChange={setAverageIncome} placeholder="500" />
             </div>
 
             {/* Frequency */}
@@ -527,12 +506,7 @@ export function SideHustleForm({ dispatch,state, onToast }) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Side Hustle
-          </button>
-        </div>
+        <FormSubmitButton label="Add Side Hustle" />
       </form>
     </div>
   );
@@ -636,15 +610,9 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Software Engineer" />
             </div>
 
-            {/* Annual Income */}
             <div className="form-field">
               <label className="form-label">Annual Gross Income</label>
-
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-
-                <input value={formatNumberWithCommas(grossIncome)} onChange={(e) => handleNumberInput(e, setGrossIncome)} className="form-input form-input-prefix-dollar" placeholder="120,000" type="text" />
-              </div>
+              <FormDollarInput value={grossIncome} onChange={setGrossIncome} placeholder="120,000" />
             </div>
 
             {/* Annual Growth */}
@@ -685,12 +653,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Salary
-          </button>
-        </div>
+        <FormSubmitButton label="Update Salary" />
       </form>
     </div>
   );
@@ -796,14 +759,9 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Barista" />
             </div>
 
-            {/* Hourly Rate */}
             <div className="form-field">
               <label className="form-label">Hourly Rate</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/hr</span>
-                <input value={formatNumberWithCommas(hourlyRate)} onChange={(e) => handleNumberInput(e, setHourlyRate)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="25" type="text" step="0.01" />
-              </div>
+              <FormDollarInput value={hourlyRate} onChange={setHourlyRate} placeholder="25" suffix="/hr" />
             </div>
 
             {/* Hours Per Week */}
@@ -870,12 +828,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Hourly Income
-          </button>
-        </div>
+        <FormSubmitButton label="Update Hourly Income" />
       </form>
     </div>
   );
@@ -936,13 +889,9 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Freelance Writing" />
             </div>
 
-            {/* Average Income Per Period */}
             <div className="form-field">
               <label className="form-label">Average Income Per Period</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(averageIncome)} onChange={(e) => handleNumberInput(e, setAverageIncome)} className="form-input form-input-prefix-dollar" placeholder="500" type="text" step="0.01" />
-              </div>
+              <FormDollarInput value={averageIncome} onChange={setAverageIncome} placeholder="500" />
             </div>
 
             {/* Frequency */}
@@ -991,12 +940,7 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Side Hustle
-          </button>
-        </div>
+        <FormSubmitButton label="Update Side Hustle" />
       </form>
     </div>
   );

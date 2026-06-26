@@ -6,8 +6,8 @@ export default function FireCta() {
     <section className="landing-fire-cta">
       <div className="landing-fire-cta-inner">
         <h2 className="landing-fire-title">
-          Financial Independence,
-          <span>Retire Early</span>
+          Financial Independence.
+          <span>Retire Early.</span>
         </h2>
 
         <a href="/dashboard" className="landing-fire-btn">

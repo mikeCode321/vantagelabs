@@ -5,6 +5,9 @@ import { formatNumberWithCommas, handleNumberInput } from "@/app/dashboard/utils
 import { ID } from "@/app/dashboard/Accounts";
 import {TimelineAgeFields,getValidatedTimelinePayload, } from "@/app/dashboard/TimelineAgeFields";
 import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Link, HouseIcon, LinkIcon, Building2, CreditCard } from 'lucide-react';
+import FormSlider from "@/app/dashboard/components/FormSlider";
+import FormHeader from "@/app/dashboard/components/FormHeader";
+import LinkCard from "@/app/dashboard/components/LinkCard";
 
 // ─────────────────────────────────────────────
 // EXPENSES
@@ -224,15 +227,8 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><House/></div>
-        <div>
-          <h3 className="form-header-title">Add Home Loan</h3>
-          <p className="form-header-desc">
-            Add mortgage details and optionally link it to a house asset.
-          </p>
-        </div>
-      </div>
+      <FormHeader icon={<House/>} title={"Add Home Loan"} desc={"Add mortgage details and optionally link it to a house asset."} />
+
       {!hasAvailableHouse && (
         <div className="form-warning">
           No available house assets to link. Add a house asset first, or remove an existing loan link before adding another.
@@ -290,64 +286,17 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
               readOnly={linkedAssetId !== ""}
             />
 
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a House Asset</div>
-                    <div className="link-card-sub">
-                      Sync this loan with an existing house
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {availableHouses.length === 0 ? (
-                  <p className="link-card-no-accounts">
-                    No house assets available.
-                  </p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select
-                      value={linkedAssetId}
-                      onChange={(e) => handleHouseSelect(e.target.value)}
-                      className="form-input"
-                    >
-                      <option value="">None - No linking</option>
-
-                      {availableHouses.map((house) => {
-                        const isLinked = Boolean(house.linked_loan_id);
-
-                        return (
-                          <option
-                            key={house.id}
-                            value={house.id}
-                            disabled={isLinked}
-                          >
-                            {house.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-
-                    {linkedAssetId && !linkError && (
-                      <div className="link-card-synced">
-                        <Link/> Linked to{" "}
-                        {
-                          availableHouses.find(
-                            (house) => house.id === linkedAssetId
-                          )?.name
-                        }
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a House Asset"
+              sub="Sync this loan with an existing house"
+              items={availableHouses}
+              emptyMessage="No house assets available."
+              selectedId={linkedAssetId}
+              onSelect={handleHouseSelect}
+              isItemDisabled={(house) => Boolean(house.linked_loan_id)}
+              error={linkError}
+              syncedLabel={availableHouses.find((h) => h.id === linkedAssetId)?.name}
+            />
 
             <div className="preview-card">
               <div className="preview-card-header preview-card-header-mb10">
@@ -488,15 +437,8 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><Car/></div>
-        <div>
-          <h3 className="form-header-title">Add Car Loan</h3>
-          <p className="form-header-desc">
-            Add vehicle loan details and optionally link it to a car asset.
-          </p>
-        </div>
-      </div>
+      <FormHeader icon={<Car/>} title={"Add Car Loan"} desc={"Add vehicle loan details and optionally link it to a car asset."} />
+
 
       {!hasAvailableCar && (
         <div className="form-warning">
@@ -545,64 +487,17 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
               readOnly={linkedAssetId !== ""}
             />
 
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a Car Asset</div>
-                    <div className="link-card-sub">
-                      Sync this loan with an existing vehicle
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {availableCars.length === 0 ? (
-                  <p className="link-card-no-accounts">
-                    No car assets available.
-                  </p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select
-                      value={linkedAssetId}
-                      onChange={(e) => handleCarSelect(e.target.value)}
-                      className="form-input"
-                    >
-                      <option value="">None - No linking</option>
-
-                      {availableCars.map((car) => {
-                        const isLinked = car.linked_loan_id;
-
-                        return (
-                          <option
-                            key={car.id}
-                            value={car.id}
-                            disabled={isLinked}
-                          >
-                            {car.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-
-                    {linkedAssetId && !linkError && (
-                      <div className="link-card-synced">
-                        <Link/> Linked to{" "}
-                        {
-                          availableCars.find(
-                            (car) => car.id === linkedAssetId
-                          )?.name
-                        }
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a Car Asset"
+              sub="Sync this loan with an existing vehicle"
+              items={availableCars}
+              emptyMessage="No car assets available."
+              selectedId={linkedAssetId}
+              onSelect={handleCarSelect}
+              isItemDisabled={(car) => Boolean(car.linked_loan_id)}
+              error={linkError}
+              syncedLabel={availableCars.find((c) => c.id === linkedAssetId)?.name}
+            />
 
             <div className="preview-card">
               <div className="preview-card-header preview-card-header-mb10">
@@ -674,14 +569,7 @@ export function LivingExpensesForm({ dispatch,state, onToast }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><ShoppingCart/></div>
-        <div>
-          <h3 className="form-header-title">Add Living Expenses</h3>
-          <p className="form-header-desc">Track recurring monthly costs like groceries, utilities, and subscriptions.</p>
-        </div>
-      </div>
+      <FormHeader icon={<ShoppingCart/>} title={"Add Living Expenses"} desc={"Track recurring monthly costs like groceries, utilities, and subscriptions."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -703,13 +591,7 @@ export function LivingExpensesForm({ dispatch,state, onToast }) {
               </div>
             </div>
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Annual Growth Rate</label>
-                <span className="form-slider-value">{Number(growth).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Annual Growth Rate" value={growth} onChange={setGrowth} min={0} max={15} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
@@ -794,14 +676,7 @@ export function DebtExpenseForm({ dispatch,state, onToast }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><HandCoins/></div>
-        <div>
-          <h3 className="form-header-title">Add Debt</h3>
-          <p className="form-header-desc">Track loans, credit cards, or any outstanding debt with monthly payments.</p>
-        </div>
-      </div>
+      <FormHeader icon={<HandCoins/>} title={"Add Debt"} desc={"Track loans, credit cards, or any outstanding debt with monthly payments."} />
 
       <form onSubmit={onSubmit} className="space-y-3">
         <div className="form-two-col">
@@ -922,14 +797,7 @@ export function RentExpenseForm({ dispatch,state, onToast, }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><BanknoteArrowDown/></div>
-        <div>
-          <h3 className="form-header-title">Add Rent</h3>
-          <p className="form-header-desc">Track monthly rent payments with expected annual rent growth.</p>
-        </div>
-      </div>
+      <FormHeader icon={<BanknoteArrowDown/>} title={"Add Rent"} desc={"Track monthly rent payments with expected annual rent growth."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -946,13 +814,7 @@ export function RentExpenseForm({ dispatch,state, onToast, }) {
               </div>
             </div>
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Annual Rent Growth</label>
-                <span className="form-slider-value">{Number(growth).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Annual Rent Growth" value={growth} onChange={setGrowth} min={0} max={15} step={0.1} />     
           </div>
 
           {/* ── RIGHT ── */}
@@ -1080,13 +942,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><Car/></div>
-        <div>
-          <h3 className="form-header-title">Edit Car Loan</h3>
-          <p className="form-header-desc">Update vehicle loan details, payment assumptions, and timeline.</p>
-        </div>
-      </div>
+      <FormHeader icon={<Car/>} title={"Edit Car Loan"} desc={"Update vehicle loan details, payment assumptions, and timeline."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1132,44 +988,20 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
               readOnly={linkedAssetId !== ""}
             />
 
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a Car Asset</div>
-                    <div className="link-card-sub">Sync this loan with an existing vehicle</div>
-                  </div>
-                </div>
-              </div>
-              <div className="link-card-body">
-                {availableCars.length === 0 ? (
-                  <p className="link-card-no-accounts">No car assets available.</p>
-                ) : item.linked_asset_id ? (
-                  <div className="link-card-synced">
-                    🔗 Linked to {availableCars.find((car) => car.id === item.linked_asset_id)?.name || "Car"}
-                    <p className="form-inline-muted">Delete the linked car to reassign</p>
-                  </div>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select value={linkedAssetId} onChange={(e) => handleCarSelect(e.target.value)} className="form-input">
-                      <option value="">None - No linking</option>
-                      {availableCars.map((car) => (
-                        <option key={car.id} value={car.id} disabled={car.linked_loan_id && car.linked_loan_id !== item.id}>
-                          {car.name} {car.linked_loan_id && car.linked_loan_id !== item.id ? "(already linked)" : ""}
-                        </option>
-                      ))}
-                    </select>
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-                    {linkedAssetId && !linkError && (
-                      <div className="link-card-synced">
-                        🔗 Linked to {availableCars.find((car) => car.id === linkedAssetId)?.name}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a Car Asset"
+              sub="Sync this loan with an existing vehicle"
+              items={availableCars}
+              emptyMessage="No car assets available."
+              selectedId={linkedAssetId}
+              onSelect={handleCarSelect}
+              isItemDisabled={(car) => Boolean(car.linked_loan_id) && car.linked_loan_id !== item.id}
+              error={linkError}
+              isLocked={Boolean(item.linked_asset_id)}
+              lockedLabel={availableCars.find((c) => c.id === item.linked_asset_id)?.name ?? "Car"}
+              lockedSubMessage="Delete the linked car to reassign"
+              syncedLabel={availableCars.find((c) => c.id === linkedAssetId)?.name}
+            />
 
             <div className="preview-card">
               <div className="preview-card-header preview-card-header-mb10">
@@ -1332,15 +1164,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><House/></div>
-        <div>
-          <h3 className="form-header-title">Edit Home Loan</h3>
-          <p className="form-header-desc">
-            Update mortgage details, payment assumptions, and timeline.
-          </p>
-        </div>
-      </div>
+      <FormHeader icon={<House/>} title={"Edit Home Loan"} desc={"Update mortgage details, payment assumptions, and timeline."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1436,67 +1260,20 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
               readOnly={linkedAssetId !== ""}
             />
 
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><House/></span>
-                  <div>
-                    <div className="link-card-title">
-                      Link to a House Asset
-                    </div>
-                    <div className="link-card-sub">
-                      Sync this loan with an existing house
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {availableHouses.length === 0 ? (
-                  <p className="link-card-no-accounts">
-                    No house assets available.
-                  </p>
-                ) : isAlreadyLinked ? (
-                  <div className="link-card-synced">
-                    <Link/> Linked to {linkedHouse?.name || "House asset"}
-
-                    <p className="form-inline-muted">Delete the linked house to reassign</p>
-                  </div>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select
-                      value={linkedAssetId}
-                      onChange={(e) => handleHouseSelect(e.target.value)}
-                      className="form-input"
-                    >
-                      <option value="">None - No linking</option>
-
-                      {availableHouses.map((house) => {
-                        const isLinked = Boolean(house.linked_loan_id);
-
-                        return (
-                          <option
-                            key={house.id}
-                            value={house.id}
-                            disabled={isLinked}
-                          >
-                            {house.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-
-                    {linkedAssetId && !linkError && (
-                      <div className="link-card-synced">
-                        <Link/> Linked to {linkedHouse?.name}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a House Asset"
+              sub="Sync this loan with an existing house"
+              items={availableHouses}
+              emptyMessage="No house assets available."
+              selectedId={linkedAssetId}
+              onSelect={handleHouseSelect}
+              isItemDisabled={(house) => Boolean(house.linked_loan_id)}
+              error={linkError}
+              isLocked={isAlreadyLinked}
+              lockedLabel={linkedHouse?.name ?? "House asset"}
+              lockedSubMessage="Delete the linked house to reassign"
+              syncedLabel={linkedHouse?.name}
+            />
 
             <div className="preview-card">
               <div className="preview-card-header preview-card-header-mb10">
@@ -1563,14 +1340,7 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><House/></div>
-        <div>
-          <h3 className="form-header-title">Edit Living Expenses</h3>
-          <p className="form-header-desc">Update monthly amount and growth rate for this expense.</p>
-        </div>
-      </div>
+      <FormHeader icon={<House/>} title={"Edit Living Expenses"} desc={"Update monthly amount and growth rate for this expense."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1592,14 +1362,9 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
               </div>
             </div>
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Annual Growth Rate</label>
-                <span className="form-slider-value">{Number(growth).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Annual Growth Rate" value={growth} onChange={setGrowth} min={0} max={15} step={0.1} />
           </div>
+
 
           {/* ── RIGHT ── */}
           <div className="form-col">
@@ -1675,14 +1440,7 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><Building2/></div>
-        <div>
-          <h3 className="form-header-title">Edit Rent</h3>
-          <p className="form-header-desc">Update monthly rent and annual growth rate.</p>
-        </div>
-      </div>
+      <FormHeader icon={<Building2/>} title={"Edit Rent"} desc={"Update monthly rent and annual growth rate."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1787,14 +1545,7 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><CreditCard/></div>
-        <div>
-          <h3 className="form-header-title">Edit Debt</h3>
-          <p className="form-header-desc">Update loan balance, monthly payment, and interest rate.</p>
-        </div>
-      </div>
+      <FormHeader icon={<CreditCard/>} title={"Edit Debt"} desc={"Update loan balance, monthly payment, and interest rate."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">

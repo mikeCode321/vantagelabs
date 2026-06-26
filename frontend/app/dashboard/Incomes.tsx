@@ -5,6 +5,9 @@ import { formatNumberWithCommas, handleNumberInput } from "@/app/dashboard/utils
 import { ID } from "@/app/dashboard/Accounts";
 import { TimelineAgeFields, getValidatedTimelinePayload } from "@/app/dashboard/TimelineAgeFields";
 import { CircleDollarSign, Landmark,Handbag, Clock,Rocket,Link } from 'lucide-react';
+import FormSlider from "@/app/dashboard/components/FormSlider";
+import FormHeader from "@/app/dashboard/components/FormHeader";
+import LinkCard from "@/app/dashboard/components/LinkCard";
 
 // ─────────────────────────────────────────────
 // INCOME
@@ -149,15 +152,9 @@ export function SalaryForm({ dispatch, state, onToast }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><Handbag/></div>
-        <div>
-          <h3 className="form-header-title">Add Salary Income</h3>
-          <p className="form-header-desc">Track your employment income and annual growth rate.</p>
-        </div>
-      </div>
 
+      <FormHeader icon={<Handbag/>} title={"Add Salary Income"} desc={"Track your employment income and annual growth rate."}/>
+      
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
           {/* ── LEFT ── */}
@@ -194,53 +191,24 @@ export function SalaryForm({ dispatch, state, onToast }) {
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
 
-            {/* Link to 401k card */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Landmark/></span>
-
-                  <div>
-                    <div className="link-card-title">Link to a 401(k) Account</div>
-
-                    <div className="link-card-sub">Sync this item with a retirement account</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {available401ks.length === 0 ? (
-                  <p className="link-card-no-accounts">No 401(k) accounts available.</p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
-                      <option value="">Select an account</option>
-
-                      {available401ks.map((account) => {
-                        const isLinked = account.linked_income_id;
-
-                        return (
-                          <option key={account.id} value={account.id} disabled={isLinked}>
-                            {account.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-
-                    {linked401kId && !linkError && <div className="link-card-synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a 401(k) Account"
+              sub="Sync this item with a retirement account"
+              items={available401ks}
+              emptyMessage="No 401(k) accounts available."
+              selectedId={linked401kId}
+              onSelect={handle401kSelect}
+              isItemDisabled={(acc) => Boolean(acc.linked_income_id)}
+              error={linkError}
+              syncedLabel={available401ks.find((a) => a.id === linked401kId)?.name}
+            />
           </div>
         </div>
 
@@ -345,14 +313,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><Clock/></div>
-        <div>
-          <h3 className="form-header-title">Add Hourly Wage Income</h3>
-          <p className="form-header-desc">Track hourly income, weekly hours, and projected growth.</p>
-        </div>
-      </div>
+      <FormHeader icon={<Clock/>} title={"Add Hourly Wage Income"} desc={"Track hourly income, weekly hours, and projected growth."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -400,53 +361,24 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
 
-            {/* Link to 401k card */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Landmark/></span>
-
-                  <div>
-                    <div className="link-card-title">Link to a 401(k) Account</div>
-
-                    <div className="link-card-sub">Sync retirement account with a linked job</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {available401ks.length === 0 ? (
-                  <p className="link-card-no-jobs">No 401(k) accounts available.</p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
-                      <option value="">Select an account</option>
-
-                      {available401ks.map((account) => {
-                        const isLinked = account.linked_income_id;
-
-                        return (
-                          <option key={account.id} value={account.id} disabled={isLinked}>
-                            {account.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-
-                    {linked401kId && !linkError && <div className="link-card-synced">🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a 401(k) Account"
+              sub="Sync this item with a retirement account"
+              items={available401ks}
+              emptyMessage="No 401(k) accounts available."
+              selectedId={linked401kId}
+              onSelect={handle401kSelect}
+              isItemDisabled={(acc) => Boolean(acc.linked_income_id)}
+              error={linkError}
+              syncedLabel={available401ks.find((a) => a.id === linked401kId)?.name}
+            />
 
             {/* Annual Income Preview */}
             <div className="preview-card">
@@ -524,14 +456,8 @@ export function SideHustleForm({ dispatch,state, onToast }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><Rocket/></div>
-        <div>
-          <h3 className="form-header-title">Add Side Hustle Income</h3>
-          <p className="form-header-desc">Track variable income with frequency and variability estimates.</p>
-        </div>
-      </div>
+
+      <FormHeader icon={<Rocket/>} title={"Add Side Hustle Income"} desc={"Track variable income with frequency and variability estimates."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -566,17 +492,10 @@ export function SideHustleForm({ dispatch,state, onToast }) {
               </select>
             </div>
 
-            {/* Variability Slider */}
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Income Variability</label>
-                <span className="form-slider-value">±{variabilityPercent.toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={50} step={0.1} value={variability} onChange={(e) => setVariability(e.target.value)} className="form-slider" />
-              <p className="preview-card-sub">
-                Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
-              </p>
-            </div>
+            <FormSlider label="Income Variability" value={variability} onChange={setVariability} min={0} max={50} step={0.1} prefix="±" />
+            <p className="preview-card-sub">
+              Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            </p>
           </div>
 
           {/* ── RIGHT ── */}
@@ -584,12 +503,12 @@ export function SideHustleForm({ dispatch,state, onToast }) {
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
 
             {/* Annual Income Preview */}
             <div className="preview-card">
@@ -702,16 +621,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><Handbag/></div>
-
-        <div>
-          <h3 className="form-header-title">Edit Salary Income</h3>
-
-          <p className="form-header-desc">Update your employment income and growth details.</p>
-        </div>
-      </div>
+      <FormHeader icon={<Handbag/>} title={"Edit Salary Income"} desc={"Update your employment income and growth details."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -754,53 +664,24 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
 
-            {/* Link to 401k card */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Landmark/></span>
-
-                  <div>
-                    <div className="link-card-title">Link to a 401(k) Account</div>
-
-                    <div className="link-card-sub">Sync account connections automatically</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {available401ks.length === 0 ? (
-                  <p className="link-card-no-accounts">No 401(k) accounts available.</p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
-                      <option value="">Select an account</option>
-
-                      {available401ks.map((account) => {
-                        const isLinked = account.linked_income_id;
-
-                        return (
-                          <option key={account.id} value={account.id} disabled={isLinked}>
-                            {account.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-
-                    {linked401kId && !linkError && <div className="link-card-synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a 401(k) Account"
+              sub="Sync this item with a retirement account"
+              items={available401ks}
+              emptyMessage="No 401(k) accounts available."
+              selectedId={linked401kId}
+              onSelect={handle401kSelect}
+              isItemDisabled={(acc) => Boolean(acc.linked_income_id)}
+              error={linkError}
+              syncedLabel={available401ks.find((a) => a.id === linked401kId)?.name}
+            />
           </div>
         </div>
 
@@ -901,14 +782,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><Clock/></div>
-        <div>
-          <h3 className="form-header-title">Edit Hourly Wage Income</h3>
-          <p className="form-header-desc">Update hourly rate, weekly hours, and growth details.</p>
-        </div>
-      </div>
+      <FormHeader icon={<Clock/>} title={"Edit Hourly Wage Income"} desc={"Update hourly rate, weekly hours, and growth details."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -964,50 +838,20 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
           />
 
             {/* Link to 401k card */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Landmark/></span>
-
-                  <div>
-                    <div className="link-card-title">Link 401(k) Account</div>
-
-                    <div className="link-card-sub">Connect this job to a retirement account</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {available401ks.length === 0 ? (
-                  <p className="link-card-no-accounts">No 401(k) accounts available.</p>
-                ) : isAlreadyLinked ? (
-                  <div className="link-card-synced">
-                    🔗 Linked to {available401ks.find((a) => a.id === linked401kId)?.name}
-                    <p className="form-inline-muted">Delete the linked account to reassign</p>
-                  </div>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select value={linked401kId} onChange={(e) => handle401kSelect(e.target.value)} className="form-input">
-                      <option value="">None - No linking</option>
-
-                      {available401ks.map((account) => {
-                        const isLinked = account.linked_income_id;
-
-                        return (
-                          <option key={account.id} value={account.id} disabled={isLinked}>
-                            {account.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-
-                    {linked401kId && !linkError && <div className="link-card-synced"><Link/> Linked to {available401ks.find((a) => a.id === linked401kId)?.name}</div>}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link 401(k) Account"
+              sub="Connect this job to a retirement account"
+              items={available401ks}
+              emptyMessage="No 401(k) accounts available."
+              selectedId={linked401kId}
+              onSelect={handle401kSelect}
+              isItemDisabled={(acc) => Boolean(acc.linked_income_id)}
+              error={linkError}
+              isLocked={isAlreadyLinked}
+              lockedLabel={available401ks.find((a) => a.id === linked401kId)?.name}
+              lockedSubMessage="Delete the linked account to reassign"
+              syncedLabel={available401ks.find((a) => a.id === linked401kId)?.name}
+            />
 
             {/* Annual Income Preview */}
             <div className="preview-card">
@@ -1078,14 +922,7 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><Rocket/></div>
-        <div>
-          <h3 className="form-header-title">Edit Side Hustle Income</h3>
-          <p className="form-header-desc">Update frequency, variability, and income details.</p>
-        </div>
-      </div>
+      <FormHeader icon={<Rocket/>} title={"Edit Side Hustle Income"} desc={"Update frequency, variability, and income details."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1120,32 +957,24 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
               </select>
             </div>
 
-            {/* Variability Slider */}
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Income Variability</label>
-                <span className="form-slider-value">±{variabilityPercent.toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={50} step={0.1} value={variability} onChange={(e) => setVariability(e.target.value)} className="form-slider" />
-              <p className="preview-card-sub">
-                Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
-              </p>
-            </div>
+            <FormSlider label="Income Variability" value={variability} onChange={setVariability} min={0} max={50} step={0.1} prefix="±" />
+            <p className="preview-card-sub">
+              Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            </p>
+            
           </div>
 
-          {/* ── RIGHT ── */}
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
             <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+              state={state}
+              startAge={startAge}
+              endAge={endAge}
+              setStartAge={setStartAge}
+              setEndAge={setEndAge}
+            />
 
-            {/* Annual Income Preview */}
             <div className="preview-card">
               <div className="preview-card-header">
                 <span className="preview-icon"><CircleDollarSign/></span>

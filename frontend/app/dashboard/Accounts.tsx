@@ -7,6 +7,9 @@ import {
   TimelineAgeFields,
   getValidatedTimelinePayload,
 } from "@/app/dashboard/TimelineAgeFields";
+import FormSlider from "@/app/dashboard/components/FormSlider";
+import FormHeader from "@/app/dashboard/components/FormHeader";
+import LinkCard from '@/app/dashboard/components/LinkCard';
 
 // ─────────────────────────────────────────────
 // CORE
@@ -149,13 +152,8 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><CreditCard/></div>
-        <div>
-          <h3 className="form-header-title">Add Checking Account</h3>
-          <p className="form-header-desc">Track your checking account balance and tiered interest rates.</p>
-        </div>
-      </div>
+      <FormHeader icon={<CreditCard/>} title={"Add Checking Account"} desc={"Track your checking account balance and tiered interest rates."}/>
+
       {hasCheckingAccount && (
         <div className="form-warning">
           At the moment we are only supporting 1 checking account. Remove the existing account or edit it.
@@ -237,8 +235,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
   const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">("dollar");
   const [monthlyContribution, setMonthlyContribution] = useState("");
   const [contributionPercentage, setContributionPercentage] = useState("");
-  const [expectedReturn, setExpectedReturn] = useState("");
-  const [dividendYield, setDividendYield] = useState("");
+  const [expectedReturn, setExpectedReturn] = useState("0");
+  const [dividendYield, setDividendYield] = useState("0");
   const [startAge, setStartAge] = useState("");
   const [endAge, setEndAge] = useState("");
   const [dividendStrategy, setDividendStrategy] = useState<"drip" | "cash_out">("drip");
@@ -356,13 +354,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><ChartColumnIncreasing/></div>
-        <div>
-          <h3 className="form-header-title">Add Taxable Investment Account</h3>
-          <p className="form-header-desc">Track your brokerage account with returns and dividend strategies.</p>
-        </div>
-      </div>
+      <FormHeader icon={<ChartColumnIncreasing/>} title={"Add Taxable Investment Account"} desc={"Track your brokerage account with returns and dividend strategies."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -421,21 +413,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
               </div>
             )}
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Expected Annual Return</label>
-                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
-            </div>
-
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Dividend Yield</label>
-                <span className="form-slider-value">{Number(dividendYield).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={10} step={0.1} value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={20} step={0.1} />
+            <FormSlider label="Dividend Yield" value={dividendYield} onChange={setDividendYield} min={0} max={10} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
@@ -451,46 +430,20 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
             />
 
             {/* 🔧 FIX: Link to job card - NOW SHOWS IN BOTH MODES */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a job</div>
-                    <div className="link-card-sub">
-                      {contributionMode === "percentage" 
-                        ? "Required for percentage-based contributions"
-                        : "Optional — enables percentage-based contributions"}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {allJobs.length === 0 ? (
-                  <p className="link-card-no-jobs">No jobs yet — add a qualifying job first.</p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select 
-                      value={linkedIncomeId} 
-                      onChange={(e) => handleJobSelect(e.target.value)} 
-                      className="form-input" 
-                      disabled={isLoadingTaxCalc}
-                    >
-                      <option value="">None - No linking</option>
-                      {allJobs.map((job) => (
-                        <option key={job.id} value={job.id}>
-                          {job.name}
-                        </option>
-                      ))}
-                    </select>
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-                    {isLoadingTaxCalc && <p className="form-inline-loading">⏳ Calculating net income...</p>}
-                  
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a job"
+              sub={contributionMode === "percentage"
+                ? "Required for percentage-based contributions"
+                : "Optional — enables percentage-based contributions"}
+              items={allJobs}
+              emptyMessage="No jobs yet — add a qualifying job first."
+              selectedId={linkedIncomeId}
+              onSelect={handleJobSelect}
+              selectDisabled={isLoadingTaxCalc}
+              error={linkError}
+              loadingMessage={isLoadingTaxCalc ? "⏳ Calculating net income..." : undefined}
+              syncedLabel={selectedJob ? `Synced years ${selectedJob.start_age}–${selectedJob.end_age}` : undefined}
+            />
 
             {/* Merged Contribution Preview - Only show in percentage mode */}
             {contributionMode === "percentage" && selectedJob && netIncome && !isLoadingTaxCalc && (
@@ -686,13 +639,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><PiggyBank/></div>
-        <div>
-          <h3 className="form-header-title">Add Employer Retirement Account</h3>
-          <p className="form-header-desc">Track your 401(k), 403(b), or pension and optionally link it to a job.</p>
-        </div>
-      </div>
+
+      <FormHeader icon={<PiggyBank/>} title={"Add Employer Retirement Account"} desc={"Track your 401(k), 403(b), or pension and optionally link it to a job."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -749,29 +697,11 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
               </div>
             )}
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Expected Annual Return</label>
-                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={15} step={0.1} />
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Employer Match Rate</label>
-                <span className="form-slider-value">{Number(matchRate).toFixed(0)}%</span>
-              </div>
-              <input type="range" min={0} max={200} step={1} value={matchRate} onChange={(e) => setMatchRate(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Employer Match Rate" value={matchRate} onChange={setMatchRate} min={0} max={200} step={1} decimals={0} />
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Employer Match Cap (% of salary)</label>
-                <span className="form-slider-value">{Number(matchLimit).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={10} step={0.1} value={matchLimit} onChange={(e) => setMatchLimit(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Employer Match Cap (% of salary)" value={matchLimit} onChange={setMatchLimit} min={0} max={10} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
@@ -787,43 +717,17 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             />
 
             {/* Link to job card */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a job</div>
-                    <div className="link-card-sub">Required for percentage-based contributions and employer match preview</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {allJobs.length === 0 ? (
-                  <p className="link-card-no-jobs">No jobs yet — add a qualifying job first.</p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select value={linkedIncomeId} onChange={(e) => handleJobSelect(e.target.value)} className="form-input">
-                      <option value="">None - No linking</option>
-                      {allJobs.map((job) => {
-                        const isLinked = job.linked_401k_id;
-                        return (
-                          <option key={job.id} value={job.id} disabled={isLinked}>
-                            {job.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
-                    {linkedJob && !linkError && (
-                      <div className="link-card-synced">
-                        <Link/> Synced years {linkedJob.start_age}–{linkedJob.end_age}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a job"
+              sub="Required for percentage-based contributions and employer match preview"
+              items={allJobs}
+              emptyMessage="No jobs yet — add a qualifying job first."
+              selectedId={linkedIncomeId}
+              onSelect={handleJobSelect}
+              isItemDisabled={(job) => Boolean(job.linked_401k_id)}
+              error={linkError}
+              syncedLabel={linkedJob ? `Synced years ${linkedJob.start_age}–${linkedJob.end_age}` : undefined}
+            />
 
             {/* Contribution Preview - percentage mode */}
             {contributionMode === "percentage" && selectedJob && (
@@ -941,14 +845,8 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><CreditCard/></div>
-        <div>
-          <h3 className="form-header-title">Edit Checking Account</h3>
-          <p className="form-header-desc">Update your checking account balance and tiered interest rates.</p>
-        </div>
-      </div>
+
+      <FormHeader icon={<CreditCard/>} title={"Edit Checking Account"} desc={"Update your checking account balance and tiered interest rates."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1051,8 +949,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
   const [contributionPercentage, setContributionPercentage] = useState(
     item.contribution_percentage != null ? (item.contribution_percentage * 100).toString() : ""
   );  
-  const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "");
-  const [dividendYield, setDividendYield] = useState((item.dividend_yield * 100)?.toString() || "");
+  const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "0");
+  const [dividendYield, setDividendYield] = useState((item.dividend_yield * 100)?.toString() || "0");
   const [startAge, setStartAge] = useState(item.start_age.toString());
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [dividendStrategy, setDividendStrategy] = useState(item.dividend_reinvestment || "drip");
@@ -1157,17 +1055,10 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon">📈</div>
-        <div>
-          <h3 className="form-header-title">Edit Taxable Investment Account</h3>
-          <p className="form-header-desc">Update your brokerage account with returns and dividend strategies.</p>
-        </div>
-      </div>
-
+      <FormHeader icon={<ChartColumnIncreasing/>} title={"Edit Taxable Investment Account"} desc={"Update your brokerage account with returns and dividend strategies."}/>
+      
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Account Details</p>
 
@@ -1220,21 +1111,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
               </div>
             )}
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Expected Annual Return</label>
-                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
-            </div>
-
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Dividend Yield</label>
-                <span className="form-slider-value">{Number(dividendYield).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={10} step={0.1} value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={20} step={0.1} />
+            <FormSlider label="Dividend Yield" value={dividendYield} onChange={setDividendYield} min={0} max={10} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
@@ -1250,45 +1128,20 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
             />
 
             {/* 🔧 FIX: Link to job card - NOW SHOWS IN BOTH MODES */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a job</div>
-                    <div className="link-card-sub">
-                      {contributionMode === "percentage" 
-                        ? "Required for percentage-based contributions"
-                        : "Optional — enables percentage-based contributions"}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {allJobs.length === 0 ? (
-                  <p className="link-card-no-jobs">No jobs yet — add a qualifying job first.</p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select 
-                      value={linkedIncomeId} 
-                      onChange={(e) => handleJobSelect(e.target.value)} 
-                      className="form-input" 
-                      disabled={isLoadingTaxCalc}
-                    >
-                      <option value="">None - No linking</option>
-                      {allJobs.map((job) => (
-                        <option key={job.id} value={job.id}>
-                          {job.name}
-                        </option>
-                      ))}
-                    </select>
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-                    {isLoadingTaxCalc && <p className="form-inline-loading">⏳ Calculating net income...</p>}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a job"
+              sub={contributionMode === "percentage"
+                ? "Required for percentage-based contributions"
+                : "Optional — enables percentage-based contributions"}
+              items={allJobs}
+              emptyMessage="No jobs yet — add a qualifying job first."
+              selectedId={linkedIncomeId}
+              onSelect={handleJobSelect}
+              selectDisabled={isLoadingTaxCalc}
+              error={linkError}
+              loadingMessage={isLoadingTaxCalc ? "⏳ Calculating net income..." : undefined}
+              syncedLabel={selectedJob ? `Synced years ${selectedJob.start_age}–${selectedJob.end_age}` : undefined}            
+            />
 
             {/* Merged Contribution Preview - Only show in percentage mode */}
             {contributionMode === "percentage" && selectedJob && netIncome && !isLoadingTaxCalc && (
@@ -1471,17 +1324,10 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><PiggyBank/></div>
-        <div>
-          <h3 className="form-header-title">Edit Employer Retirement Account</h3>
-          <p className="form-header-desc">Update your 401(k), 403(b), or pension details.</p>
-        </div>
-      </div>
+      <FormHeader icon={<PiggyBank/>} title={"Edit Employer Retirement Account"} desc={"Update your 401(k), 403(b), or pension details."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Account Details</p>
 
@@ -1498,7 +1344,6 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               </div>
             </div>
 
-            {/* Contribution Mode Toggle - Compact */}
             <div className="form-field">
               <label className="form-label">Contribution</label>
               <div className="form-toggle-group">
@@ -1511,7 +1356,6 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               </div>
             </div>
 
-            {/* Dollar Mode */}
             {contributionMode === "dollar" && (
               <div className="form-field">
                 <label className="form-label">Monthly Contribution</label>
@@ -1523,7 +1367,6 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               </div>
             )}
 
-            {/* Percentage Mode */}
             {contributionMode === "percentage" && (
               <div className="form-field">
                 <label className="form-label">Percentage of Gross Income</label>
@@ -1534,29 +1377,9 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               </div>
             )}
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Expected Annual Return</label>
-                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
-            </div>
-
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Employer Match Rate</label>
-                <span className="form-slider-value">{Number(matchRate).toFixed(0)}%</span>
-              </div>
-              <input type="range" min={0} max={200} step={1} value={matchRate} onChange={(e) => setMatchRate(e.target.value)} className="form-slider" />
-            </div>
-
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Employer Match Cap (% of salary)</label>
-                <span className="form-slider-value">{Number(matchLimit).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={10} step={0.1} value={matchLimit} onChange={(e) => setMatchLimit(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={15} step={0.1} />
+            <FormSlider label="Employer Match Rate" value={matchRate} onChange={setMatchRate} min={0} max={200} step={1} decimals={0} />
+            <FormSlider label="Employer Match Cap (% of salary)" value={matchLimit} onChange={setMatchLimit} min={0} max={10} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
@@ -1571,51 +1394,20 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               setEndAge={setEndAge}
             />
 
-            {/* Link to job card */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a job</div>
-                    <div className="link-card-sub">Required for percentage-based contributions</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {allJobs.length === 0 ? (
-                  <p className="link-card-no-jobs">No jobs yet — add a qualifying job first.</p>
-                ) : item.linked_income_id ? (
-                  <div>
-                    <div className="link-card-synced">
-                      🔗 Linked to {allJobs.find((j) => j.id === linkedIncomeId)?.name}
-                      <p className="form-inline-muted">Delete this account to unlink and reassign</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select value={linkedIncomeId} onChange={(e) => handleJobSelect(e.target.value)} className="form-input">
-                      <option value="">None - No linking</option>
-                      {allJobs.map((job) => {
-                        const isLinked = job.linked_401k_id;
-                        return (
-                          <option key={job.id} value={job.id} disabled={isLinked}>
-                            {job.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
-                    {linkedJob && !linkError && (
-                      <div className="link-card-synced">
-                        <Link/> Synced years {linkedJob.start_age}–{linkedJob.end_age}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a job"
+              sub="Required for percentage-based contributions"
+              items={allJobs}
+              emptyMessage="No jobs yet — add a qualifying job first."
+              selectedId={linkedIncomeId}
+              onSelect={handleJobSelect}
+              isItemDisabled={(job) => Boolean(job.linked_401k_id)}
+              error={linkError}
+              isLocked={Boolean(item.linked_income_id)}
+              lockedLabel={allJobs.find((j) => j.id === linkedIncomeId)?.name}
+              lockedSubMessage="Delete this account to unlink and reassign"
+              syncedLabel={linkedJob ? `Synced years ${linkedJob.start_age}–${linkedJob.end_age}` : undefined}
+            />
 
             {/* Merged Contribution Preview - Only show in percentage mode */}
             {contributionMode === "percentage" && selectedJob && (

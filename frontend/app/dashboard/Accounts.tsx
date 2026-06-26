@@ -10,6 +10,9 @@ import {
 import FormSlider from "@/app/dashboard/components/FormSlider";
 import FormHeader from "@/app/dashboard/components/FormHeader";
 import LinkCard from '@/app/dashboard/components/LinkCard';
+import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
+import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
+import FormToggleGroup from '@/app/dashboard/components/FormToggleButton';
 
 // ─────────────────────────────────────────────
 // CORE
@@ -172,10 +175,7 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="10,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder="10,000" required />
             </div>
 
             <div className="tier-list">
@@ -218,12 +218,8 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
             setEndAge={setEndAge}
           />
         </div>
-        {/* Submit Button */}
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit form-btn-submit-mt" disabled={hasCheckingAccount}>
-              Add Checking Account
-          </button>
-        </div>
+
+        <FormSubmitButton label="Add Checking Account" disabled={hasCheckingAccount} topMargin />
       </form>
     </div>
   );
@@ -369,36 +365,25 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="50,000" type="text" />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder={"50,000"}/>
             </div>
 
             {/* Contribution Mode Toggle - Compact */}
-            <div className="form-field">
-              <label className="form-label">Contribution</label>
-              
-                <div className="form-toggle-group">
-                  <button type="button" className={`form-btn-secondary${contributionMode === "dollar" ? " active" : ""}`} onClick={() => setContributionMode("dollar")}>
-                    $
-                  </button>
-                  <button type="button" className={`form-btn-secondary${contributionMode === "percentage" ? " active" : ""}`} onClick={() => setContributionMode("percentage")} disabled={!canUsePercentageMode} title={!canUsePercentageMode ? "Link a job first" : ""}>
-                    %
-                  </button>
-                </div>
-             
-            </div>
+            <FormToggleGroup
+              label="Contribution"
+              value={contributionMode}
+              onChange={setContributionMode}
+              options={[
+                { value: "dollar", label: "$" },
+                { value: "percentage", label: "%", disabled: !canUsePercentageMode, disabledTitle: "Link a job first" },
+              ]}
+            />
 
             {/* Dollar Mode */}
             {contributionMode === "dollar" && (
               <div className="form-field">
                 <label className="form-label">Monthly Contribution</label>
-                <div className="form-input-wrap">
-                  <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix-label">/mo</span>
-                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} placeholder="1,000" type="text" />
-                </div>
+                <FormDollarInput value={monthlyContribution} onChange={setMonthlyContribution} placeholder={"1,000"} suffix='/mo'/>
               </div>
             )}
 
@@ -471,16 +456,11 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
             {/* Dividend strategy section */}
             <p className="form-section-heading">Dividend Strategy</p>
 
-            <div className="form-field">
-              <div className="form-toggle-group">
-                <button type="button" className={dividendStrategy === "drip" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("drip")}>
-                  DRIP
-                </button>
-                <button type="button" className={dividendStrategy === "cash_out" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("cash_out")}>
-                  Cash Out
-                </button>
-              </div>
-            </div>
+            <FormToggleGroup value={dividendStrategy} onChange={setDividendStrategy} options={[
+                { value: "drip", label: "DRIP" },
+                { value: "cash_out", label: "Cash Out" },
+              ]}
+            />
 
             {dividendStrategy === "cash_out" && (
               <div className="form-field">
@@ -498,11 +478,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit form-btn-submit-mt">
-            Add Taxable Investment Account
-          </button>
-        </div>
+        <FormSubmitButton label="Add Taxable Investment Account" topMargin />
       </form>
     </div>
   );
@@ -655,10 +631,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="25,000" type="text" />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder={"25,000"}/>
             </div>
 
             {/* Contribution Mode Toggle - Compact */}
@@ -678,11 +651,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             {contributionMode === "dollar" && (
               <div className="form-field">
                 <label className="form-label">Monthly Contribution</label>
-                <div className="form-input-wrap">
-                  <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix-label">/mo</span>
-                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)}placeholder="500" type="text" />
-                </div>
+                <FormDollarInput value={monthlyContribution} onChange={setMonthlyContribution} placeholder="500" suffix='/mo'/>
               </div>
             )}
 
@@ -698,9 +667,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             )}
 
             <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={15} step={0.1} />
-
             <FormSlider label="Employer Match Rate" value={matchRate} onChange={setMatchRate} min={0} max={200} step={1} decimals={0} />
-
             <FormSlider label="Employer Match Cap (% of salary)" value={matchLimit} onChange={setMatchLimit} min={0} max={10} step={0.1} />
           </div>
 
@@ -770,11 +737,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit form-btn-submit-mt">
-            Add Employer Retirement Account
-          </button>
-        </div>
+        <FormSubmitButton label="Add Employer Retirement Account" topMargin />
       </form>
     </div>
   );
@@ -863,10 +826,7 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
             {/* Starting Balance */}
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="10,000" type="text" />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder="10,000"/>
             </div>
 
             {/* Interest Tiers */}
@@ -930,12 +890,7 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
           </div>
         </div>
 
-        {/* Submit Button */}
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit form-btn-submit-mt">
-            Update Checking Account
-          </button>
-        </div>
+        <FormSubmitButton label="Update Checking Account" topMargin />
       </form>
     </div>
   );
@@ -1069,10 +1024,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
 
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="50,000" type="text" />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder="50,000" />
             </div>
 
             {/* Contribution Mode Toggle - Compact */}
@@ -1088,15 +1040,10 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
               </div>
             </div>
 
-            {/* Dollar Mode */}
             {contributionMode === "dollar" && (
               <div className="form-field">
                 <label className="form-label">Monthly Contribution</label>
-                <div className="form-input-wrap">
-                  <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix-label">/mo</span>
-                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} placeholder="1,000" type="text" />
-                </div>
+                <FormDollarInput value={monthlyContribution} onChange={setMonthlyContribution} placeholder="1,000" suffix='/mo'/>
               </div>
             )}
 
@@ -1166,19 +1113,12 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
               </div>
             )}
 
-            {/* Dividend strategy section */}
             <p className="form-section-heading">Dividend Strategy</p>
-
-            <div className="form-field">
-              <div style={{ display: "flex", gap: "4px" }}>
-                <button type="button" className={dividendStrategy === "drip" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("drip")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
-                  DRIP
-                </button>
-                <button type="button" className={dividendStrategy === "cash_out" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("cash_out")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
-                  Cash Out
-                </button>
-              </div>
-            </div>
+            <FormToggleGroup value={dividendStrategy} onChange={setDividendStrategy} options={[
+                { value: "drip", label: "DRIP" },
+                { value: "cash_out", label: "Cash Out" },
+              ]}
+            />
 
             {dividendStrategy === "cash_out" && (
               <div className="form-field">
@@ -1196,11 +1136,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Taxable Investment Account
-          </button>
-        </div>
+        <FormSubmitButton label="Update Taxable Investment Account" />
       </form>
     </div>
   );
@@ -1338,10 +1274,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
 
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="25,000" type="text" />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder={"25,000"}/>
             </div>
 
             <div className="form-field">
@@ -1359,11 +1292,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
             {contributionMode === "dollar" && (
               <div className="form-field">
                 <label className="form-label">Monthly Contribution</label>
-                <div className="form-input-wrap">
-                  <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix-label">/mo</span>
-                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} placeholder="500" type="text" />
-                </div>
+                <FormDollarInput value={monthlyContribution} onChange={setMonthlyContribution} placeholder={"500"} suffix='/mo'/>
               </div>
             )}
 
@@ -1450,11 +1379,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Retirement Account
-          </button>
-        </div>
+        <FormSubmitButton label="Update Retirement Account" />
       </form>
     </div>
   );

@@ -8,6 +8,8 @@ import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Lin
 import FormSlider from "@/app/dashboard/components/FormSlider";
 import FormHeader from "@/app/dashboard/components/FormHeader";
 import LinkCard from "@/app/dashboard/components/LinkCard";
+import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
+import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
 
 // ─────────────────────────────────────────────
 // EXPENSES
@@ -247,10 +249,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(originalPrincipal)} onChange={(e) => handleNumberInput(e, setOriginalPrincipal)} className="form-input form-input-prefix-dollar" placeholder="320,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={originalPrincipal} onChange={setOriginalPrincipal} placeholder="320,000" required />
             </div>
 
             <div className="form-field">
@@ -264,13 +263,8 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             </div>
 
             <div className="form-field">
-              <label className="form-label">
-                Extra Monthly Payment <span className="form-label-muted">(optional)</span>
-              </label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(extraMonthlyPayment)} onChange={(e) => handleNumberInput(e, setExtraMonthlyPayment)} className="form-input form-input-prefix-dollar" placeholder="0" type="text" inputMode="decimal" />
-              </div>
+              <label className="form-label">Extra Monthly Payment <span className="form-label-muted">(optional)</span></label>
+              <FormDollarInput value={extraMonthlyPayment} onChange={setExtraMonthlyPayment} placeholder="0" />
             </div>
           </div>
 
@@ -316,11 +310,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit" disabled={!hasAvailableHouse}>
-            Add Home Loan
-          </button>
-        </div>
+        <FormSubmitButton label="Add Home Loan" disabled={!hasAvailableHouse} />
       </form>
     </div>
   );
@@ -458,10 +448,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(originalPrincipal)} onChange={(e) => handleNumberInput(e, setOriginalPrincipal)} className="form-input form-input-prefix-dollar" placeholder="25,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={originalPrincipal} onChange={setOriginalPrincipal} placeholder="25,000" required />
             </div>
 
             <div className="form-field">
@@ -517,11 +504,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit" disabled={!hasAvailableCar}>
-            Add Car Loan
-          </button>
-        </div>
+        <FormSubmitButton label="Add Car Loan" disabled={!hasAvailableCar} />
       </form>
     </div>
   );
@@ -584,11 +567,7 @@ export function LivingExpensesForm({ dispatch,state, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Monthly Amount</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input value={formatNumberWithCommas(amount)} onChange={(e) => handleNumberInput(e, setAmount)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="3,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={amount} onChange={setAmount} placeholder="3,000" suffix="/mo" required />
             </div>
 
             <FormSlider label="Annual Growth Rate" value={growth} onChange={setGrowth} min={0} max={15} step={0.1} />
@@ -621,11 +600,7 @@ export function LivingExpensesForm({ dispatch,state, onToast }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Living Expenses
-          </button>
-        </div>
+        <FormSubmitButton label="Add Living Expenses" />
       </form>
     </div>
   );
@@ -691,19 +666,12 @@ export function DebtExpenseForm({ dispatch,state, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Total Debt Amount</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input className="form-input form-input-prefix-dollar" value={formatNumberWithCommas(debtAmount)} onChange={(e) => handleNumberInput(e, setDebtAmount)} type="text" inputMode="decimal" placeholder="25,000" required />
-              </div>
+              <FormDollarInput value={debtAmount} onChange={setDebtAmount} placeholder="25,000" required />
             </div>
 
             <div className="form-field">
               <label className="form-label">Monthly Payment</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyPayment)} onChange={(e) => handleNumberInput(e, setMonthlyPayment)} type="text" inputMode="decimal" placeholder="400" required />
-              </div>
+              <FormDollarInput value={monthlyPayment} onChange={setMonthlyPayment} placeholder="400" suffix="/mo" required />
             </div>
 
             <div className="form-field">
@@ -747,11 +715,7 @@ export function DebtExpenseForm({ dispatch,state, onToast }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Debt
-          </button>
-        </div>
+        <FormSubmitButton label="Add Debt" />
       </form>
     </div>
   );
@@ -807,11 +771,7 @@ export function RentExpenseForm({ dispatch,state, onToast, }) {
 
             <div className="form-field">
               <label className="form-label">Monthly Rent</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input className="form-input form-input-prefix-dollar form-input-has-suffix" onChange={(e) => handleNumberInput(e, setAmount)} value={formatNumberWithCommas(amount)} placeholder="2,000" type="text" required />
-              </div>
+              <FormDollarInput value={amount} onChange={setAmount} placeholder="2,000" suffix="/mo" required />
             </div>
 
             <FormSlider label="Annual Rent Growth" value={growth} onChange={setGrowth} min={0} max={15} step={0.1} />     
@@ -846,11 +806,7 @@ export function RentExpenseForm({ dispatch,state, onToast, }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Rent
-          </button>
-        </div>
+        <FormSubmitButton label="Add Rent" />
       </form>
     </div>
   );
@@ -956,10 +912,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(originalPrincipal)} onChange={(e) => handleNumberInput(e, setOriginalPrincipal)} className="form-input form-input-prefix-dollar" placeholder="25,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={originalPrincipal} onChange={setOriginalPrincipal} placeholder="25,000" required />
             </div>
 
             <div className="form-field">
@@ -1021,9 +974,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">Update Car Loan</button>
-        </div>
+        <FormSubmitButton label="Update Car Loan" />
       </form>
     </div>
   );
@@ -1183,20 +1134,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(originalPrincipal)}
-                  onChange={(e) =>
-                    handleNumberInput(e, setOriginalPrincipal)
-                  }
-                  className="form-input form-input-prefix-dollar"
-                  placeholder="320,000"
-                  type="text"
-                  inputMode="decimal"
-                  required
-                />
-              </div>
+              <FormDollarInput value={originalPrincipal} onChange={setOriginalPrincipal} placeholder="320,000" required />
             </div>
 
             <div className="form-field">
@@ -1228,23 +1166,8 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
             </div>
 
             <div className="form-field">
-              <label className="form-label">
-                Extra Monthly Payment{" "}
-                <span className="form-label-muted">(optional)</span>
-              </label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(extraMonthlyPayment)}
-                  onChange={(e) =>
-                    handleNumberInput(e, setExtraMonthlyPayment)
-                  }
-                  className="form-input form-input-prefix-dollar"
-                  placeholder="0"
-                  type="text"
-                  inputMode="decimal"
-                />
-              </div>
+              <label className="form-label">Extra Monthly Payment <span className="form-label-muted">(optional)</span></label>
+              <FormDollarInput value={extraMonthlyPayment} onChange={setExtraMonthlyPayment} placeholder="0" />
             </div>
           </div>
 
@@ -1293,11 +1216,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Home Loan
-          </button>
-        </div>
+        <FormSubmitButton label="Update Home Loan" />
       </form>
     </div>
   );
@@ -1355,11 +1274,7 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
 
             <div className="form-field">
               <label className="form-label">Monthly Amount</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input value={formatNumberWithCommas(amount)} onChange={(e) => handleNumberInput(e, setAmount)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="3,000" type="text" />
-              </div>
+              <FormDollarInput value={amount} onChange={setAmount} placeholder="3,000" suffix="/mo" />
             </div>
 
             <FormSlider label="Annual Growth Rate" value={growth} onChange={setGrowth} min={0} max={15} step={0.1} />
@@ -1393,11 +1308,7 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Living Expenses
-          </button>
-        </div>
+        <FormSubmitButton label="Update Living Expenses" />
       </form>
     </div>
   );
@@ -1450,11 +1361,7 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
 
             <div className="form-field">
               <label className="form-label">Monthly Rent</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input value={amount} onChange={(e) => setAmount(e.target.value)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="2,000" />
-              </div>
+              <FormDollarInput value={amount} onChange={setAmount} placeholder="2,000" suffix="/mo" />
             </div>
 
             <div className="form-field-gap8">
@@ -1560,19 +1467,12 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
 
             <div className="form-field">
               <label className="form-label">Total Debt Amount</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(debtAmount)} onChange={(e) => handleNumberInput(e, setDebtAmount)} className="form-input form-input-prefix-dollar" placeholder="25,000" type="text" inputMode="decimal" />
-              </div>
+              <FormDollarInput value={debtAmount} onChange={setDebtAmount} placeholder="25,000" />
             </div>
 
             <div className="form-field">
               <label className="form-label">Monthly Payment</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input value={formatNumberWithCommas(monthlyPayment)} onChange={(e) => handleNumberInput(e, setMonthlyPayment)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="400" type="text" inputMode="decimal" />
-              </div>
+              <FormDollarInput value={monthlyPayment} onChange={setMonthlyPayment} placeholder="400" suffix="/mo" />
             </div>
 
             <div className="form-field">
@@ -1616,11 +1516,7 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Debt
-          </button>
-        </div>
+        <FormSubmitButton label="Update Debt" />
       </form>
     </div>
   );

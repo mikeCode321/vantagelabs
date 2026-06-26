@@ -546,7 +546,7 @@ export default function Dashboard() {
 
       <div className="dash-main">
         
-        { process.env.DEBUG_MODE === "true" &&
+        {process.env.NEXT_PUBLIC_DEBUG_MODE === "true" &&
           (<div style={{ display: "flex", justifyContent: "space-between"}}>
             {/* <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre> */}
             <JsonView value={state} collapsed={2} displayDataTypes={false} displayObjectSize={false} shortenTextAfterLength={40}/>

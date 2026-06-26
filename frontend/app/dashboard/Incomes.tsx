@@ -100,9 +100,9 @@ export function SalaryForm({ dispatch, state, onToast }) {
     e.preventDefault();
     const timeline = getValidatedTimelinePayload(state, startAge, endAge);
         
-            if (timeline.invalid) {
-                return;
-            }
+    if (timeline.invalid) {
+        return;
+    }
 
     if (linkError) {
       return;
@@ -250,9 +250,9 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
     e.preventDefault();
     const timeline = getValidatedTimelinePayload(state, startAge, endAge);
         
-            if (timeline.invalid) {
-                return;
-            }
+    if (timeline.invalid) {
+        return;
+    }
 
     if (linkError) {
       return;
@@ -388,15 +388,14 @@ export function SideHustleForm({ dispatch,state, onToast }) {
 
   const frequencyMultiplier = { weekly: 52, biweekly: 26, monthly: 12, quarterly: 4, annual: 1 }[frequency] || 12;
   const annualIncome = Number(averageIncome) * frequencyMultiplier;
-  const variabilityPercent = Number(variability) || 0;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const timeline = getValidatedTimelinePayload(state, startAge, endAge);
         
-            if (timeline.invalid) {
-                return;
-            }
+    if (timeline.invalid) {
+        return;
+    }
 
     dispatch({
       type: "ADD_INCOME",
@@ -524,9 +523,9 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
     e.preventDefault();
     const timeline = getValidatedTimelinePayload(state, startAge, endAge);
         
-            if (timeline.invalid) {
-                return;
-            }
+    if (timeline.invalid) {
+        return;
+    }
 
     if (linkError) {
       return;
@@ -606,13 +605,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-              state={state}
-              startAge={startAge}
-              endAge={endAge}
-              setStartAge={setStartAge}
-              setEndAge={setEndAge}
-            />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
 
             <LinkCard
               title="Link to a 401(k) Account"
@@ -672,9 +665,9 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
     e.preventDefault();
     const timeline = getValidatedTimelinePayload(state, startAge, endAge);
         
-            if (timeline.invalid) {
-                return;
-            }
+    if (timeline.invalid) {
+        return;
+    }
 
     if (linkError) {
       return;
@@ -724,11 +717,9 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Income Details</p>
 
-            {/* Job Name */}
             <div className="form-field">
               <label className="form-label">Job Name</label>
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Barista" />
@@ -739,7 +730,6 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
               <FormDollarInput value={hourlyRate} onChange={setHourlyRate} placeholder="25" suffix="/hr" />
             </div>
 
-            {/* Hours Per Week */}
             <div className="form-field">
               <label className="form-label">Hours Per Week</label>
               <div className="form-input-wrap">
@@ -748,7 +738,6 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
               </div>
             </div>
 
-            {/* Growth Rate */}
             <div className="form-field">
               <label className="form-label">Annual Growth Rate</label>
               <div className="form-input-wrap">
@@ -758,19 +747,10 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
             </div>
           </div>
 
-          {/* ── RIGHT ── */}
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
-
-            {/* Link to 401k card */}
             <LinkCard
               title="Link 401(k) Account"
               sub="Connect this job to a retirement account"
@@ -808,15 +788,14 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
 
   const frequencyMultiplier = { weekly: 52, biweekly: 26, monthly: 12, quarterly: 4, annual: 1 }[frequency] || 12;
   const annualIncome = Number(averageIncome) * frequencyMultiplier;
-  const variabilityPercent = Number(variability) || 0;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const timeline = getValidatedTimelinePayload(state, startAge, endAge);
         
-            if (timeline.invalid) {
-                return;
-            }
+    if (timeline.invalid) {
+        return;
+    }
 
     dispatch({
       type: "UPDATE_INCOME",
@@ -843,11 +822,9 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Income Details</p>
 
-            {/* Side Hustle Name */}
             <div className="form-field">
               <label className="form-label">Side Hustle Name</label>
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Freelance Writing" />
@@ -858,7 +835,6 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
               <FormDollarInput value={averageIncome} onChange={setAverageIncome} placeholder="500" />
             </div>
 
-            {/* Frequency */}
             <div className="form-field">
               <label className="form-label">Frequency</label>
               <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className="form-input">
@@ -878,14 +854,7 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
-
-            <TimelineAgeFields
-              state={state}
-              startAge={startAge}
-              endAge={endAge}
-              setStartAge={setStartAge}
-              setEndAge={setEndAge}
-            />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
 
             <PreviewCard icon={<CircleDollarSign/>} label="Estimated Annual Income" amount={`$${annualIncome.toLocaleString()}`} unit="/yr">
               ${(Number(averageIncome) || 0).toLocaleString()} {frequency}

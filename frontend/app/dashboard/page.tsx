@@ -546,14 +546,16 @@ export default function Dashboard() {
 
       <div className="dash-main">
         
-        <div style={{ display: "flex", justifyContent: "space-between"}}>
-          {/* <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre> */}
-          <JsonView value={state} collapsed={2} displayDataTypes={false} displayObjectSize={false} shortenTextAfterLength={40}/>
-          {/* {simResult ? <JsonView
-            value={simResult} collapsed={2} displayDataTypes={false} displayObjectSize={false} shortenTextAfterLength={40}
-          />: "[]"} */}
-          {/* <UserAgeForm state={state} dispatch={dispatch} /> */}
-        </div> 
+        { process.env.DEBUG_MODE === "true" &&
+          (<div style={{ display: "flex", justifyContent: "space-between"}}>
+            {/* <pre suppressHydrationWarning>{JSON.stringify(state, null, 2)}</pre> */}
+            <JsonView value={state} collapsed={2} displayDataTypes={false} displayObjectSize={false} shortenTextAfterLength={40}/>
+            {/* {simResult ? <JsonView
+              value={simResult} collapsed={2} displayDataTypes={false} displayObjectSize={false} shortenTextAfterLength={40}
+            />: "[]"} */}
+            {/* <UserAgeForm state={state} dispatch={dispatch} /> */}
+          </div>)
+        }
        
         
         <section className="simulation-results-grid">

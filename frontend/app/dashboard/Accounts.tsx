@@ -1,22 +1,17 @@
 import './styles/Forms.css'
 
 import { useState, useEffect } from "react";
-import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/dashboard/utils";
-import { CreditCard, ChartColumnIncreasing , DollarSign, Link, PiggyBank } from 'lucide-react';
-import {
-  TimelineAgeFields,
-  getValidatedTimelinePayload,
-} from "@/app/dashboard/TimelineAgeFields";
+import { formatNumberWithCommas, handleTierThresholdInput } from "@/app/dashboard/utils";
+import { CreditCard, ChartColumnIncreasing, PiggyBank } from 'lucide-react';
+import { TimelineAgeFields, getValidatedTimelinePayload,} from "@/app/dashboard/TimelineAgeFields";
 import FormSlider from "@/app/dashboard/components/FormSlider";
 import FormHeader from "@/app/dashboard/components/FormHeader";
 import LinkCard from '@/app/dashboard/components/LinkCard';
 import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
 import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
 import FormToggleGroup from '@/app/dashboard/components/FormToggleButton';
-
-// ─────────────────────────────────────────────
-// CORE
-// ─────────────────────────────────────────────
+import ContributionPreviewCard from '@/app/dashboard/components/ContributionPreviewCard';
+import PreviewCard from './components/PreviewCard';
 
 export type ID = string;
 
@@ -432,25 +427,11 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
 
             {/* Merged Contribution Preview - Only show in percentage mode */}
             {contributionMode === "percentage" && selectedJob && netIncome && !isLoadingTaxCalc && (
-              <div className="preview-card">
-                <div className="preview-card-header">
-                  <span className="preview-icon">💵</span>
-                  <span className="preview-card-label">Contribution Preview</span>
-                </div>
-                <div className="preview-card-row">
-                  <div className="preview-card-col">
-                    <span className="preview-card-meta-label">Monthly</span>
-                    <span className="preview-card-value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
-                  </div>
-                  <div className="preview-card-col preview-card-col-right">
-                    <span className="preview-card-meta-label">Annual</span>
-                    <span className="preview-card-value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
-                  </div>
-                </div>
-                <div className="preview-card-footer">
-                  {(Number(contributionPercentage || 0)).toFixed(1)}% of ${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
-                </div>
-              </div>
+              <ContributionPreviewCard
+                monthly={effectiveMonthlyContribution()}
+                annual={effectiveMonthlyContribution() * 12}
+                footer={`${Number(contributionPercentage || 0).toFixed(1)}% of $${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net`}
+              />
             )}
 
             {/* Dividend strategy section */}
@@ -698,42 +679,17 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 
             {/* Contribution Preview - percentage mode */}
             {contributionMode === "percentage" && selectedJob && (
-              <div className="preview-card">
-                <div className="preview-card-header">
-                  <span className="preview-icon"><DollarSign/></span>
-                  <span className="preview-card-label">Contribution Preview</span>
-                </div>
-                <div className="preview-card-row">
-                  <div className="preview-card-col">
-                    <span className="preview-card-meta-label">Monthly</span>
-                    <span className="preview-card-value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
-                  </div>
-                  <div className="preview-card-col preview-card-col-right">
-                    <span className="preview-card-meta-label">Annual</span>
-                    <span className="preview-card-value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
-                  </div>
-                </div>
-                <div className="preview-card-footer">
-                  {Number(contributionPercentage).toFixed(1)}% of ${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly gross
-                </div>
-              </div>
+              <ContributionPreviewCard
+                monthly={effectiveMonthlyContribution()}
+                annual={effectiveMonthlyContribution() * 12}
+                footer={`${Number(contributionPercentage).toFixed(1)}% of $${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly gross`}
+              />
             )}
 
-            {/* Annual total preview with employer match */}
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span className="preview-icon"></span>
-                <span className="preview-card-label">Annual Total</span>
-              </div>
-              <div className="preview-card-amount preview-card-amount-lg">
-                ${Math.round(annualTotal).toLocaleString()}
-                <span className="preview-card-unit preview-card-unit-lg">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${Math.round(annualEmployee).toLocaleString()} you + ${Math.round(annualEmployer).toLocaleString()} employer match
-                {!selectedJob && annualEmployer === 0 && <span> (link a job to see match)</span>}
-              </div>
-            </div>
+            <PreviewCard icon={<span>🏦</span>} label="Annual Total" amount={`$${Math.round(annualTotal).toLocaleString()}`} unit="/yr" large>
+              ${Math.round(annualEmployee).toLocaleString()} you + ${Math.round(annualEmployer).toLocaleString()} employer match
+              {!selectedJob && annualEmployer === 0 && <span> (link a job to see match)</span>}
+            </PreviewCard>
           </div>
         </div>
 
@@ -1092,25 +1048,11 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
 
             {/* Merged Contribution Preview - Only show in percentage mode */}
             {contributionMode === "percentage" && selectedJob && netIncome && !isLoadingTaxCalc && (
-              <div className="preview-card">
-                <div className="preview-card-header">
-                  <span className="preview-icon"><DollarSign/></span>
-                  <span className="preview-card-label">Contribution Preview</span>
-                </div>
-                <div className="preview-card-row">
-                  <div className="preview-card-col">
-                    <span className="preview-card-meta-label">Monthly</span>
-                    <span className="preview-card-value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
-                  </div>
-                  <div className="preview-card-col preview-card-col-right">
-                    <span className="preview-card-meta-label">Annual</span>
-                    <span className="preview-card-value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
-                  </div>
-                </div>
-                <div className="preview-card-footer">
-                  {Number(contributionPercentage).toFixed(1)}% of ${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
-                </div>
-              </div>
+              <ContributionPreviewCard
+                monthly={effectiveMonthlyContribution()}
+                annual={effectiveMonthlyContribution() * 12}
+                footer={`${Number(contributionPercentage || 0).toFixed(1)}% of $${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net`}
+              />
             )}
 
             <p className="form-section-heading">Dividend Strategy</p>
@@ -1340,42 +1282,17 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
 
             {/* Merged Contribution Preview - Only show in percentage mode */}
             {contributionMode === "percentage" && selectedJob && (
-              <div className="preview-card">
-                <div className="preview-card-header">
-                  <span className="preview-icon"><DollarSign/></span>
-                  <span className="preview-card-label">Contribution Preview</span>
-                </div>
-                <div className="preview-card-row">
-                  <div className="preview-card-col">
-                    <span className="preview-card-meta-label">Monthly</span>
-                    <span className="preview-card-value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
-                  </div>
-                  <div className="preview-card-col preview-card-col-right">
-                    <span className="preview-card-meta-label">Annual</span>
-                    <span className="preview-card-value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
-                  </div>
-                </div>
-                <div className="preview-card-footer">
-                  {Number(contributionPercentage).toFixed(1)}% of ${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
-                </div>
-              </div>
+              <ContributionPreviewCard
+                monthly={effectiveMonthlyContribution()}
+                annual={effectiveMonthlyContribution() * 12}
+                footer={`${Number(contributionPercentage).toFixed(1)}% of $${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly gross`}
+              />
             )}
 
-            {/* Annual contribution preview with employer match */}
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span className="preview-icon"></span>
-                <span className="preview-card-label">Annual Total</span>
-              </div>
-              <div className="preview-card-amount preview-card-amount-lg">
-                ${Math.round(annualTotal).toLocaleString()}
-                <span className="preview-card-unit preview-card-unit-lg">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${Math.round(annualEmployee).toLocaleString()} you + ${Math.round(annualEmployer).toLocaleString()} employer match
-                {!selectedJob && annualEmployer === 0 && <span> (link a job to see match)</span>}
-              </div>
-            </div>
+            <PreviewCard icon={<span>🏦</span>} label="Annual Total" amount={`$${Math.round(annualTotal).toLocaleString()}`} unit="/yr" large>
+              ${Math.round(annualEmployee).toLocaleString()} you + ${Math.round(annualEmployer).toLocaleString()} employer match
+              {!selectedJob && annualEmployer === 0 && <span> (link a job to see match)</span>}
+            </PreviewCard>
           </div>
         </div>
 

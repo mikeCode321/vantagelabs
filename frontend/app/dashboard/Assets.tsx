@@ -10,6 +10,7 @@ import FormHeader from '@/app/dashboard/components/FormHeader';
 import LinkCard from '@/app/dashboard/components/LinkCard';
 import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
 import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
+import PreviewCard from './components/PreviewCard';
 
 // ─────────────────────────────────────────────
 // ASSET
@@ -213,23 +214,9 @@ export function HouseAssetForm({ dispatch, state, onClose, onToast }) {
               syncedLabel={linkedLoan?.name}
             />
 
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span className="preview-icon"><ChartBarIncreasing/></span>
-                <span className="preview-card-label">Value After Year 1</span>
-              </div>
-
-              <div className="preview-card-amount preview-card-amount-lg">
-                $
-                {appreciatedValue.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-              </div>
-
-              <div className="preview-card-sub">
-                +{Number(appreciation).toFixed(1)}% appreciation from ${(Number(houseValue) || 0).toLocaleString()}
-              </div>
-            </div>
+            <PreviewCard icon={<ChartBarIncreasing/>} label="Value After Year 1" amount={`$${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} large>
+              +{Number(appreciation).toFixed(1)}% appreciation from ${(Number(houseValue) || 0).toLocaleString()}
+            </PreviewCard>
           </div>
         </div>
 
@@ -396,23 +383,9 @@ export function CarAssetForm({ dispatch,state, onClose, onToast }) {
               syncedLabel={linkedLoan?.name}
             />
 
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span className="preview-icon"><ChartBarDecreasing/></span>
-                <span className="preview-card-label">Value After Year 1</span>
-              </div>
-
-              <div className="preview-card-amount preview-card-amount-lg">
-                $
-                {depreciatedValue.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-              </div>
-
-              <div className="preview-card-sub">
-                -{Number(depreciation).toFixed(1)}% depreciation from ${(Number(carValue) || 0).toLocaleString()}
-              </div>
-            </div>
+            <PreviewCard icon={<ChartBarDecreasing/>} label="Value After Year 1" amount={`$${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} large>
+              -{Number(depreciation).toFixed(1)}% depreciation from ${(Number(carValue) || 0).toLocaleString()}
+            </PreviewCard>
           </div>
         </div>
 
@@ -583,23 +556,9 @@ export function EditHouseAssetForm({ item, state, dispatch, onClose, onToast }) 
               syncedLabel={linkedLoan?.name}
             />
 
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span className="preview-icon"><ChartBarIncreasing/></span>
-                <span className="preview-card-label">Value After Year 1</span>
-              </div>
-
-              <div className="preview-card-amount preview-card-amount-lg">
-                $
-                {appreciatedValue.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-              </div>
-
-              <div className="preview-card-sub">
-                +{Number(appreciation).toFixed(1)}% appreciation from ${(Number(houseValue) || 0).toLocaleString()}
-              </div>
-            </div>
+            <PreviewCard icon={<ChartBarIncreasing/>} label="Value After Year 1" amount={`$${appreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} large>
+              +{Number(appreciation).toFixed(1)}% appreciation from ${(Number(houseValue) || 0).toLocaleString()}
+            </PreviewCard>
           </div>
         </div>
 
@@ -794,23 +753,9 @@ export function EditCarAssetForm({ state, item, dispatch, onClose, onToast }) {
               syncedLabel={linkedLoan?.name}
             />
 
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span className="preview-icon"><ChartBarDecreasing/></span>
-                <span className="preview-card-label">Value After Year 1</span>
-              </div>
-
-              <div className="preview-card-amount preview-card-amount-lg">
-                $
-                {depreciatedValue.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-              </div>
-
-              <div className="preview-card-sub">
-                -{Number(depreciation).toFixed(1)}% depreciation from ${(Number(carValue) || 0).toLocaleString()}
-              </div>
-            </div>
+            <PreviewCard icon={<ChartBarDecreasing/>} label="Value After Year 1" amount={`$${depreciatedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} large>
+              -{Number(depreciation).toFixed(1)}% depreciation from ${(Number(carValue) || 0).toLocaleString()}
+            </PreviewCard>
           </div>
         </div>
 

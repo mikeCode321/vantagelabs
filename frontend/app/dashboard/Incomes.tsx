@@ -9,10 +9,9 @@ import FormSlider from "@/app/dashboard/components/FormSlider";
 import FormHeader from "@/app/dashboard/components/FormHeader";
 import LinkCard from "@/app/dashboard/components/LinkCard";
 import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
+import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
+import PreviewCard from './components/PreviewCard';
 
-// ─────────────────────────────────────────────
-// INCOME
-// ─────────────────────────────────────────────
 export type SalaryIncome = {
   source_type: "income";
   variant: "salary";
@@ -367,24 +366,12 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
               syncedLabel={available401ks.find((a) => a.id === linked401kId)?.name}
             />
 
-            {/* Annual Income Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><CircleDollarSign/></span>
-                <span className="preview-card-label">Estimated Annual Income</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualIncome.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(hourlyRate) || 0).toLocaleString()}/hr × {(Number(hoursPerWeek) || 0).toLocaleString()} hrs/week
-              </div>
-            </div>
+            <PreviewCard icon={<CircleDollarSign/>} label="Estimated Annual Income" amount={`$${annualIncome.toLocaleString()}`} unit="/yr">
+              ${(Number(hourlyRate) || 0).toLocaleString()}/hr × {(Number(hoursPerWeek) || 0).toLocaleString()} hrs/week
+            </PreviewCard>
           </div>
         </div>
 
-        {/* Footer */}
         <FormSubmitButton label="Add Hourly Income" />
       </form>
     </div>
@@ -477,7 +464,6 @@ export function SideHustleForm({ dispatch,state, onToast }) {
             </p>
           </div>
 
-          {/* ── RIGHT ── */}
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
@@ -489,20 +475,9 @@ export function SideHustleForm({ dispatch,state, onToast }) {
               setEndAge={setEndAge}
             />
 
-            {/* Annual Income Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><CircleDollarSign/></span>
-                <span className="preview-card-label">Estimated Annual Income</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualIncome.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(averageIncome) || 0).toLocaleString()} {frequency}
-              </div>
-            </div>
+            <PreviewCard icon={<CircleDollarSign/>} label="Estimated Annual Income" amount={`$${annualIncome.toLocaleString()}`} unit="/yr">
+              ${(Number(averageIncome) || 0).toLocaleString()} {frequency}
+            </PreviewCard>
           </div>
         </div>
 
@@ -811,20 +786,9 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
               syncedLabel={available401ks.find((a) => a.id === linked401kId)?.name}
             />
 
-            {/* Annual Income Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><CircleDollarSign/></span>
-                <span className="preview-card-label">Estimated Annual Income</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualIncome.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(hourlyRate) || 0).toLocaleString()}/hr × {(Number(hoursPerWeek) || 0).toLocaleString()} hrs/week
-              </div>
-            </div>
+            <PreviewCard icon={<CircleDollarSign/>} label="Estimated Annual Income" amount={`$${annualIncome.toLocaleString()}`} unit="/yr">
+              ${(Number(hourlyRate) || 0).toLocaleString()}/hr × {(Number(hoursPerWeek) || 0).toLocaleString()} hrs/week
+            </PreviewCard>
           </div>
         </div>
 
@@ -910,7 +874,6 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
             <p className="preview-card-sub">
               Income fluctuates between ${(Number(averageIncome) * (1 - Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })} – ${(Number(averageIncome) * (1 + Number(variability) / 100)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </p>
-            
           </div>
 
           <div className="form-col">
@@ -924,19 +887,9 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
               setEndAge={setEndAge}
             />
 
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><CircleDollarSign/></span>
-                <span className="preview-card-label">Estimated Annual Income</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualIncome.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(averageIncome) || 0).toLocaleString()} {frequency}
-              </div>
-            </div>
+            <PreviewCard icon={<CircleDollarSign/>} label="Estimated Annual Income" amount={`$${annualIncome.toLocaleString()}`} unit="/yr">
+              ${(Number(averageIncome) || 0).toLocaleString()} {frequency}
+            </PreviewCard>
           </div>
         </div>
 

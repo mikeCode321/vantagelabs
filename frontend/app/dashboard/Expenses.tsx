@@ -10,6 +10,8 @@ import FormHeader from "@/app/dashboard/components/FormHeader";
 import LinkCard from "@/app/dashboard/components/LinkCard";
 import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
 import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
+import LoanPaymentPreviewCard from '@/app/dashboard/components/LoanPaymentPreviewCard';
+import PreviewCard from './components/PreviewCard';
 
 // ─────────────────────────────────────────────
 // EXPENSES
@@ -292,21 +294,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
               syncedLabel={availableHouses.find((h) => h.id === linkedAssetId)?.name}
             />
 
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span><DollarSign/></span>
-                <div className="preview-card-label">Estimated Payment</div>
-              </div>
-              <div className="preview-card-amount">
-                $
-                {monthlyExpense.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-                /mo
-              </div>
-              <div className="preview-card-sub">Principal + interest only</div>
-            </div>
-
+            <LoanPaymentPreviewCard monthlyPayment={monthlyExpense} />
           </div>
         </div>
 
@@ -486,20 +474,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
               syncedLabel={availableCars.find((c) => c.id === linkedAssetId)?.name}
             />
 
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span><DollarSign/></span>
-                <div className="preview-card-label">Estimated Payment</div>
-              </div>
-              <div className="preview-card-amount">
-                $
-                {monthlyExpense.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-                /mo
-              </div>
-              <div className="preview-card-sub">Principal + interest only</div>
-            </div>
+            <LoanPaymentPreviewCard monthlyPayment={monthlyExpense} />
 
           </div>
         </div>
@@ -577,26 +552,11 @@ export function LivingExpensesForm({ dispatch,state, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
 
-            {/* Annual Cost Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Cost</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualExpense.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">${(Number(amount) || 0).toLocaleString()}/mo × 12</div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Cost" amount={`$${annualExpense.toLocaleString()}`} unit="/yr">
+              ${(Number(amount) || 0).toLocaleString()}/mo × 12
+            </PreviewCard>
           </div>
         </div>
 
@@ -689,29 +649,12 @@ export function DebtExpenseForm({ dispatch,state, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
 
-            {/* Annual Payment Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Payment</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualPayment.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
-                {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
-              </div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Payment" amount={`$${annualPayment.toLocaleString()}`} unit="/yr">
+              ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
+              {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
+            </PreviewCard>
           </div>
         </div>
 
@@ -781,28 +724,11 @@ export function RentExpenseForm({ dispatch,state, onToast, }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
 
-            {/* Annual Cost Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Rent Cost</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualRent.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
-              </div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Rent Cost" amount={`$${annualRent.toLocaleString()}`} unit="/yr">
+              ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
+            </PreviewCard>
           </div>
         </div>
 
@@ -956,21 +882,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
               syncedLabel={availableCars.find((c) => c.id === linkedAssetId)?.name}
             />
 
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span><DollarSign/></span>
-                <div className="preview-card-label">Estimated Payment</div>
-              </div>
-              <div className="preview-card-amount">
-                $
-                {monthlyExpense.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-                /mo
-              </div>
-              <div className="preview-card-sub">Principal + interest only</div>
-            </div>
-            
+            <LoanPaymentPreviewCard monthlyPayment={monthlyExpense} />
           </div>
         </div>
 
@@ -1198,20 +1110,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
               syncedLabel={linkedHouse?.name}
             />
 
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span><DollarSign/></span>
-                <div className="preview-card-label">Estimated Payment</div>
-              </div>
-              <div className="preview-card-amount">
-                $
-                {monthlyExpense.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-                /mo
-              </div>
-              <div className="preview-card-sub">Principal + interest only</div>
-            </div>
+            <LoanPaymentPreviewCard monthlyPayment={monthlyExpense} />
 
           </div>
         </div>
@@ -1285,26 +1184,11 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
 
-            {/* Annual Cost Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Cost</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualExpense.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">${(Number(amount) || 0).toLocaleString()}/mo × 12</div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Cost" amount={`$${annualExpense.toLocaleString()}`} unit="/yr">
+              ${(Number(amount) || 0).toLocaleString()}/mo × 12
+            </PreviewCard>
           </div>
         </div>
 
@@ -1377,28 +1261,11 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
 
-            {/* Annual Cost Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Rent Cost</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualRent.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
-              </div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Rent Cost" amount={`$${annualRent.toLocaleString()}`} unit="/yr">
+              ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
+            </PreviewCard>
             
           </div>
         </div>
@@ -1490,29 +1357,12 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
 
-            {/* Annual Payment Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Payment</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualPayment.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
-                {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
-              </div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Payment" amount={`$${annualPayment.toLocaleString()}`} unit="/yr">
+              ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
+              {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
+            </PreviewCard>
           </div>
         </div>
 

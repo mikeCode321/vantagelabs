@@ -14,7 +14,12 @@ import {
 
 export type ID = string;
 
-export type Tier = {
+type TierForm = {
+  threshold: string;
+  annual_rate: string;
+};
+
+type Tier = {
   threshold: number;
   annual_rate: number;
 };
@@ -82,14 +87,15 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
   const [balance, setBalance] = useState("");
   const [startAge, setStartAge] = useState("");
   const [endAge, setEndAge] = useState("");
-  const [tiers, setTiers] = useState<Array<{ threshold: number; annual_rate: number }>>([{ threshold: 0, annual_rate: 0 }]);
+  const [tiers, setTiers] = useState<TierForm[]>([{ threshold: "", annual_rate: "" }]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     const timeline = getValidatedTimelinePayload(state, startAge, endAge);
 
     if (timeline.invalid) {
-        return;
+      return;
     }
 
     dispatch({
@@ -102,27 +108,29 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
         start_age: timeline.start,
         end_age: timeline.end,
         starting_balance: Number(balance),
-        interest_tiers: tiers,
+        interest_tiers: tiers.map((tier) => ({
+          threshold: Number(tier.threshold || 0),
+          annual_rate: Number(tier.annual_rate || 0) / 100,
+        })),
       },
     });
 
     onToast(name, "added");
-
     onClose();
 
     // setName("Checking Account");
     // setBalance("");
     // setStartAge("");
     // setEndAge("");
-    // setTiers([{ threshold: 0, annual_rate: 0 }]);
+    // setTiers([{ threshold: "", annual_rate: "" }]);
   };
 
   const addTier = () => {
     setTiers([
       ...tiers,
       {
-        threshold: tiers[tiers.length - 1]?.threshold ?? 0,
-        annual_rate: 0.0,
+        threshold: tiers[tiers.length - 1]?.threshold ?? "0",
+        annual_rate: "0",
       },
     ]);
   };
@@ -135,13 +143,12 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
 
   const updateTier = (index: number, field: "threshold" | "annual_rate", value: string) => {
     const updated = [...tiers];
-    updated[index][field] = Number(value);
+    updated[index][field] = value;
     setTiers(updated);
   };
 
   return (
     <div className="form-panel">
-      {/* Header */}
       <div className="form-header">
         <div className="form-header-icon"><CreditCard/></div>
         <div>
@@ -157,17 +164,14 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Account Details</p>
 
-            {/* Account Name */}
             <div className="form-field">
               <label className="form-label">Account Name</label>
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Main Checking, Emergency Fund" required />
             </div>
 
-            {/* Starting Balance */}
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
               <div className="form-input-wrap">
@@ -176,7 +180,6 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
               </div>
             </div>
 
-            {/* Interest Tiers */}
             <div className="tier-list">
               <div className="tier-header">
                 <label className="tier-title">Interest Tiers</label>
@@ -190,12 +193,12 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
                   <div className="tier-item">
                     <div className="tier-input-wrap-narrow">
                       <label className="form-label">Threshold</label>
-                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} className="form-input" placeholder="e.g. 100000" type="text" inputMode="decimal" />
+                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} className="form-input" placeholder="100000" type="text" inputMode="decimal" />
                     </div>
 
                     <div className="tier-input-wrap-narrow">
                       <label className="form-label">APY (%)</label>
-                      <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} className="form-input" placeholder="0.03" type="number" step="0.0001" />
+                      <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} className="form-input" placeholder="3" type="number" step="0.0001" />
                     </div>
 
                     {tiers.length > 1 && (
@@ -297,7 +300,6 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
     return 0;
   };
 
-
   const canUsePercentageMode = netIncome !== null && !isLoadingTaxCalc;
 
   const onSubmit = (e: React.FormEvent) => {
@@ -326,7 +328,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
-        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
+        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage || 0) / 100 : undefined,        
         expected_return: Number(expectedReturn) / 100,
         dividend_yield: Number(dividendYield) / 100,
         dividend_reinvestment: dividendStrategy,
@@ -508,7 +510,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
                   </div>
                 </div>
                 <div className="preview-card-footer">
-                  {Number(contributionPercentage).toFixed(1)}% of ${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
+                  {(Number(contributionPercentage || 0)).toFixed(1)}% of ${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
                 </div>
               </div>
             )}
@@ -656,7 +658,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
-        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
+        contribution_percentage: contributionMode === "percentage" ? (parseFloat(contributionPercentage || "0") / 100): undefined,        
         expected_return: Number(expectedReturn) / 100,
         employer_match_rate: Number(matchRate) / 100,
         employer_match_limit: Number(matchLimit) / 100,
@@ -881,14 +883,19 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [startAge, setStartAge] = useState(item.start_age.toString());
   const [endAge, setEndAge] = useState(item.end_age.toString());
-  const [tiers, setTiers] = useState(item.interest_tiers && item.interest_tiers.length > 0 ? item.interest_tiers : [{ threshold: 0, annual_rate: 0 }]);
+  const [tiers, setTiers] = useState<TierForm[]>(
+    item.interest_tiers.length > 0
+      ? item.interest_tiers.map((tier) => ({ threshold: tier.threshold.toString(), annual_rate: Number((tier.annual_rate * 100).toFixed(4)).toString(),}))
+      : [{ threshold: "", annual_rate: "" }]
+  );
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     const timeline = getValidatedTimelinePayload(state, startAge, endAge);
 
     if (timeline.invalid) {
-        return;
+      return;
     }
 
     dispatch({
@@ -899,7 +906,10 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
         start_age: timeline.start,
         end_age: timeline.end,
         starting_balance: Number(balance),
-        interest_tiers: tiers,
+        interest_tiers: tiers.map((tier) => ({
+          threshold: Number(tier.threshold || 0),
+          annual_rate: Number(tier.annual_rate || 0) / 100,
+        })),
       },
     });
 
@@ -911,8 +921,8 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
     setTiers([
       ...tiers,
       {
-        threshold: (tiers[tiers.length - 1]?.threshold ?? 0) + 50000,
-        annual_rate: 0.0,
+        threshold: String((tiers[tiers.length - 1]?.threshold ?? 0) + 50000),
+        annual_rate: "0",
       },
     ]);
   };
@@ -925,7 +935,7 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
 
   const updateTier = (index: number, field: "threshold" | "annual_rate", value: string) => {
     const updated = [...tiers];
-    updated[index][field] = Number(value);
+    updated[index][field] = value;
     setTiers(updated);
   };
 
@@ -975,12 +985,26 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
                   <div className="tier-item">
                     <div className="tier-input-wrap-narrow">
                       <label className="form-label">Threshold</label>
-                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} className="form-input" placeholder="e.g. 100000" type="text" inputMode="decimal" />
+                      <input
+                        value={formatNumberWithCommas(tier.threshold)}
+                        onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)}
+                        className="form-input"
+                        placeholder="100000"
+                        type="text"
+                        inputMode="decimal"
+                      />                    
                     </div>
 
                     <div className="tier-input-wrap-narrow">
                       <label className="form-label">APY (%)</label>
-                      <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} className="form-input" placeholder="0.03" type="number" step="0.0001" />
+                      <input
+                        value={tier.annual_rate}
+                        onChange={(e) => updateTier(index, "annual_rate", e.target.value)}
+                        className="form-input"
+                        placeholder="3.5"
+                        type="text"
+                        inputMode="decimal"
+                      />
                     </div>
 
                     {tiers.length > 1 && (
@@ -1024,7 +1048,9 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">(item.contribution_mode || "dollar");
   const [monthlyContribution, setMonthlyContribution] = useState(item.monthly_contribution?.toString() || "");
-  const [contributionPercentage, setContributionPercentage] = useState(item.contribution_percentage?.toString() || "");
+  const [contributionPercentage, setContributionPercentage] = useState(
+    item.contribution_percentage != null ? (item.contribution_percentage * 100).toString() : ""
+  );  
   const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "");
   const [dividendYield, setDividendYield] = useState((item.dividend_yield * 100)?.toString() || "");
   const [startAge, setStartAge] = useState(item.start_age.toString());
@@ -1115,7 +1141,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
-        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
+        contribution_percentage: contributionMode === "percentage" ? parseFloat(contributionPercentage || "0") / 100 : undefined,
         expected_return: Number(expectedReturn) / 100,
         dividend_yield: Number(dividendYield) / 100,
         dividend_reinvestment: dividendStrategy,
@@ -1332,7 +1358,9 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">(item.contribution_mode || "dollar");
   const [monthlyContribution, setMonthlyContribution] = useState(item.monthly_contribution?.toString() || "");
-  const [contributionPercentage, setContributionPercentage] = useState(item.contribution_percentage?.toString() || "");
+  const [contributionPercentage, setContributionPercentage] = useState(
+    item.contribution_percentage !== undefined ? (item.contribution_percentage * 100).toString() : ""
+  );  
   const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "7");
   const [matchRate, setMatchRate] = useState((item.employer_match_rate * 100)?.toString() || "100");
   const [matchLimit, setMatchLimit] = useState((item.employer_match_limit * 100)?.toString() || "4");
@@ -1408,7 +1436,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
       starting_balance: Number(balance),
       contribution_mode: contributionMode,
       monthly_contribution: effectiveMonthlyContribution(),
-      contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
+      contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) / 100 : undefined,      
       expected_return: Number(expectedReturn) / 100,
       employer_match_rate: Number(matchRate) / 100,
       employer_match_limit: Number(matchLimit) / 100,

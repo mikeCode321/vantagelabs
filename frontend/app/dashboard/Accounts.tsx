@@ -1,20 +1,26 @@
 import './styles/Forms.css'
 
 import { useState, useEffect } from "react";
-import { formatNumberWithCommas, handleNumberInput, handleTierThresholdInput } from "@/app/dashboard/utils";
-import { CreditCard, ChartColumnIncreasing , DollarSign, Link, PiggyBank } from 'lucide-react';
-import {
-  TimelineAgeFields,
-  getValidatedTimelinePayload,
-} from "@/app/dashboard/TimelineAgeFields";
-
-// ─────────────────────────────────────────────
-// CORE
-// ─────────────────────────────────────────────
+import { formatNumberWithCommas, handleTierThresholdInput } from "@/app/dashboard/utils";
+import { CreditCard, ChartColumnIncreasing, PiggyBank } from 'lucide-react';
+import { TimelineAgeFields, getValidatedTimelinePayload,} from "@/app/dashboard/TimelineAgeFields";
+import FormSlider from "@/app/dashboard/components/FormSlider";
+import FormHeader from "@/app/dashboard/components/FormHeader";
+import LinkCard from '@/app/dashboard/components/LinkCard';
+import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
+import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
+import FormToggleGroup from '@/app/dashboard/components/FormToggleButton';
+import ContributionPreviewCard from '@/app/dashboard/components/ContributionPreviewCard';
+import PreviewCard from './components/PreviewCard';
 
 export type ID = string;
 
-export type Tier = {
+type TierForm = {
+  threshold: string;
+  annual_rate: string;
+};
+
+type Tier = {
   threshold: number;
   annual_rate: number;
 };
@@ -82,14 +88,15 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
   const [balance, setBalance] = useState("");
   const [startAge, setStartAge] = useState("");
   const [endAge, setEndAge] = useState("");
-  const [tiers, setTiers] = useState<Array<{ threshold: number; annual_rate: number }>>([{ threshold: 0, annual_rate: 0 }]);
+  const [tiers, setTiers] = useState<TierForm[]>([{ threshold: "", annual_rate: "" }]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     const timeline = getValidatedTimelinePayload(state, startAge, endAge);
 
     if (timeline.invalid) {
-        return;
+      return;
     }
 
     dispatch({
@@ -102,27 +109,29 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
         start_age: timeline.start,
         end_age: timeline.end,
         starting_balance: Number(balance),
-        interest_tiers: tiers,
+        interest_tiers: tiers.map((tier) => ({
+          threshold: Number(tier.threshold || 0),
+          annual_rate: Number(tier.annual_rate || 0) / 100,
+        })),
       },
     });
 
     onToast(name, "added");
-
     onClose();
 
     // setName("Checking Account");
     // setBalance("");
     // setStartAge("");
     // setEndAge("");
-    // setTiers([{ threshold: 0, annual_rate: 0 }]);
+    // setTiers([{ threshold: "", annual_rate: "" }]);
   };
 
   const addTier = () => {
     setTiers([
       ...tiers,
       {
-        threshold: tiers[tiers.length - 1]?.threshold ?? 0,
-        annual_rate: 0.0,
+        threshold: tiers[tiers.length - 1]?.threshold ?? "0",
+        annual_rate: "0",
       },
     ]);
   };
@@ -135,20 +144,14 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
 
   const updateTier = (index: number, field: "threshold" | "annual_rate", value: string) => {
     const updated = [...tiers];
-    updated[index][field] = Number(value);
+    updated[index][field] = value;
     setTiers(updated);
   };
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><CreditCard/></div>
-        <div>
-          <h3 className="form-header-title">Add Checking Account</h3>
-          <p className="form-header-desc">Track your checking account balance and tiered interest rates.</p>
-        </div>
-      </div>
+      <FormHeader icon={<CreditCard/>} title={"Add Checking Account"} desc={"Track your checking account balance and tiered interest rates."}/>
+
       {hasCheckingAccount && (
         <div className="form-warning">
           At the moment we are only supporting 1 checking account. Remove the existing account or edit it.
@@ -157,26 +160,19 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Account Details</p>
 
-            {/* Account Name */}
             <div className="form-field">
               <label className="form-label">Account Name</label>
               <input value={name} onChange={(e) => setName(e.target.value)} className="form-input" placeholder="Main Checking, Emergency Fund" required />
             </div>
 
-            {/* Starting Balance */}
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="10,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder="10,000" required />
             </div>
 
-            {/* Interest Tiers */}
             <div className="tier-list">
               <div className="tier-header">
                 <label className="tier-title">Interest Tiers</label>
@@ -190,12 +186,12 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
                   <div className="tier-item">
                     <div className="tier-input-wrap-narrow">
                       <label className="form-label">Threshold</label>
-                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} className="form-input" placeholder="e.g. 100000" type="text" inputMode="decimal" />
+                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} className="form-input" placeholder="100000" type="text" inputMode="decimal" />
                     </div>
 
                     <div className="tier-input-wrap-narrow">
                       <label className="form-label">APY (%)</label>
-                      <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} className="form-input" placeholder="0.03" type="number" step="0.0001" />
+                      <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} className="form-input" placeholder="3" type="number" step="0.0001" />
                     </div>
 
                     {tiers.length > 1 && (
@@ -217,12 +213,8 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
             setEndAge={setEndAge}
           />
         </div>
-        {/* Submit Button */}
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit form-btn-submit-mt" disabled={hasCheckingAccount}>
-              Add Checking Account
-          </button>
-        </div>
+
+        <FormSubmitButton label="Add Checking Account" disabled={hasCheckingAccount} topMargin />
       </form>
     </div>
   );
@@ -234,8 +226,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
   const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">("dollar");
   const [monthlyContribution, setMonthlyContribution] = useState("");
   const [contributionPercentage, setContributionPercentage] = useState("");
-  const [expectedReturn, setExpectedReturn] = useState("");
-  const [dividendYield, setDividendYield] = useState("");
+  const [expectedReturn, setExpectedReturn] = useState("0");
+  const [dividendYield, setDividendYield] = useState("0");
   const [startAge, setStartAge] = useState("");
   const [endAge, setEndAge] = useState("");
   const [dividendStrategy, setDividendStrategy] = useState<"drip" | "cash_out">("drip");
@@ -297,7 +289,6 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
     return 0;
   };
 
-
   const canUsePercentageMode = netIncome !== null && !isLoadingTaxCalc;
 
   const onSubmit = (e: React.FormEvent) => {
@@ -326,7 +317,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
-        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
+        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage || 0) / 100 : undefined,        
         expected_return: Number(expectedReturn) / 100,
         dividend_yield: Number(dividendYield) / 100,
         dividend_reinvestment: dividendStrategy,
@@ -354,13 +345,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><ChartColumnIncreasing/></div>
-        <div>
-          <h3 className="form-header-title">Add Taxable Investment Account</h3>
-          <p className="form-header-desc">Track your brokerage account with returns and dividend strategies.</p>
-        </div>
-      </div>
+      <FormHeader icon={<ChartColumnIncreasing/>} title={"Add Taxable Investment Account"} desc={"Track your brokerage account with returns and dividend strategies."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -375,36 +360,25 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="50,000" type="text" />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder={"50,000"}/>
             </div>
 
             {/* Contribution Mode Toggle - Compact */}
-            <div className="form-field">
-              <label className="form-label">Contribution</label>
-              
-                <div className="form-toggle-group">
-                  <button type="button" className={`form-btn-secondary${contributionMode === "dollar" ? " active" : ""}`} onClick={() => setContributionMode("dollar")}>
-                    $
-                  </button>
-                  <button type="button" className={`form-btn-secondary${contributionMode === "percentage" ? " active" : ""}`} onClick={() => setContributionMode("percentage")} disabled={!canUsePercentageMode} title={!canUsePercentageMode ? "Link a job first" : ""}>
-                    %
-                  </button>
-                </div>
-             
-            </div>
+            <FormToggleGroup
+              label="Contribution"
+              value={contributionMode}
+              onChange={setContributionMode}
+              options={[
+                { value: "dollar", label: "$" },
+                { value: "percentage", label: "%", disabled: !canUsePercentageMode, disabledTitle: "Link a job first" },
+              ]}
+            />
 
             {/* Dollar Mode */}
             {contributionMode === "dollar" && (
               <div className="form-field">
                 <label className="form-label">Monthly Contribution</label>
-                <div className="form-input-wrap">
-                  <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix-label">/mo</span>
-                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} placeholder="1,000" type="text" />
-                </div>
+                <FormDollarInput value={monthlyContribution} onChange={setMonthlyContribution} placeholder={"1,000"} suffix='/mo'/>
               </div>
             )}
 
@@ -419,21 +393,8 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
               </div>
             )}
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Expected Annual Return</label>
-                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
-            </div>
-
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Dividend Yield</label>
-                <span className="form-slider-value">{Number(dividendYield).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={10} step={0.1} value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={20} step={0.1} />
+            <FormSlider label="Dividend Yield" value={dividendYield} onChange={setDividendYield} min={0} max={10} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
@@ -449,83 +410,38 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
             />
 
             {/* 🔧 FIX: Link to job card - NOW SHOWS IN BOTH MODES */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a job</div>
-                    <div className="link-card-sub">
-                      {contributionMode === "percentage" 
-                        ? "Required for percentage-based contributions"
-                        : "Optional — enables percentage-based contributions"}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {allJobs.length === 0 ? (
-                  <p className="link-card-no-jobs">No jobs yet — add a qualifying job first.</p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select 
-                      value={linkedIncomeId} 
-                      onChange={(e) => handleJobSelect(e.target.value)} 
-                      className="form-input" 
-                      disabled={isLoadingTaxCalc}
-                    >
-                      <option value="">None - No linking</option>
-                      {allJobs.map((job) => (
-                        <option key={job.id} value={job.id}>
-                          {job.name}
-                        </option>
-                      ))}
-                    </select>
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-                    {isLoadingTaxCalc && <p className="form-inline-loading">⏳ Calculating net income...</p>}
-                  
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a job"
+              sub={contributionMode === "percentage"
+                ? "Required for percentage-based contributions"
+                : "Optional — enables percentage-based contributions"}
+              items={allJobs}
+              emptyMessage="No jobs yet — add a qualifying job first."
+              selectedId={linkedIncomeId}
+              onSelect={handleJobSelect}
+              selectDisabled={isLoadingTaxCalc}
+              error={linkError}
+              loadingMessage={isLoadingTaxCalc ? "⏳ Calculating net income..." : undefined}
+              syncedLabel={selectedJob ? `Synced years ${selectedJob.start_age}–${selectedJob.end_age}` : undefined}
+            />
 
             {/* Merged Contribution Preview - Only show in percentage mode */}
             {contributionMode === "percentage" && selectedJob && netIncome && !isLoadingTaxCalc && (
-              <div className="preview-card">
-                <div className="preview-card-header">
-                  <span className="preview-icon">💵</span>
-                  <span className="preview-card-label">Contribution Preview</span>
-                </div>
-                <div className="preview-card-row">
-                  <div className="preview-card-col">
-                    <span className="preview-card-meta-label">Monthly</span>
-                    <span className="preview-card-value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
-                  </div>
-                  <div className="preview-card-col preview-card-col-right">
-                    <span className="preview-card-meta-label">Annual</span>
-                    <span className="preview-card-value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
-                  </div>
-                </div>
-                <div className="preview-card-footer">
-                  {Number(contributionPercentage).toFixed(1)}% of ${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
-                </div>
-              </div>
+              <ContributionPreviewCard
+                monthly={effectiveMonthlyContribution()}
+                annual={effectiveMonthlyContribution() * 12}
+                footer={`${Number(contributionPercentage || 0).toFixed(1)}% of $${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net`}
+              />
             )}
 
             {/* Dividend strategy section */}
             <p className="form-section-heading">Dividend Strategy</p>
 
-            <div className="form-field">
-              <div className="form-toggle-group">
-                <button type="button" className={dividendStrategy === "drip" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("drip")}>
-                  DRIP
-                </button>
-                <button type="button" className={dividendStrategy === "cash_out" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("cash_out")}>
-                  Cash Out
-                </button>
-              </div>
-            </div>
+            <FormToggleGroup value={dividendStrategy} onChange={setDividendStrategy} options={[
+                { value: "drip", label: "DRIP" },
+                { value: "cash_out", label: "Cash Out" },
+              ]}
+            />
 
             {dividendStrategy === "cash_out" && (
               <div className="form-field">
@@ -543,11 +459,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit form-btn-submit-mt">
-            Add Taxable Investment Account
-          </button>
-        </div>
+        <FormSubmitButton label="Add Taxable Investment Account" topMargin />
       </form>
     </div>
   );
@@ -656,7 +568,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
-        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
+        contribution_percentage: contributionMode === "percentage" ? (parseFloat(contributionPercentage || "0") / 100): undefined,        
         expected_return: Number(expectedReturn) / 100,
         employer_match_rate: Number(matchRate) / 100,
         employer_match_limit: Number(matchLimit) / 100,
@@ -684,13 +596,8 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><PiggyBank/></div>
-        <div>
-          <h3 className="form-header-title">Add Employer Retirement Account</h3>
-          <p className="form-header-desc">Track your 401(k), 403(b), or pension and optionally link it to a job.</p>
-        </div>
-      </div>
+
+      <FormHeader icon={<PiggyBank/>} title={"Add Employer Retirement Account"} desc={"Track your 401(k), 403(b), or pension and optionally link it to a job."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -705,10 +612,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="25,000" type="text" />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder={"25,000"}/>
             </div>
 
             {/* Contribution Mode Toggle - Compact */}
@@ -728,11 +632,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             {contributionMode === "dollar" && (
               <div className="form-field">
                 <label className="form-label">Monthly Contribution</label>
-                <div className="form-input-wrap">
-                  <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix-label">/mo</span>
-                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)}placeholder="500" type="text" />
-                </div>
+                <FormDollarInput value={monthlyContribution} onChange={setMonthlyContribution} placeholder="500" suffix='/mo'/>
               </div>
             )}
 
@@ -747,29 +647,9 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
               </div>
             )}
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Expected Annual Return</label>
-                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
-            </div>
-
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Employer Match Rate</label>
-                <span className="form-slider-value">{Number(matchRate).toFixed(0)}%</span>
-              </div>
-              <input type="range" min={0} max={200} step={1} value={matchRate} onChange={(e) => setMatchRate(e.target.value)} className="form-slider" />
-            </div>
-
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Employer Match Cap (% of salary)</label>
-                <span className="form-slider-value">{Number(matchLimit).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={10} step={0.1} value={matchLimit} onChange={(e) => setMatchLimit(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={15} step={0.1} />
+            <FormSlider label="Employer Match Rate" value={matchRate} onChange={setMatchRate} min={0} max={200} step={1} decimals={0} />
+            <FormSlider label="Employer Match Cap (% of salary)" value={matchLimit} onChange={setMatchLimit} min={0} max={10} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
@@ -785,90 +665,35 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
             />
 
             {/* Link to job card */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a job</div>
-                    <div className="link-card-sub">Required for percentage-based contributions and employer match preview</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {allJobs.length === 0 ? (
-                  <p className="link-card-no-jobs">No jobs yet — add a qualifying job first.</p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select value={linkedIncomeId} onChange={(e) => handleJobSelect(e.target.value)} className="form-input">
-                      <option value="">None - No linking</option>
-                      {allJobs.map((job) => {
-                        const isLinked = job.linked_401k_id;
-                        return (
-                          <option key={job.id} value={job.id} disabled={isLinked}>
-                            {job.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
-                    {linkedJob && !linkError && (
-                      <div className="link-card-synced">
-                        <Link/> Synced years {linkedJob.start_age}–{linkedJob.end_age}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a job"
+              sub="Required for percentage-based contributions and employer match preview"
+              items={allJobs}
+              emptyMessage="No jobs yet — add a qualifying job first."
+              selectedId={linkedIncomeId}
+              onSelect={handleJobSelect}
+              isItemDisabled={(job) => Boolean(job.linked_401k_id)}
+              error={linkError}
+              syncedLabel={linkedJob ? `Synced years ${linkedJob.start_age}–${linkedJob.end_age}` : undefined}
+            />
 
             {/* Contribution Preview - percentage mode */}
             {contributionMode === "percentage" && selectedJob && (
-              <div className="preview-card">
-                <div className="preview-card-header">
-                  <span className="preview-icon"><DollarSign/></span>
-                  <span className="preview-card-label">Contribution Preview</span>
-                </div>
-                <div className="preview-card-row">
-                  <div className="preview-card-col">
-                    <span className="preview-card-meta-label">Monthly</span>
-                    <span className="preview-card-value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
-                  </div>
-                  <div className="preview-card-col preview-card-col-right">
-                    <span className="preview-card-meta-label">Annual</span>
-                    <span className="preview-card-value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
-                  </div>
-                </div>
-                <div className="preview-card-footer">
-                  {Number(contributionPercentage).toFixed(1)}% of ${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly gross
-                </div>
-              </div>
+              <ContributionPreviewCard
+                monthly={effectiveMonthlyContribution()}
+                annual={effectiveMonthlyContribution() * 12}
+                footer={`${Number(contributionPercentage).toFixed(1)}% of $${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly gross`}
+              />
             )}
 
-            {/* Annual total preview with employer match */}
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span className="preview-icon"></span>
-                <span className="preview-card-label">Annual Total</span>
-              </div>
-              <div className="preview-card-amount preview-card-amount-lg">
-                ${Math.round(annualTotal).toLocaleString()}
-                <span className="preview-card-unit preview-card-unit-lg">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${Math.round(annualEmployee).toLocaleString()} you + ${Math.round(annualEmployer).toLocaleString()} employer match
-                {!selectedJob && annualEmployer === 0 && <span> (link a job to see match)</span>}
-              </div>
-            </div>
+            <PreviewCard icon={<span>🏦</span>} label="Annual Total" amount={`$${Math.round(annualTotal).toLocaleString()}`} unit="/yr" large>
+              ${Math.round(annualEmployee).toLocaleString()} you + ${Math.round(annualEmployer).toLocaleString()} employer match
+              {!selectedJob && annualEmployer === 0 && <span> (link a job to see match)</span>}
+            </PreviewCard>
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit form-btn-submit-mt">
-            Add Employer Retirement Account
-          </button>
-        </div>
+        <FormSubmitButton label="Add Employer Retirement Account" topMargin />
       </form>
     </div>
   );
@@ -881,14 +706,19 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [startAge, setStartAge] = useState(item.start_age.toString());
   const [endAge, setEndAge] = useState(item.end_age.toString());
-  const [tiers, setTiers] = useState(item.interest_tiers && item.interest_tiers.length > 0 ? item.interest_tiers : [{ threshold: 0, annual_rate: 0 }]);
+  const [tiers, setTiers] = useState<TierForm[]>(
+    item.interest_tiers.length > 0
+      ? item.interest_tiers.map((tier) => ({ threshold: tier.threshold.toString(), annual_rate: Number((tier.annual_rate * 100).toFixed(4)).toString(),}))
+      : [{ threshold: "", annual_rate: "" }]
+  );
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     const timeline = getValidatedTimelinePayload(state, startAge, endAge);
 
     if (timeline.invalid) {
-        return;
+      return;
     }
 
     dispatch({
@@ -899,7 +729,10 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
         start_age: timeline.start,
         end_age: timeline.end,
         starting_balance: Number(balance),
-        interest_tiers: tiers,
+        interest_tiers: tiers.map((tier) => ({
+          threshold: Number(tier.threshold || 0),
+          annual_rate: Number(tier.annual_rate || 0) / 100,
+        })),
       },
     });
 
@@ -911,8 +744,8 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
     setTiers([
       ...tiers,
       {
-        threshold: (tiers[tiers.length - 1]?.threshold ?? 0) + 50000,
-        annual_rate: 0.0,
+        threshold: String((tiers[tiers.length - 1]?.threshold ?? 0) + 50000),
+        annual_rate: "0",
       },
     ]);
   };
@@ -925,20 +758,14 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
 
   const updateTier = (index: number, field: "threshold" | "annual_rate", value: string) => {
     const updated = [...tiers];
-    updated[index][field] = Number(value);
+    updated[index][field] = value;
     setTiers(updated);
   };
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><CreditCard/></div>
-        <div>
-          <h3 className="form-header-title">Edit Checking Account</h3>
-          <p className="form-header-desc">Update your checking account balance and tiered interest rates.</p>
-        </div>
-      </div>
+
+      <FormHeader icon={<CreditCard/>} title={"Edit Checking Account"} desc={"Update your checking account balance and tiered interest rates."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -955,10 +782,7 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
             {/* Starting Balance */}
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="10,000" type="text" />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder="10,000"/>
             </div>
 
             {/* Interest Tiers */}
@@ -975,12 +799,26 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
                   <div className="tier-item">
                     <div className="tier-input-wrap-narrow">
                       <label className="form-label">Threshold</label>
-                      <input value={formatNumberWithCommas(tier.threshold.toString())} onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)} className="form-input" placeholder="e.g. 100000" type="text" inputMode="decimal" />
+                      <input
+                        value={formatNumberWithCommas(tier.threshold)}
+                        onChange={(e) => handleTierThresholdInput(e, index, tiers, setTiers)}
+                        className="form-input"
+                        placeholder="100000"
+                        type="text"
+                        inputMode="decimal"
+                      />                    
                     </div>
 
                     <div className="tier-input-wrap-narrow">
                       <label className="form-label">APY (%)</label>
-                      <input value={tier.annual_rate} onChange={(e) => updateTier(index, "annual_rate", e.target.value)} className="form-input" placeholder="0.03" type="number" step="0.0001" />
+                      <input
+                        value={tier.annual_rate}
+                        onChange={(e) => updateTier(index, "annual_rate", e.target.value)}
+                        className="form-input"
+                        placeholder="3.5"
+                        type="text"
+                        inputMode="decimal"
+                      />
                     </div>
 
                     {tiers.length > 1 && (
@@ -1008,12 +846,7 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
           </div>
         </div>
 
-        {/* Submit Button */}
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit form-btn-submit-mt">
-            Update Checking Account
-          </button>
-        </div>
+        <FormSubmitButton label="Update Checking Account" topMargin />
       </form>
     </div>
   );
@@ -1024,9 +857,11 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">(item.contribution_mode || "dollar");
   const [monthlyContribution, setMonthlyContribution] = useState(item.monthly_contribution?.toString() || "");
-  const [contributionPercentage, setContributionPercentage] = useState(item.contribution_percentage?.toString() || "");
-  const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "");
-  const [dividendYield, setDividendYield] = useState((item.dividend_yield * 100)?.toString() || "");
+  const [contributionPercentage, setContributionPercentage] = useState(
+    item.contribution_percentage != null ? (item.contribution_percentage * 100).toString() : ""
+  );  
+  const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "0");
+  const [dividendYield, setDividendYield] = useState((item.dividend_yield * 100)?.toString() || "0");
   const [startAge, setStartAge] = useState(item.start_age.toString());
   const [endAge, setEndAge] = useState(item.end_age.toString());
   const [dividendStrategy, setDividendStrategy] = useState(item.dividend_reinvestment || "drip");
@@ -1115,7 +950,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
         starting_balance: Number(balance),
         contribution_mode: contributionMode,
         monthly_contribution: effectiveMonthlyContribution(),
-        contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
+        contribution_percentage: contributionMode === "percentage" ? parseFloat(contributionPercentage || "0") / 100 : undefined,
         expected_return: Number(expectedReturn) / 100,
         dividend_yield: Number(dividendYield) / 100,
         dividend_reinvestment: dividendStrategy,
@@ -1131,17 +966,10 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon">📈</div>
-        <div>
-          <h3 className="form-header-title">Edit Taxable Investment Account</h3>
-          <p className="form-header-desc">Update your brokerage account with returns and dividend strategies.</p>
-        </div>
-      </div>
-
+      <FormHeader icon={<ChartColumnIncreasing/>} title={"Edit Taxable Investment Account"} desc={"Update your brokerage account with returns and dividend strategies."}/>
+      
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Account Details</p>
 
@@ -1152,10 +980,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
 
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="50,000" type="text" />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder="50,000" />
             </div>
 
             {/* Contribution Mode Toggle - Compact */}
@@ -1171,15 +996,10 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
               </div>
             </div>
 
-            {/* Dollar Mode */}
             {contributionMode === "dollar" && (
               <div className="form-field">
                 <label className="form-label">Monthly Contribution</label>
-                <div className="form-input-wrap">
-                  <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix-label">/mo</span>
-                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} placeholder="1,000" type="text" />
-                </div>
+                <FormDollarInput value={monthlyContribution} onChange={setMonthlyContribution} placeholder="1,000" suffix='/mo'/>
               </div>
             )}
 
@@ -1194,21 +1014,8 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
               </div>
             )}
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Expected Annual Return</label>
-                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={20} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
-            </div>
-
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Dividend Yield</label>
-                <span className="form-slider-value">{Number(dividendYield).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={10} step={0.1} value={dividendYield} onChange={(e) => setDividendYield(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={20} step={0.1} />
+            <FormSlider label="Dividend Yield" value={dividendYield} onChange={setDividendYield} min={0} max={10} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
@@ -1224,82 +1031,36 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
             />
 
             {/* 🔧 FIX: Link to job card - NOW SHOWS IN BOTH MODES */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a job</div>
-                    <div className="link-card-sub">
-                      {contributionMode === "percentage" 
-                        ? "Required for percentage-based contributions"
-                        : "Optional — enables percentage-based contributions"}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {allJobs.length === 0 ? (
-                  <p className="link-card-no-jobs">No jobs yet — add a qualifying job first.</p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select 
-                      value={linkedIncomeId} 
-                      onChange={(e) => handleJobSelect(e.target.value)} 
-                      className="form-input" 
-                      disabled={isLoadingTaxCalc}
-                    >
-                      <option value="">None - No linking</option>
-                      {allJobs.map((job) => (
-                        <option key={job.id} value={job.id}>
-                          {job.name}
-                        </option>
-                      ))}
-                    </select>
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-                    {isLoadingTaxCalc && <p className="form-inline-loading">⏳ Calculating net income...</p>}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a job"
+              sub={contributionMode === "percentage"
+                ? "Required for percentage-based contributions"
+                : "Optional — enables percentage-based contributions"}
+              items={allJobs}
+              emptyMessage="No jobs yet — add a qualifying job first."
+              selectedId={linkedIncomeId}
+              onSelect={handleJobSelect}
+              selectDisabled={isLoadingTaxCalc}
+              error={linkError}
+              loadingMessage={isLoadingTaxCalc ? "⏳ Calculating net income..." : undefined}
+              syncedLabel={selectedJob ? `Synced years ${selectedJob.start_age}–${selectedJob.end_age}` : undefined}            
+            />
 
             {/* Merged Contribution Preview - Only show in percentage mode */}
             {contributionMode === "percentage" && selectedJob && netIncome && !isLoadingTaxCalc && (
-              <div className="preview-card">
-                <div className="preview-card-header">
-                  <span className="preview-icon"><DollarSign/></span>
-                  <span className="preview-card-label">Contribution Preview</span>
-                </div>
-                <div className="preview-card-row">
-                  <div className="preview-card-col">
-                    <span className="preview-card-meta-label">Monthly</span>
-                    <span className="preview-card-value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
-                  </div>
-                  <div className="preview-card-col preview-card-col-right">
-                    <span className="preview-card-meta-label">Annual</span>
-                    <span className="preview-card-value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
-                  </div>
-                </div>
-                <div className="preview-card-footer">
-                  {Number(contributionPercentage).toFixed(1)}% of ${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
-                </div>
-              </div>
+              <ContributionPreviewCard
+                monthly={effectiveMonthlyContribution()}
+                annual={effectiveMonthlyContribution() * 12}
+                footer={`${Number(contributionPercentage || 0).toFixed(1)}% of $${(netIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net`}
+              />
             )}
 
-            {/* Dividend strategy section */}
             <p className="form-section-heading">Dividend Strategy</p>
-
-            <div className="form-field">
-              <div style={{ display: "flex", gap: "4px" }}>
-                <button type="button" className={dividendStrategy === "drip" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("drip")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
-                  DRIP
-                </button>
-                <button type="button" className={dividendStrategy === "cash_out" ? "form-btn-secondary active" : "form-btn-secondary"} onClick={() => setDividendStrategy("cash_out")} style={{ flex: 1, padding: "8px 12px", fontSize: "13px" }}>
-                  Cash Out
-                </button>
-              </div>
-            </div>
+            <FormToggleGroup value={dividendStrategy} onChange={setDividendStrategy} options={[
+                { value: "drip", label: "DRIP" },
+                { value: "cash_out", label: "Cash Out" },
+              ]}
+            />
 
             {dividendStrategy === "cash_out" && (
               <div className="form-field">
@@ -1317,11 +1078,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Taxable Investment Account
-          </button>
-        </div>
+        <FormSubmitButton label="Update Taxable Investment Account" />
       </form>
     </div>
   );
@@ -1332,7 +1089,9 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
   const [balance, setBalance] = useState(item.starting_balance.toString());
   const [contributionMode, setContributionMode] = useState<"dollar" | "percentage">(item.contribution_mode || "dollar");
   const [monthlyContribution, setMonthlyContribution] = useState(item.monthly_contribution?.toString() || "");
-  const [contributionPercentage, setContributionPercentage] = useState(item.contribution_percentage?.toString() || "");
+  const [contributionPercentage, setContributionPercentage] = useState(
+    item.contribution_percentage !== undefined ? (item.contribution_percentage * 100).toString() : ""
+  );  
   const [expectedReturn, setExpectedReturn] = useState((item.expected_return * 100)?.toString() || "7");
   const [matchRate, setMatchRate] = useState((item.employer_match_rate * 100)?.toString() || "100");
   const [matchLimit, setMatchLimit] = useState((item.employer_match_limit * 100)?.toString() || "4");
@@ -1408,7 +1167,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
       starting_balance: Number(balance),
       contribution_mode: contributionMode,
       monthly_contribution: effectiveMonthlyContribution(),
-      contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) : undefined,
+      contribution_percentage: contributionMode === "percentage" ? Number(contributionPercentage) / 100 : undefined,      
       expected_return: Number(expectedReturn) / 100,
       employer_match_rate: Number(matchRate) / 100,
       employer_match_limit: Number(matchLimit) / 100,
@@ -1443,17 +1202,10 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><PiggyBank/></div>
-        <div>
-          <h3 className="form-header-title">Edit Employer Retirement Account</h3>
-          <p className="form-header-desc">Update your 401(k), 403(b), or pension details.</p>
-        </div>
-      </div>
+      <FormHeader icon={<PiggyBank/>} title={"Edit Employer Retirement Account"} desc={"Update your 401(k), 403(b), or pension details."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
-          {/* ── LEFT ── */}
           <div className="form-col">
             <p className="form-section-heading">Account Details</p>
 
@@ -1464,13 +1216,9 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
 
             <div className="form-field">
               <label className="form-label">Starting Balance</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(balance)} onChange={(e) => handleNumberInput(e, setBalance)} className="form-input form-input-prefix-dollar" placeholder="25,000" type="text" />
-              </div>
+              <FormDollarInput value={balance} onChange={setBalance} placeholder={"25,000"}/>
             </div>
 
-            {/* Contribution Mode Toggle - Compact */}
             <div className="form-field">
               <label className="form-label">Contribution</label>
               <div className="form-toggle-group">
@@ -1483,19 +1231,13 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               </div>
             </div>
 
-            {/* Dollar Mode */}
             {contributionMode === "dollar" && (
               <div className="form-field">
                 <label className="form-label">Monthly Contribution</label>
-                <div className="form-input-wrap">
-                  <span className="form-input-prefix">$</span>
-                  <span className="form-input-suffix-label">/mo</span>
-                  <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyContribution)} onChange={(e) => handleNumberInput(e, setMonthlyContribution)} placeholder="500" type="text" />
-                </div>
+                <FormDollarInput value={monthlyContribution} onChange={setMonthlyContribution} placeholder={"500"} suffix='/mo'/>
               </div>
             )}
 
-            {/* Percentage Mode */}
             {contributionMode === "percentage" && (
               <div className="form-field">
                 <label className="form-label">Percentage of Gross Income</label>
@@ -1506,29 +1248,9 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               </div>
             )}
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Expected Annual Return</label>
-                <span className="form-slider-value">{Number(expectedReturn).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={15} step={0.1} value={expectedReturn} onChange={(e) => setExpectedReturn(e.target.value)} className="form-slider" />
-            </div>
-
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Employer Match Rate</label>
-                <span className="form-slider-value">{Number(matchRate).toFixed(0)}%</span>
-              </div>
-              <input type="range" min={0} max={200} step={1} value={matchRate} onChange={(e) => setMatchRate(e.target.value)} className="form-slider" />
-            </div>
-
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Employer Match Cap (% of salary)</label>
-                <span className="form-slider-value">{Number(matchLimit).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={10} step={0.1} value={matchLimit} onChange={(e) => setMatchLimit(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={15} step={0.1} />
+            <FormSlider label="Employer Match Rate" value={matchRate} onChange={setMatchRate} min={0} max={200} step={1} decimals={0} />
+            <FormSlider label="Employer Match Cap (% of salary)" value={matchLimit} onChange={setMatchLimit} min={0} max={10} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
@@ -1543,98 +1265,38 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               setEndAge={setEndAge}
             />
 
-            {/* Link to job card */}
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a job</div>
-                    <div className="link-card-sub">Required for percentage-based contributions</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="link-card-body">
-                {allJobs.length === 0 ? (
-                  <p className="link-card-no-jobs">No jobs yet — add a qualifying job first.</p>
-                ) : item.linked_income_id ? (
-                  <div>
-                    <div className="link-card-synced">
-                      🔗 Linked to {allJobs.find((j) => j.id === linkedIncomeId)?.name}
-                      <p className="form-inline-muted">Delete this account to unlink and reassign</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select value={linkedIncomeId} onChange={(e) => handleJobSelect(e.target.value)} className="form-input">
-                      <option value="">None - No linking</option>
-                      {allJobs.map((job) => {
-                        const isLinked = job.linked_401k_id;
-                        return (
-                          <option key={job.id} value={job.id} disabled={isLinked}>
-                            {job.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-                    {linkError && <div style={{ color: "#EF4444", fontSize: "0.875rem", marginTop: "0.5rem" }}>{linkError}</div>}
-                    {linkedJob && !linkError && (
-                      <div className="link-card-synced">
-                        <Link/> Synced years {linkedJob.start_age}–{linkedJob.end_age}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a job"
+              sub="Required for percentage-based contributions"
+              items={allJobs}
+              emptyMessage="No jobs yet — add a qualifying job first."
+              selectedId={linkedIncomeId}
+              onSelect={handleJobSelect}
+              isItemDisabled={(job) => Boolean(job.linked_401k_id)}
+              error={linkError}
+              isLocked={Boolean(item.linked_income_id)}
+              lockedLabel={allJobs.find((j) => j.id === linkedIncomeId)?.name}
+              lockedSubMessage="Delete this account to unlink and reassign"
+              syncedLabel={linkedJob ? `Synced years ${linkedJob.start_age}–${linkedJob.end_age}` : undefined}
+            />
 
             {/* Merged Contribution Preview - Only show in percentage mode */}
             {contributionMode === "percentage" && selectedJob && (
-              <div className="preview-card">
-                <div className="preview-card-header">
-                  <span className="preview-icon"><DollarSign/></span>
-                  <span className="preview-card-label">Contribution Preview</span>
-                </div>
-                <div className="preview-card-row">
-                  <div className="preview-card-col">
-                    <span className="preview-card-meta-label">Monthly</span>
-                    <span className="preview-card-value">${effectiveMonthlyContribution().toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</span>
-                  </div>
-                  <div className="preview-card-col preview-card-col-right">
-                    <span className="preview-card-meta-label">Annual</span>
-                    <span className="preview-card-value">${(effectiveMonthlyContribution() * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
-                  </div>
-                </div>
-                <div className="preview-card-footer">
-                  {Number(contributionPercentage).toFixed(1)}% of ${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly net
-                </div>
-              </div>
+              <ContributionPreviewCard
+                monthly={effectiveMonthlyContribution()}
+                annual={effectiveMonthlyContribution() * 12}
+                footer={`${Number(contributionPercentage).toFixed(1)}% of $${(selectedJob.gross_income / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })} monthly gross`}
+              />
             )}
 
-            {/* Annual contribution preview with employer match */}
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span className="preview-icon"></span>
-                <span className="preview-card-label">Annual Total</span>
-              </div>
-              <div className="preview-card-amount preview-card-amount-lg">
-                ${Math.round(annualTotal).toLocaleString()}
-                <span className="preview-card-unit preview-card-unit-lg">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${Math.round(annualEmployee).toLocaleString()} you + ${Math.round(annualEmployer).toLocaleString()} employer match
-                {!selectedJob && annualEmployer === 0 && <span> (link a job to see match)</span>}
-              </div>
-            </div>
+            <PreviewCard icon={<span>🏦</span>} label="Annual Total" amount={`$${Math.round(annualTotal).toLocaleString()}`} unit="/yr" large>
+              ${Math.round(annualEmployee).toLocaleString()} you + ${Math.round(annualEmployer).toLocaleString()} employer match
+              {!selectedJob && annualEmployer === 0 && <span> (link a job to see match)</span>}
+            </PreviewCard>
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Retirement Account
-          </button>
-        </div>
+        <FormSubmitButton label="Update Retirement Account" />
       </form>
     </div>
   );

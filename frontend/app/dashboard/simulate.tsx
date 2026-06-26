@@ -301,7 +301,7 @@ class TaxableInvestmentSim {
     this.dividendReinvestment = account.dividend_reinvestment; // "drip" | "cash_out"
     this.contributionMode = account.contribution_mode;         // "dollar" | "percentage"
     this.monthlyContributionFixed = account.monthly_contribution;
-    this.contributionPercentage = (account.contribution_percentage ?? 0.0) / 100;
+    this.contributionPercentage = (account.contribution_percentage ?? 0.0);
 
     this.linkedIncomeId = account.linked_income_id ?? null;
     this.lotMethod = account.lot_method ?? "hifo";

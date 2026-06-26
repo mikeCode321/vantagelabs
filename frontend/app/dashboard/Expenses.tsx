@@ -5,6 +5,13 @@ import { formatNumberWithCommas, handleNumberInput } from "@/app/dashboard/utils
 import { ID } from "@/app/dashboard/Accounts";
 import {TimelineAgeFields,getValidatedTimelinePayload, } from "@/app/dashboard/TimelineAgeFields";
 import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Link, HouseIcon, LinkIcon, Building2, CreditCard } from 'lucide-react';
+import FormSlider from "@/app/dashboard/components/FormSlider";
+import FormHeader from "@/app/dashboard/components/FormHeader";
+import LinkCard from "@/app/dashboard/components/LinkCard";
+import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
+import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
+import LoanPaymentPreviewCard from '@/app/dashboard/components/LoanPaymentPreviewCard';
+import PreviewCard from './components/PreviewCard';
 
 // ─────────────────────────────────────────────
 // EXPENSES
@@ -224,15 +231,8 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><House/></div>
-        <div>
-          <h3 className="form-header-title">Add Home Loan</h3>
-          <p className="form-header-desc">
-            Add mortgage details and optionally link it to a house asset.
-          </p>
-        </div>
-      </div>
+      <FormHeader icon={<House/>} title={"Add Home Loan"} desc={"Add mortgage details and optionally link it to a house asset."} />
+
       {!hasAvailableHouse && (
         <div className="form-warning">
           No available house assets to link. Add a house asset first, or remove an existing loan link before adding another.
@@ -251,10 +251,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(originalPrincipal)} onChange={(e) => handleNumberInput(e, setOriginalPrincipal)} className="form-input form-input-prefix-dollar" placeholder="320,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={originalPrincipal} onChange={setOriginalPrincipal} placeholder="320,000" required />
             </div>
 
             <div className="form-field">
@@ -268,13 +265,8 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
             </div>
 
             <div className="form-field">
-              <label className="form-label">
-                Extra Monthly Payment <span className="form-label-muted">(optional)</span>
-              </label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(extraMonthlyPayment)} onChange={(e) => handleNumberInput(e, setExtraMonthlyPayment)} className="form-input form-input-prefix-dollar" placeholder="0" type="text" inputMode="decimal" />
-              </div>
+              <label className="form-label">Extra Monthly Payment <span className="form-label-muted">(optional)</span></label>
+              <FormDollarInput value={extraMonthlyPayment} onChange={setExtraMonthlyPayment} placeholder="0" />
             </div>
           </div>
 
@@ -290,88 +282,23 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
               readOnly={linkedAssetId !== ""}
             />
 
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a House Asset</div>
-                    <div className="link-card-sub">
-                      Sync this loan with an existing house
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <LinkCard
+              title="Link to a House Asset"
+              sub="Sync this loan with an existing house"
+              items={availableHouses}
+              emptyMessage="No house assets available."
+              selectedId={linkedAssetId}
+              onSelect={handleHouseSelect}
+              isItemDisabled={(house) => Boolean(house.linked_loan_id)}
+              error={linkError}
+              syncedLabel={availableHouses.find((h) => h.id === linkedAssetId)?.name}
+            />
 
-              <div className="link-card-body">
-                {availableHouses.length === 0 ? (
-                  <p className="link-card-no-accounts">
-                    No house assets available.
-                  </p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select
-                      value={linkedAssetId}
-                      onChange={(e) => handleHouseSelect(e.target.value)}
-                      className="form-input"
-                    >
-                      <option value="">None - No linking</option>
-
-                      {availableHouses.map((house) => {
-                        const isLinked = Boolean(house.linked_loan_id);
-
-                        return (
-                          <option
-                            key={house.id}
-                            value={house.id}
-                            disabled={isLinked}
-                          >
-                            {house.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-
-                    {linkedAssetId && !linkError && (
-                      <div className="link-card-synced">
-                        <Link/> Linked to{" "}
-                        {
-                          availableHouses.find(
-                            (house) => house.id === linkedAssetId
-                          )?.name
-                        }
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span><DollarSign/></span>
-                <div className="preview-card-label">Estimated Payment</div>
-              </div>
-              <div className="preview-card-amount">
-                $
-                {monthlyExpense.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-                /mo
-              </div>
-              <div className="preview-card-sub">Principal + interest only</div>
-            </div>
-
+            <LoanPaymentPreviewCard monthlyPayment={monthlyExpense} />
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit" disabled={!hasAvailableHouse}>
-            Add Home Loan
-          </button>
-        </div>
+        <FormSubmitButton label="Add Home Loan" disabled={!hasAvailableHouse} />
       </form>
     </div>
   );
@@ -488,15 +415,8 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><Car/></div>
-        <div>
-          <h3 className="form-header-title">Add Car Loan</h3>
-          <p className="form-header-desc">
-            Add vehicle loan details and optionally link it to a car asset.
-          </p>
-        </div>
-      </div>
+      <FormHeader icon={<Car/>} title={"Add Car Loan"} desc={"Add vehicle loan details and optionally link it to a car asset."} />
+
 
       {!hasAvailableCar && (
         <div className="form-warning">
@@ -516,10 +436,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(originalPrincipal)} onChange={(e) => handleNumberInput(e, setOriginalPrincipal)} className="form-input form-input-prefix-dollar" placeholder="25,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={originalPrincipal} onChange={setOriginalPrincipal} placeholder="25,000" required />
             </div>
 
             <div className="form-field">
@@ -545,88 +462,24 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
               readOnly={linkedAssetId !== ""}
             />
 
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a Car Asset</div>
-                    <div className="link-card-sub">
-                      Sync this loan with an existing vehicle
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <LinkCard
+              title="Link to a Car Asset"
+              sub="Sync this loan with an existing vehicle"
+              items={availableCars}
+              emptyMessage="No car assets available."
+              selectedId={linkedAssetId}
+              onSelect={handleCarSelect}
+              isItemDisabled={(car) => Boolean(car.linked_loan_id)}
+              error={linkError}
+              syncedLabel={availableCars.find((c) => c.id === linkedAssetId)?.name}
+            />
 
-              <div className="link-card-body">
-                {availableCars.length === 0 ? (
-                  <p className="link-card-no-accounts">
-                    No car assets available.
-                  </p>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select
-                      value={linkedAssetId}
-                      onChange={(e) => handleCarSelect(e.target.value)}
-                      className="form-input"
-                    >
-                      <option value="">None - No linking</option>
-
-                      {availableCars.map((car) => {
-                        const isLinked = car.linked_loan_id;
-
-                        return (
-                          <option
-                            key={car.id}
-                            value={car.id}
-                            disabled={isLinked}
-                          >
-                            {car.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-
-                    {linkedAssetId && !linkError && (
-                      <div className="link-card-synced">
-                        <Link/> Linked to{" "}
-                        {
-                          availableCars.find(
-                            (car) => car.id === linkedAssetId
-                          )?.name
-                        }
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span><DollarSign/></span>
-                <div className="preview-card-label">Estimated Payment</div>
-              </div>
-              <div className="preview-card-amount">
-                $
-                {monthlyExpense.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-                /mo
-              </div>
-              <div className="preview-card-sub">Principal + interest only</div>
-            </div>
+            <LoanPaymentPreviewCard monthlyPayment={monthlyExpense} />
 
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit" disabled={!hasAvailableCar}>
-            Add Car Loan
-          </button>
-        </div>
+        <FormSubmitButton label="Add Car Loan" disabled={!hasAvailableCar} />
       </form>
     </div>
   );
@@ -674,14 +527,7 @@ export function LivingExpensesForm({ dispatch,state, onToast }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><ShoppingCart/></div>
-        <div>
-          <h3 className="form-header-title">Add Living Expenses</h3>
-          <p className="form-header-desc">Track recurring monthly costs like groceries, utilities, and subscriptions.</p>
-        </div>
-      </div>
+      <FormHeader icon={<ShoppingCart/>} title={"Add Living Expenses"} desc={"Track recurring monthly costs like groceries, utilities, and subscriptions."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -696,54 +542,25 @@ export function LivingExpensesForm({ dispatch,state, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Monthly Amount</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input value={formatNumberWithCommas(amount)} onChange={(e) => handleNumberInput(e, setAmount)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="3,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={amount} onChange={setAmount} placeholder="3,000" suffix="/mo" required />
             </div>
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Annual Growth Rate</label>
-                <span className="form-slider-value">{Number(growth).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Annual Growth Rate" value={growth} onChange={setGrowth} min={0} max={15} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
 
-            {/* Annual Cost Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Cost</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualExpense.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">${(Number(amount) || 0).toLocaleString()}/mo × 12</div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Cost" amount={`$${annualExpense.toLocaleString()}`} unit="/yr">
+              ${(Number(amount) || 0).toLocaleString()}/mo × 12
+            </PreviewCard>
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Living Expenses
-          </button>
-        </div>
+        <FormSubmitButton label="Add Living Expenses" />
       </form>
     </div>
   );
@@ -794,14 +611,7 @@ export function DebtExpenseForm({ dispatch,state, onToast }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><HandCoins/></div>
-        <div>
-          <h3 className="form-header-title">Add Debt</h3>
-          <p className="form-header-desc">Track loans, credit cards, or any outstanding debt with monthly payments.</p>
-        </div>
-      </div>
+      <FormHeader icon={<HandCoins/>} title={"Add Debt"} desc={"Track loans, credit cards, or any outstanding debt with monthly payments."} />
 
       <form onSubmit={onSubmit} className="space-y-3">
         <div className="form-two-col">
@@ -816,19 +626,12 @@ export function DebtExpenseForm({ dispatch,state, onToast }) {
 
             <div className="form-field">
               <label className="form-label">Total Debt Amount</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input className="form-input form-input-prefix-dollar" value={formatNumberWithCommas(debtAmount)} onChange={(e) => handleNumberInput(e, setDebtAmount)} type="text" inputMode="decimal" placeholder="25,000" required />
-              </div>
+              <FormDollarInput value={debtAmount} onChange={setDebtAmount} placeholder="25,000" required />
             </div>
 
             <div className="form-field">
               <label className="form-label">Monthly Payment</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input className="form-input form-input-prefix-dollar form-input-has-suffix" value={formatNumberWithCommas(monthlyPayment)} onChange={(e) => handleNumberInput(e, setMonthlyPayment)} type="text" inputMode="decimal" placeholder="400" required />
-              </div>
+              <FormDollarInput value={monthlyPayment} onChange={setMonthlyPayment} placeholder="400" suffix="/mo" required />
             </div>
 
             <div className="form-field">
@@ -846,37 +649,16 @@ export function DebtExpenseForm({ dispatch,state, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
 
-            {/* Annual Payment Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Payment</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualPayment.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
-                {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
-              </div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Payment" amount={`$${annualPayment.toLocaleString()}`} unit="/yr">
+              ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
+              {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
+            </PreviewCard>
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Debt
-          </button>
-        </div>
+        <FormSubmitButton label="Add Debt" />
       </form>
     </div>
   );
@@ -922,14 +704,7 @@ export function RentExpenseForm({ dispatch,state, onToast, }) {
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><BanknoteArrowDown/></div>
-        <div>
-          <h3 className="form-header-title">Add Rent</h3>
-          <p className="form-header-desc">Track monthly rent payments with expected annual rent growth.</p>
-        </div>
-      </div>
+      <FormHeader icon={<BanknoteArrowDown/>} title={"Add Rent"} desc={"Track monthly rent payments with expected annual rent growth."}/>
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -939,56 +714,25 @@ export function RentExpenseForm({ dispatch,state, onToast, }) {
 
             <div className="form-field">
               <label className="form-label">Monthly Rent</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input className="form-input form-input-prefix-dollar form-input-has-suffix" onChange={(e) => handleNumberInput(e, setAmount)} value={formatNumberWithCommas(amount)} placeholder="2,000" type="text" required />
-              </div>
+              <FormDollarInput value={amount} onChange={setAmount} placeholder="2,000" suffix="/mo" required />
             </div>
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Annual Rent Growth</label>
-                <span className="form-slider-value">{Number(growth).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Annual Rent Growth" value={growth} onChange={setGrowth} min={0} max={15} step={0.1} />     
           </div>
 
           {/* ── RIGHT ── */}
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
 
-            {/* Annual Cost Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Rent Cost</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualRent.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
-              </div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Rent Cost" amount={`$${annualRent.toLocaleString()}`} unit="/yr">
+              ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
+            </PreviewCard>
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Add Rent
-          </button>
-        </div>
+        <FormSubmitButton label="Add Rent" />
       </form>
     </div>
   );
@@ -1080,13 +824,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><Car/></div>
-        <div>
-          <h3 className="form-header-title">Edit Car Loan</h3>
-          <p className="form-header-desc">Update vehicle loan details, payment assumptions, and timeline.</p>
-        </div>
-      </div>
+      <FormHeader icon={<Car/>} title={"Edit Car Loan"} desc={"Update vehicle loan details, payment assumptions, and timeline."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1100,10 +838,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(originalPrincipal)} onChange={(e) => handleNumberInput(e, setOriginalPrincipal)} className="form-input form-input-prefix-dollar" placeholder="25,000" type="text" inputMode="decimal" required />
-              </div>
+              <FormDollarInput value={originalPrincipal} onChange={setOriginalPrincipal} placeholder="25,000" required />
             </div>
 
             <div className="form-field">
@@ -1132,66 +867,26 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
               readOnly={linkedAssetId !== ""}
             />
 
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><Link/></span>
-                  <div>
-                    <div className="link-card-title">Link to a Car Asset</div>
-                    <div className="link-card-sub">Sync this loan with an existing vehicle</div>
-                  </div>
-                </div>
-              </div>
-              <div className="link-card-body">
-                {availableCars.length === 0 ? (
-                  <p className="link-card-no-accounts">No car assets available.</p>
-                ) : item.linked_asset_id ? (
-                  <div className="link-card-synced">
-                    🔗 Linked to {availableCars.find((car) => car.id === item.linked_asset_id)?.name || "Car"}
-                    <p className="form-inline-muted">Delete the linked car to reassign</p>
-                  </div>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select value={linkedAssetId} onChange={(e) => handleCarSelect(e.target.value)} className="form-input">
-                      <option value="">None - No linking</option>
-                      {availableCars.map((car) => (
-                        <option key={car.id} value={car.id} disabled={car.linked_loan_id && car.linked_loan_id !== item.id}>
-                          {car.name} {car.linked_loan_id && car.linked_loan_id !== item.id ? "(already linked)" : ""}
-                        </option>
-                      ))}
-                    </select>
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-                    {linkedAssetId && !linkError && (
-                      <div className="link-card-synced">
-                        🔗 Linked to {availableCars.find((car) => car.id === linkedAssetId)?.name}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            <LinkCard
+              title="Link to a Car Asset"
+              sub="Sync this loan with an existing vehicle"
+              items={availableCars}
+              emptyMessage="No car assets available."
+              selectedId={linkedAssetId}
+              onSelect={handleCarSelect}
+              isItemDisabled={(car) => Boolean(car.linked_loan_id) && car.linked_loan_id !== item.id}
+              error={linkError}
+              isLocked={Boolean(item.linked_asset_id)}
+              lockedLabel={availableCars.find((c) => c.id === item.linked_asset_id)?.name ?? "Car"}
+              lockedSubMessage="Delete the linked car to reassign"
+              syncedLabel={availableCars.find((c) => c.id === linkedAssetId)?.name}
+            />
 
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span><DollarSign/></span>
-                <div className="preview-card-label">Estimated Payment</div>
-              </div>
-              <div className="preview-card-amount">
-                $
-                {monthlyExpense.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-                /mo
-              </div>
-              <div className="preview-card-sub">Principal + interest only</div>
-            </div>
-            
+            <LoanPaymentPreviewCard monthlyPayment={monthlyExpense} />
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">Update Car Loan</button>
-        </div>
+        <FormSubmitButton label="Update Car Loan" />
       </form>
     </div>
   );
@@ -1332,15 +1027,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
   return (
     <div className="form-panel">
-      <div className="form-header">
-        <div className="form-header-icon"><House/></div>
-        <div>
-          <h3 className="form-header-title">Edit Home Loan</h3>
-          <p className="form-header-desc">
-            Update mortgage details, payment assumptions, and timeline.
-          </p>
-        </div>
-      </div>
+      <FormHeader icon={<House/>} title={"Edit Home Loan"} desc={"Update mortgage details, payment assumptions, and timeline."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1359,20 +1046,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
 
             <div className="form-field">
               <label className="form-label">Original Principal</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(originalPrincipal)}
-                  onChange={(e) =>
-                    handleNumberInput(e, setOriginalPrincipal)
-                  }
-                  className="form-input form-input-prefix-dollar"
-                  placeholder="320,000"
-                  type="text"
-                  inputMode="decimal"
-                  required
-                />
-              </div>
+              <FormDollarInput value={originalPrincipal} onChange={setOriginalPrincipal} placeholder="320,000" required />
             </div>
 
             <div className="form-field">
@@ -1404,23 +1078,8 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
             </div>
 
             <div className="form-field">
-              <label className="form-label">
-                Extra Monthly Payment{" "}
-                <span className="form-label-muted">(optional)</span>
-              </label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input
-                  value={formatNumberWithCommas(extraMonthlyPayment)}
-                  onChange={(e) =>
-                    handleNumberInput(e, setExtraMonthlyPayment)
-                  }
-                  className="form-input form-input-prefix-dollar"
-                  placeholder="0"
-                  type="text"
-                  inputMode="decimal"
-                />
-              </div>
+              <label className="form-label">Extra Monthly Payment <span className="form-label-muted">(optional)</span></label>
+              <FormDollarInput value={extraMonthlyPayment} onChange={setExtraMonthlyPayment} placeholder="0" />
             </div>
           </div>
 
@@ -1436,91 +1095,27 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
               readOnly={linkedAssetId !== ""}
             />
 
-            <div className="link-card">
-              <div className="link-card-header">
-                <div className="link-card-info">
-                  <span className="preview-icon"><House/></span>
-                  <div>
-                    <div className="link-card-title">
-                      Link to a House Asset
-                    </div>
-                    <div className="link-card-sub">
-                      Sync this loan with an existing house
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <LinkCard
+              title="Link to a House Asset"
+              sub="Sync this loan with an existing house"
+              items={availableHouses}
+              emptyMessage="No house assets available."
+              selectedId={linkedAssetId}
+              onSelect={handleHouseSelect}
+              isItemDisabled={(house) => Boolean(house.linked_loan_id)}
+              error={linkError}
+              isLocked={isAlreadyLinked}
+              lockedLabel={linkedHouse?.name ?? "House asset"}
+              lockedSubMessage="Delete the linked house to reassign"
+              syncedLabel={linkedHouse?.name}
+            />
 
-              <div className="link-card-body">
-                {availableHouses.length === 0 ? (
-                  <p className="link-card-no-accounts">
-                    No house assets available.
-                  </p>
-                ) : isAlreadyLinked ? (
-                  <div className="link-card-synced">
-                    <Link/> Linked to {linkedHouse?.name || "House asset"}
-
-                    <p className="form-inline-muted">Delete the linked house to reassign</p>
-                  </div>
-                ) : (
-                  <div className="form-field-gap8">
-                    <select
-                      value={linkedAssetId}
-                      onChange={(e) => handleHouseSelect(e.target.value)}
-                      className="form-input"
-                    >
-                      <option value="">None - No linking</option>
-
-                      {availableHouses.map((house) => {
-                        const isLinked = Boolean(house.linked_loan_id);
-
-                        return (
-                          <option
-                            key={house.id}
-                            value={house.id}
-                            disabled={isLinked}
-                          >
-                            {house.name} {isLinked ? "(already linked)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {linkError && <p className="form-inline-error">{linkError}</p>}
-
-                    {linkedAssetId && !linkError && (
-                      <div className="link-card-synced">
-                        <Link/> Linked to {linkedHouse?.name}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="preview-card">
-              <div className="preview-card-header preview-card-header-mb10">
-                <span><DollarSign/></span>
-                <div className="preview-card-label">Estimated Payment</div>
-              </div>
-              <div className="preview-card-amount">
-                $
-                {monthlyExpense.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
-                /mo
-              </div>
-              <div className="preview-card-sub">Principal + interest only</div>
-            </div>
+            <LoanPaymentPreviewCard monthlyPayment={monthlyExpense} />
 
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Home Loan
-          </button>
-        </div>
+        <FormSubmitButton label="Update Home Loan" />
       </form>
     </div>
   );
@@ -1563,14 +1158,7 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><House/></div>
-        <div>
-          <h3 className="form-header-title">Edit Living Expenses</h3>
-          <p className="form-header-desc">Update monthly amount and growth rate for this expense.</p>
-        </div>
-      </div>
+      <FormHeader icon={<House/>} title={"Edit Living Expenses"} desc={"Update monthly amount and growth rate for this expense."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1585,54 +1173,26 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
 
             <div className="form-field">
               <label className="form-label">Monthly Amount</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input value={formatNumberWithCommas(amount)} onChange={(e) => handleNumberInput(e, setAmount)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="3,000" type="text" />
-              </div>
+              <FormDollarInput value={amount} onChange={setAmount} placeholder="3,000" suffix="/mo" />
             </div>
 
-            <div className="form-field-gap8">
-              <div className="form-slider-header">
-                <label className="form-label">Annual Growth Rate</label>
-                <span className="form-slider-value">{Number(growth).toFixed(1)}%</span>
-              </div>
-              <input type="range" min={0} max={15} step={0.1} value={growth} onChange={(e) => setGrowth(e.target.value)} className="form-slider" />
-            </div>
+            <FormSlider label="Annual Growth Rate" value={growth} onChange={setGrowth} min={0} max={15} step={0.1} />
           </div>
+
 
           {/* ── RIGHT ── */}
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
 
-            {/* Annual Cost Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Cost</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualExpense.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">${(Number(amount) || 0).toLocaleString()}/mo × 12</div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Cost" amount={`$${annualExpense.toLocaleString()}`} unit="/yr">
+              ${(Number(amount) || 0).toLocaleString()}/mo × 12
+            </PreviewCard>
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Living Expenses
-          </button>
-        </div>
+        <FormSubmitButton label="Update Living Expenses" />
       </form>
     </div>
   );
@@ -1675,14 +1235,7 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><Building2/></div>
-        <div>
-          <h3 className="form-header-title">Edit Rent</h3>
-          <p className="form-header-desc">Update monthly rent and annual growth rate.</p>
-        </div>
-      </div>
+      <FormHeader icon={<Building2/>} title={"Edit Rent"} desc={"Update monthly rent and annual growth rate."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1692,11 +1245,7 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
 
             <div className="form-field">
               <label className="form-label">Monthly Rent</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input value={amount} onChange={(e) => setAmount(e.target.value)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="2,000" />
-              </div>
+              <FormDollarInput value={amount} onChange={setAmount} placeholder="2,000" suffix="/mo" />
             </div>
 
             <div className="form-field-gap8">
@@ -1712,28 +1261,11 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
 
-            {/* Annual Cost Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Rent Cost</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualRent.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
-              </div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Rent Cost" amount={`$${annualRent.toLocaleString()}`} unit="/yr">
+              ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
+            </PreviewCard>
             
           </div>
         </div>
@@ -1787,14 +1319,7 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
 
   return (
     <div className="form-panel">
-      {/* Header */}
-      <div className="form-header">
-        <div className="form-header-icon"><CreditCard/></div>
-        <div>
-          <h3 className="form-header-title">Edit Debt</h3>
-          <p className="form-header-desc">Update loan balance, monthly payment, and interest rate.</p>
-        </div>
-      </div>
+      <FormHeader icon={<CreditCard/>} title={"Edit Debt"} desc={"Update loan balance, monthly payment, and interest rate."} />
 
       <form onSubmit={onSubmit}>
         <div className="form-two-col">
@@ -1809,19 +1334,12 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
 
             <div className="form-field">
               <label className="form-label">Total Debt Amount</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <input value={formatNumberWithCommas(debtAmount)} onChange={(e) => handleNumberInput(e, setDebtAmount)} className="form-input form-input-prefix-dollar" placeholder="25,000" type="text" inputMode="decimal" />
-              </div>
+              <FormDollarInput value={debtAmount} onChange={setDebtAmount} placeholder="25,000" />
             </div>
 
             <div className="form-field">
               <label className="form-label">Monthly Payment</label>
-              <div className="form-input-wrap">
-                <span className="form-input-prefix">$</span>
-                <span className="form-input-suffix-label">/mo</span>
-                <input value={formatNumberWithCommas(monthlyPayment)} onChange={(e) => handleNumberInput(e, setMonthlyPayment)} className="form-input form-input-prefix-dollar form-input-has-suffix" placeholder="400" type="text" inputMode="decimal" />
-              </div>
+              <FormDollarInput value={monthlyPayment} onChange={setMonthlyPayment} placeholder="400" suffix="/mo" />
             </div>
 
             <div className="form-field">
@@ -1839,37 +1357,16 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
 
-            {/* Annual Payment Preview */}
-            <div className="preview-card">
-              <div className="preview-card-header">
-                <span className="preview-icon"><DollarSign/></span>
-                <span className="preview-card-label">Annual Payment</span>
-              </div>
-              <div className="preview-card-amount">
-                ${annualPayment.toLocaleString()}
-                <span className="preview-card-unit">/yr</span>
-              </div>
-              <div className="preview-card-sub">
-                ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
-                {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
-              </div>
-            </div>
+            <PreviewCard icon={<DollarSign/>} label="Annual Payment" amount={`$${annualPayment.toLocaleString()}`} unit="/yr">
+              ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
+              {interestRate && <span> · {Number(interestRate).toFixed(1)}% APR</span>}
+            </PreviewCard>
           </div>
         </div>
 
-        <div className="form-footer">
-          <button type="submit" className="form-btn-submit">
-            Update Debt
-          </button>
-        </div>
+        <FormSubmitButton label="Update Debt" />
       </form>
     </div>
   );

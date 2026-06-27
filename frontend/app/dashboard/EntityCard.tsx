@@ -1,6 +1,6 @@
 import './styles/EntityCard.css';
 
-import { useState} from "react";
+import { useState, useEffect } from "react";
 import { CircleDollarSign, HandCoins, PieChart, Landmark, } from 'lucide-react';
 import EntityModal from "@/app/dashboard/EntityModal";
 import {formatNumberWithCommas} from "@/app/dashboard/utils";
@@ -296,6 +296,20 @@ function EntityRow({ item, category, dispatch, onEdit, state, onToast }) {
 export default function EntityCard({ state, ENTITY_CONFIG, category, dispatch, onToast, tutorialActive }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [variantBeingEdited, setVariantBeingEdited] = useState(null);
+
+  useEffect(() => {
+    const isMobile = window.innerWidth <= 860;
+    if (!isModalOpen || !isMobile) return;
+
+    document.body.dataset.scrollLocks = String((Number(document.body.dataset.scrollLocks) || 0) + 1);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      const next = (Number(document.body.dataset.scrollLocks) || 1) - 1;
+      document.body.dataset.scrollLocks = String(next);
+      if (next === 0) document.body.style.overflow = "";
+    };
+  }, [isModalOpen]);
 
   const handleEdit = (item) => {
     setVariantBeingEdited(item);

@@ -402,6 +402,20 @@ export default function Dashboard() {
   const [showTutorial, setShowTutorial] = useState(false);
   const [activeTutorialStepId, setActiveTutorialStepId] = useState<TutorialStepId | null>(null);
 
+  useEffect(() => {
+    const isMobile = window.innerWidth <= 860;
+    if (!showTutorial || !isMobile) return;
+
+    document.body.dataset.scrollLocks = String((Number(document.body.dataset.scrollLocks) || 0) + 1);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      const next = (Number(document.body.dataset.scrollLocks) || 1) - 1;
+      document.body.dataset.scrollLocks = String(next);
+      if (next === 0) document.body.style.overflow = "";
+    };
+  }, [showTutorial]);
+
   const showToast = (entityName: string, action: "added" | "edited" | "deleted") => {
     const id = crypto.randomUUID();
     const message = `${entityName} ${action} successfully`;

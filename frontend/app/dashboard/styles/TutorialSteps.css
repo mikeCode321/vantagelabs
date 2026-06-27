@@ -1010,6 +1010,13 @@
     border-radius: 20px;
   }
 
+  .ts-tutorial-form .form-panel {
+    margin: 0;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+  }
+
   .ts-welcome {
     padding: 36px 28px 32px;
   }

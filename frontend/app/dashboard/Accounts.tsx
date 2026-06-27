@@ -649,7 +649,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 
             <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={15} step={0.1} />
             <FormSlider label="Employer Match Rate" value={matchRate} onChange={setMatchRate} min={0} max={200} step={1} decimals={0} />
-            <FormSlider label="Employer Match Cap (% of salary)" value={matchLimit} onChange={setMatchLimit} min={0} max={10} step={0.1} />
+            <FormSlider label="Employer Match Cap" value={matchLimit} onChange={setMatchLimit} min={0} max={10} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}
@@ -1250,7 +1250,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
 
             <FormSlider label="Expected Annual Return" value={expectedReturn} onChange={setExpectedReturn} min={0} max={15} step={0.1} />
             <FormSlider label="Employer Match Rate" value={matchRate} onChange={setMatchRate} min={0} max={200} step={1} decimals={0} />
-            <FormSlider label="Employer Match Cap (% of salary)" value={matchLimit} onChange={setMatchLimit} min={0} max={10} step={0.1} />
+            <FormSlider label="Employer Match Cap" value={matchLimit} onChange={setMatchLimit} min={0} max={10} step={0.1} />
           </div>
 
           {/* ── RIGHT ── */}

@@ -4,17 +4,13 @@ import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/dashboard/utils";
 import { ID } from "@/app/dashboard/Accounts";
 import { TimelineAgeFields, getValidatedTimelinePayload, } from "@/app/dashboard/TimelineAgeFields";
-import { Link, HousePlus, ChartBarIncreasing, Car, ChartBarDecreasing } from 'lucide-react';
+import { HousePlus, ChartBarIncreasing, Car, ChartBarDecreasing } from 'lucide-react';
 import FormSlider from "@/app/dashboard/components/FormSlider";
 import FormHeader from '@/app/dashboard/components/FormHeader';
 import LinkCard from '@/app/dashboard/components/LinkCard';
 import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
 import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
 import PreviewCard from './components/PreviewCard';
-
-// ─────────────────────────────────────────────
-// ASSET
-// ─────────────────────────────────────────────
 
 export type HouseAsset = {
   source_type: string; // "asset"

@@ -991,6 +991,7 @@
 @media (max-width: 860px) {
   .ts-overlay {
     background: rgba(0, 0, 0, 0.35);
+    overscroll-behavior: none; /* add this */
   }
 
   .ts-overlay-no-bg {
@@ -1040,6 +1041,7 @@
     min-height: unset;
     max-height: calc(100dvh - 32px);
     overflow-y: auto;
+    overscroll-behavior: contain; /* add this */
     gap: 0;
     border-radius: 20px;
   }

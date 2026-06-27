@@ -4,7 +4,7 @@ import { useState } from "react";
 import { formatNumberWithCommas, handleNumberInput } from "@/app/dashboard/utils";
 import { ID } from "@/app/dashboard/Accounts";
 import {TimelineAgeFields,getValidatedTimelinePayload, } from "@/app/dashboard/TimelineAgeFields";
-import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Link, HouseIcon, LinkIcon, Building2, CreditCard } from 'lucide-react';
+import {  HandCoins,  House,BanknoteArrowDown,ShoppingCart, Car, DollarSign, Building2, CreditCard } from 'lucide-react';
 import FormSlider from "@/app/dashboard/components/FormSlider";
 import FormHeader from "@/app/dashboard/components/FormHeader";
 import LinkCard from "@/app/dashboard/components/LinkCard";
@@ -12,10 +12,6 @@ import FormDollarInput from '@/app/dashboard/components/FormDollarInput';
 import FormSubmitButton from '@/app/dashboard/components/FormSubmitButton';
 import LoanPaymentPreviewCard from '@/app/dashboard/components/LoanPaymentPreviewCard';
 import PreviewCard from './components/PreviewCard';
-
-// ─────────────────────────────────────────────
-// EXPENSES
-// ─────────────────────────────────────────────
 
 export type LivingExpense = {
   source_type: "expense";

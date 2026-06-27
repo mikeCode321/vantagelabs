@@ -24,6 +24,7 @@
   width: min(560px, calc(100vw - 32px));
   max-height: calc(100vh - 64px);
   overflow-y: auto;
+  overscroll-behavior: contain;
   box-shadow:
     0 0 0 1px var(--shadow-card-ring),
     0 24px 64px var(--shadow-overlay);
@@ -872,8 +873,8 @@
     gap: 0;
     width: calc(100vw - 16px);
     min-height: 0;
-    max-height: none;   /* CHANGE: was calc(100dvh - 32px) */
-    height: 100%;       /* ADD: fill the overlay */
+    max-height: none;   
+    height: 100%;       
     overflow-y: auto;
     overscroll-behavior: contain;
     background: var(--white);

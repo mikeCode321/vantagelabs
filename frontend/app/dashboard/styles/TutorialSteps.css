@@ -8,6 +8,7 @@
   backdrop-filter: blur(4px);
   animation: ts-fade-in 0.2s ease;
   z-index: 1000;
+  background-color: rgba(128, 128, 128, 0.5);
 }
 
 @keyframes ts-fade-in {
@@ -595,10 +596,6 @@
   background: var(--accent-muted);
 }
 
-/* ─────────────────────────────────────────────
-   SPLIT STEP / TUTORIAL FORM
-───────────────────────────────────────────── */
-
 .ts-modal-split-step {
   width: min(1120px, calc(100vw - 48px));
   min-height: 560px;
@@ -610,19 +607,23 @@
   border: none;
   box-shadow: none;
   border-radius: 0;
-  overflow: visible;
+  overflow: auto;
 }
 
 .ts-tutorial-form {
   padding: 36px;
   background: var(--white);
   overflow-y: auto;
-  max-height: calc(100vh - 96px);
+  /* max-height: calc(100vh - 96px); */
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
 }
 
 .ts-step-panel {
   position: relative;
   padding: 48px 36px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
   border-right: 1px solid var(--border-subtle);
   background:
     radial-gradient(circle at top left, var(--accent-muted), transparent 34%),
@@ -814,6 +815,23 @@
   margin-top: 28px;
 }
 
+.ts-tutorial-form .form-panel {
+  margin: 0;
+  width: 100%;
+  max-height: none;
+  overflow: visible;
+}
+
+.ts-overlay-no-bg {
+  background: none !important;
+  backdrop-filter: none !important;
+  pointer-events: none;
+}
+
+.ts-overlay-no-bg > * {
+  pointer-events: auto;
+}
+
 /* ─────────────────────────────────────────────
    MOBILE PANEL
 ───────────────────────────────────────────── */
@@ -992,16 +1010,6 @@
   .ts-overlay {
     background: rgba(0, 0, 0, 0.35);
     overscroll-behavior: none; /* add this */
-  }
-
-  .ts-overlay-no-bg {
-    background: none !important;
-    backdrop-filter: none !important;
-    pointer-events: none;
-  }
-
-  .ts-overlay-no-bg > * {
-    pointer-events: auto;
   }
 
   .ts-modal {

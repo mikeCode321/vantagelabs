@@ -8,6 +8,7 @@
   backdrop-filter: blur(4px);
   animation: ts-fade-in 0.2s ease;
   z-index: 1000;
+  background-color: rgba(128, 128, 128, 0.5);
 }
 
 @keyframes ts-fade-in {
@@ -596,10 +597,6 @@
   background: var(--accent-muted);
 }
 
-/* ─────────────────────────────────────────────
-   SPLIT STEP / TUTORIAL FORM
-───────────────────────────────────────────── */
-
 .ts-modal-split-step {
   width: min(1120px, calc(100vw - 48px));
   min-height: 560px;
@@ -611,19 +608,23 @@
   border: none;
   box-shadow: none;
   border-radius: 0;
-  overflow: visible;
+  overflow: auto;
 }
 
 .ts-tutorial-form {
   padding: 36px;
   background: var(--white);
   overflow-y: auto;
-  max-height: calc(100vh - 96px);
+  /* max-height: calc(100vh - 96px); */
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
 }
 
 .ts-step-panel {
   position: relative;
   padding: 48px 36px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
   border-right: 1px solid var(--border-subtle);
   background:
     radial-gradient(circle at top left, var(--accent-muted), transparent 34%),
@@ -822,6 +823,33 @@
   overflow: visible;
 }
 
+.ts-overlay-no-bg {
+  background: none !important;
+  backdrop-filter: none !important;
+  pointer-events: none;
+}
+
+.ts-overlay-no-bg > * {
+  pointer-events: auto;
+}
+
+.ts-tutorial-form .form-panel {
+  margin: 0;
+  width: 100%;
+  max-height: none;
+  overflow: visible;
+}
+
+.ts-overlay-no-bg {
+  background: none !important;
+  backdrop-filter: none !important;
+  pointer-events: none;
+}
+
+.ts-overlay-no-bg > * {
+  pointer-events: auto;
+}
+
 /* ─────────────────────────────────────────────
    MOBILE PANEL
 ───────────────────────────────────────────── */
@@ -832,33 +860,174 @@
 /* ─────────────────────────────────────────────
    MEDIA QUERIES
 ───────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .ts-field-row {
+    flex-direction: column;
+  }
+
+  .ts-field-row-sep {
+    display: none;
+  }
+
+  .ts-welcome-features {
+    gap: 12px;
+  }
+
+  .ts-step-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-highlight-logo {
+    width: 48px;
+    height: 48px;
+    font-size: 36px;
+  }
+
+  .ts-modal {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 32px);
+    border-radius: var(--radius-lg);
+  }
+
+  .ts-welcome {
+    padding: 28px 20px 24px;
+  }
+
+  .ts-welcome-wordmark {
+    font-size: 30px;
+    margin-bottom: 6px;
+  }
+
+  .ts-welcome-tagline {
+    margin-bottom: 18px;
+  }
+
+  .ts-welcome-divider {
+    margin-bottom: 16px;
+  }
+
+  .ts-welcome-body {
+    margin-bottom: 18px;
+  }
+
+  .ts-profile {
+    padding: 20px 16px 28px;
+  }
+
+  .ts-profile-title {
+    font-size: var(--text-sm);
+  }
+
+  .ts-filing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-btn {
+    padding: 13px 20px;
+  }
+
+  .ts-modal-split-step {
+    width: calc(100vw - 8px);
+    border-radius: var(--radius-lg);
+  }
+
+  .ts-step-panel {
+    padding: 16px 16px 12px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .ts-tutorial-form {
+    padding: 16px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .ts-panel-mobile-meta .ts-step-title {
+    font-size: var(--text-sm);
+  }
+
+  .ts-highlight-card {
+    max-height: 60dvh;
+    padding: 20px 16px 28px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .ts-highlight-title {
+    font-size: var(--text-sm);
+  }
+
+  .ts-highlight-actions {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .ts-results-side-card {
+    max-height: 55dvh;
+    padding: 20px 16px 28px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .ts-results-title {
+    font-size: var(--text-lg);
+  }
+}
+
+@media (max-width: 760px) {
+  .form-input,
+  .ts-input,
+  .ts-select,
+  .ts-textarea,
+  .setup-input {
+    font-size: 16px !important; /* prevents iOS Safari zoom on focus */
+  }
+
+  .ts-modal-split-step {
+    width: min(560px, calc(100vw - 32px));
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+
+  .ts-checking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-step-panel {
+    padding: 28px 24px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .ts-step-title {
+    font-size: var(--text-lg);
+    max-width: none;
+  }
+
+  .ts-step-description {
+    max-width: none;
+  }
+
+  .ts-tutorial-form {
+    padding: 24px;
+    max-height: unset;
+  }
+
+  .ts-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .ts-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
 @media (max-width: 860px) {
   .ts-overlay {
     background: rgba(0, 0, 0, 0.35);
-    overscroll-behavior: none;
-    align-items: center;        
-    padding: 16px 8px;
-    box-sizing: border-box;
-  }
-
-  .ts-step-panel .ts-step-actions {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .ts-overlay:has(.ts-modal-split-step) {
-    align-items: stretch;
-    justify-content: center;
-    padding: 16px 8px;
-  }
-
-  .ts-overlay-no-bg {
-    background: none !important;
-    backdrop-filter: none !important;
-    pointer-events: none;
-  }
-
-  .ts-overlay-no-bg > * {
-    pointer-events: auto;
+    overscroll-behavior: none; /* add this */
   }
 
   .ts-modal {

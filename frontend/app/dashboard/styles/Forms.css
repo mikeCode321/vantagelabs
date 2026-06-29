@@ -301,21 +301,6 @@
   margin-top: 24px;
 }
 
-.form-btn-cancel {
-  background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--accent-border);
-  border-radius: 3px;
-  padding: 10px 16px;
-  font-family: var(--font-primary), monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
 /* Contribution / preview card rows */
 
 .preview-card {
@@ -449,16 +434,10 @@
   border-top: 1px solid var(--accent-border);
 }
 
-.link-card-no-jobs {
+.link-card-no-accounts {
   margin: 0;
   font-size: 0.75rem;
   color: var(--text-secondary);
-}
-
-.link-card-select-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 }
 
 .link-card-synced {
@@ -668,8 +647,7 @@
     gap: 8px;
   }
 
-  .form-btn-submit,
-  .form-btn-cancel {
+  .form-btn-submit {
     width: 100%;
     text-align: center;
   }

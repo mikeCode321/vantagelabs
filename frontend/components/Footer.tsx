@@ -1,5 +1,5 @@
 import Image from "next/image";
-import "../styles/Footer.css";
+import "./styles/Footer.css";
 
 export default function LandingFooter() {
   return (

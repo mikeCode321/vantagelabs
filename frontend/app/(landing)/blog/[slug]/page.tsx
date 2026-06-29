@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
 import { getPostBySlug, getAllPosts, BlogPost } from "@/lib/blog/posts";
+import TopBar from "@/components/TopBar";
+import Footer from "@/components/Footer";
+import "../styles/blog.css";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -28,34 +31,60 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
+  const allPosts = getAllPosts();
+  const relatedPosts = allPosts.filter((p) => p.slug !== slug).slice(0, 5);
 
   if (!post) {
     notFound();
   }
 
   return (
-    <article className="max-w-2xl mx-auto px-6 py-16">
-      <Link
-        href="/blog"
-        className="text-sm text-slate-500 hover:text-slate-900 mb-8 inline-block"
-      >
-        ← Back to blog
-      </Link>
+    <div className="blog-page">
+      <TopBar />
 
-      <header className="mb-10">
-        <h1 className="text-3xl font-bold text-slate-900 mb-3">{post.title}</h1>
-        <p className="text-slate-500 text-sm">
-          Published on {new Date(post.publishedAt).toLocaleDateString()}
-        </p>
-      </header>
+      <main className="blog-main">
+        <div className="blog-layout">
+          <article className="blog-content">
+            <Link href="/blog" className="blog-post-back">
+              ← Back to blog
+            </Link>
 
-      <div className="prose prose-slate max-w-none">
-        {post.content.split("\n\n").map((paragraph, index) => (
-          <p key={index} className="mb-4 leading-relaxed text-slate-700">
-            {paragraph}
-          </p>
-        ))}
-      </div>
-    </article>
+            <header className="blog-post-header">
+              <h1 className="blog-post-title">{post.title}</h1>
+              <p className="blog-post-meta">
+                Published on {new Date(post.publishedAt).toLocaleDateString()}
+              </p>
+            </header>
+
+            <div className="blog-post-content">
+              {post.content.split("\n\n").map((paragraph, index) => (
+                <p key={index} className="blog-post-paragraph">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </article>
+
+          <aside className="blog-sidebar">
+            <section className="blog-sidebar-section">
+              <h2 className="blog-sidebar-title">Related Posts</h2>
+              <div className="blog-sidebar-list">
+                {relatedPosts.map((related) => (
+                  <Link
+                    key={related.slug}
+                    href={`/blog/${related.slug}`}
+                    className="blog-sidebar-link"
+                  >
+                    {related.title}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          </aside>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
   );
 }

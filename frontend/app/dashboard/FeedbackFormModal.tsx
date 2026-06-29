@@ -2,7 +2,7 @@ import "./styles/FeedbackFormModal.css"
 
 import React from "react";
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 
 function getAnonymousId() {
   const storageKey = "vantage_anonymous_id";
@@ -45,7 +45,7 @@ export default function FeedbackFormModal({ isOpen, onClose }: { isOpen: boolean
       utm_params: Object.fromEntries(new URLSearchParams(window.location.search).entries()),
     };
 
-    const { error } = await supabase.from("feedback_submissions").insert(feedbackRow);
+    const { error } = await getSupabaseClient().from("feedback_submissions").insert(feedbackRow);
     console.log("success insert to feedback submissions")
     
     setIsSubmitting(false);

@@ -1,7 +1,7 @@
-import TopBar from "./(landing)/components/TopBar";
+import TopBar from "../components/TopBar";
 import LandingDashboardShowcase from "./(landing)/components/DashboardShowcase";
 import Fire from "./(landing)/components/Fire"
-import Footer from "./(landing)/components/Footer"
+import Footer from "../components/Footer"
 export default function Home() {
 
   return (

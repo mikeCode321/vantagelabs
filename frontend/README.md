@@ -20,6 +20,38 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Local Supabase Setup
+
+The dashboard uses Supabase for features like the feedback form. To run a local Supabase stack (Postgres + auth) on your machine:
+
+1. Install a container runtime compatible with Docker APIs (Docker Desktop, Rancher Desktop, Podman, or OrbStack).
+2. The Supabase CLI is already installed as a dev dependency. If you need to reinstall it:
+   ```bash
+   npm install supabase --save-dev
+   ```
+3. Initialize the local Supabase project (creates the `supabase/` config folder):
+   ```bash
+   npx supabase init
+   ```
+4. Start the local stack:
+   ```bash
+   npm run supabase:start
+   # or
+   npx supabase start
+   ```
+5. Copy the local API URL and anon key printed by the CLI into `.env.local`:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-local-anon-key>
+   ```
+6. In a separate terminal, run the Next.js dev server:
+   ```bash
+   npm run dev
+   ```
+7. Visit the local Supabase dashboard at [http://localhost:54323](http://localhost:54323).
+
+For production, set the real Supabase project credentials in your deployment platform (e.g., Vercel) instead of committing them.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

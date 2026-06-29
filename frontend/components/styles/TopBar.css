@@ -43,6 +43,10 @@
     line-height: 1;
 }
 
+.landing-logo-text:hover {
+    cursor: pointer;
+}
+
 .landing-logo-fire {
     font-weight: bold;
     color: var(--secondary);
@@ -70,6 +74,7 @@
 
 .landing-nav-link:hover {
     color: var(--accent);
+    cursor: pointer;
 }
 
 .landing-nav-dropdown {
@@ -121,6 +126,7 @@
 .landing-nav-dropdown-item:hover {
     background: var(--accent-soft);
     color: var(--accent);
+    cursor: pointer;
 }
 
 .landing-try-btn {
@@ -149,6 +155,7 @@
     border-color: var(--accent-dark);
     color: var(--accent-dark);
     transform: translateY(-1px);
+    cursor: pointer;
 }
 
 .landing-try-btn:active {
@@ -257,6 +264,7 @@
 
 .landing-mobile-menu-link:hover {
     color: var(--accent);
+    cursor: pointer;
 }
 
 .landing-mobile-menu-dropdown {

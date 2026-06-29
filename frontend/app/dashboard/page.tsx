@@ -406,13 +406,22 @@ export default function Dashboard() {
     const isMobile = window.innerWidth <= 860;
     if (!showTutorial || !isMobile) return;
 
+    // On mobile the dashboard's root container switches to overflow: visible
+    // (so the page itself scrolls), which means the real scrolling element is
+    // <html>, not <body>. Locking only body.style.overflow does nothing in
+    // that case, so the page behind the fixed tutorial overlay can still be
+    // dragged/scrolled. Lock both so the overlay actually stays put.
     document.body.dataset.scrollLocks = String((Number(document.body.dataset.scrollLocks) || 0) + 1);
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
 
     return () => {
       const next = (Number(document.body.dataset.scrollLocks) || 1) - 1;
       document.body.dataset.scrollLocks = String(next);
-      if (next === 0) document.body.style.overflow = "";
+      if (next === 0) {
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+      }
     };
   }, [showTutorial]);
 
@@ -591,4 +600,3 @@ export default function Dashboard() {
     </div>
   );
 }
-

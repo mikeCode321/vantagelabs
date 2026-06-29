@@ -619,6 +619,14 @@
   font-weight: 600;
 }
 
+.ts-tutorial-form .form-panel {
+  margin: 0;
+  width: 100%;
+  max-height: none;
+  overflow-y: visible;
+  overflow-x: visible;
+}
+
 @media (max-width: 480px) {
   .form-panel {
     margin: 14px;
@@ -692,10 +700,13 @@
     max-height: unset;
   }
 
-  /* Modal now scrolls itself on mobile — panel fills it cleanly */
   .form-panel {
-    margin: 20px;
-    width: calc(100% - 40px);
     max-height: none;
+  }
+
+  .ts-tutorial-form .form-panel {
+    margin: 0;
+    width: 100%;
+    overflow: visible;
   }
 }

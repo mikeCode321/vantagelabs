@@ -840,7 +840,6 @@
   overflow: visible;
 }
 
-<<<<<<< HEAD
 .ts-overlay-no-bg {
   background: none !important;
   backdrop-filter: none !important;
@@ -851,8 +850,6 @@
   pointer-events: auto;
 }
 
-=======
->>>>>>> main
 /* ─────────────────────────────────────────────
    MOBILE PANEL
 ───────────────────────────────────────────── */

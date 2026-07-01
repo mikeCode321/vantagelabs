@@ -1,5 +1,7 @@
 import './styles/Forms.css';
 
+import { getAllPresetAges, PresetAge } from "@/app/dashboard/utils";
+
 type TimelineAgeFieldsProps = {
   state: any;
   startAge: string;
@@ -9,9 +11,59 @@ type TimelineAgeFieldsProps = {
   startAgeLabel?: string;
   endAgeLabel?: string;
   readOnly?: boolean;
+  showPresetChips?: boolean;
 };
 
-function getTimelineBounds(state: any) {
+function formatPresetOption(preset: PresetAge): string {
+  if (preset.key === "now" || preset.key === "retirement" || preset.key === "end_of_plan") {
+    return `${preset.label} (${preset.value})`;
+  }
+  return `${preset.label} — ${preset.description}`;
+}
+
+function getPresetsChronologically(state: any): PresetAge[] {
+  return getAllPresetAges(state).slice().sort((a, b) => a.value - b.value);
+}
+
+type PresetAgeSelectProps = {
+  state: any;
+  currentValue: string;
+  onSelect: (value: string) => void;
+};
+
+function PresetAgeSelect({ state, currentValue, onSelect }: PresetAgeSelectProps) {
+  const presets = getPresetsChronologically(state);
+  const selectedValue = Number(currentValue);
+  const matchingPreset = presets.find((p) => p.value === selectedValue);
+  const selectValue = matchingPreset ? String(matchingPreset.value) : "";
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value) {
+      onSelect(value);
+    }
+  };
+
+  return (
+    <div className="preset-age-select-wrap">
+      <select
+        className="form-input preset-age-select"
+        value={selectValue}
+        onChange={handleChange}
+        title="Quick select a preset age"
+      >
+        <option value="">Quick select…</option>
+        {presets.map((preset) => (
+          <option key={preset.key} value={preset.value}>
+            {formatPresetOption(preset)}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+export function getTimelineBounds(state: any) {
   const minAge = Number(state?.user_start_age ?? 1);
   const maxAge = minAge + 100;
   return { minAge, maxAge };
@@ -53,12 +105,26 @@ export function getValidatedTimelinePayload(state: any, startAge: string, endAge
   return { invalid, start, end, minAge, maxAge };
 }
 
-export function TimelineAgeFields({state, startAge, endAge, setStartAge, setEndAge, startAgeLabel = "Start Age", endAgeLabel = "End Age", readOnly = false,}) {
+export function TimelineAgeFields({state, startAge, endAge, setStartAge, setEndAge, startAgeLabel = "Start Age", endAgeLabel = "End Age", readOnly = false, showPresetChips = false,}) {
   const { minAge, maxAge } = getTimelineBounds(state);
 
   const startAgeInvalid = !readOnly && isStartAgeInvalid(startAge, minAge, maxAge);
   const endAgeInvalid = !readOnly && isEndAgeInvalid(endAge, startAge, minAge, maxAge);
   const timelineInvalid = startAgeInvalid || endAgeInvalid;
+
+  const setStartAgeSafe = (value: string) => {
+    const clamped = clampAge(value, minAge, maxAge);
+    setStartAge(clamped);
+    if (endAge && Number(endAge) < Number(clamped)) {
+      setEndAge(clamped);
+    }
+  };
+
+  const setEndAgeSafe = (value: string) => {
+    const minEndAge = Number(startAge) || minAge;
+    const clamped = clampAge(value, minEndAge, maxAge);
+    setEndAge(clamped);
+  };
 
   return (
     <>
@@ -91,6 +157,9 @@ export function TimelineAgeFields({state, startAge, endAge, setStartAge, setEndA
             readOnly={readOnly}
             required
           />
+          {showPresetChips && !readOnly && (
+            <PresetAgeSelect state={state} currentValue={startAge} onSelect={setStartAgeSafe} />
+          )}
         </div>
 
         <div className="form-field">
@@ -114,6 +183,9 @@ export function TimelineAgeFields({state, startAge, endAge, setStartAge, setEndA
             max={maxAge}
             readOnly={readOnly}
           />
+          {showPresetChips && !readOnly && (
+            <PresetAgeSelect state={state} currentValue={endAge} onSelect={setEndAgeSafe} />
+          )}
         </div>
       </div>
 

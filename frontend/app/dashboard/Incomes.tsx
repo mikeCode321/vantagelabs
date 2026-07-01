@@ -192,6 +192,7 @@ export function SalaryForm({ dispatch, state, onToast }) {
               endAge={endAge}
               setStartAge={setStartAge}
               setEndAge={setEndAge}
+              showPresetChips
             />
 
             <LinkCard
@@ -352,6 +353,7 @@ export function HourlyWageForm({ dispatch, state, onToast }) {
               endAge={endAge}
               setStartAge={setStartAge}
               setEndAge={setEndAge}
+              showPresetChips
             />
 
             <LinkCard
@@ -472,6 +474,7 @@ export function SideHustleForm({ dispatch,state, onToast }) {
               endAge={endAge}
               setStartAge={setStartAge}
               setEndAge={setEndAge}
+              showPresetChips
             />
 
             <PreviewCard icon={<CircleDollarSign/>} label="Estimated Annual Income" amount={`$${annualIncome.toLocaleString()}`} unit="/yr">
@@ -605,7 +608,7 @@ export function EditSalaryForm({ item, state, dispatch, onClose, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} showPresetChips/>
 
             <LinkCard
               title="Link to a 401(k) Account"
@@ -749,7 +752,7 @@ export function EditHourlyWageForm({ item, state, dispatch, onClose, onToast }) 
 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} showPresetChips />
 
             <LinkCard
               title="Link 401(k) Account"
@@ -854,7 +857,7 @@ export function EditSideHustleForm({ item, dispatch,state, onClose, onToast }) {
 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} showPresetChips />
 
             <PreviewCard icon={<CircleDollarSign/>} label="Estimated Annual Income" amount={`$${annualIncome.toLocaleString()}`} unit="/yr">
               ${(Number(averageIncome) || 0).toLocaleString()} {frequency}

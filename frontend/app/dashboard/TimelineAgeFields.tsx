@@ -1,5 +1,6 @@
-import './styles/Forms.css';
+import './TimelineAgeFields.css';
 
+import { useState } from "react";
 import { getAllPresetAges, PresetAge } from "@/app/dashboard/utils";
 
 type TimelineAgeFieldsProps = {
@@ -14,51 +15,170 @@ type TimelineAgeFieldsProps = {
   showPresetChips?: boolean;
 };
 
-function formatPresetOption(preset: PresetAge): string {
-  if (preset.key === "now" || preset.key === "retirement" || preset.key === "end_of_plan") {
-    return `${preset.label} (${preset.value})`;
-  }
-  return `${preset.label} — ${preset.description}`;
-}
 
 function getPresetsChronologically(state: any): PresetAge[] {
-  return getAllPresetAges(state).slice().sort((a, b) => a.value - b.value);
+  const allPresets = getAllPresetAges(state);
+  
+  // Prioritize now, retirement, end_of_plan as first 3 chips
+  const priorityKeys = ["now", "retirement", "end_of_plan"];
+  const priorityPresets = allPresets.filter(p => priorityKeys.includes(p.key));
+  const otherPresets = allPresets.filter(p => !priorityKeys.includes(p.key));
+  
+  // Sort priority presets in the desired order
+  const sortedPriority = priorityKeys
+    .map(key => priorityPresets.find(p => p.key === key))
+    .filter((p): p is PresetAge => p !== undefined);
+  
+  // Sort other presets chronologically
+  const sortedOthers = otherPresets.slice().sort((a, b) => a.value - b.value);
+  
+  return [...sortedPriority, ...sortedOthers];
 }
 
-type PresetAgeSelectProps = {
+type PresetAgeChipsProps = {
   state: any;
   currentValue: string;
   onSelect: (value: string) => void;
 };
 
-function PresetAgeSelect({ state, currentValue, onSelect }: PresetAgeSelectProps) {
+function PresetAgeChips({ state, currentValue, onSelect }: PresetAgeChipsProps) {
   const presets = getPresetsChronologically(state);
   const selectedValue = Number(currentValue);
-  const matchingPreset = presets.find((p) => p.value === selectedValue);
-  const selectValue = matchingPreset ? String(matchingPreset.value) : "";
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (value) {
-      onSelect(value);
+  const handleChipClick = (value: number) => {
+    onSelect(String(value));
+  };
+
+  return (
+    <div className="preset-age-scroll-wrapper">
+      <div className="preset-age-chips-row">
+        {presets.map((preset) => (
+          <button
+            key={preset.key}
+            type="button"
+            className={`preset-age-chip${selectedValue === preset.value ? " active" : ""}`}
+            onClick={() => handleChipClick(preset.value)}
+            data-tooltip={preset.description}
+          >
+            {preset.label}
+          </button>
+        ))}
+      </div>
+      <div className="preset-age-scroll-fade" />
+    </div>
+  );
+}
+
+type SharedPresetChipsProps = {
+  state: any;
+  startAge: string;
+  endAge: string;
+  setStartAge: (value: string) => void;
+  setEndAge: (value: string) => void;
+};
+
+function SharedPresetChips({ state, startAge, endAge, setStartAge, setEndAge }: SharedPresetChipsProps) {
+  const [hoveredPreset, setHoveredPreset] = useState<PresetAge | null>(null);
+  const presets = getPresetsChronologically(state);
+  const startValue = Number(startAge);
+  const endValue = Number(endAge);
+
+  // Toggle switch implementation (commented out for future reuse)
+  /*
+  const [targetField, setTargetField] = useState<"start" | "end">("start");
+  const currentValue = targetField === "start" ? startAge : endAge;
+  const selectedValue = Number(currentValue);
+
+  const handleChipClick = (value: number) => {
+    if (targetField === "start") {
+      setStartAge(String(value));
+    } else {
+      setEndAge(String(value));
     }
   };
 
   return (
-    <div className="preset-age-select-wrap">
-      <select
-        className="form-input preset-age-select"
-        value={selectValue}
-        onChange={handleChange}
-        title="Quick select a preset age"
-      >
-        <option value="">Quick select…</option>
-        {presets.map((preset) => (
-          <option key={preset.key} value={preset.value}>
-            {formatPresetOption(preset)}
-          </option>
-        ))}
-      </select>
+    <div className="form-field">
+      <div className="preset-age-toggle" data-target={targetField}>
+        <button
+          type="button"
+          className={targetField === "start" ? "active" : ""}
+          onClick={() => setTargetField("start")}
+        >
+          Start
+        </button>
+        <button
+          type="button"
+          className={targetField === "end" ? "active" : ""}
+          onClick={() => setTargetField("end")}
+        >
+          End
+        </button>
+      </div>
+      <div className="preset-age-scroll-wrapper">
+        <div className="preset-age-chips-row">
+          {presets.map((preset) => (
+            <button
+              key={preset.key}
+              type="button"
+              className={`preset-age-chip${selectedValue === preset.value ? " active" : ""}`}
+              onClick={() => handleChipClick(preset.value)}
+              data-tooltip={preset.description}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+        <div className="preset-age-scroll-fade" />
+      </div>
+    </div>
+  );
+  */
+
+  // Auto-sorting implementation
+  const handleChipClick = (value: number) => {
+    const currentStart = Number(startAge);
+    
+    // If start age is empty, set it
+    if (startAge === "" || Number.isNaN(currentStart)) {
+      setStartAge(String(value));
+      return;
+    }
+    
+    // Auto-sorting logic: if value < current start, set as new start
+    // If value > current start, set as new end
+    if (value < currentStart) {
+      setStartAge(String(value));
+    } else if (value > currentStart) {
+      setEndAge(String(value));
+    }
+    // If value == current start, do nothing
+  };
+
+  const displayDescription = hoveredPreset?.description || "";
+
+  return (
+    <div className="form-field">
+      <div className="preset-age-scroll-wrapper">
+        <div className="preset-age-chips-row">
+          {presets.map((preset) => (
+            <button
+              key={preset.key}
+              type="button"
+              className={`preset-age-chip${startValue === preset.value || endValue === preset.value ? " active" : ""}`}
+              onClick={() => handleChipClick(preset.value)}
+              onMouseEnter={() => setHoveredPreset(preset)}
+              onMouseLeave={() => setHoveredPreset(null)}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+        <div className="preset-age-scroll-fade" />
+        {displayDescription && (
+          <p className="preset-age-description">{displayDescription}</p>
+        )}
+      </div>
     </div>
   );
 }
@@ -157,9 +277,6 @@ export function TimelineAgeFields({state, startAge, endAge, setStartAge, setEndA
             readOnly={readOnly}
             required
           />
-          {showPresetChips && !readOnly && (
-            <PresetAgeSelect state={state} currentValue={startAge} onSelect={setStartAgeSafe} />
-          )}
         </div>
 
         <div className="form-field">
@@ -183,11 +300,12 @@ export function TimelineAgeFields({state, startAge, endAge, setStartAge, setEndA
             max={maxAge}
             readOnly={readOnly}
           />
-          {showPresetChips && !readOnly && (
-            <PresetAgeSelect state={state} currentValue={endAge} onSelect={setEndAgeSafe} />
-          )}
         </div>
       </div>
+
+      {showPresetChips && !readOnly && (
+        <SharedPresetChips state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAgeSafe} setEndAge={setEndAgeSafe} />
+      )}
 
       {readOnly && (
         <p className="form-helper">Inherited from linked asset - edit the asset to change these dates.</p>

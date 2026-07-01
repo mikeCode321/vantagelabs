@@ -1,0 +1,175 @@
+/* Horizontal scrollable chip row for preset age selection */
+
+/* Toggle switch styles (commented out for future reuse)
+.preset-age-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 8px;
+  padding: 4px;
+  background: var(--off-white);
+  border-radius: 20px;
+  border: 1px solid var(--border-soft);
+}
+
+.preset-age-toggle button {
+  position: relative;
+  z-index: 2;
+  padding: 6px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.preset-age-toggle button.active {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.preset-age-toggle::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.preset-age-toggle[data-target="start"]::before {
+  transform: translateX(0);
+}
+
+.preset-age-toggle[data-target="end"]::before {
+  transform: translateX(100%);
+}
+*/
+
+.preset-age-scroll-wrapper {
+  position: relative;
+  width: 100%;
+  margin-top: 6px;
+  padding-bottom: 24px;
+}
+
+.preset-age-chips-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 6px 10px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.preset-age-chips-row::-webkit-scrollbar {
+  display: none;
+}
+
+.preset-age-scroll-fade {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 1)
+  );
+}
+
+.preset-age-chip {
+  position: relative;
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-soft);
+  color: var(--primary);
+  cursor: pointer;
+  user-select: none;
+  transition: 0.15s;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.preset-age-chip:hover {
+  background: var(--accent-muted);
+  border-color: var(--accent);
+}
+
+.preset-age-chip.active {
+  background: var(--accent);
+  border-color: var(--accent-dark);
+  color: var(--white);
+}
+
+.preset-age-chip.active:hover {
+  background: var(--accent-dark);
+}
+
+/* Tooltip styles (commented out - using description display instead)
+.preset-age-chip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%) translateY(6px);
+  background: var(--tooltip-bg);
+  color: var(--white);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.3;
+  width: max-content;
+  max-width: 220px;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.15s;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.preset-age-chip::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 2px);
+  transform: translateX(-50%) translateY(6px);
+  border: 6px solid transparent;
+  border-top-color: var(--tooltip-bg);
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.15s;
+  z-index: 10;
+}
+
+.preset-age-chip:hover::after,
+.preset-age-chip:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+*/
+
+.preset-age-description {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

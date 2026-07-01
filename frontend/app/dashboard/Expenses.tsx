@@ -276,6 +276,7 @@ export function HouseLoanExpenseForm({ dispatch, state, onClose, onToast }) {
               setStartAge={setStartAge}
               setEndAge={setEndAge}
               readOnly={linkedAssetId !== ""}
+              showPresetChips
             />
 
             <LinkCard
@@ -456,6 +457,7 @@ export function CarLoanExpenseForm({ dispatch, state, onClose, onToast }) {
               setStartAge={setStartAge}
               setEndAge={setEndAge}
               readOnly={linkedAssetId !== ""}
+              showPresetChips
             />
 
             <LinkCard
@@ -548,7 +550,7 @@ export function LivingExpensesForm({ dispatch,state, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} showPresetChips/>
 
             <PreviewCard icon={<DollarSign/>} label="Annual Cost" amount={`$${annualExpense.toLocaleString()}`} unit="/yr">
               ${(Number(amount) || 0).toLocaleString()}/mo × 12
@@ -645,7 +647,7 @@ export function DebtExpenseForm({ dispatch,state, onToast }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} showPresetChips />
 
             <PreviewCard icon={<DollarSign/>} label="Annual Payment" amount={`$${annualPayment.toLocaleString()}`} unit="/yr">
               ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12
@@ -720,7 +722,7 @@ export function RentExpenseForm({ dispatch,state, onToast, }) {
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} showPresetChips/>
 
             <PreviewCard icon={<DollarSign/>} label="Annual Rent Cost" amount={`$${annualRent.toLocaleString()}`} unit="/yr">
               ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
@@ -861,6 +863,7 @@ export function EditCarLoanExpenseForm({ item, state, dispatch, onClose, onToast
               setStartAge={setStartAge}
               setEndAge={setEndAge}
               readOnly={linkedAssetId !== ""}
+              showPresetChips
             />
 
             <LinkCard
@@ -1089,6 +1092,7 @@ export function EditHouseLoanExpenseForm({ item, state, dispatch, onClose, onToa
               setStartAge={setStartAge}
               setEndAge={setEndAge}
               readOnly={linkedAssetId !== ""}
+              showPresetChips
             />
 
             <LinkCard
@@ -1180,7 +1184,7 @@ export function EditLivingExpensesForm({ item, dispatch,state, onClose, onToast 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge}/>
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} showPresetChips/>
 
             <PreviewCard icon={<DollarSign/>} label="Annual Cost" amount={`$${annualExpense.toLocaleString()}`} unit="/yr">
               ${(Number(amount) || 0).toLocaleString()}/mo × 12
@@ -1257,7 +1261,7 @@ export function EditRentExpenseForm({ item, dispatch,state, onClose, onToast }) 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} showPresetChips />
 
             <PreviewCard icon={<DollarSign/>} label="Annual Rent Cost" amount={`$${annualRent.toLocaleString()}`} unit="/yr">
               ${(Number(amount) || 0).toLocaleString()}/mo · grows {Number(growth).toFixed(1)}%/yr
@@ -1353,7 +1357,7 @@ export function EditDebtExpenseForm({ item, dispatch,state, onClose, onToast }) 
           <div className="form-col">
             <p className="form-section-heading">Timeline</p>
 
-            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} />
+            <TimelineAgeFields state={state} startAge={startAge} endAge={endAge} setStartAge={setStartAge} setEndAge={setEndAge} showPresetChips />
 
             <PreviewCard icon={<DollarSign/>} label="Annual Payment" amount={`$${annualPayment.toLocaleString()}`} unit="/yr">
               ${(Number(monthlyPayment) || 0).toLocaleString()}/mo × 12

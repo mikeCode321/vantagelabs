@@ -3,7 +3,7 @@ import './styles/Forms.css'
 import { useState, useEffect } from "react";
 import { formatNumberWithCommas, handleTierThresholdInput } from "@/app/dashboard/utils";
 import { CreditCard, ChartColumnIncreasing, PiggyBank } from 'lucide-react';
-import { TimelineAgeFields, getValidatedTimelinePayload,} from "@/app/dashboard/TimelineAgeFields";
+import { TimelineAgeFields, getValidatedTimelinePayload, getTimelineBounds,} from "@/app/dashboard/TimelineAgeFields";
 import FormSlider from "@/app/dashboard/components/FormSlider";
 import FormHeader from "@/app/dashboard/components/FormHeader";
 import LinkCard from '@/app/dashboard/components/LinkCard';
@@ -86,18 +86,12 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
   const hasCheckingAccount = state.accounts?.checking?.length > 0;
   const [name, setName] = useState("Checking Account");
   const [balance, setBalance] = useState("");
-  const [startAge, setStartAge] = useState("");
-  const [endAge, setEndAge] = useState("");
   const [tiers, setTiers] = useState<TierForm[]>([{ threshold: "", annual_rate: "" }]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
-
-    if (timeline.invalid) {
-      return;
-    }
+    const { minAge, maxAge } = getTimelineBounds(state);
 
     dispatch({
       type: "ADD_ACCOUNT",
@@ -106,8 +100,8 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
         variant: "checking",
         id: crypto.randomUUID(),
         name,
-        start_age: timeline.start,
-        end_age: timeline.end,
+        start_age: minAge,
+        end_age: maxAge,
         starting_balance: Number(balance),
         interest_tiers: tiers.map((tier) => ({
           threshold: Number(tier.threshold || 0),
@@ -118,12 +112,6 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
 
     onToast(name, "added");
     onClose();
-
-    // setName("Checking Account");
-    // setBalance("");
-    // setStartAge("");
-    // setEndAge("");
-    // setTiers([{ threshold: "", annual_rate: "" }]);
   };
 
   const addTier = () => {
@@ -204,14 +192,6 @@ export function CheckingAccountForm({ dispatch, state, onClose, onToast }) {
               ))}
             </div>
           </div>
-          {/* ── RIGHT ── */}
-          <TimelineAgeFields
-            state={state}
-            startAge={startAge}
-            endAge={endAge}
-            setStartAge={setStartAge}
-            setEndAge={setEndAge}
-          />
         </div>
 
         <FormSubmitButton label="Add Checking Account" disabled={hasCheckingAccount} topMargin />
@@ -407,6 +387,7 @@ export function TaxableInvestmentAccountForm({ dispatch, state, onToast }) {
               endAge={endAge}
               setStartAge={setStartAge}
               setEndAge={setEndAge}
+              showPresetChips
             />
 
             {/* 🔧 FIX: Link to job card - NOW SHOWS IN BOTH MODES */}
@@ -662,6 +643,7 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
               endAge={endAge}
               setStartAge={setStartAge}
               setEndAge={setEndAge}
+              showPresetChips
             />
 
             {/* Link to job card */}
@@ -704,8 +686,6 @@ export function EmployerRetirementAccountForm({ dispatch, state, onToast }) {
 export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast }) {
   const [name, setName] = useState(item.name);
   const [balance, setBalance] = useState(item.starting_balance.toString());
-  const [startAge, setStartAge] = useState(item.start_age.toString());
-  const [endAge, setEndAge] = useState(item.end_age.toString());
   const [tiers, setTiers] = useState<TierForm[]>(
     item.interest_tiers.length > 0
       ? item.interest_tiers.map((tier) => ({ threshold: tier.threshold.toString(), annual_rate: Number((tier.annual_rate * 100).toFixed(4)).toString(),}))
@@ -715,19 +695,15 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const timeline = getValidatedTimelinePayload(state, startAge, endAge);
-
-    if (timeline.invalid) {
-      return;
-    }
+    const { minAge, maxAge } = getTimelineBounds(state);
 
     dispatch({
       type: "UPDATE_ACCOUNT",
       payload: {
         ...item,
         name,
-        start_age: timeline.start,
-        end_age: timeline.end,
+        start_age: minAge,
+        end_age: maxAge,
         starting_balance: Number(balance),
         interest_tiers: tiers.map((tier) => ({
           threshold: Number(tier.threshold || 0),
@@ -744,7 +720,7 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
     setTiers([
       ...tiers,
       {
-        threshold: String((tiers[tiers.length - 1]?.threshold ?? 0) + 50000),
+        threshold: String((Number(tiers[tiers.length - 1]?.threshold || 0)) + 50000),
         annual_rate: "0",
       },
     ]);
@@ -832,18 +808,6 @@ export function EditCheckingAccountForm({ item,state, dispatch, onClose, onToast
             </div>
           </div>
 
-          {/* ── RIGHT ── */}
-          <div className="form-col">
-            <p className="form-section-heading">Timeline</p>
-
-            <TimelineAgeFields
-              state={state}
-              startAge={startAge}
-              endAge={endAge}
-              setStartAge={setStartAge}
-              setEndAge={setEndAge}
-            />
-          </div>
         </div>
 
         <FormSubmitButton label="Update Checking Account" topMargin />
@@ -1028,6 +992,7 @@ export function EditTaxableInvestmentAccountForm({ item, state, dispatch, onClos
               endAge={endAge}
               setStartAge={setStartAge}
               setEndAge={setEndAge}
+              showPresetChips
             />
 
             {/* 🔧 FIX: Link to job card - NOW SHOWS IN BOTH MODES */}
@@ -1263,6 +1228,7 @@ export function EditEmployerRetirementAccountForm({ item, state, dispatch, onClo
               endAge={endAge}
               setStartAge={setStartAge}
               setEndAge={setEndAge}
+              showPresetChips
             />
 
             <LinkCard

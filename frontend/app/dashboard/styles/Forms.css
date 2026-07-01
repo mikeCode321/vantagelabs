@@ -209,6 +209,17 @@
   gap: 10px;
 }
 
+.preset-age-select-wrap {
+  margin-top: 6px;
+}
+
+.preset-age-select {
+  width: 100%;
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
 .form-slider-header {
   display: flex;
   justify-content: space-between;

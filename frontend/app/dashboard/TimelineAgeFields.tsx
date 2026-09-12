@@ -2,18 +2,6 @@ import './styles/Forms.css';
 
 import { getAllPresetAges, PresetAge } from "@/app/dashboard/utils";
 
-type TimelineAgeFieldsProps = {
-  state: any;
-  startAge: string;
-  endAge: string;
-  setStartAge: (value: string) => void;
-  setEndAge: (value: string) => void;
-  startAgeLabel?: string;
-  endAgeLabel?: string;
-  readOnly?: boolean;
-  showPresetChips?: boolean;
-};
-
 function formatPresetOption(preset: PresetAge): string {
   if (preset.key === "now" || preset.key === "retirement" || preset.key === "end_of_plan") {
     return `${preset.label} (${preset.value})`;
